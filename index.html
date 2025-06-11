@@ -238,31 +238,29 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-#sessionHelp {
-  width: 100%;
-  max-width: 100%; /* für mobile volle Breite */
-  height: 30px;
-  background-color: #124012; /* dunkles Grün als Hintergrund */
-  color: #a0e6a0; /* helles Grün für Text */
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 30px; /* vertikal zentriert */
-  text-align: center;
-  border-radius: 4px;
-  margin: 6px 0 10px 0;
-  user-select: none;
-  box-shadow: 0 0 8px #3b8f3baa;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-#sessionHelp span {
-  position: absolute;
-  white-space: nowrap;
-  will-change: transform;
-  animation: tickerScroll 15s linear infinite;
-  padding-left: 100%;
-}
+  #sessionHelp {
+    position: fixed;
+    top: 40px; /* Unter der Uhrzeit */
+    left: 0;
+    width: 100vw;
+    height: 40px;
+    background-color: rgba(0, 255, 153, 0.15);
+    color: #00ff99;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    user-select: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 0 10px #00ff9966;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  #sessionHelp span {
+    position: relative;
+    display: inline-block;
+    padding-left: 100vw; /* Start rechts außerhalb */
+  }
 
 @keyframes tickerScroll {
   0% {
@@ -830,7 +828,9 @@ weeklyResetController();
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   const sessionHelp = document.getElementById("sessionHelp");
-
+ const textSpan = sessionHelp.querySelector('span');
+ 
+ 
   const sessionDescriptions = {
     "Sydney": "Sydney-Session: Ruhiger Markt, oft Vorbereitung auf Asien.",
     "Tokyo": "Tokyo-Session: Bewegung in Yen-Paaren, asiatischer Handel.",
@@ -860,6 +860,31 @@ weeklyResetController();
     { name: "New York Killzone", start: 810, end: 1020 },
     { name: "Deadzone", start: 1380, end: 0 }
   ];
+  
+  function animateSessionHelp() {
+    // Starte mit Text rechts außerhalb
+    textSpan.style.transition = 'none';
+    textSpan.style.transform = 'translateX(100vw)';
+
+    // Kurz warten, dann reinlaufen lassen
+    setTimeout(() => {
+      textSpan.style.transition = 'transform 5s linear';
+      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // zur Mitte
+
+      // Nach 5s Laufzeit + 10s Pause den Text rausfahren
+      setTimeout(() => {
+        textSpan.style.transition = 'transform 5s linear';
+        textSpan.style.transform = 'translateX(-100%)';
+      }, 15000); // 5s rein + 10s pause = 15s
+
+      // Nach 20s (gesamt) nochmal zurücksetzen und wiederholen
+      setTimeout(() => {
+        animateSessionHelp();
+      }, 20000);
+    }, 100); // 0.1s Delay zum Anwenden ohne Transition
+  }
+  
+  animateSessionHelp();
 
   function getMinutesNow() {
     const now = new Date();
