@@ -362,6 +362,7 @@ function loadSelection() {
 
 document.addEventListener('DOMContentLoaded', () => {
   container.innerHTML = generatePairsHTML();
+
   generateCheckboxes();
   loadSelection();
   updateVisiblePairs();
@@ -385,12 +386,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVisiblePairs();
     saveSelection();
   });
+
+  // Jetzt die gespeicherten Zustände laden:
+  loadFromStorage();           // Statistikdaten
+  loadOpenTradesFromStorage(); // Offene Trades
+
+  updateAllStats();
+  updateSummary();
 });
 
-// Aufruf beim Laden der Seite:
-document.addEventListener('DOMContentLoaded', () => {
-  container.innerHTML = generatePairsHTML();
-});
+
 
     function updateSummary() {
       let today = new Date();
