@@ -698,29 +698,6 @@ function removeTradeFromOpenBarByPrefix(prefix) {
   toRemove.forEach(el => el.remove());
 }
 
-function loadOpenTradesFromStorage() {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith("openTrade_")) {
-      const tradeStr = localStorage.getItem(key);
-      if (tradeStr) {
-        try {
-          const trade = JSON.parse(tradeStr);
-          addOpenTradeToUI(trade);
-        } catch (e) {
-          console.error("Fehler beim Parsen des Trades aus localStorage:", e);
-        }
-      }
-    }
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadFromStorage();
-  loadOpenTradesFromStorage();
-});
-
-
     function updateStats(id) {
       const stats = document.getElementById(`stats_${id}`);
       const { success, fail } = tradeData[id];
