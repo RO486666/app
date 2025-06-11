@@ -625,6 +625,16 @@ function addOpenTradeToUI(trade) {
   const box = document.createElement("div");
   box.className = "open-trade";
   box.id = trade.id;
+
+  // Farbe setzen je nach Long oder Short:
+  if (trade.direction === "Long") {
+    box.style.backgroundColor = "#228B22";  // dunkelgrün
+    box.style.color = "white";
+  } else if (trade.direction === "Short") {
+    box.style.backgroundColor = "#B22222";  // dunkelrot
+    box.style.color = "white";
+  }
+
   box.innerHTML = `
     <div><strong>${trade.pair}</strong> (${trade.direction})</div>
     <div class="timestamp">${trade.date} – ${trade.time}</div>
