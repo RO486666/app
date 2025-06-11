@@ -299,13 +299,7 @@ body {
   "XAG/USD"   // Silber
 ];
 
-    const container = document.getElementById("pairContainer");
-    const summaryText = document.getElementById("summaryText");
-    const monthlyText = document.getElementById("monthlyText");
-    const dailyText = document.getElementById("dailyText");
-    const tradeData = {};
-	
-	function generatePairsHTML() {
+   function generatePairsHTML() {
   return pairs.map(pair => {
     const id = pair.replace(/\W/g, "");
     return `
@@ -362,6 +356,7 @@ function loadSelection() {
 
 document.addEventListener('DOMContentLoaded', () => {
   container.innerHTML = generatePairsHTML();
+
   generateCheckboxes();
   loadSelection();
   updateVisiblePairs();
@@ -385,12 +380,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVisiblePairs();
     saveSelection();
   });
+
+  // Jetzt die gespeicherten Zustände laden:
+  loadFromStorage();           // Statistikdaten
+  loadOpenTradesFromStorage(); // Offene Trades
+
+  updateAllStats();
+  updateSummary();
 });
 
-// Aufruf beim Laden der Seite:
-document.addEventListener('DOMContentLoaded', () => {
-  container.innerHTML = generatePairsHTML();
-});
+
 
     function updateSummary() {
       let today = new Date();
@@ -557,49 +556,41 @@ function confirmChoice(id, pair) {
   const result = document.getElementById(`result_${id}`);
   const actions = document.getElementById(`actions_${id}`);
 
-  if (selected) {
-    const dir = selected.value;
-    result.style.color = dir === "Long" ? "lime" : "red";
-    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
-
-    localStorage.setItem("openTrade_" + id, dir);
-    actions.style.display = "block";
-
-    // Wenn schon ein Timer läuft, löschen
-    if (hideResultTimeout) clearTimeout(hideResultTimeout);
-
-    // Nach 3 Sekunden Text ausblenden
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
-
-    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const date = now.toLocaleDateString();
-    const tradeId = id + "_" + Date.now();
-
-    const trade = {
-      id: tradeId,
-      pair: pair,
-      direction: dir,
-      symbol: id,
-      time: timestamp,
-      date: date,
-    };
-
-    removeTradeFromOpenBarByPrefix(id);
-    addOpenTradeToUI(trade);
-
-  } else {
+  if (!selected) {
     result.style.color = "orange";
-    result.textContent = `Bitte Long oder Short auswählen.`;
-
+    result.textContent = "Bitte Long oder Short auswählen.";
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
+    hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
+    return;
   }
+
+  const dir = selected.value;
+  result.style.color = dir === "Long" ? "lime" : "red";
+  result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+  actions.style.display = "block";
+
+  if (hideResultTimeout) clearTimeout(hideResultTimeout);
+  hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
+
+  const now = new Date();
+  const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const date = now.toLocaleDateString();
+  const tradeId = id + "_" + Date.now();
+
+  const trade = {
+    id: tradeId,
+    pair: pair,
+    direction: dir,
+    symbol: id,
+    time: timestamp,
+    date: date,
+  };
+
+  // Einzelnen Trade speichern mit eindeutiger ID
+  localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
+
+  // Trade unten in UI anzeigen (neuen Trade hinzufügen, ohne alte zu löschen)
+  addOpenTradeToUI(trade);
 }
 
 
