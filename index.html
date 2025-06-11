@@ -238,7 +238,7 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-  #sessionHelp {
+#sessionHelp {
     position: fixed;
     top: 40px; /* Unter der Uhrzeit */
     left: 0;
@@ -862,28 +862,37 @@ weeklyResetController();
   ];
   
   function animateSessionHelp() {
-    // Starte mit Text rechts außerhalb
+    // Start rechts außerhalb (ohne Transition)
     textSpan.style.transition = 'none';
     textSpan.style.transform = 'translateX(100vw)';
 
-    // Kurz warten, dann reinlaufen lassen
+    // Kurze Pause, damit die Position gesetzt wird
     setTimeout(() => {
+      // Phase 1: Reinlaufen (5s)
       textSpan.style.transition = 'transform 5s linear';
-      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // zur Mitte
+      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // Zentriert
 
-      // Nach 5s Laufzeit + 10s Pause den Text rausfahren
+      // Phase 2 & 3: Pause + rauslaufen nach links
       setTimeout(() => {
-        textSpan.style.transition = 'transform 5s linear';
-        textSpan.style.transform = 'translateX(-100%)';
-      }, 15000); // 5s rein + 10s pause = 15s
+        // Pause: keine Bewegung (setzen Transition auf none)
+        textSpan.style.transition = 'none';
+        textSpan.style.transform = 'translateX(calc(50vw - 50%))';
 
-      // Nach 20s (gesamt) nochmal zurücksetzen und wiederholen
+        // Nach 10 Sekunden Pause Phase 3 starten
+        setTimeout(() => {
+          // Phase 3: Rauslaufen nach links (5s)
+          textSpan.style.transition = 'transform 5s linear';
+          textSpan.style.transform = 'translateX(-100%)';
+        }, 10000); // 10 Sekunden Pause
+      }, 5000); // Nach 5 Sekunden Reinlaufen
+
+      // Nach Gesamt 20 Sekunden Zyklus neu starten
       setTimeout(() => {
         animateSessionHelp();
       }, 20000);
-    }, 100); // 0.1s Delay zum Anwenden ohne Transition
+    }, 100); // kleine Verzögerung zum Anwenden der Startposition
   }
-  
+
   animateSessionHelp();
 
   function getMinutesNow() {
