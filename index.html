@@ -552,8 +552,6 @@ function markResult(symbol, tradeId, result) {
 
 let hideResultTimeout;
 
-let hideResultTimeout;
-
 function confirmChoice(id, pair) {
   const selected = document.querySelector(`input[name="choice_${id}"]:checked`);
   const result = document.getElementById(`result_${id}`);
@@ -564,13 +562,18 @@ function confirmChoice(id, pair) {
     result.style.color = dir === "Long" ? "lime" : "red";
     result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
 
+    localStorage.setItem("openTrade_" + id, dir);
     actions.style.display = "block";
 
+    // Wenn schon ein Timer läuft, löschen
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
+
+    // Nach 3 Sekunden Text ausblenden
     hideResultTimeout = setTimeout(() => {
       result.textContent = "";
     }, 3000);
 
+    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const date = now.toLocaleDateString();
@@ -585,10 +588,7 @@ function confirmChoice(id, pair) {
       date: date,
     };
 
-    // Speichere den neuen Trade mit eindeutiger ID
-    localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
-
-    // Zeige den neuen Trade in der UI (unten)
+    removeTradeFromOpenBarByPrefix(id);
     addOpenTradeToUI(trade);
 
   } else {
@@ -601,7 +601,6 @@ function confirmChoice(id, pair) {
     }, 3000);
   }
 }
-
 
 
 function addOpenTradeToUI(trade) {
