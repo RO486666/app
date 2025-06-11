@@ -248,28 +248,39 @@ body {
       });
     }
   </script>
-</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
-<canvas id="particleCanvas"></canvas>
-<div id="sessionHelp" style="color:#ccc; font-size:14px; text-align:center; margin:4px 0; user-select:none;">
-  Hier erscheint die Session-Hilfe...
-</div>
-<div class="progress-bar" id="progressBar"></div>
-</div><div class="sidebar">
-<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
-  <button id="selectAll">Alle auswählen</button>
-  <button id="deselectAll">Alle abwählen</button>
-  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
-</div>
-<div id="pairContainer"><div>
-</div></div>
-<div class="footer-summary" id="monthlySummary">
+</head></head><body>
+  <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
+
+  <!-- Session Hilfe direkt unter der Session-Zeit -->
+  <div id="sessionHelp" style="color:#ccc; font-size:14px; text-align:center; margin:4px 0; user-select:none;">
+    Hier erscheint die Session-Hilfe...
+  </div>
+
+  <div class="progress-container">
+    <canvas id="particleCanvas"></canvas>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="sidebar">
+    <div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
+      <button id="selectAll">Alle auswählen</button>
+      <button id="deselectAll">Alle abwählen</button>
+      <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
+    </div>
+    <div id="pairContainer"><div></div></div>
+    <div class="footer-summary" id="monthlySummary">
       📅 <strong>Monatliche Auswertung:</strong><br/>
-<span id="monthlyText">Noch keine Trades gemacht</span><br/>
-</div>
-<div class="footer-summary" id="weeklySummary">
+      <span id="monthlyText">Noch keine Trades gemacht</span><br/>
+    </div>
+    <div class="footer-summary" id="weeklySummary">
       📊 <strong>Wöchentliche Auswertung:</strong><br/>
-<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
-</div>
+      <span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
+    </div>
+    <div class="footer-summary" id="dailySummary">
+      📆 <strong>Tagesauswertung (Heute):</strong><br/>
+      <span id="dailyText">Noch keine Trades gemacht</span><br/>
+    </div>
+
 <div class="footer-summary" id="dailySummary">
       📆 <strong>Tagesauswertung (Heute):</strong><br/>
 <span id="dailyText">Noch keine Trades gemacht</span><br/>
