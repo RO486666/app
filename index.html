@@ -238,9 +238,9 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-   #sessionHelp {
+ #sessionHelp {
     position: fixed;
-    top: 40px; /* Unter der Uhrzeit */
+    top: 40px; /* unter der Uhrzeit */
     left: 0;
     width: 100vw;
     height: 40px;
@@ -260,8 +260,8 @@ body {
     position: relative;
     display: inline-block;
     padding-left: 100vw; /* Start rechts außerhalb */
+    white-space: nowrap;
   }
-
 @keyframes tickerScroll {
   0% {
     transform: translateX(100%);
@@ -286,7 +286,7 @@ body {
   <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 
   <!-- Session Hilfe direkt unter der Session-Zeit -->
-  <div id="sessionHelp"><span>Hier erscheint die Session-Hilfe...</span></div>
+ <div id="sessionHelp"><span>Hier erscheint die Session-Hilfe...</span></div>
 
 <div class="progress-container">
     <canvas id="particleCanvas"></canvas>
@@ -863,27 +863,30 @@ weeklyResetController();
   
 
   function animateSessionHelp() {
-    // Starte mit Text rechts außerhalb
+    // Start rechts außerhalb
     textSpan.style.transition = 'none';
     textSpan.style.transform = 'translateX(100vw)';
 
-    // Kurz warten, dann reinlaufen lassen
     setTimeout(() => {
+      // Langsam reinlaufen zur Mitte
       textSpan.style.transition = 'transform 5s linear';
-      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // zur Mitte
+      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // in die Mitte
 
-      // Nach 5s Laufzeit + 10s Pause den Text rausfahren
       setTimeout(() => {
+        // 10 Sekunden Pause
+        // Dann rausfahren nach links
         textSpan.style.transition = 'transform 5s linear';
         textSpan.style.transform = 'translateX(-100%)';
-      }, 15000); // 5s rein + 10s pause = 15s
 
-      // Nach 20s (gesamt) nochmal zurücksetzen und wiederholen
-      setTimeout(() => {
-        animateSessionHelp();
-      }, 20000);
-    }, 100); // 0.1s Delay zum Anwenden ohne Transition
+        setTimeout(() => {
+          // Wieder von vorne starten
+          animateSessionHelp();
+        }, 5000); // Ende rausfahren
+      }, 15000); // 5s reinlaufen + 10s Pause
+    }, 100); // Kurzes Delay ohne Transition
   }
+
+  animateSessionHelp();
 
   animateSessionHelp();
 
