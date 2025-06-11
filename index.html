@@ -238,56 +238,7 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-    #sessionHelp {
-    position: fixed;
-    top: 100px; /* unter der Uhrzeit */
-    left: 0;
-    width: 100vw;
-    height: 40px;
-    background-color: rgba(0, 255, 153, 0.15);
-    color: #00ff99;
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 40px;
-    text-align: center;
-    user-select: none;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 0 10px #00ff9966;
-    overflow: hidden;
-    white-space: nowrap;
-  }
 
-  #sessionHelp span {
-    display: inline-block;
-    white-space: nowrap;
-    position: relative;
-
-    /* Animation mit 20s Dauer (5s rein, 10s Pause, 5s raus) */
-    animation: tickerAnim 20s linear infinite;
-  }
-
-  @keyframes tickerAnim {
-    0% {
-      transform: translateX(100vw); /* Start ganz rechts außerhalb */
-    }
-    25% {
-      transform: translateX(calc(50vw - 50%)); /* In die Mitte */
-    }
-    75% {
-      transform: translateX(calc(50vw - 50%)); /* Pause in der Mitte */
-    }
-    100% {
-      transform: translateX(-100%); /* Ganz links draußen */
-    }
-  }
-@keyframes tickerScroll {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
 
 
 </style>
