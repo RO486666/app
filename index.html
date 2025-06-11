@@ -1,139 +1,101 @@
-<html><head><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>Myfxbook + Trade Tracker</title>
-<style>
-    body {
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-    iframe {
-      width: 65%;
-      height: 100%;
-      border: none;
-    }
-    .sidebar {
-      width: 35%;
-      padding: 20px;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade App Layout</title>
+  <style>
+    body { background: #111; color: white; font-family: sans-serif; margin: 0; padding: 0; }
+    .header { background: #1c1c1c; padding: 10px; text-align: center; font-size: 18px; }
+    .session-bar { height: 10px; background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300); margin-top: 5px; }
+    .main { padding: 20px; padding-bottom: 120px; text-align: center; }
+
+    .big-btn { padding: 20px 30px; font-size: 22px; font-weight: bold; border-radius: 15px; border: none; background-color: #00aa44; color: white; margin: 20px auto; width: 80%; max-width: 300px; }
+
+    .tab-buttons { text-align: center; margin-top: 20px; }
+    .tab-buttons button { background: #333; color: white; padding: 10px 15px; border-radius: 5px; margin: 5px; border: none; font-weight: bold; cursor: pointer; }
+    .tab-buttons .active { background: #0077cc; }
+
+    .stats-box { background: #222; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
+
+    .position-bar {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
       background: #1c1c1c;
-      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      border-top: 2px solid #333;
     }
-    .pair-box {
-      background: #222;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
+    .trade-box {
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      width: 85%;
+      max-width: 280px;
+      background: #333;
+      padding: 10px;
+      border-radius: 10px;
+      min-width: 180px;
     }
-    .pair-box h3 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #ffd700;
-    }
-    label {
-      margin-right: 10px;
-      font-size: 16px;
-    }
-    button {
-      margin-top: 10px;
-      margin-right: 5px;
-      padding: 6px 12px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background-color: #444;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #666;
-    }
-    .result,
-    .stats {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .footer-summary {
-      background: #2a2a2a;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 20px;
-    }
-    .reset-btn {
-      margin-top: 10px;
-      background: darkred;
-    }
-    .reset-btn:hover {
-      background: red;
-    }
-    .action-buttons {
-      display: none;
-      margin-top: 10px;
-    }
-	.open-trade.long {
-  background-color: #228B22 !important; /* Dunkelgrün */
-  color: white !important;
+	
+.progress-container {
+  position: relative;
+  background: #111;
+  height: 24px;
+  width: 100%;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  overflow: visible; /* damit der Glow nicht abgeschnitten wird */
+
+  /* Leuchtender Ring außen */
+    box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0);
+  border-radius: 6px;
 }
 
-.open-trade.short {
-  background-color: #B22222 !important; /* Dunkelrot */
-  color: white !important;
-}
-  
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
-    height: auto;
-    overflow: auto;
-  }
-  iframe {
-    width: 100%;
-    height: 300px;
-  }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-  }
-  .pair-box {
-    font-size: 16px;
-    padding: 10px;
-  }
-  button {
-    width: 100%;
-    margin: 5px 0;
-    font-size: 16px;
-  }
-  label {
-    display: block;
-    margin: 8px 0;
-  }
+.alert-below-header {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  overflow: hidden;
+  background: transparent;
 }
 
+.alert-message {
+  position: absolute;
+  white-space: nowrap;
+  top: 0;
+  color: black;
+  background: #ffaa00;
+  padding: 5px 20px;
+  border-radius: 0 0 10px 10px;
+  animation: slideAcross 5s linear forwards;
+  font-weight: bold;
+}
 
-.sidebar {
-  width: 100% !important;
-  height: 100vh !important;
-  background: #1c1c1c;
-  padding: 20px;
-  overflow-y: auto;
+@keyframes slideAcross {
+  0%   { left: 100%; }
+  10%  { left: 0%; }
+  90%  { left: 0%; }
+  100% { left: -100%; }
 }
-body {
-  flex-direction: column !important;
-}
+
 
 
 .ticker {
   width: 100%;
-  background: #222;
-  color: #00ff99;
+  background: #222;           /* dunkler Hintergrund */
+  color: #00ff99;             /* Schriftfarbe (z.B. knalliges Grün) */
   padding: 10px;
-  text-align: center;
+  text-align: center;         /* Text horizontal zentrieren */
   font-size: 18px;
   font-weight: bold;
+  font-family: Arial, sans-serif;
+  user-select: none;
 }
 .progress-container {
   position: relative;
@@ -144,686 +106,396 @@ body {
   border-bottom: 1px solid #333;
   overflow: hidden;
 }
-#particleCanvas {
-  z-index: 0;
 
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  pointer-events: none;
-}
 .progress-bar {
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
+  width: 0%; /* wird per JS gesetzt */
   background: #222;
   z-index: 2;
-  z-index: 2;
   transition: width 1s linear;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
-.news-ticker {
-  width: 100%;
-  background: #111;
-  color: #ffc107;
-  font-size: 16px;
-  padding: 6px 12px;
+
+@keyframes slideAcross {
+  0%   { left: 100%; }
+  40%  { left: 50%; transform: translateX(-50%); } /* mittig */
+  70%  { left: 50%; transform: translateX(-50%); } /* steht in der Mitte */
+  100% { left: 200%; } /* raus nach rechts */
+}
+
+.alert-message {
+  position: absolute;
+  white-space: nowrap;
+  top: 0;
+  color: black;
+  background: #ffaa00;
+  padding: 5px 20px;
+  border-radius: 0 0 10px 10px;
+  animation: slideAcross 5s ease forwards;
+  font-weight: bold;
+  transform: translateX(0); /* Start ohne Offset */
+}
+
+.session-info {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #aaf0aa; /* angenehmes Grün für Tipps */
   text-align: center;
   font-style: italic;
-  border-bottom: 1px solid #333;
+  user-select: none;
 }
+
 .open-bar {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  background: #1a1a1a;
-  border-top: 2px solid #333;
-  padding: 10px;
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  z-index: 1000;
-  box-sizing: border-box;
-}
-.open-trade {
-  background: #333;
-  border-radius: 6px;
-  padding: 10px;
-  min-width: 140px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  user-select: none;
-}
-.open-trade .actions {
-  display: none;
-  margin-top: 10px;
-}
-.open-trade.expanded .actions {
-  display: block;
-}
-.timestamp {
-  font-size: 0.75rem;
-  color: #bbb;
-  margin-top: 4px;
-}
-#pairSelector {
-  background-color: #222;
-  color: white;
-  border-radius: 6px;
-  padding: 10px;
-  max-height: 180px;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
   overflow-y: auto;
-  user-select: none;
-}
-#pairSelector label {
-  cursor: pointer;
-  font-size: 14px;
-}
-#pairSelector button {
-  margin-right: 10px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-#checkboxList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px; /* Abstand zwischen den Checkboxen */
-  max-height: 150px;
-  overflow-y: auto;
+  background: #222;
+  border-radius: 10px 0 0 10px;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.5);
+  padding: 10px;
+  z-index: 10000;
 }
 
-#checkboxList label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 140px; /* Breite der einzelnen Checkbox-Elemente */
-  cursor: pointer;
-  font-size: 14px;
+.open-bar {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #222;
+  border-radius: 10px 0 0 10px;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.5);
+  padding: 10px;
+  z-index: 10000;
+  font-family: Arial, sans-serif;
 }
-</style>
-<link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js');
+.trade-box {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  color: white;
+  user-select: none;
+}
+
+.trade-box.Long {
+  background-color: #228B22; /* grün */
+}
+
+.trade-box.Short {
+  background-color: #B22222; /* rot */
+}
+
+.result-value {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+
+    .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border-radius: 10px; display: none; z-index: 1000; width: 90%; max-width: 300px; }
+    select, input { padding: 8px; margin-top: 10px; width: 100%; border-radius: 5px; border: none; font-size: 16px; }
+    .popup button { margin-top: 10px; padding: 10px; width: 100%; font-size: 16px; }
+  </style>
+</head>
+<body>
+// Copyride Roman Kleis
+<div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
+<div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="alert-below-header" id="alertBox"></div>
+  
+  
+  
+  <div class="main">
+    <button class="big-btn" onclick="showPopup()">+ Trade starten</button>
+
+    <div class="tab-buttons">
+      <button class="btn active" onclick="switchTab('tag')">Tag</button>
+      <button class="btn" onclick="switchTab('woche')">Woche</button>
+      <button class="btn" onclick="switchTab('monat')">Monat</button>
+    </div>
+    <div class="stats-box" id="tagBox">
+      <h3>📅 Tagesauswertung</h3>
+      <p>Gewinne: 0 | Verluste: 0</p>
+      <p>Gesamt PnL: 0 €</p>
+      <p>Profitfaktor: –</p>
+      <p>Durchschnitt Gewinn/Verlust: –</p>
+    </div>
+
+
+    <div class="stats-box" id="wocheBox" style="display:none">
+      <h3>📈 Wochenauswertung</h3>
+      <p>Gewinne: 0 | Verluste: 0</p>
+      <p>Gesamt PnL: 0 €</p>
+      <p>Profitfaktor: –</p>
+      <p>Durchschnitt Gewinn/Verlust: –</p>
+    </div>
+
+    <div class="stats-box" id="monatBox" style="display:none">
+      <h3>📊 Monatsauswertung</h3>
+      <p>Gewinne: 0 | Verluste: 0</p>
+      <p>Gesamt PnL: 0 €</p>
+      <p>Profitfaktor: –</p>
+      <p>Durchschnitt Gewinn/Verlust: –</p>
+    </div>
+  </div>
+  <div class="popup" id="tradePopup">
+    <h3>Trade eingeben</h3>
+    <select id="pairSelect">
+      <option value="">Paar wählen</option>
+      <option value="EUR/USD">EUR/USD</option>
+      <option value="XAU/USD">XAU/USD</option>
+      <option value="GBP/JPY">GBP/JPY</option>
+    </select>
+    <select id="directionSelect">
+      <option value="">Richtung wählen</option>
+      <option value="Long">Long</option>
+      <option value="Short">Short</option>
+    </select>
+    <button onclick="addTrade()">Trade speichern</button>
+  </div>
+
+  <div class="popup" id="resultPopup">
+    <h3>Ergebnis</h3>
+    <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50">
+    <button onclick="saveResult()">Speichern</button>
+  </div>
+  
+  
+
+  <div class="position-bar" id="positionBar"></div>
+
+  <script>
+   // Hilfsfunktionen für Datum-Vergleich
+    function isSameDay(date1, date2) {
+      return date1.getDate() === date2.getDate() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getFullYear() === date2.getFullYear();
+    }
+
+    function isSameWeek(date1, date2) {
+      const startOfWeek = new Date(date2);
+      startOfWeek.setDate(date2.getDate() - date2.getDay()); // Sonntag = 0
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return date1 >= startOfWeek && date1 <= endOfWeek;
+    }
+
+    function isSameMonth(date1, date2) {
+      return date1.getMonth() === date2.getMonth() &&
+             date1.getFullYear() === date2.getFullYear();
+    }
+
+    // Globals
+    const tradesData = [];
+    let activeBox = null;
+    let resultType = "win";
+
+    // Tab wechseln
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.stats-box').forEach(box => box.style.display = 'none');
+      document.getElementById(tab + 'Box').style.display = 'block';
+      document.querySelectorAll('.tab-buttons button').forEach(btn => {
+        if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add('active');
       });
     }
-  </script>
-</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
-<canvas id="particleCanvas"></canvas>
-<div class="progress-bar" id="progressBar"></div>
-</div><div class="sidebar">
-<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
-  <button id="selectAll">Alle auswählen</button>
-  <button id="deselectAll">Alle abwählen</button>
-  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
-</div>
-<div id="pairContainer"><div>
-</div></div>
-<div class="footer-summary" id="monthlySummary">
-      📅 <strong>Monatliche Auswertung:</strong><br/>
-<span id="monthlyText">Noch keine Trades gemacht</span><br/>
-</div>
-<div class="footer-summary" id="weeklySummary">
-      📊 <strong>Wöchentliche Auswertung:</strong><br/>
-<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
-</div>
-<div class="footer-summary" id="dailySummary">
-      📆 <strong>Tagesauswertung (Heute):</strong><br/>
-<span id="dailyText">Noch keine Trades gemacht</span><br/>
-</div>
-<div class="footer-summary">
-<div><strong>✔️ Gesamt-Erfolge:</strong> <span id="totalSuccess">0</span></div>
-<div><strong>❌ Gesamt-Misserfolge:</strong> <span id="totalFail">0</span></div>
-<button class="reset-btn" onclick="manualReset()">🔄 ALLES zurücksetzen</button>
-</div>
-</div><script>
-    const pairs = [
-  "EUR/USD",
-  "USD/JPY",
-  "GBP/USD",
-  "USD/CHF",
-  "AUD/USD",
-  "USD/CAD",
-  "NZD/USD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "GBP/JPY",
-  "AUD/JPY",
-  "CHF/JPY",
-  "EUR/AUD",
-  "EUR/CAD",
-  "GBP/AUD",
-  "AUD/CAD",
-  "NZD/JPY",
-  "XAU/USD",  // Gold
-  "XAG/USD"   // Silber
-];
 
-    const container = document.getElementById("pairContainer");
-    const summaryText = document.getElementById("summaryText");
-    const monthlyText = document.getElementById("monthlyText");
-    const dailyText = document.getElementById("dailyText");
-    const tradeData = {};
-	
-	function generatePairsHTML() {
-  return pairs.map(pair => {
-    const id = pair.replace(/\W/g, "");
-    return `
-      <div class="pair-box" id="pairBox_${id}">
-        <h3>${pair}</h3>
-        <label><input name="choice_${id}" type="radio" value="Long" /> Long</label>
-        <label><input name="choice_${id}" type="radio" value="Short" /> Short</label><br />
-        <button onclick="confirmChoice('${id}', '${pair}')">Bestätigen</button>
-        <button onclick="resetChoice('${id}')">Zurücksetzen</button>
-        <div class="action-buttons" id="actions_${id}"></div>
-        <div class="result" id="result_${id}"></div>
-        <div class="stats" id="stats_${id}">✔️ 0 | ❌ 0</div>
-      </div>
-    `;
-  }).join('');
-}
-
-
-function generateCheckboxes() {
-  checkboxList.innerHTML = pairs.map(pair => {
-    const id = pair.replace(/\W/g, "");
-    return `<label style="display:block; margin-bottom:5px;">
-      <input type="checkbox" class="pair-checkbox" data-pair-id="${id}" checked> ${pair}
-    </label>`;
-  }).join('');
-}
-
-function updateVisiblePairs() {
-  const checkedBoxes = document.querySelectorAll('.pair-checkbox:checked');
-  const visibleIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-pair-id'));
-
-  pairs.forEach(pair => {
-    const id = pair.replace(/\W/g, "");
-    const pairDiv = document.getElementById(`pairBox_${id}`);
-    if(pairDiv) pairDiv.style.display = visibleIds.includes(id) ? "" : "none";
-  });
-}
-
-function saveSelection() {
-  const checkedIds = Array.from(document.querySelectorAll('.pair-checkbox:checked'))
-    .map(cb => cb.getAttribute('data-pair-id'));
-  localStorage.setItem('selectedPairs', JSON.stringify(checkedIds));
-}
-
-function loadSelection() {
-  const saved = JSON.parse(localStorage.getItem('selectedPairs') || '[]');
-  if(saved.length === 0) return; // Alle anzeigen, wenn nix gespeichert
-
-  document.querySelectorAll('.pair-checkbox').forEach(cb => {
-    const id = cb.getAttribute('data-pair-id');
-    cb.checked = saved.includes(id);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  container.innerHTML = generatePairsHTML();
-  generateCheckboxes();
-  loadSelection();
-  updateVisiblePairs();
-
-  // Eventlistener für Checkboxen
-  document.querySelectorAll('.pair-checkbox').forEach(cb => {
-    cb.addEventListener('change', () => {
-      updateVisiblePairs();
-      saveSelection();
-    });
-  });
-
-  // Select/Deselect All Buttons
-  document.getElementById('selectAll').addEventListener('click', () => {
-    document.querySelectorAll('.pair-checkbox').forEach(cb => cb.checked = true);
-    updateVisiblePairs();
-    saveSelection();
-  });
-  document.getElementById('deselectAll').addEventListener('click', () => {
-    document.querySelectorAll('.pair-checkbox').forEach(cb => cb.checked = false);
-    updateVisiblePairs();
-    saveSelection();
-  });
-});
-
-// Aufruf beim Laden der Seite:
-document.addEventListener('DOMContentLoaded', () => {
-  container.innerHTML = generatePairsHTML();
-});
-
-function updateSummary() {
-  let today = new Date();
-  let dayString = today.toLocaleDateString();
-  let monthString = today.getFullYear() + "-" + (today.getMonth() + 1);
-
-  let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0");
-  let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0");
-  let storedDay = localStorage.getItem("dailyDate");
-  if (storedDay !== dayString) {
-    dailySuccess = 0; dailyFail = 0;
-    localStorage.setItem("dailySuccess", "0");
-    localStorage.setItem("dailyFail", "0");
-    localStorage.setItem("dailyDate", dayString);
-  }
-
-  let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0");
-  let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0");
-  let storedMonth = localStorage.getItem("monthlyDate");
-  if (storedMonth !== monthString) {
-    monthlySuccess = 0; monthlyFail = 0;
-    localStorage.setItem("monthlySuccess", "0");
-    localStorage.setItem("monthlyFail", "0");
-    localStorage.setItem("monthlyDate", monthString);
-  }
-
-  const renderBlock = (success, fail, textEl, tag) => {
-    const total = success + fail;
-    if (total === 0) {
-      textEl.textContent = "Noch keine Trades gemacht";
-      return;
+    function showPopup() {
+      document.getElementById("tradePopup").style.display = "block";
     }
-    let rate = success === 0 && fail > 0 ? -1 : Math.round((success / total) * 100);
-    let display = rate === -1 ? "-100%" : rate + "%";
-    let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
-    textEl.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
-      (rate >= 51 ? `✅ ${tag} <strong>ist</strong> profitabel` : `❌ ${tag} <strong>ist</strong> nicht profitabel`);
-  }
 
-  renderBlock(dailySuccess, dailyFail, dailyText, "Heute");
-
-  let totalSuccess = 0, totalFail = 0;
-  for (let id in tradeData) {
-    totalSuccess += tradeData[id].success || 0;
-    totalFail += tradeData[id].fail || 0;
-  }
-
-  document.getElementById("totalSuccess").textContent = totalSuccess;
-  document.getElementById("totalFail").textContent = totalFail;
-
-  let rate = totalSuccess === 0 && totalFail > 0 ? -1 : Math.round((totalSuccess / (totalSuccess + totalFail)) * 100);
-  let display = rate === -1 ? "-100%" : rate + "%";
-  let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
-  let isAbschluss = localStorage.getItem("lastWeekReset") === today.toLocaleDateString();
-  summaryText.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
-    (rate >= 51 ? (isAbschluss ? `✅ Diese Woche <strong>war</strong> profitabel` : `✅ Diese Woche <strong>ist</strong> profitabel`) :
-                  (isAbschluss ? `❌ Diese Woche <strong>war</strong> nicht profitabel` : `❌ Diese Woche <strong>ist</strong> nicht profitabel`));
-
-  renderBlock(monthlySuccess, monthlyFail, monthlyText, "Diesen Monat");
-}
-
-function manualReset() {
-  if (confirm("Willst du wirklich ALLES zurücksetzen?")) {
-    for (let id in tradeData) {
-      tradeData[id].success = 0;
-      tradeData[id].fail = 0;
+    function hidePopups() {
+      document.getElementById("tradePopup").style.display = "none";
+      document.getElementById("resultPopup").style.display = "none";
     }
-    localStorage.setItem("dailySuccess", "0");
-    localStorage.setItem("dailyFail", "0");
-    localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-    localStorage.setItem("monthlySuccess", "0");
-    localStorage.setItem("monthlyFail", "0");
-    localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-    saveToStorage();
-    updateAllStats();
-    updateSummary();
-    document.querySelectorAll(".action-buttons").forEach(div => div.style.display = "none");
-    document.querySelectorAll(".result").forEach(div => div.textContent = "");
-    document.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
-  }
-}
 
-function markSuccess(id) {
-  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
-  tradeData[id].success += 1;
-  const daily = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
-  const monthly = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
-  localStorage.setItem("dailySuccess", daily);
-  localStorage.setItem("monthlySuccess", monthly);
-  localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-  localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-  saveToStorage(); 
-  updateStats(id); 
-  updateSummary(); 
-  localStorage.removeItem("openTrade_" + id);
-  clearUI(id);
-}
+    // Trade hinzufügen mit Datum und ID
+    function addTrade() {
+      const pair = document.getElementById("pairSelect").value;
+      const direction = document.getElementById("directionSelect").value;
+      if (!pair || !direction) return;
 
-function markFail(id) {
-  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
-  tradeData[id].fail += 1;
-  let daily = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
-  let monthly = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
-  localStorage.setItem("dailyFail", daily);
-  localStorage.setItem("monthlyFail", monthly);
-  localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-  localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-  saveToStorage(); 
-  updateStats(id); 
-  updateSummary(); 
-  localStorage.removeItem("openTrade_" + id);
-  clearUI(id);
-}
+      const now = new Date();
+      const tradeObj = {
+        id: Date.now(),
+        pair: pair,
+        direction: direction,
+        date: now,
+        pnl: null,
+        resultType: null
+      };
+      tradesData.push(tradeObj);
 
-function getOpenTrades() {
-  return JSON.parse(localStorage.getItem("openTrades") || "[]");
-}
-
-function saveOpenTrades(trades) {
-  localStorage.setItem("openTrades", JSON.stringify(trades));
-}
-
-function addOpenTrade(trade) {
-  const trades = getOpenTrades();
-  trades.push(trade);
-  saveOpenTrades(trades);
-}
-
-function removeOpenTrade(tradeId) {
-  let trades = getOpenTrades();
-  trades = trades.filter(t => t.id !== tradeId);
-  saveOpenTrades(trades);
-}
-
-function markResult(symbol, tradeId, result) {
-  // Entferne den Trade aus der unteren Leiste
-  const el = document.getElementById(tradeId);
-  if (el) el.remove();
-
-  // Aktualisiere Erfolg/Misserfolg je nach Ergebnis
-  if (!tradeData[symbol]) tradeData[symbol] = { success: 0, fail: 0 };
-
-  if (result === "success") {
-    tradeData[symbol].success++;
-    // Update tägliche und monatliche Zähler in localStorage
-    let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
-    let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
-    localStorage.setItem("dailySuccess", dailySuccess);
-    localStorage.setItem("monthlySuccess", monthlySuccess);
-  } else if (result === "fail") {
-    tradeData[symbol].fail++;
-    let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
-    let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
-    localStorage.setItem("dailyFail", dailyFail);
-    localStorage.setItem("monthlyFail", monthlyFail);
-  }
-
-  saveToStorage();
-
-  // Update Statistiken oben (z.B. Anzeige der Erfolge/Misserfolge)
-  updateStats(symbol);
-  updateSummary();
-
-  // Setze UI für das Paar oben zurück (radiobuttons, Ergebnis, Aktionen)
-  clearUI(symbol);
-
-  // Entferne ggf. den offenen Trade aus localStorage
-  localStorage.removeItem("openTrade_" + symbol);
-}
-
-function saveToStorage() {
-  localStorage.setItem("tradeData", JSON.stringify(tradeData));
-}
-
-function loadFromStorage() {
-  const saved = JSON.parse(localStorage.getItem("tradeData") || "{}");
-  Object.assign(tradeData, saved);
-}
-
-let hideResultTimeout;
-
-function confirmChoice(id, pair) {
-  const selected = document.querySelector(`input[name="choice_${id}"]:checked`);
-  const result = document.getElementById(`result_${id}`);
-  const actions = document.getElementById(`actions_${id}`);
-
-  if (selected) {
-    const dir = selected.value;
-
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const date = now.toLocaleDateString();
-    const tradeId = id + "_" + Date.now();
-
-    const trade = {
-      id: tradeId,
-      pair: pair,
-      direction: dir,
-      symbol: id,
-      time: timestamp,
-      date: date,
-    };
-
-    result.style.color = dir === "Long" ? "lime" : "red";
-    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
-    actions.style.display = "block";
-
-    addOpenTrade(trade);
-    addOpenTradeToUI(trade);
-
-    if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
-
-  } else {
-    result.style.color = "orange";
-    result.textContent = `Bitte Long oder Short auswählen.`;
-
-    if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
-  }
-}
-
-function addOpenTradeToUI(trade) {
-  const container = document.getElementById("openTrades");
-
-  if (document.getElementById(trade.id)) return;
-
-  const box = document.createElement("div");
-  box.className = "open-trade";
-  box.id = trade.id;
-
-  // Farbe setzen je nach Long oder Short:
-  if (trade.direction === "Long") {
-    box.style.backgroundColor = "#228B22";  // dunkelgrün
-    box.style.color = "white";
-  } else if (trade.direction === "Short") {
-    box.style.backgroundColor = "#B22222";  // dunkelrot
-    box.style.color = "white";
-  }
-
-  box.innerHTML = `
-    <div><strong>${trade.pair}</strong> (${trade.direction})</div>
-    <div class="timestamp">${trade.date} – ${trade.time}</div>
-    <div class="actions">
-      <button onclick="markResult('${trade.symbol}', '${trade.id}', 'success')">✅</button>
-      <button onclick="markResult('${trade.symbol}', '${trade.id}', 'fail')">❌</button>
-    </div>
-  `;
-
-  box.addEventListener("click", () => {
-    box.classList.toggle("expanded");
-  });
-
-  container.prepend(box);
-}
-
-function resetChoice(id) {
-  const radios = document.getElementsByName(`choice_${id}`);
-  radios.forEach(r => r.checked = false);
-
-  const resultElem = document.getElementById(`result_${id}`);
-  if(resultElem) resultElem.textContent = "";
-
-  const actionsElem = document.getElementById(`actions_${id}`);
-  if(actionsElem) actionsElem.style.display = "none";
-
-  const prevSuccess = tradeData[id]?.success || 0;
-  const prevFail = tradeData[id]?.fail || 0;
-
-  const dailySuccess = Math.max(0, parseInt(localStorage.getItem("dailySuccess") || "0") - prevSuccess);
-  const dailyFail = Math.max(0, parseInt(localStorage.getItem("dailyFail") || "0") - prevFail);
-  const monthlySuccess = Math.max(0, parseInt(localStorage.getItem("monthlySuccess") || "0") - prevSuccess);
-  const monthlyFail = Math.max(0, parseInt(localStorage.getItem("monthlyFail") || "0") - prevFail);
-
-  localStorage.setItem("dailySuccess", dailySuccess);
-  localStorage.setItem("dailyFail", dailyFail);
-  localStorage.setItem("monthlySuccess", monthlySuccess);
-  localStorage.setItem("monthlyFail", monthlyFail);
-
-  if(tradeData[id]) {
-    tradeData[id].success = 0;
-    tradeData[id].fail = 0;
-  }
-
-  saveToStorage();
-
-  updateStats(id);
-  updateSummary();
-
-  removeTradeFromOpenBar(id);
-  localStorage.removeItem("openTrade_" + id);
-  removeTradeFromOpenBarByPrefix(id);
-}
-
-function removeTradeFromOpenBar(tradeId) {
-  const el = document.getElementById(tradeId);
-  if (el) el.remove();
-}
-
-function removeTradeFromOpenBarByPrefix(prefix) {
-  const container = document.getElementById("openTrades");
-  if (!container) return;
-
-  const toRemove = [];
-  container.querySelectorAll(".open-trade").forEach(el => {
-    if (el.id.startsWith(prefix + "_")) {
-      toRemove.push(el);
+      const box = document.createElement("div");
+      box.className = "trade-box " + direction;
+      box.dataset.id = tradeObj.id;
+      box.innerHTML = `
+        <strong>${pair}</strong><br>${direction}<br>
+        <button onclick="markResult(this, 'win')">✅ Erfolg</button>
+        <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
+        <div class="result-value"></div>
+      `;
+      document.getElementById("positionBar").appendChild(box);
+      hidePopups();
     }
-  });
 
-  toRemove.forEach(el => el.remove());
-}
-
-function updateStats(id) {
-  const stats = document.getElementById(`stats_${id}`);
-  const { success, fail } = tradeData[id];
-  stats.innerHTML = `✔️ ${success} | ❌ ${fail}`;
-}
-
-function updateAllStats() {
-  for (let id of Object.keys(tradeData)) {
-    updateStats(id);
-  }
-}
-
-function clearUI(id) {
-  const radios = document.getElementsByName(`choice_${id}`);
-  radios.forEach(r => r.checked = false);
-  document.getElementById(`result_${id}`).textContent = "";
-  document.getElementById(`actions_${id}`).style.display = "none";
-}
-
-loadFromStorage();
-
-pairs.forEach((pair) => {
-  const id = pair.replace(/\W/g, "");
-  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
-
-  const savedDir = localStorage.getItem("openTrade_" + id);
-  if (savedDir) {
-    const result = document.getElementById(`result_${id}`);
-    result.textContent = `Du bist ${savedDir.toUpperCase()} bei ${pair} gegangen.`;
-    result.style.color = savedDir === "Long" ? "lime" : "red";
-    document.getElementById(`actions_${id}`).style.display = "block";
-    document.querySelector(`input[name="choice_${id}"][value="${savedDir}"]`).checked = true;
-  }
-
-  updateStats(id);
-});
-
-function weeklyResetController() {
-  const now = new Date();
-  const todayStr = now.toLocaleDateString();
-  const day = now.getDay();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
-  const lastWeekReset = localStorage.getItem("lastWeekReset") || "";
-
-  if (hour === 23 && minute === 59 && lastWeekReset !== todayStr) {
-    if (day === 5) {
-      const confirmReset = confirm("Willst du die Woche jetzt abschließen und zurücksetzen?");
-      if (!confirmReset) return;
+    // Ergebnis markieren (Erfolg/Misserfolg)
+    function markResult(btn, type) {
+      activeBox = btn.closest(".trade-box");
+      resultType = type;
+      document.getElementById("pnlInput").value = "";
+      document.getElementById("resultPopup").style.display = "block";
     }
-    if (day === 0 || day === 5) {
-      const totalSuccess = Object.values(tradeData).reduce((sum, d) => sum + (d.success || 0), 0);
-      const totalFail = Object.values(tradeData).reduce((sum, d) => sum + (d.fail || 0), 0);
 
-      const monthSuccess = parseInt(localStorage.getItem("monthlySuccess") || "0") + totalSuccess;
-      const monthFail = parseInt(localStorage.getItem("monthlyFail") || "0") + totalFail;
-      localStorage.setItem("monthlySuccess", monthSuccess);
-      localStorage.setItem("monthlyFail", monthFail);
+    // Ergebnis speichern, Array updaten, Statistik neu berechnen
+    function saveResult() {
+      let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
+      if (pnlRaw === "") return;
+      let pnl = parseFloat(pnlRaw);
+      if (isNaN(pnl)) return;
+      pnl = Math.abs(pnl);
+      pnl = resultType === "loss" ? -pnl : pnl;
 
-      for (let id in tradeData) {
-        tradeData[id].success = 0;
-        tradeData[id].fail = 0;
+      const resultDiv = activeBox.querySelector(".result-value");
+      resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
+
+      const tradeId = Number(activeBox.dataset.id);
+      const trade = tradesData.find(t => t.id === tradeId);
+      if (trade) {
+        trade.pnl = pnl;
+        trade.resultType = resultType;
       }
+	  
+	    activeBox.remove();
 
-      localStorage.setItem("lastWeekReset", todayStr);
-      saveToStorage();
-      updateAllStats();
-      updateSummary();
+      hidePopups();
+      updateStats();
+    }
+
+    // Statistik updaten (Tag, Woche, Monat)
+   function updateStats() {
+  const now = new Date();
+
+  function calcStats(filterFn) {
+    const filtered = tradesData.filter(t => t.pnl !== null && filterFn(t.date));
+    const wins = filtered.filter(t => t.pnl > 0);
+    const losses = filtered.filter(t => t.pnl < 0);
+    const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+
+    const profitFactor = losses.length === 0 ? '–' : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
+    const avg = filtered.length === 0 ? '–' : (totalPnl / filtered.length).toFixed(2);
+    
+    const totalTrades = wins.length + losses.length;
+    const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
+
+       return {
+      wins: wins.length,
+      losses: losses.length,
+      totalPnl,
+      avg,
+      totalTrades: wins.length + losses.length,
+      profitPercent
+    };
+  }
+
+
+  const isToday = date => isSameDay(date, now);
+  const isThisWeek = date => isSameWeek(date, now);
+  const isThisMonth = date => isSameMonth(date, now);
+
+  const dayStats = calcStats(isToday);
+  const weekStats = calcStats(isThisWeek);
+  const monthStats = calcStats(isThisMonth);
+
+  function colorText(value, isPnl = false) {
+    if (isPnl) {
+      return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
+    } else {
+      return `<span style="color: ${value > 0 ? '#0f0' : '#f44'}">${value}</span>`;
     }
   }
+
+  function colorProfitPercent(p) {
+    if (p === null) return "–";
+    if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
+    if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
+    if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
+    return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+  }
+
+  // Tag
+  const tagBox = document.getElementById("tagBox");
+  tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+  tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
+  tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+  tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+
+  // Woche
+  const wocheBox = document.getElementById("wocheBox");
+  wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+  wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
+  wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+  wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+
+  // Monat
+  const monatBox = document.getElementById("monatBox");
+  monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+  monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
+  monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+  monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
 }
-
-setInterval(weeklyResetController, 60000);
-weeklyResetController();
-
-updateSummary();
 
   </script>
 
-<script>
-  const sessionText = document.getElementById("sessionText");
+x<script>
+// Alles für Sessionbarund info
+
+const sessionText = document.getElementById("sessionText");
   const progressBar = document.getElementById("progressBar");
+  const progressContainer = document.querySelector(".progress-container");
+  const alertBox = document.getElementById("alertBox");
+  const sessionInfoEl = document.getElementById("sessionInfo");
 
- const sessionColors = {
-  "Sydney": "#3388ff",
-  "Tokyo": "#00aaff",
-  "London": "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  "Deadzone": "#333"
-};
+  const sessionColors = {
+    "Sydney": "#3388ff",
+    "Tokyo": "#00aaff",
+    "London": "#ffd700",
+    "New York": "#ff4500",
+    "London Killzone": "#ccff00",
+    "New York Killzone": "#ff8800",
+    "Deadzone": "#333"
+  };
 
-const sessions = [
-  { name: "Sydney", start: 1380, end: 480 }, // 23:00 – 08:00
-  { name: "Tokyo", start: 60, end: 600 },    // 01:00 – 10:00
-  { name: "London", start: 540, end: 1020 }, // 09:00 – 17:00
-  { name: "New York", start: 870, end: 1380 }, // 14:30 – 23:00
-  { name: "London Killzone", start: 420, end: 660 }, // 07:00 – 11:00
-  { name: "New York Killzone", start: 810, end: 1020 }, // 13:30 – 17:00
-  { name: "Deadzone", start: 1380, end: 0 } // 23:00 – 00:00
-];
+  const sessions = [
+   { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt – gute Planung möglich." },
+  { name: "Tokyo", start: 60, end: 600, info: "Asia-Zeit – Breakouts möglich." },
+  { name: "London", start: 540, end: 1020, info: "Volatilität steigt – gute Bewegungen." },
+  { name: "New York", start: 870, end: 1380, info: "Hauptmarkt – oft starke Impulse." },
+  { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase – viele Trades möglich." },
+  { name: "New York Killzone", start: 810, end: 1020, info: "Volatile Phase – erhöhte Aufmerksamkeit." },
+  { name: "Deadzone", start: 1380, end: 0, info: "Wenig Bewegung – keine aktive Session." }
+  ];
+
+  let lastAlertSession = null;
 
   function getMinutesNow() {
     const now = new Date();
     return now.getHours() * 60 + now.getMinutes();
   }
+  
+
 
   function getCurrentSessions(minNow) {
     return sessions.filter(s => {
@@ -857,14 +529,41 @@ const sessions = [
     progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
   }
 
+  function hexToRgba(hex, alpha) {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0,2), 16);
+    const g = parseInt(hex.substring(2,4), 16);
+    const b = parseInt(hex.substring(4,6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function getMinutesToNextSession(minNow) {
+    const futureStarts = sessions
+      .map(s => s.start)
+      .filter(start => start > minNow);
+
+    if(futureStarts.length === 0) {
+      return sessions[0].start + 1440 - minNow;
+    }
+
+    const nextStart = Math.min(...futureStarts);
+    return nextStart - minNow;
+  }
+
+  function showAlert(msg) {
+    const el = document.createElement("div");
+    el.className = "alert-message";
+    el.textContent = msg;
+    alertBox.innerHTML = "";
+    alertBox.appendChild(el);
+    setTimeout(() => alertBox.innerHTML = "", 5000);
+  }
+
   function updateRealTimeBar() {
     const now = new Date();
     const minutes = getMinutesNow();
     const percent = (minutes / 1439) * 100;
     progressBar.style.width = percent + "%";
-
-    const hours = String(now.getHours()).padStart(2, '0');
-    const mins = String(now.getMinutes()).padStart(2, '0');
 
     const activeSessions = getCurrentSessions(minutes);
     const names = activeSessions.map(s => s.name);
@@ -872,13 +571,37 @@ const sessions = [
 
     updateGradientBar(colors);
 
+    if (colors.length > 0) {
+      progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
+    } else {
+      progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
+    }
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const mins = String(now.getMinutes()).padStart(2, '0');
     const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
     sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+if (activeSessions.length > 0) {
+  sessionInfoEl.textContent = activeSessions[0].info || "Keine weiteren Infos.";
+} else {
+  sessionInfoEl.textContent = "Keine aktive Session – Markt ruhig.";
+}
+    // Warnung 5 Minuten vor Sessionwechsel
+    const minutesToNext = getMinutesToNextSession(minutes);
+
+    if (minutesToNext <= 5 && minutesToNext > 0) {
+      if (lastAlertSession !== sessionInfo) {
+        showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
+        lastAlertSession = sessionInfo;
+      }
+    } else {
+      lastAlertSession = null;
+    }
   }
+  
 
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
 </script>
-
-<div class="open-bar" id="openTrades"></div>
-</body></html>
+</body>
+</html>
