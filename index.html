@@ -784,6 +784,7 @@ weeklyResetController();
 const progressBar = document.getElementById("progressBar");
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
+
 const sessionHelp = document.getElementById("sessionHelp");
 
 const sessionDescriptions = {
@@ -804,6 +805,7 @@ function updateSessionHelp(activeSessions) {
     sessionHelp.innerHTML = descriptions.join("<br>");
   }
 }
+
 
 // Im updateRealTimeBar() am Ende aufrufen:
 function updateRealTimeBar() {
