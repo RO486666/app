@@ -567,18 +567,13 @@ function confirmChoice(id, pair) {
     result.style.color = dir === "Long" ? "lime" : "red";
     result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
 
-    localStorage.setItem("openTrade_" + id, dir);
     actions.style.display = "block";
 
-    // Wenn schon ein Timer läuft, löschen
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
-
-    // Nach 3 Sekunden Text ausblenden
     hideResultTimeout = setTimeout(() => {
       result.textContent = "";
     }, 3000);
 
-    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const date = now.toLocaleDateString();
@@ -593,8 +588,14 @@ function confirmChoice(id, pair) {
       date: date,
     };
 
-    removeTradeFromOpenBarByPrefix(id);
+    // Speichere neuen Trade mit eindeutiger ID
+    localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
+
+    // Zeige neuen Trade in UI unten
     addOpenTradeToUI(trade);
+
+    // Diese Zeile entfernen oder auskommentieren, damit mehrere Trades pro Paar angezeigt werden
+    // removeTradeFromOpenBarByPrefix(id);
 
   } else {
     result.style.color = "orange";
