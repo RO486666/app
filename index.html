@@ -238,7 +238,7 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-   #sessionHelp {
+    #sessionHelp {
     position: fixed;
     top: 40px; /* unter der Uhrzeit */
     left: 0;
@@ -264,6 +264,21 @@ body {
 
     /* Animation mit 20s Dauer (5s rein, 10s Pause, 5s raus) */
     animation: tickerAnim 20s linear infinite;
+  }
+
+  @keyframes tickerAnim {
+    0% {
+      transform: translateX(100vw); /* Start ganz rechts außerhalb */
+    }
+    25% {
+      transform: translateX(calc(50vw - 50%)); /* In die Mitte */
+    }
+    75% {
+      transform: translateX(calc(50vw - 50%)); /* Pause in der Mitte */
+    }
+    100% {
+      transform: translateX(-100%); /* Ganz links draußen */
+    }
   }
 @keyframes tickerScroll {
   0% {
@@ -864,36 +879,22 @@ weeklyResetController();
     { name: "Deadzone", start: 1380, end: 0 }
   ];
   
-
-  function animateSessionHelp() {
-    // Start rechts außerhalb
-    textSpan.style.transition = 'none';
-    textSpan.style.transform = 'translateX(100vw)';
-
-    setTimeout(() => {
-      // Langsam reinlaufen zur Mitte
-      textSpan.style.transition = 'transform 5s linear';
-      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // in die Mitte
-
-      setTimeout(() => {
-        // 10 Sekunden Pause
-        // Dann rausfahren nach links
-        textSpan.style.transition = 'transform 5s linear';
-        textSpan.style.transform = 'translateX(-100%)';
-
-        setTimeout(() => {
-          // Wieder von vorne starten
-          animateSessionHelp();
-        }, 5000); // Ende rausfahren
-      }, 15000); // 5s reinlaufen + 10s Pause
-    }, 100); // Kurzes Delay ohne Transition
+    // Beispielhafte Funktion, um aktive Sessions zu simulieren
+  function getActiveSessions() {
+    // Ersetze hier mit deiner echten Session-Logik
+    return ["London", "London Killzone"];
   }
 
-  animateSessionHelp();
+   function updateSessionHelp() {
+    const activeSessions = getActiveSessions();
+    if (activeSessions.length === 0) {
+      sessionSpan.textContent = "Keine aktive Session – Vorsicht vor Fakeouts!";
+    } else {
+      const descriptions = activeSessions.map(s => sessionDescriptions[s] || s);
+      sessionSpan.textContent = descriptions.join(" — ");
+    }
+  }
 
-  animateSessionHelp();
-
-  animateSessionHelp();
 
   function getMinutesNow() {
     const now = new Date();
@@ -1053,7 +1054,7 @@ weeklyResetController();
 
     updateSessionHelp(activeSessions);
   }
-
+ updateSessionHelp();
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
 </script>
