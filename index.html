@@ -392,118 +392,138 @@ document.addEventListener('DOMContentLoaded', () => {
   container.innerHTML = generatePairsHTML();
 });
 
-    function updateSummary() {
-      let today = new Date();
-      let dayString = today.toLocaleDateString();
-      let monthString = today.getFullYear() + "-" + (today.getMonth() + 1);
+function updateSummary() {
+  let today = new Date();
+  let dayString = today.toLocaleDateString();
+  let monthString = today.getFullYear() + "-" + (today.getMonth() + 1);
 
-      let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0");
-      let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0");
-      let storedDay = localStorage.getItem("dailyDate");
-      if (storedDay !== dayString) {
-        dailySuccess = 0; dailyFail = 0;
-        localStorage.setItem("dailySuccess", "0");
-        localStorage.setItem("dailyFail", "0");
-        localStorage.setItem("dailyDate", dayString);
-      }
+  let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0");
+  let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0");
+  let storedDay = localStorage.getItem("dailyDate");
+  if (storedDay !== dayString) {
+    dailySuccess = 0; dailyFail = 0;
+    localStorage.setItem("dailySuccess", "0");
+    localStorage.setItem("dailyFail", "0");
+    localStorage.setItem("dailyDate", dayString);
+  }
 
-      let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0");
-      let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0");
-      let storedMonth = localStorage.getItem("monthlyDate");
-      if (storedMonth !== monthString) {
-        monthlySuccess = 0; monthlyFail = 0;
-        localStorage.setItem("monthlySuccess", "0");
-        localStorage.setItem("monthlyFail", "0");
-        localStorage.setItem("monthlyDate", monthString);
-      }
+  let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0");
+  let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0");
+  let storedMonth = localStorage.getItem("monthlyDate");
+  if (storedMonth !== monthString) {
+    monthlySuccess = 0; monthlyFail = 0;
+    localStorage.setItem("monthlySuccess", "0");
+    localStorage.setItem("monthlyFail", "0");
+    localStorage.setItem("monthlyDate", monthString);
+  }
 
-      const renderBlock = (success, fail, textEl, tag) => {
-        const total = success + fail;
-        if (total === 0) {
-          textEl.textContent = "Noch keine Trades gemacht";
-          return;
-        }
-        let rate = success === 0 && fail > 0 ? -1 : Math.round((success / total) * 100);
-        let display = rate === -1 ? "-100%" : rate + "%";
-        let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
-        textEl.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
-          (rate >= 51 ? `✅ ${tag} <strong>ist</strong> profitabel` : `❌ ${tag} <strong>ist</strong> nicht profitabel`);
-      }
-
-      renderBlock(dailySuccess, dailyFail, dailyText, "Heute");
-
-      let totalSuccess = 0, totalFail = 0;
-      for (let id in tradeData) {
-        totalSuccess += tradeData[id].success || 0;
-        totalFail += tradeData[id].fail || 0;
-      }
-
-      document.getElementById("totalSuccess").textContent = totalSuccess;
-      document.getElementById("totalFail").textContent = totalFail;
-
-      let rate = totalSuccess === 0 && totalFail > 0 ? -1 : Math.round((totalSuccess / (totalSuccess + totalFail)) * 100);
-      let display = rate === -1 ? "-100%" : rate + "%";
-      let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
-      let isAbschluss = localStorage.getItem("lastWeekReset") === today.toLocaleDateString();
-      summaryText.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
-        (rate >= 51 ? (isAbschluss ? `✅ Diese Woche <strong>war</strong> profitabel` : `✅ Diese Woche <strong>ist</strong> profitabel`) :
-                      (isAbschluss ? `❌ Diese Woche <strong>war</strong> nicht profitabel` : `❌ Diese Woche <strong>ist</strong> nicht profitabel`));
-
-      renderBlock(monthlySuccess, monthlyFail, monthlyText, "Diesen Monat");
+  const renderBlock = (success, fail, textEl, tag) => {
+    const total = success + fail;
+    if (total === 0) {
+      textEl.textContent = "Noch keine Trades gemacht";
+      return;
     }
+    let rate = success === 0 && fail > 0 ? -1 : Math.round((success / total) * 100);
+    let display = rate === -1 ? "-100%" : rate + "%";
+    let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
+    textEl.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
+      (rate >= 51 ? `✅ ${tag} <strong>ist</strong> profitabel` : `❌ ${tag} <strong>ist</strong> nicht profitabel`);
+  }
 
-    function manualReset() {
-      if (confirm("Willst du wirklich ALLES zurücksetzen?")) {
-        for (let id in tradeData) {
-          tradeData[id].success = 0;
-          tradeData[id].fail = 0;
-        }
-        localStorage.setItem("dailySuccess", "0");
-        localStorage.setItem("dailyFail", "0");
-        localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-        localStorage.setItem("monthlySuccess", "0");
-        localStorage.setItem("monthlyFail", "0");
-        localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-        saveToStorage();
-        updateAllStats();
-        updateSummary();
-        document.querySelectorAll(".action-buttons").forEach(div => div.style.display = "none");
-        document.querySelectorAll(".result").forEach(div => div.textContent = "");
-        document.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
-      }
-    }
+  renderBlock(dailySuccess, dailyFail, dailyText, "Heute");
 
-    function markSuccess(id) {
-      if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
-      tradeData[id].success += 1;
-      const daily = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
-      const monthly = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
-      localStorage.setItem("dailySuccess", daily);
-      localStorage.setItem("monthlySuccess", monthly);
-      localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-      localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-      saveToStorage(); 
-	  updateStats(id); 
-	  updateSummary(); 
-	  localStorage.removeItem("openTrade_" + id);
-      clearUI(id);
-    }
+  let totalSuccess = 0, totalFail = 0;
+  for (let id in tradeData) {
+    totalSuccess += tradeData[id].success || 0;
+    totalFail += tradeData[id].fail || 0;
+  }
 
-    function markFail(id) {
-      if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
-	  tradeData[id].fail += 1;
-      let daily = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
-      let monthly = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
-      localStorage.setItem("dailyFail", daily);
-      localStorage.setItem("monthlyFail", monthly);
-      localStorage.setItem("dailyDate", new Date().toLocaleDateString());
-      localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
-      saveToStorage(); 
-	  updateStats(id); 
-	  updateSummary(); 
-	  localStorage.removeItem("openTrade_" + id);
-      clearUI(id);
+  document.getElementById("totalSuccess").textContent = totalSuccess;
+  document.getElementById("totalFail").textContent = totalFail;
+
+  let rate = totalSuccess === 0 && totalFail > 0 ? -1 : Math.round((totalSuccess / (totalSuccess + totalFail)) * 100);
+  let display = rate === -1 ? "-100%" : rate + "%";
+  let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
+  let isAbschluss = localStorage.getItem("lastWeekReset") === today.toLocaleDateString();
+  summaryText.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
+    (rate >= 51 ? (isAbschluss ? `✅ Diese Woche <strong>war</strong> profitabel` : `✅ Diese Woche <strong>ist</strong> profitabel`) :
+                  (isAbschluss ? `❌ Diese Woche <strong>war</strong> nicht profitabel` : `❌ Diese Woche <strong>ist</strong> nicht profitabel`));
+
+  renderBlock(monthlySuccess, monthlyFail, monthlyText, "Diesen Monat");
+}
+
+function manualReset() {
+  if (confirm("Willst du wirklich ALLES zurücksetzen?")) {
+    for (let id in tradeData) {
+      tradeData[id].success = 0;
+      tradeData[id].fail = 0;
     }
+    localStorage.setItem("dailySuccess", "0");
+    localStorage.setItem("dailyFail", "0");
+    localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+    localStorage.setItem("monthlySuccess", "0");
+    localStorage.setItem("monthlyFail", "0");
+    localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+    saveToStorage();
+    updateAllStats();
+    updateSummary();
+    document.querySelectorAll(".action-buttons").forEach(div => div.style.display = "none");
+    document.querySelectorAll(".result").forEach(div => div.textContent = "");
+    document.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
+  }
+}
+
+function markSuccess(id) {
+  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
+  tradeData[id].success += 1;
+  const daily = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
+  const monthly = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
+  localStorage.setItem("dailySuccess", daily);
+  localStorage.setItem("monthlySuccess", monthly);
+  localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+  localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+  saveToStorage(); 
+  updateStats(id); 
+  updateSummary(); 
+  localStorage.removeItem("openTrade_" + id);
+  clearUI(id);
+}
+
+function markFail(id) {
+  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
+  tradeData[id].fail += 1;
+  let daily = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
+  let monthly = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
+  localStorage.setItem("dailyFail", daily);
+  localStorage.setItem("monthlyFail", monthly);
+  localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+  localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+  saveToStorage(); 
+  updateStats(id); 
+  updateSummary(); 
+  localStorage.removeItem("openTrade_" + id);
+  clearUI(id);
+}
+
+function getOpenTrades() {
+  return JSON.parse(localStorage.getItem("openTrades") || "[]");
+}
+
+function saveOpenTrades(trades) {
+  localStorage.setItem("openTrades", JSON.stringify(trades));
+}
+
+function addOpenTrade(trade) {
+  const trades = getOpenTrades();
+  trades.push(trade);
+  saveOpenTrades(trades);
+}
+
+function removeOpenTrade(tradeId) {
+  let trades = getOpenTrades();
+  trades = trades.filter(t => t.id !== tradeId);
+  saveOpenTrades(trades);
+}
 
 function markResult(symbol, tradeId, result) {
   // Entferne den Trade aus der unteren Leiste
@@ -541,14 +561,14 @@ function markResult(symbol, tradeId, result) {
   localStorage.removeItem("openTrade_" + symbol);
 }
 
-    function saveToStorage() {
-      localStorage.setItem("tradeData", JSON.stringify(tradeData));
-    }
+function saveToStorage() {
+  localStorage.setItem("tradeData", JSON.stringify(tradeData));
+}
 
-    function loadFromStorage() {
-      const saved = JSON.parse(localStorage.getItem("tradeData") || "{}");
-      Object.assign(tradeData, saved);
-    }
+function loadFromStorage() {
+  const saved = JSON.parse(localStorage.getItem("tradeData") || "{}");
+  Object.assign(tradeData, saved);
+}
 
 let hideResultTimeout;
 
@@ -559,21 +579,7 @@ function confirmChoice(id, pair) {
 
   if (selected) {
     const dir = selected.value;
-    result.style.color = dir === "Long" ? "lime" : "red";
-    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
 
-    localStorage.setItem("openTrade_" + id, dir);
-    actions.style.display = "block";
-
-    // Wenn schon ein Timer läuft, löschen
-    if (hideResultTimeout) clearTimeout(hideResultTimeout);
-
-    // Nach 3 Sekunden Text ausblenden
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
-
-    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const date = now.toLocaleDateString();
@@ -588,8 +594,17 @@ function confirmChoice(id, pair) {
       date: date,
     };
 
-    removeTradeFromOpenBarByPrefix(id);
+    result.style.color = dir === "Long" ? "lime" : "red";
+    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+    actions.style.display = "block";
+
+    addOpenTrade(trade);
     addOpenTradeToUI(trade);
+
+    if (hideResultTimeout) clearTimeout(hideResultTimeout);
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
 
   } else {
     result.style.color = "orange";
@@ -602,18 +617,16 @@ function confirmChoice(id, pair) {
   }
 }
 
-
 function addOpenTradeToUI(trade) {
   const container = document.getElementById("openTrades");
 
-  // Verhindert Duplikate
   if (document.getElementById(trade.id)) return;
 
   const box = document.createElement("div");
   box.className = "open-trade";
   box.id = trade.id;
   box.innerHTML = `
-    <div><strong>${trade.pair}</strong></div>
+    <div><strong>${trade.pair}</strong> (${trade.direction})</div>
     <div class="timestamp">${trade.date} – ${trade.time}</div>
     <div class="actions">
       <button onclick="markResult('${trade.symbol}', '${trade.id}', 'success')">✅</button>
@@ -628,23 +641,19 @@ function addOpenTradeToUI(trade) {
   container.prepend(box);
 }
 
- function resetChoice(id) {
-  // Radiobuttons zurücksetzen
+function resetChoice(id) {
   const radios = document.getElementsByName(`choice_${id}`);
   radios.forEach(r => r.checked = false);
 
-  // Ergebnis-Text und Aktionsbuttons verstecken
   const resultElem = document.getElementById(`result_${id}`);
   if(resultElem) resultElem.textContent = "";
 
   const actionsElem = document.getElementById(`actions_${id}`);
   if(actionsElem) actionsElem.style.display = "none";
 
-  // Erfolgs-/Misserfolgszähler für das Paar zurücksetzen
   const prevSuccess = tradeData[id]?.success || 0;
   const prevFail = tradeData[id]?.fail || 0;
 
-  // Tages- & Monatszähler im LocalStorage anpassen
   const dailySuccess = Math.max(0, parseInt(localStorage.getItem("dailySuccess") || "0") - prevSuccess);
   const dailyFail = Math.max(0, parseInt(localStorage.getItem("dailyFail") || "0") - prevFail);
   const monthlySuccess = Math.max(0, parseInt(localStorage.getItem("monthlySuccess") || "0") - prevSuccess);
@@ -655,25 +664,18 @@ function addOpenTradeToUI(trade) {
   localStorage.setItem("monthlySuccess", monthlySuccess);
   localStorage.setItem("monthlyFail", monthlyFail);
 
-  // Paarzähler zurücksetzen
   if(tradeData[id]) {
     tradeData[id].success = 0;
     tradeData[id].fail = 0;
   }
 
-  // Speicher aktualisieren
   saveToStorage();
 
-  // Obere Statistik aktualisieren
   updateStats(id);
   updateSummary();
 
-  // Offenen Trade aus unterer Leiste entfernen
   removeTradeFromOpenBar(id);
-
-  // Offenen Trade aus localStorage löschen
   localStorage.removeItem("openTrade_" + id);
-  
   removeTradeFromOpenBarByPrefix(id);
 }
 
@@ -686,7 +688,6 @@ function removeTradeFromOpenBarByPrefix(prefix) {
   const container = document.getElementById("openTrades");
   if (!container) return;
 
-  // Finde alle Trades mit id beginnend mit prefix + "_"
   const toRemove = [];
   container.querySelectorAll(".open-trade").forEach(el => {
     if (el.id.startsWith(prefix + "_")) {
@@ -694,36 +695,34 @@ function removeTradeFromOpenBarByPrefix(prefix) {
     }
   });
 
-  // Entferne alle
   toRemove.forEach(el => el.remove());
 }
 
-    function updateStats(id) {
-      const stats = document.getElementById(`stats_${id}`);
-      const { success, fail } = tradeData[id];
-      stats.innerHTML = `✔️ ${success} | ❌ ${fail}`;
-    }
+function updateStats(id) {
+  const stats = document.getElementById(`stats_${id}`);
+  const { success, fail } = tradeData[id];
+  stats.innerHTML = `✔️ ${success} | ❌ ${fail}`;
+}
 
-    function updateAllStats() {
-      for (let id of Object.keys(tradeData)) {
-        updateStats(id);
-      }
-    }
+function updateAllStats() {
+  for (let id of Object.keys(tradeData)) {
+    updateStats(id);
+  }
+}
 
-
-
-	function clearUI(id) {
+function clearUI(id) {
   const radios = document.getElementsByName(`choice_${id}`);
   radios.forEach(r => r.checked = false);
   document.getElementById(`result_${id}`).textContent = "";
   document.getElementById(`actions_${id}`).style.display = "none";
 }
-    loadFromStorage();
-   pairs.forEach((pair) => {
+
+loadFromStorage();
+
+pairs.forEach((pair) => {
   const id = pair.replace(/\W/g, "");
   if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
 
-  // Wenn vorheriger Trade offen → Anzeigen
   const savedDir = localStorage.getItem("openTrade_" + id);
   if (savedDir) {
     const result = document.getElementById(`result_${id}`);
@@ -735,22 +734,20 @@ function removeTradeFromOpenBarByPrefix(prefix) {
 
   updateStats(id);
 });
+
 function weeklyResetController() {
   const now = new Date();
   const todayStr = now.toLocaleDateString();
-  const day = now.getDay(); // Sonntag = 0, Freitag = 5
+  const day = now.getDay();
   const hour = now.getHours();
   const minute = now.getMinutes();
   const lastWeekReset = localStorage.getItem("lastWeekReset") || "";
 
   if (hour === 23 && minute === 59 && lastWeekReset !== todayStr) {
-    // 🔔 Freitag 23:59 → nur mit Bestätigung
     if (day === 5) {
       const confirmReset = confirm("Willst du die Woche jetzt abschließen und zurücksetzen?");
       if (!confirmReset) return;
     }
-
-    // ✅ Sonntag 23:59 → automatisch
     if (day === 0 || day === 5) {
       const totalSuccess = Object.values(tradeData).reduce((sum, d) => sum + (d.success || 0), 0);
       const totalFail = Object.values(tradeData).reduce((sum, d) => sum + (d.fail || 0), 0);
@@ -776,7 +773,8 @@ function weeklyResetController() {
 setInterval(weeklyResetController, 60000);
 weeklyResetController();
 
-    updateSummary();
+updateSummary();
+
   </script>
 
 <script>
