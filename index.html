@@ -239,33 +239,38 @@ body {
   font-size: 14px;
 }
 #sessionHelp {
-  color: #00ff99;
-  font-size: 14px;
-  font-weight: 600;
-  max-width: 600px;
+  position: relative;
+  width: 600px;
+  height: 30px;
   margin: 10px auto 20px auto;
-  background-color: rgba(0, 255, 153, 0.15);
-  padding: 10px 15px;
+  overflow: hidden;
+  background-color: rgba(0,255,153,0.15);
   border-radius: 6px;
   box-shadow: 0 0 8px #00ff99aa;
+  color: #00ff99;
+  font-size: 16px;
+  font-weight: 600;
   user-select: none;
-  
-  /* Neu für Ticker */
-  white-space: nowrap;
-  overflow: hidden;
-  position: relative;
+  text-align: center;
 }
 
 #sessionHelp span {
-  display: inline-block;
+  position: absolute;
+  white-space: nowrap;
+  will-change: transform;
+  animation: tickerScroll 15s linear infinite;
   padding-left: 100%;
-  animation: ticker-move 15s linear infinite;
 }
 
-@keyframes ticker-move {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
+
 
 </style>
 <link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
@@ -281,7 +286,8 @@ body {
   <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 
   <!-- Session Hilfe direkt unter der Session-Zeit -->
-  <div id="sessionHelp" style="color:#ccc; font-size:14px; text-align:center; margin:4px 0; user-select:none;"></div>
+  <div id="sessionHelp"><span>Hier erscheint die Session-Hilfe...</span></div>
+
 <div class="progress-container">
     <canvas id="particleCanvas"></canvas>
     <div class="progress-bar" id="progressBar"></div>
@@ -981,15 +987,15 @@ weeklyResetController();
     progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
   }
 
-  function updateSessionHelp(activeSessions) {
-    if (!sessionHelp) return;
-    if (activeSessions.length === 0) {
-      sessionHelp.textContent = "Keine aktive Session – Vorsicht vor Fakeouts!";
-    } else {
-      const descriptions = activeSessions.map(s => sessionDescriptions[s.name] || s.name);
-      sessionHelp.innerHTML = descriptions.join("<br>");
-    }
+ function updateSessionHelp(activeSessions) {
+  if (!sessionHelp) return;
+  if (activeSessions.length === 0) {
+    sessionHelp.innerHTML = '<span>Keine aktive Session – Vorsicht vor Fakeouts!</span>';
+  } else {
+    const descriptions = activeSessions.map(s => sessionDescriptions[s.name] || s.name);
+    sessionHelp.innerHTML = `<span>${descriptions.join(' — ')}</span>`;
   }
+}
 
   function updateRealTimeBar() {
     const now = new Date();
