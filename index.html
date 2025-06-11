@@ -780,10 +780,8 @@ weeklyResetController();
   </script>
 
 <script>
- const sessionText = document.getElementById("sessionText");
-const progressBar = document.getElementById("progressBar");
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
+  const sessionText = document.getElementById("sessionText");
+  const progressBar = document.getElementById("progressBar");
 
  const sessionColors = {
   "Sydney": "#3388ff",
@@ -821,97 +819,6 @@ const sessions = [
       }
     });
   }
-function getPercentFromMinutes(minute) {
-  return (minute / 1439) * 100;
-}
-
-class Particle {
-  constructor(x, y, color) {
-    this.x = x + (Math.random() * 10 - 5);
-    this.y = y + (Math.random() * 10 - 5);
-    this.radius = Math.random() * 2 + 1;
-    this.color = color;
-    this.alpha = 1;
-    this.vx = (Math.random() - 0.5) * 0.2;
-    this.vy = (Math.random() - 0.5) * 0.2;
-    this.life = 60 + Math.random() * 60;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.alpha -= 1 / this.life;
-    this.life--;
-    if (this.alpha < 0) this.alpha = 0;
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.fillStyle = this.color;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 6;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-let particles = [];
-
-function addParticlesAt(percent, color, count = 2) {
-  const x = (canvas.width * percent) / 100;
-  const y = canvas.height / 2;
-  for (let i = 0; i < count; i++) {
-    particles.push(new Particle(x, y, color));
-  }
-}
-
-function resizeCanvas() {
-  canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = canvas.parentElement.clientHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const nowMinutes = getMinutesNow();
-  const activeSessions = getCurrentSessions(nowMinutes);
-
-  activeSessions.forEach(s => {
-    const percent = getPercentFromMinutes(s.start % 1440);
-    const color = sessionColors[s.name] || "#888";
-    addParticlesAt(percent, color, 2);
-  });
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.update();
-    if (p.alpha <= 0 || p.life <= 0) {
-      particles.splice(i, 1);
-    } else {
-      p.draw();
-    }
-  }
-
-  // Glow wenn Sessionstart < 5 Minuten her
-  let glow = false;
-  sessions.forEach(session => {
-    let start = session.start;
-    if (start > session.end) {
-      if (nowMinutes < session.end) start -= 1440;
-    }
-    if (nowMinutes >= start && nowMinutes < start + 5) {
-      glow = true;
-    }
-  });
-  progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
-
-  requestAnimationFrame(animate);
-}
-
-animate();
 
   function updateGradientBar(colors) {
     if (colors.length === 0) {
@@ -932,8 +839,6 @@ animate();
     const base64 = btoa(svg);
     progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
   }
-  
-  
 
   function updateRealTimeBar() {
     const now = new Date();
@@ -953,7 +858,6 @@ animate();
     const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
     sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
   }
-  
 
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
