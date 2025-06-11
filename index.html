@@ -841,9 +841,7 @@ function updateRealTimeBar() {
   const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
   sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
 
-
-
-  // NEU: Hilfetext aktualisieren
+  // Hier den Hilfetext aktualisieren:
   updateSessionHelp(activeSessions);
 }
  const sessionColors = {
