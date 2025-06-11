@@ -1001,24 +1001,27 @@ animate();
   
   
 
-  function updateRealTimeBar() {
-    const now = new Date();
-    const minutes = getMinutesNow();
-    const percent = (minutes / 1439) * 100;
-    progressBar.style.width = percent + "%";
+function updateRealTimeBar() {
+  const now = new Date();
+  const minutes = getMinutesNow();
+  const percent = (minutes / 1439) * 100;
+  progressBar.style.width = percent + "%";
 
-    const hours = String(now.getHours()).padStart(2, '0');
-    const mins = String(now.getMinutes()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const mins = String(now.getMinutes()).padStart(2, '0');
 
-    const activeSessions = getCurrentSessions(minutes);
-    const names = activeSessions.map(s => s.name);
-    const colors = names.map(name => sessionColors[name] || "#666");
+  const activeSessions = getCurrentSessions(minutes);
+  const names = activeSessions.map(s => s.name);
+  const colors = names.map(name => sessionColors[name] || "#666");
 
-    updateGradientBar(colors);
+  updateGradientBar(colors);
 
-    const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
-    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-  }
+  const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
+  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+
+  // Hier den Hilfetext aktualisieren
+  updateSessionHelp(activeSessions);
+}
   
 
   setInterval(updateRealTimeBar, 60000);
