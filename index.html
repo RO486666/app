@@ -238,58 +238,6 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-    #sessionHelp {
-    position: fixed;
-    top: 40px; /* unter der Uhrzeit */
-    left: 0;
-    width: 100vw;
-    height: 40px;
-    background-color: rgba(0, 255, 153, 0.15);
-    color: #00ff99;
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 40px;
-    text-align: center;
-    user-select: none;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 0 10px #00ff9966;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  #sessionHelp span {
-    display: inline-block;
-    white-space: nowrap;
-    position: relative;
-
-    /* Animation mit 20s Dauer (5s rein, 10s Pause, 5s raus) */
-    animation: tickerAnim 20s linear infinite;
-  }
-
-  @keyframes tickerAnim {
-    0% {
-      transform: translateX(100vw); /* Start ganz rechts außerhalb */
-    }
-    25% {
-      transform: translateX(calc(50vw - 50%)); /* In die Mitte */
-    }
-    75% {
-      transform: translateX(calc(50vw - 50%)); /* Pause in der Mitte */
-    }
-    100% {
-      transform: translateX(-100%); /* Ganz links draußen */
-    }
-  }
-@keyframes tickerScroll {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-
 </style>
 <link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -300,37 +248,25 @@ body {
       });
     }
   </script>
-</head></head><body>
-  <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
-
-<!-- Session-Hilfe außerhalb und oberhalb des Balkens -->
-<div id="sessionHelp">Hier erscheint die Session-Hilfe...</div>
-
-<div class="progress-container">
-  <canvas id="particleCanvas"></canvas>
-  <div class="progress-bar" id="progressBar"></div>
+</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
+<canvas id="particleCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+</div><div class="sidebar">
+<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
+  <button id="selectAll">Alle auswählen</button>
+  <button id="deselectAll">Alle abwählen</button>
+  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
 </div>
-
-  <div class="sidebar">
-    <div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
-      <button id="selectAll">Alle auswählen</button>
-      <button id="deselectAll">Alle abwählen</button>
-      <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
-    </div>
-    <div id="pairContainer"><div></div></div>
-    <div class="footer-summary" id="monthlySummary">
+<div id="pairContainer"><div>
+</div></div>
+<div class="footer-summary" id="monthlySummary">
       📅 <strong>Monatliche Auswertung:</strong><br/>
-      <span id="monthlyText">Noch keine Trades gemacht</span><br/>
-    </div>
-    <div class="footer-summary" id="weeklySummary">
+<span id="monthlyText">Noch keine Trades gemacht</span><br/>
+</div>
+<div class="footer-summary" id="weeklySummary">
       📊 <strong>Wöchentliche Auswertung:</strong><br/>
-      <span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
-    </div>
-    <div class="footer-summary" id="dailySummary">
-      📆 <strong>Tagesauswertung (Heute):</strong><br/>
-      <span id="dailyText">Noch keine Trades gemacht</span><br/>
-    </div>
-
+<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
+</div>
 <div class="footer-summary" id="dailySummary">
       📆 <strong>Tagesauswertung (Heute):</strong><br/>
 <span id="dailyText">Noch keine Trades gemacht</span><br/>
@@ -426,7 +362,6 @@ function loadSelection() {
 
 document.addEventListener('DOMContentLoaded', () => {
   container.innerHTML = generatePairsHTML();
-
   generateCheckboxes();
   loadSelection();
   updateVisiblePairs();
@@ -450,16 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVisiblePairs();
     saveSelection();
   });
-
-  // Jetzt die gespeicherten Zustände laden:
-  loadFromStorage();           // Statistikdaten
-  loadOpenTradesFromStorage(); // Offene Trades
-
-  updateAllStats();
-  updateSummary();
 });
 
-
+// Aufruf beim Laden der Seite:
+document.addEventListener('DOMContentLoaded', () => {
+  container.innerHTML = generatePairsHTML();
+});
 
     function updateSummary() {
       let today = new Date();
@@ -626,41 +557,49 @@ function confirmChoice(id, pair) {
   const result = document.getElementById(`result_${id}`);
   const actions = document.getElementById(`actions_${id}`);
 
-  if (!selected) {
-    result.style.color = "orange";
-    result.textContent = "Bitte Long oder Short auswählen.";
+  if (selected) {
+    const dir = selected.value;
+    result.style.color = dir === "Long" ? "lime" : "red";
+    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+
+    localStorage.setItem("openTrade_" + id, dir);
+    actions.style.display = "block";
+
+    // Wenn schon ein Timer läuft, löschen
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
-    return;
+
+    // Nach 3 Sekunden Text ausblenden
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
+
+    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString();
+    const tradeId = id + "_" + Date.now();
+
+    const trade = {
+      id: tradeId,
+      pair: pair,
+      direction: dir,
+      symbol: id,
+      time: timestamp,
+      date: date,
+    };
+
+    removeTradeFromOpenBarByPrefix(id);
+    addOpenTradeToUI(trade);
+
+  } else {
+    result.style.color = "orange";
+    result.textContent = `Bitte Long oder Short auswählen.`;
+
+    if (hideResultTimeout) clearTimeout(hideResultTimeout);
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
   }
-
-  const dir = selected.value;
-  result.style.color = dir === "Long" ? "lime" : "red";
-  result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
-  actions.style.display = "block";
-
-  if (hideResultTimeout) clearTimeout(hideResultTimeout);
-  hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
-
-  const now = new Date();
-  const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const date = now.toLocaleDateString();
-  const tradeId = id + "_" + Date.now();
-
-  const trade = {
-    id: tradeId,
-    pair: pair,
-    direction: dir,
-    symbol: id,
-    time: timestamp,
-    date: date,
-  };
-
-  // Einzelnen Trade speichern mit eindeutiger ID
-  localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
-
-  // Trade unten in UI anzeigen (neuen Trade hinzufügen, ohne alte zu löschen)
-  addOpenTradeToUI(trade);
 }
 
 
@@ -842,59 +781,29 @@ weeklyResetController();
 
 <script>
  const sessionText = document.getElementById("sessionText");
-  const progressBar = document.getElementById("progressBar");
-  const canvas = document.getElementById('particleCanvas');
-  const ctx = canvas.getContext('2d');
-  const sessionHelp = document.getElementById("sessionHelp");
- const textSpan = sessionHelp.querySelector('span');
- 
- 
-  const sessionDescriptions = {
-    "Sydney": "Sydney-Session: Ruhiger Markt, oft Vorbereitung auf Asien.",
-    "Tokyo": "Tokyo-Session: Bewegung in Yen-Paaren, asiatischer Handel.",
-    "London": "London-Session: Hohe Liquidität, starke Marktbewegungen.",
-    "New York": "New York-Session: Haupttradingzeit mit hohem Volumen.",
-    "London Killzone": "London Killzone: Stop Hunts und mögliche Fakeouts.",
-    "New York Killzone": "New York Killzone: Volumenanstieg, Breakouts.",
-    "Deadzone": "Deadzone: Markt ist ruhig, wenig Bewegung erwartet.",
-  };
+const progressBar = document.getElementById("progressBar");
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
 
-  const sessionColors = {
-    "Sydney": "#3388ff",
-    "Tokyo": "#00aaff",
-    "London": "#ffd700",
-    "New York": "#ff4500",
-    "London Killzone": "#ccff00",
-    "New York Killzone": "#ff8800",
-    "Deadzone": "#333"
-  };
+ const sessionColors = {
+  "Sydney": "#3388ff",
+  "Tokyo": "#00aaff",
+  "London": "#ffd700",
+  "New York": "#ff4500",
+  "London Killzone": "#ccff00",
+  "New York Killzone": "#ff8800",
+  "Deadzone": "#333"
+};
 
-  const sessions = [
-    { name: "Sydney", start: 1380, end: 480 },
-    { name: "Tokyo", start: 60, end: 600 },
-    { name: "London", start: 540, end: 1020 },
-    { name: "New York", start: 870, end: 1380 },
-    { name: "London Killzone", start: 420, end: 660 },
-    { name: "New York Killzone", start: 810, end: 1020 },
-    { name: "Deadzone", start: 1380, end: 0 }
-  ];
-  
-    // Beispielhafte Funktion, um aktive Sessions zu simulieren
-  function getActiveSessions() {
-    // Ersetze hier mit deiner echten Session-Logik
-    return ["London", "London Killzone"];
-  }
-
-   function updateSessionHelp() {
-    const activeSessions = getActiveSessions();
-    if (activeSessions.length === 0) {
-      sessionSpan.textContent = "Keine aktive Session – Vorsicht vor Fakeouts!";
-    } else {
-      const descriptions = activeSessions.map(s => sessionDescriptions[s] || s);
-      sessionSpan.textContent = descriptions.join(" — ");
-    }
-  }
-
+const sessions = [
+  { name: "Sydney", start: 1380, end: 480 }, // 23:00 – 08:00
+  { name: "Tokyo", start: 60, end: 600 },    // 01:00 – 10:00
+  { name: "London", start: 540, end: 1020 }, // 09:00 – 17:00
+  { name: "New York", start: 870, end: 1380 }, // 14:30 – 23:00
+  { name: "London Killzone", start: 420, end: 660 }, // 07:00 – 11:00
+  { name: "New York Killzone", start: 810, end: 1020 }, // 13:30 – 17:00
+  { name: "Deadzone", start: 1380, end: 0 } // 23:00 – 00:00
+];
 
   function getMinutesNow() {
     const now = new Date();
@@ -912,97 +821,97 @@ weeklyResetController();
       }
     });
   }
+function getPercentFromMinutes(minute) {
+  return (minute / 1439) * 100;
+}
 
-  function getPercentFromMinutes(minute) {
-    return (minute / 1439) * 100;
+class Particle {
+  constructor(x, y, color) {
+    this.x = x + (Math.random() * 10 - 5);
+    this.y = y + (Math.random() * 10 - 5);
+    this.radius = Math.random() * 2 + 1;
+    this.color = color;
+    this.alpha = 1;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = (Math.random() - 0.5) * 0.2;
+    this.life = 60 + Math.random() * 60;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= 1 / this.life;
+    this.life--;
+    if (this.alpha < 0) this.alpha = 0;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+let particles = [];
+
+function addParticlesAt(percent, color, count = 2) {
+  const x = (canvas.width * percent) / 100;
+  const y = canvas.height / 2;
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle(x, y, color));
+  }
+}
+
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const nowMinutes = getMinutesNow();
+  const activeSessions = getCurrentSessions(nowMinutes);
+
+  activeSessions.forEach(s => {
+    const percent = getPercentFromMinutes(s.start % 1440);
+    const color = sessionColors[s.name] || "#888";
+    addParticlesAt(percent, color, 2);
+  });
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.update();
+    if (p.alpha <= 0 || p.life <= 0) {
+      particles.splice(i, 1);
+    } else {
+      p.draw();
+    }
   }
 
-  class Particle {
-    constructor(x, y, color) {
-      this.x = x + (Math.random() * 10 - 5);
-      this.y = y + (Math.random() * 10 - 5);
-      this.radius = Math.random() * 2 + 1;
-      this.color = color;
-      this.alpha = 1;
-      this.vx = (Math.random() - 0.5) * 0.2;
-      this.vy = (Math.random() - 0.5) * 0.2;
-      this.life = 60 + Math.random() * 60;
+  // Glow wenn Sessionstart < 5 Minuten her
+  let glow = false;
+  sessions.forEach(session => {
+    let start = session.start;
+    if (start > session.end) {
+      if (nowMinutes < session.end) start -= 1440;
     }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.alpha -= 1 / this.life;
-      this.life--;
-      if (this.alpha < 0) this.alpha = 0;
+    if (nowMinutes >= start && nowMinutes < start + 5) {
+      glow = true;
     }
-    draw() {
-      ctx.save();
-      ctx.globalAlpha = this.alpha;
-      ctx.fillStyle = this.color;
-      ctx.shadowColor = this.color;
-      ctx.shadowBlur = 6;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
+  });
+  progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
 
-  let particles = [];
+  requestAnimationFrame(animate);
+}
 
-  function addParticlesAt(percent, color, count = 2) {
-    const x = (canvas.width * percent) / 100;
-    const y = canvas.height / 2;
-    for (let i = 0; i < count; i++) {
-      particles.push(new Particle(x, y, color));
-    }
-  }
-
-  function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const nowMinutes = getMinutesNow();
-    const activeSessions = getCurrentSessions(nowMinutes);
-
-    activeSessions.forEach(s => {
-      const percent = getPercentFromMinutes(s.start % 1440);
-      const color = sessionColors[s.name] || "#888";
-      addParticlesAt(percent, color, 2);
-    });
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.update();
-      if (p.alpha <= 0 || p.life <= 0) {
-        particles.splice(i, 1);
-      } else {
-        p.draw();
-      }
-    }
-
-    let glow = false;
-    sessions.forEach(session => {
-      let start = session.start;
-      if (start > session.end) {
-        if (nowMinutes < session.end) start -= 1440;
-      }
-      if (nowMinutes >= start && nowMinutes < start + 5) {
-        glow = true;
-      }
-    });
-    progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
+animate();
 
   function updateGradientBar(colors) {
     if (colors.length === 0) {
@@ -1023,16 +932,8 @@ weeklyResetController();
     const base64 = btoa(svg);
     progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
   }
-
- function updateSessionHelp(activeSessions) {
-  if (!sessionHelp) return;
-  if (activeSessions.length === 0) {
-    sessionHelp.innerHTML = '<span>Keine aktive Session – Vorsicht vor Fakeouts!</span>';
-  } else {
-    const descriptions = activeSessions.map(s => sessionDescriptions[s.name] || s.name);
-    sessionHelp.innerHTML = `<span>${descriptions.join(' — ')}</span>`;
-  }
-}
+  
+  
 
   function updateRealTimeBar() {
     const now = new Date();
@@ -1051,10 +952,9 @@ weeklyResetController();
 
     const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
     sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-
-    updateSessionHelp(activeSessions);
   }
- updateSessionHelp();
+  
+
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
 </script>
