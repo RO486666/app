@@ -1,131 +1,98 @@
 <html><head><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
 <title>Myfxbook + Trade Tracker</title>
 <style>
-    body {
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-    iframe {
-      width: 65%;
-      height: 100%;
-      border: none;
-    }
-    .sidebar {
-      width: 35%;
-      padding: 20px;
-      background: #1c1c1c;
-      overflow-y: auto;
-    }
-    .pair-box {
-      background: #222;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-    }
-    .pair-box h3 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #ffd700;
-    }
-    label {
-      margin-right: 10px;
-      font-size: 16px;
-    }
-    button {
-      margin-top: 10px;
-      margin-right: 5px;
-      padding: 6px 12px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background-color: #444;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #666;
-    }
-    .result,
-    .stats {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .footer-summary {
-      background: #2a2a2a;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 20px;
-    }
-    .reset-btn {
-      margin-top: 10px;
-      background: darkred;
-    }
-    .reset-btn:hover {
-      background: red;
-    }
-    .action-buttons {
-      display: none;
-      margin-top: 10px;
-    }
-  
+body {
+  background: #111;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: row; /* Desktop: Sidebar links, Content rechts */
+}
+
+/* Mobile: Spalte statt Reihe */
 @media (max-width: 768px) {
   body {
-    flex-direction: column;
-    height: auto;
-    overflow: auto;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: auto !important;
   }
   iframe {
-    width: 100%;
-    height: 300px;
+    width: 100% !important;
+    height: 300px !important;
   }
   .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 10px;
+    width: 100% !important;
+    height: auto !important;
+    padding: 10px !important;
+    overflow-y: visible !important;
   }
   .pair-box {
-    font-size: 16px;
-    padding: 10px;
+    font-size: 16px !important;
+    padding: 10px !important;
+    margin-bottom: 12px !important;
   }
   button {
-    width: 100%;
-    margin: 5px 0;
-    font-size: 16px;
+    width: 100% !important;
+    margin: 8px 0 !important;
+    font-size: 16px !important;
   }
   label {
-    display: block;
-    margin: 8px 0;
+    display: block !important;
+    margin: 8px 0 !important;
+  }
+  .footer-summary {
+    padding: 15px !important;
+    margin: 10px 0 !important;
+  }
+  .open-bar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding: 5px 8px !important;
+  }
+  .open-trade {
+    min-width: 160px !important;
+    padding: 8px !important;
+    font-size: 14px !important;
   }
 }
 
-
+/* Desktop Sidebar */
 .sidebar {
-  width: 100% !important;
+  width: 35% !important;
   height: 100vh !important;
   background: #1c1c1c;
   padding: 20px;
   overflow-y: auto;
-}
-body {
-  flex-direction: column !important;
+  box-sizing: border-box;
 }
 
-
-.ticker {
+/* Content-Bereich (Sidebar weg - default) */
+#pairContainer {
   width: 100%;
-  background: #222;
-  color: #00ff99;
-  padding: 10px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
+  box-sizing: border-box;
 }
+
+/* Buttons & Checkboxen */
+#checkboxList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+#checkboxList label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 140px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Fortschrittsbalken */
 .progress-container {
   position: relative;
   background: #111;
@@ -134,41 +101,52 @@ body {
   border-top: 1px solid #333;
   border-bottom: 1px solid #333;
   overflow: hidden;
-}
-#particleCanvas {
-  z-index: 0;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  pointer-events: none;
+  margin-bottom: 8px;
 }
 .progress-bar {
   background-size: 100% 100%;
   background-repeat: no-repeat;
-
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   background: #222;
   z-index: 2;
-  z-index: 2;
   transition: width 1s linear;
 }
-.news-ticker {
+#particleCanvas {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
   width: 100%;
-  background: #111;
-  color: #ffc107;
-  font-size: 16px;
-  padding: 6px 12px;
-  text-align: center;
-  font-style: italic;
-  border-bottom: 1px solid #333;
+  pointer-events: none;
 }
+
+/* Ticker */
+.ticker {
+  width: 100%;
+  background: #222;
+  color: #00ff99;
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Footer summary */
+.footer-summary {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 10px;
+  user-select: none;
+}
+
+/* Trade-Box */
 .open-bar {
   position: fixed;
   bottom: 0;
@@ -191,6 +169,7 @@ body {
   transition: all 0.3s ease;
   flex-shrink: 0;
   user-select: none;
+  font-size: 14px;
 }
 .open-trade .actions {
   display: none;
