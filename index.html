@@ -250,6 +250,9 @@ body {
   </script>
 </head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
 <canvas id="particleCanvas"></canvas>
+<div id="sessionHelp" style="color:#ccc; font-size:14px; text-align:center; margin:4px 0; user-select:none;">
+  Hier erscheint die Session-Hilfe...
+</div>
 <div class="progress-bar" id="progressBar"></div>
 </div><div class="sidebar">
 <div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
@@ -775,9 +778,7 @@ weeklyResetController();
 
     updateSummary();
   </script>
-<div id="sessionHelp" style="color:#ccc; font-size:14px; text-align:center; margin:4px 0; user-select:none;">
-  Hier erscheint die Session-Hilfe...
-</div>
+
 <script>
  const sessionText = document.getElementById("sessionText");
 const progressBar = document.getElementById("progressBar");
@@ -822,6 +823,8 @@ function updateRealTimeBar() {
 
   const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
   sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+
+
 
   // NEU: Hilfetext aktualisieren
   updateSessionHelp(activeSessions);
