@@ -238,25 +238,24 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-#sessionHelp {
-  position: fixed;
-  top: 10px; /* höher platzieren, damit über Balken */
-  left: 0;
-  width: 100vw;
-  height: 40px;
-  background-color: rgba(0, 255, 153, 0.15);
-  color: #00ff99;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 40px;
-  text-align: center;
-  user-select: none;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #00ff9966;
-  overflow: hidden;
-  white-space: nowrap;
-  z-index: 10001; /* Hoch über Balken */
-}
+  #sessionHelp {
+    position: fixed;
+    top: 40px; /* Unter der Uhrzeit */
+    left: 0;
+    width: 100vw;
+    height: 40px;
+    background-color: rgba(0, 255, 153, 0.15);
+    color: #00ff99;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    user-select: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 0 10px #00ff9966;
+    overflow: hidden;
+    white-space: nowrap;
+  }
   #sessionHelp span {
     position: relative;
     display: inline-block;
