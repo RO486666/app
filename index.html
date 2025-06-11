@@ -861,37 +861,31 @@ weeklyResetController();
     { name: "Deadzone", start: 1380, end: 0 }
   ];
   
+
   function animateSessionHelp() {
-    // Start rechts außerhalb (ohne Transition)
+    // Starte mit Text rechts außerhalb
     textSpan.style.transition = 'none';
     textSpan.style.transform = 'translateX(100vw)';
 
-    // Kurze Pause, damit die Position gesetzt wird
+    // Kurz warten, dann reinlaufen lassen
     setTimeout(() => {
-      // Phase 1: Reinlaufen (5s)
       textSpan.style.transition = 'transform 5s linear';
-      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // Zentriert
+      textSpan.style.transform = 'translateX(calc(50vw - 50%))'; // zur Mitte
 
-      // Phase 2 & 3: Pause + rauslaufen nach links
+      // Nach 5s Laufzeit + 10s Pause den Text rausfahren
       setTimeout(() => {
-        // Pause: keine Bewegung (setzen Transition auf none)
-        textSpan.style.transition = 'none';
-        textSpan.style.transform = 'translateX(calc(50vw - 50%))';
+        textSpan.style.transition = 'transform 5s linear';
+        textSpan.style.transform = 'translateX(-100%)';
+      }, 15000); // 5s rein + 10s pause = 15s
 
-        // Nach 10 Sekunden Pause Phase 3 starten
-        setTimeout(() => {
-          // Phase 3: Rauslaufen nach links (5s)
-          textSpan.style.transition = 'transform 5s linear';
-          textSpan.style.transform = 'translateX(-100%)';
-        }, 10000); // 10 Sekunden Pause
-      }, 5000); // Nach 5 Sekunden Reinlaufen
-
-      // Nach Gesamt 20 Sekunden Zyklus neu starten
+      // Nach 20s (gesamt) nochmal zurücksetzen und wiederholen
       setTimeout(() => {
         animateSessionHelp();
       }, 20000);
-    }, 100); // kleine Verzögerung zum Anwenden der Startposition
+    }, 100); // 0.1s Delay zum Anwenden ohne Transition
   }
+
+  animateSessionHelp();
 
   animateSessionHelp();
 
