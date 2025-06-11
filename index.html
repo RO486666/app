@@ -1,130 +1,122 @@
 <html><head><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
 <title>Myfxbook + Trade Tracker</title>
 <style>
-body {
-  background: #111;
-  color: white;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-  flex-direction: row; /* Desktop: Sidebar links, Content rechts */
-}
-
-/* Mobile: Spalte statt Reihe */
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    iframe {
+      width: 65%;
+      height: 100%;
+      border: none;
+    }
+    .sidebar {
+      width: 35%;
+      padding: 20px;
+      background: #1c1c1c;
+      overflow-y: auto;
+    }
+    .pair-box {
+      background: #222;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    .pair-box h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #ffd700;
+    }
+    label {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      margin-right: 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #666;
+    }
+    .result,
+    .stats {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .footer-summary {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .reset-btn {
+      margin-top: 10px;
+      background: darkred;
+    }
+    .reset-btn:hover {
+      background: red;
+    }
+    .action-buttons {
+      display: none;
+      margin-top: 10px;
+    }
+  
 @media (max-width: 768px) {
   body {
-    flex-direction: column !important;
-    height: auto !important;
-    overflow: auto !important;
+    flex-direction: column;
+    height: auto;
+    overflow: auto;
   }
   iframe {
-    width: 100% !important;
-    height: 300px !important;
+    width: 100%;
+    height: 300px;
   }
   .sidebar {
-    width: 100% !important;
-    height: auto !important;
-    padding: 10px !important;
-    overflow-y: visible !important;
+    width: 100%;
+    height: auto;
+    padding: 10px;
   }
   .pair-box {
-    font-size: 16px !important;
-    padding: 10px !important;
-    margin-bottom: 12px !important;
+    font-size: 16px;
+    padding: 10px;
   }
   button {
-    width: 100% !important;
-    margin: 8px 0 !important;
-    font-size: 16px !important;
+    width: 100%;
+    margin: 5px 0;
+    font-size: 16px;
   }
   label {
-    display: block !important;
-    margin: 8px 0 !important;
-  }
-  .footer-summary {
-    padding: 15px !important;
-    margin: 10px 0 !important;
-  }
-  .open-bar {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    padding: 5px 8px !important;
-  }
-  .open-trade {
-    min-width: 160px !important;
-    padding: 8px !important;
-    font-size: 14px !important;
+    display: block;
+    margin: 8px 0;
   }
 }
 
-/* Desktop Sidebar */
+
 .sidebar {
-  width: 35% !important;
+  width: 100% !important;
   height: 100vh !important;
   background: #1c1c1c;
   padding: 20px;
   overflow-y: auto;
-  box-sizing: border-box;
+}
+body {
+  flex-direction: column !important;
 }
 
-/* Content-Bereich (Sidebar weg - default) */
-#pairContainer {
-  width: 100%;
-  box-sizing: border-box;
-}
 
-/* Buttons & Checkboxen */
-#checkboxList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  max-height: 150px;
-  overflow-y: auto;
-}
-#checkboxList label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 140px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* Fortschrittsbalken */
-.progress-container {
-  position: relative;
-  background: #111;
-  height: 24px;
-  width: 100%;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-.progress-bar {
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: #222;
-  z-index: 2;
-  transition: width 1s linear;
-}
-#particleCanvas {
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  pointer-events: none;
-}
-
-/* Ticker */
 .ticker {
   width: 100%;
   background: #222;
@@ -133,20 +125,50 @@ body {
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 5px;
 }
+.progress-container {
+  position: relative;
+  background: #111;
+  height: 24px;
+  width: 100%;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+}
+#particleCanvas {
+  z-index: 0;
 
-/* Footer summary */
-.footer-summary {
-  background: #2a2a2a;
-  padding: 20px;
-  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+.progress-bar {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #222;
+  z-index: 2;
+  z-index: 2;
+  transition: width 1s linear;
+}
+.news-ticker {
+  width: 100%;
+  background: #111;
+  color: #ffc107;
+  font-size: 16px;
+  padding: 6px 12px;
   text-align: center;
-  margin-top: 10px;
-  user-select: none;
+  font-style: italic;
+  border-bottom: 1px solid #333;
 }
-
-/* Trade-Box */
 .open-bar {
   position: fixed;
   bottom: 0;
@@ -169,7 +191,6 @@ body {
   transition: all 0.3s ease;
   flex-shrink: 0;
   user-select: none;
-  font-size: 14px;
 }
 .open-trade .actions {
   display: none;
@@ -217,9 +238,6 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
-
-
-
 </style>
 <link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -230,33 +248,25 @@ body {
       });
     }
   </script>
-</head></head><body>
-
-<div class="progress-container">
-  <canvas id="particleCanvas"></canvas>
-  <div class="progress-bar" id="progressBar"></div>
+</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
+<canvas id="particleCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+</div><div class="sidebar">
+<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
+  <button id="selectAll">Alle auswählen</button>
+  <button id="deselectAll">Alle abwählen</button>
+  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
 </div>
-
-  <div class="sidebar">
-    <div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
-      <button id="selectAll">Alle auswählen</button>
-      <button id="deselectAll">Alle abwählen</button>
-      <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
-    </div>
-    <div id="pairContainer"><div></div></div>
-    <div class="footer-summary" id="monthlySummary">
+<div id="pairContainer"><div>
+</div></div>
+<div class="footer-summary" id="monthlySummary">
       📅 <strong>Monatliche Auswertung:</strong><br/>
-      <span id="monthlyText">Noch keine Trades gemacht</span><br/>
-    </div>
-    <div class="footer-summary" id="weeklySummary">
+<span id="monthlyText">Noch keine Trades gemacht</span><br/>
+</div>
+<div class="footer-summary" id="weeklySummary">
       📊 <strong>Wöchentliche Auswertung:</strong><br/>
-      <span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
-    </div>
-    <div class="footer-summary" id="dailySummary">
-      📆 <strong>Tagesauswertung (Heute):</strong><br/>
-      <span id="dailyText">Noch keine Trades gemacht</span><br/>
-    </div>
-
+<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
+</div>
 <div class="footer-summary" id="dailySummary">
       📆 <strong>Tagesauswertung (Heute):</strong><br/>
 <span id="dailyText">Noch keine Trades gemacht</span><br/>
@@ -352,7 +362,6 @@ function loadSelection() {
 
 document.addEventListener('DOMContentLoaded', () => {
   container.innerHTML = generatePairsHTML();
-
   generateCheckboxes();
   loadSelection();
   updateVisiblePairs();
@@ -376,16 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVisiblePairs();
     saveSelection();
   });
-
-  // Jetzt die gespeicherten Zustände laden:
-  loadFromStorage();           // Statistikdaten
-  loadOpenTradesFromStorage(); // Offene Trades
-
-  updateAllStats();
-  updateSummary();
 });
 
-
+// Aufruf beim Laden der Seite:
+document.addEventListener('DOMContentLoaded', () => {
+  container.innerHTML = generatePairsHTML();
+});
 
     function updateSummary() {
       let today = new Date();
@@ -552,41 +557,49 @@ function confirmChoice(id, pair) {
   const result = document.getElementById(`result_${id}`);
   const actions = document.getElementById(`actions_${id}`);
 
-  if (!selected) {
-    result.style.color = "orange";
-    result.textContent = "Bitte Long oder Short auswählen.";
+  if (selected) {
+    const dir = selected.value;
+    result.style.color = dir === "Long" ? "lime" : "red";
+    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+
+    localStorage.setItem("openTrade_" + id, dir);
+    actions.style.display = "block";
+
+    // Wenn schon ein Timer läuft, löschen
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
-    return;
+
+    // Nach 3 Sekunden Text ausblenden
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
+
+    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString();
+    const tradeId = id + "_" + Date.now();
+
+    const trade = {
+      id: tradeId,
+      pair: pair,
+      direction: dir,
+      symbol: id,
+      time: timestamp,
+      date: date,
+    };
+
+    removeTradeFromOpenBarByPrefix(id);
+    addOpenTradeToUI(trade);
+
+  } else {
+    result.style.color = "orange";
+    result.textContent = `Bitte Long oder Short auswählen.`;
+
+    if (hideResultTimeout) clearTimeout(hideResultTimeout);
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
   }
-
-  const dir = selected.value;
-  result.style.color = dir === "Long" ? "lime" : "red";
-  result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
-  actions.style.display = "block";
-
-  if (hideResultTimeout) clearTimeout(hideResultTimeout);
-  hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
-
-  const now = new Date();
-  const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const date = now.toLocaleDateString();
-  const tradeId = id + "_" + Date.now();
-
-  const trade = {
-    id: tradeId,
-    pair: pair,
-    direction: dir,
-    symbol: id,
-    time: timestamp,
-    date: date,
-  };
-
-  // Einzelnen Trade speichern mit eindeutiger ID
-  localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
-
-  // Trade unten in UI anzeigen (neuen Trade hinzufügen, ohne alte zu löschen)
-  addOpenTradeToUI(trade);
 }
 
 
