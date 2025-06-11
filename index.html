@@ -717,8 +717,15 @@ function loadOpenTradesFromStorage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadFromStorage();
-  loadOpenTradesFromStorage();
+  loadFromStorage();          // Statistik laden
+  loadOpenTradesFromStorage(); // Offene Trades anzeigen
+
+  // Hier weitere Initialisierungen, z.B. Checkboxen etc.
+  generateCheckboxes();
+  loadSelection();
+  updateVisiblePairs();
+  updateAllStats();
+  updateSummary();
 });
 
 
