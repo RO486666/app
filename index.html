@@ -238,6 +238,58 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
+    #sessionHelp {
+    position: fixed;
+    top: 40px; /* unter der Uhrzeit */
+    left: 0;
+    width: 100vw;
+    height: 40px;
+    background-color: rgba(0, 255, 153, 0.15);
+    color: #00ff99;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    user-select: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 0 10px #00ff9966;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  #sessionHelp span {
+    display: inline-block;
+    white-space: nowrap;
+    position: relative;
+
+    /* Animation mit 20s Dauer (5s rein, 10s Pause, 5s raus) */
+    animation: tickerAnim 20s linear infinite;
+  }
+
+  @keyframes tickerAnim {
+    0% {
+      transform: translateX(100vw); /* Start ganz rechts außerhalb */
+    }
+    25% {
+      transform: translateX(calc(50vw - 50%)); /* In die Mitte */
+    }
+    75% {
+      transform: translateX(calc(50vw - 50%)); /* Pause in der Mitte */
+    }
+    100% {
+      transform: translateX(-100%); /* Ganz links draußen */
+    }
+  }
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+
 </style>
 <link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -248,25 +300,37 @@ body {
       });
     }
   </script>
-</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
-<canvas id="particleCanvas"></canvas>
-<div class="progress-bar" id="progressBar"></div>
-</div><div class="sidebar">
-<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
-  <button id="selectAll">Alle auswählen</button>
-  <button id="deselectAll">Alle abwählen</button>
-  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
+</head></head><body>
+  <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
+
+<!-- Session-Hilfe außerhalb und oberhalb des Balkens -->
+<div id="sessionHelp">Hier erscheint die Session-Hilfe...</div>
+
+<div class="progress-container">
+  <canvas id="particleCanvas"></canvas>
+  <div class="progress-bar" id="progressBar"></div>
 </div>
-<div id="pairContainer"><div>
-</div></div>
-<div class="footer-summary" id="monthlySummary">
+
+  <div class="sidebar">
+    <div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
+      <button id="selectAll">Alle auswählen</button>
+      <button id="deselectAll">Alle abwählen</button>
+      <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
+    </div>
+    <div id="pairContainer"><div></div></div>
+    <div class="footer-summary" id="monthlySummary">
       📅 <strong>Monatliche Auswertung:</strong><br/>
-<span id="monthlyText">Noch keine Trades gemacht</span><br/>
-</div>
-<div class="footer-summary" id="weeklySummary">
+      <span id="monthlyText">Noch keine Trades gemacht</span><br/>
+    </div>
+    <div class="footer-summary" id="weeklySummary">
       📊 <strong>Wöchentliche Auswertung:</strong><br/>
-<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
-</div>
+      <span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
+    </div>
+    <div class="footer-summary" id="dailySummary">
+      📆 <strong>Tagesauswertung (Heute):</strong><br/>
+      <span id="dailyText">Noch keine Trades gemacht</span><br/>
+    </div>
+
 <div class="footer-summary" id="dailySummary">
       📆 <strong>Tagesauswertung (Heute):</strong><br/>
 <span id="dailyText">Noch keine Trades gemacht</span><br/>
@@ -299,7 +363,13 @@ body {
   "XAG/USD"   // Silber
 ];
 
-   function generatePairsHTML() {
+    const container = document.getElementById("pairContainer");
+    const summaryText = document.getElementById("summaryText");
+    const monthlyText = document.getElementById("monthlyText");
+    const dailyText = document.getElementById("dailyText");
+    const tradeData = {};
+	
+	function generatePairsHTML() {
   return pairs.map(pair => {
     const id = pair.replace(/\W/g, "");
     return `
