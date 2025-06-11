@@ -239,19 +239,21 @@ body {
   font-size: 14px;
 }
 #sessionHelp {
-  position: relative;
-  width: 600px;
+  width: 100%;
+  max-width: 100%; /* für mobile volle Breite */
   height: 30px;
-  margin: 10px auto 20px auto;
-  overflow: hidden;
-  background-color: rgba(0,255,153,0.15);
-  border-radius: 6px;
-  box-shadow: 0 0 8px #00ff99aa;
-  color: #00ff99;
-  font-size: 16px;
+  background-color: #124012; /* dunkles Grün als Hintergrund */
+  color: #a0e6a0; /* helles Grün für Text */
+  font-size: 14px;
   font-weight: 600;
-  user-select: none;
+  line-height: 30px; /* vertikal zentriert */
   text-align: center;
+  border-radius: 4px;
+  margin: 6px 0 10px 0;
+  user-select: none;
+  box-shadow: 0 0 8px #3b8f3baa;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 #sessionHelp span {
