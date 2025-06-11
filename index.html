@@ -803,73 +803,40 @@ weeklyResetController();
 
 <script>
  const sessionText = document.getElementById("sessionText");
-const progressBar = document.getElementById("progressBar");
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
+  const progressBar = document.getElementById("progressBar");
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  const sessionHelp = document.getElementById("sessionHelp");
 
-const sessionHelp = document.getElementById("sessionHelp");
+  const sessionDescriptions = {
+    "Sydney": "Sydney-Session: Ruhiger Markt, oft Vorbereitung auf Asien.",
+    "Tokyo": "Tokyo-Session: Bewegung in Yen-Paaren, asiatischer Handel.",
+    "London": "London-Session: Hohe Liquidität, starke Marktbewegungen.",
+    "New York": "New York-Session: Haupttradingzeit mit hohem Volumen.",
+    "London Killzone": "London Killzone: Stop Hunts und mögliche Fakeouts.",
+    "New York Killzone": "New York Killzone: Volumenanstieg, Breakouts.",
+    "Deadzone": "Deadzone: Markt ist ruhig, wenig Bewegung erwartet.",
+  };
 
-const sessionDescriptions = {
-  "Sydney": "Sydney-Session: Ruhiger Markt, oft Vorbereitung auf Asien.",
-  "Tokyo": "Tokyo-Session: Bewegung in Yen-Paaren, asiatischer Handel.",
-  "London": "London-Session: Hohe Liquidität, starke Marktbewegungen.",
-  "New York": "New York-Session: Haupttradingzeit mit hohem Volumen.",
-  "London Killzone": "London Killzone: Stop Hunts und mögliche Fakeouts.",
-  "New York Killzone": "New York Killzone: Volumenanstieg, Breakouts.",
-  "Deadzone": "Deadzone: Markt ist ruhig, wenig Bewegung erwartet.",
-};
+  const sessionColors = {
+    "Sydney": "#3388ff",
+    "Tokyo": "#00aaff",
+    "London": "#ffd700",
+    "New York": "#ff4500",
+    "London Killzone": "#ccff00",
+    "New York Killzone": "#ff8800",
+    "Deadzone": "#333"
+  };
 
-function updateSessionHelp(activeSessions) {
-  if (activeSessions.length === 0) {
-    sessionHelp.textContent = "Keine aktive Session – Vorsicht vor Fakeouts!";
-  } else {
-    const descriptions = activeSessions.map(s => sessionDescriptions[s.name] || s.name);
-    sessionHelp.innerHTML = descriptions.join("<br>");
-  }
-}
-
-
-// Im updateRealTimeBar() am Ende aufrufen:
-function updateRealTimeBar() {
-  const now = new Date();
-  const minutes = getMinutesNow();
-  const percent = (minutes / 1439) * 100;
-  progressBar.style.width = percent + "%";
-
-  const hours = String(now.getHours()).padStart(2, '0');
-  const mins = String(now.getMinutes()).padStart(2, '0');
-
-  const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map(s => s.name);
-  const colors = names.map(name => sessionColors[name] || "#666");
-
-  updateGradientBar(colors);
-
-  const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
-  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-
-  // Hier den Hilfetext aktualisieren:
-  updateSessionHelp(activeSessions);
-}
- const sessionColors = {
-  "Sydney": "#3388ff",
-  "Tokyo": "#00aaff",
-  "London": "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  "Deadzone": "#333"
-};
-
-const sessions = [
-  { name: "Sydney", start: 1380, end: 480 }, // 23:00 – 08:00
-  { name: "Tokyo", start: 60, end: 600 },    // 01:00 – 10:00
-  { name: "London", start: 540, end: 1020 }, // 09:00 – 17:00
-  { name: "New York", start: 870, end: 1380 }, // 14:30 – 23:00
-  { name: "London Killzone", start: 420, end: 660 }, // 07:00 – 11:00
-  { name: "New York Killzone", start: 810, end: 1020 }, // 13:30 – 17:00
-  { name: "Deadzone", start: 1380, end: 0 } // 23:00 – 00:00
-];
+  const sessions = [
+    { name: "Sydney", start: 1380, end: 480 },
+    { name: "Tokyo", start: 60, end: 600 },
+    { name: "London", start: 540, end: 1020 },
+    { name: "New York", start: 870, end: 1380 },
+    { name: "London Killzone", start: 420, end: 660 },
+    { name: "New York Killzone", start: 810, end: 1020 },
+    { name: "Deadzone", start: 1380, end: 0 }
+  ];
 
   function getMinutesNow() {
     const now = new Date();
@@ -887,97 +854,97 @@ const sessions = [
       }
     });
   }
-function getPercentFromMinutes(minute) {
-  return (minute / 1439) * 100;
-}
 
-class Particle {
-  constructor(x, y, color) {
-    this.x = x + (Math.random() * 10 - 5);
-    this.y = y + (Math.random() * 10 - 5);
-    this.radius = Math.random() * 2 + 1;
-    this.color = color;
-    this.alpha = 1;
-    this.vx = (Math.random() - 0.5) * 0.2;
-    this.vy = (Math.random() - 0.5) * 0.2;
-    this.life = 60 + Math.random() * 60;
+  function getPercentFromMinutes(minute) {
+    return (minute / 1439) * 100;
   }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.alpha -= 1 / this.life;
-    this.life--;
-    if (this.alpha < 0) this.alpha = 0;
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.fillStyle = this.color;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 6;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-}
 
-let particles = [];
-
-function addParticlesAt(percent, color, count = 2) {
-  const x = (canvas.width * percent) / 100;
-  const y = canvas.height / 2;
-  for (let i = 0; i < count; i++) {
-    particles.push(new Particle(x, y, color));
-  }
-}
-
-function resizeCanvas() {
-  canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = canvas.parentElement.clientHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const nowMinutes = getMinutesNow();
-  const activeSessions = getCurrentSessions(nowMinutes);
-
-  activeSessions.forEach(s => {
-    const percent = getPercentFromMinutes(s.start % 1440);
-    const color = sessionColors[s.name] || "#888";
-    addParticlesAt(percent, color, 2);
-  });
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.update();
-    if (p.alpha <= 0 || p.life <= 0) {
-      particles.splice(i, 1);
-    } else {
-      p.draw();
+  class Particle {
+    constructor(x, y, color) {
+      this.x = x + (Math.random() * 10 - 5);
+      this.y = y + (Math.random() * 10 - 5);
+      this.radius = Math.random() * 2 + 1;
+      this.color = color;
+      this.alpha = 1;
+      this.vx = (Math.random() - 0.5) * 0.2;
+      this.vy = (Math.random() - 0.5) * 0.2;
+      this.life = 60 + Math.random() * 60;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.alpha -= 1 / this.life;
+      this.life--;
+      if (this.alpha < 0) this.alpha = 0;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
   }
 
-  // Glow wenn Sessionstart < 5 Minuten her
-  let glow = false;
-  sessions.forEach(session => {
-    let start = session.start;
-    if (start > session.end) {
-      if (nowMinutes < session.end) start -= 1440;
-    }
-    if (nowMinutes >= start && nowMinutes < start + 5) {
-      glow = true;
-    }
-  });
-  progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
+  let particles = [];
 
-  requestAnimationFrame(animate);
-}
+  function addParticlesAt(percent, color, count = 2) {
+    const x = (canvas.width * percent) / 100;
+    const y = canvas.height / 2;
+    for (let i = 0; i < count; i++) {
+      particles.push(new Particle(x, y, color));
+    }
+  }
 
-animate();
+  function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const nowMinutes = getMinutesNow();
+    const activeSessions = getCurrentSessions(nowMinutes);
+
+    activeSessions.forEach(s => {
+      const percent = getPercentFromMinutes(s.start % 1440);
+      const color = sessionColors[s.name] || "#888";
+      addParticlesAt(percent, color, 2);
+    });
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.update();
+      if (p.alpha <= 0 || p.life <= 0) {
+        particles.splice(i, 1);
+      } else {
+        p.draw();
+      }
+    }
+
+    let glow = false;
+    sessions.forEach(session => {
+      let start = session.start;
+      if (start > session.end) {
+        if (nowMinutes < session.end) start -= 1440;
+      }
+      if (nowMinutes >= start && nowMinutes < start + 5) {
+        glow = true;
+      }
+    });
+    progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
 
   function updateGradientBar(colors) {
     if (colors.length === 0) {
@@ -998,31 +965,37 @@ animate();
     const base64 = btoa(svg);
     progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
   }
-  
-  
 
-function updateRealTimeBar() {
-  const now = new Date();
-  const minutes = getMinutesNow();
-  const percent = (minutes / 1439) * 100;
-  progressBar.style.width = percent + "%";
+  function updateSessionHelp(activeSessions) {
+    if (!sessionHelp) return;
+    if (activeSessions.length === 0) {
+      sessionHelp.textContent = "Keine aktive Session – Vorsicht vor Fakeouts!";
+    } else {
+      const descriptions = activeSessions.map(s => sessionDescriptions[s.name] || s.name);
+      sessionHelp.innerHTML = descriptions.join("<br>");
+    }
+  }
 
-  const hours = String(now.getHours()).padStart(2, '0');
-  const mins = String(now.getMinutes()).padStart(2, '0');
+  function updateRealTimeBar() {
+    const now = new Date();
+    const minutes = getMinutesNow();
+    const percent = (minutes / 1439) * 100;
+    progressBar.style.width = percent + "%";
 
-  const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map(s => s.name);
-  const colors = names.map(name => sessionColors[name] || "#666");
+    const hours = String(now.getHours()).padStart(2, '0');
+    const mins = String(now.getMinutes()).padStart(2, '0');
 
-  updateGradientBar(colors);
+    const activeSessions = getCurrentSessions(minutes);
+    const names = activeSessions.map(s => s.name);
+    const colors = names.map(name => sessionColors[name] || "#666");
 
-  const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
-  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+    updateGradientBar(colors);
 
-  // Hier den Hilfetext aktualisieren
-  updateSessionHelp(activeSessions);
-}
-  
+    const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
+    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+
+    updateSessionHelp(activeSessions);
+  }
 
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
