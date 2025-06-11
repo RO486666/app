@@ -562,50 +562,41 @@ function confirmChoice(id, pair) {
   const result = document.getElementById(`result_${id}`);
   const actions = document.getElementById(`actions_${id}`);
 
-  if (selected) {
-    const dir = selected.value;
-    result.style.color = dir === "Long" ? "lime" : "red";
-    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
-
-    actions.style.display = "block";
-
-    if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
-
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const date = now.toLocaleDateString();
-    const tradeId = id + "_" + Date.now();
-
-    const trade = {
-      id: tradeId,
-      pair: pair,
-      direction: dir,
-      symbol: id,
-      time: timestamp,
-      date: date,
-    };
-
-    // Speichere neuen Trade mit eindeutiger ID
-    localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
-
-    // Zeige neuen Trade in UI unten
-    addOpenTradeToUI(trade);
-
-    // Diese Zeile entfernen oder auskommentieren, damit mehrere Trades pro Paar angezeigt werden
-    // removeTradeFromOpenBarByPrefix(id);
-
-  } else {
+  if (!selected) {
     result.style.color = "orange";
-    result.textContent = `Bitte Long oder Short auswählen.`;
-
+    result.textContent = "Bitte Long oder Short auswählen.";
     if (hideResultTimeout) clearTimeout(hideResultTimeout);
-    hideResultTimeout = setTimeout(() => {
-      result.textContent = "";
-    }, 3000);
+    hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
+    return;
   }
+
+  const dir = selected.value;
+  result.style.color = dir === "Long" ? "lime" : "red";
+  result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+  actions.style.display = "block";
+
+  if (hideResultTimeout) clearTimeout(hideResultTimeout);
+  hideResultTimeout = setTimeout(() => { result.textContent = ""; }, 3000);
+
+  const now = new Date();
+  const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const date = now.toLocaleDateString();
+  const tradeId = id + "_" + Date.now();
+
+  const trade = {
+    id: tradeId,
+    pair: pair,
+    direction: dir,
+    symbol: id,
+    time: timestamp,
+    date: date,
+  };
+
+  // Einzelnen Trade speichern mit eindeutiger ID
+  localStorage.setItem("openTrade_" + tradeId, JSON.stringify(trade));
+
+  // Trade unten in UI anzeigen (neuen Trade hinzufügen, ohne alte zu löschen)
+  addOpenTradeToUI(trade);
 }
 
 
