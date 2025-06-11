@@ -1,0 +1,963 @@
+<html><head><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>Myfxbook + Trade Tracker</title>
+<style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    iframe {
+      width: 65%;
+      height: 100%;
+      border: none;
+    }
+    .sidebar {
+      width: 35%;
+      padding: 20px;
+      background: #1c1c1c;
+      overflow-y: auto;
+    }
+    .pair-box {
+      background: #222;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    .pair-box h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #ffd700;
+    }
+    label {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      margin-right: 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #666;
+    }
+    .result,
+    .stats {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .footer-summary {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .reset-btn {
+      margin-top: 10px;
+      background: darkred;
+    }
+    .reset-btn:hover {
+      background: red;
+    }
+    .action-buttons {
+      display: none;
+      margin-top: 10px;
+    }
+  
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    height: auto;
+    overflow: auto;
+  }
+  iframe {
+    width: 100%;
+    height: 300px;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+  .pair-box {
+    font-size: 16px;
+    padding: 10px;
+  }
+  button {
+    width: 100%;
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  label {
+    display: block;
+    margin: 8px 0;
+  }
+}
+
+
+.sidebar {
+  width: 100% !important;
+  height: 100vh !important;
+  background: #1c1c1c;
+  padding: 20px;
+  overflow-y: auto;
+}
+body {
+  flex-direction: column !important;
+}
+
+
+.ticker {
+  width: 100%;
+  background: #222;
+  color: #00ff99;
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+.progress-container {
+  position: relative;
+  background: #111;
+  height: 24px;
+  width: 100%;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+}
+#particleCanvas {
+  z-index: 0;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+.progress-bar {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #222;
+  z-index: 2;
+  z-index: 2;
+  transition: width 1s linear;
+}
+.news-ticker {
+  width: 100%;
+  background: #111;
+  color: #ffc107;
+  font-size: 16px;
+  padding: 6px 12px;
+  text-align: center;
+  font-style: italic;
+  border-bottom: 1px solid #333;
+}
+.open-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #1a1a1a;
+  border-top: 2px solid #333;
+  padding: 10px;
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+.open-trade {
+  background: #333;
+  border-radius: 6px;
+  padding: 10px;
+  min-width: 140px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  user-select: none;
+}
+.open-trade .actions {
+  display: none;
+  margin-top: 10px;
+}
+.open-trade.expanded .actions {
+  display: block;
+}
+.timestamp {
+  font-size: 0.75rem;
+  color: #bbb;
+  margin-top: 4px;
+}
+#pairSelector {
+  background-color: #222;
+  color: white;
+  border-radius: 6px;
+  padding: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  user-select: none;
+}
+#pairSelector label {
+  cursor: pointer;
+  font-size: 14px;
+}
+#pairSelector button {
+  margin-right: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+#checkboxList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Abstand zwischen den Checkboxen */
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+#checkboxList label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 140px; /* Breite der einzelnen Checkbox-Elemente */
+  cursor: pointer;
+  font-size: 14px;
+}
+</style>
+<link href="https://coruscating-baklava-a9736a.netlify.app/manifest.json" rel="manifest"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+</head></head><body><div class="ticker" id="sessionText">Session-Zeit: 00:00</div><div class="progress-container">
+<canvas id="particleCanvas"></canvas>
+<div class="progress-bar" id="progressBar"></div>
+</div><div class="sidebar">
+<div id="pairSelector" style="background:#222; padding:10px; margin-bottom:15px; border-radius:6px; color:#fff;">
+  <button id="selectAll">Alle auswählen</button>
+  <button id="deselectAll">Alle abwählen</button>
+  <div id="checkboxList" style="max-height:150px; overflow-y:auto; margin-top:10px;"></div>
+</div>
+<div id="pairContainer"><div>
+</div></div>
+<div class="footer-summary" id="monthlySummary">
+      📅 <strong>Monatliche Auswertung:</strong><br/>
+<span id="monthlyText">Noch keine Trades gemacht</span><br/>
+</div>
+<div class="footer-summary" id="weeklySummary">
+      📊 <strong>Wöchentliche Auswertung:</strong><br/>
+<span id="summaryText">📈 Erfolgsquote: <span style="color:#388e3c">NaN%</span><br/>❌ Diese Woche <strong>ist</strong> nicht profitabel</span><br/>
+</div>
+<div class="footer-summary" id="dailySummary">
+      📆 <strong>Tagesauswertung (Heute):</strong><br/>
+<span id="dailyText">Noch keine Trades gemacht</span><br/>
+</div>
+<div class="footer-summary">
+<div><strong>✔️ Gesamt-Erfolge:</strong> <span id="totalSuccess">0</span></div>
+<div><strong>❌ Gesamt-Misserfolge:</strong> <span id="totalFail">0</span></div>
+<button class="reset-btn" onclick="manualReset()">🔄 ALLES zurücksetzen</button>
+</div>
+</div><script>
+    const pairs = [
+  "EUR/USD",
+  "USD/JPY",
+  "GBP/USD",
+  "USD/CHF",
+  "AUD/USD",
+  "USD/CAD",
+  "NZD/USD",
+  "EUR/GBP",
+  "EUR/JPY",
+  "GBP/JPY",
+  "AUD/JPY",
+  "CHF/JPY",
+  "EUR/AUD",
+  "EUR/CAD",
+  "GBP/AUD",
+  "AUD/CAD",
+  "NZD/JPY",
+  "XAU/USD",  // Gold
+  "XAG/USD"   // Silber
+];
+
+    const container = document.getElementById("pairContainer");
+    const summaryText = document.getElementById("summaryText");
+    const monthlyText = document.getElementById("monthlyText");
+    const dailyText = document.getElementById("dailyText");
+    const tradeData = {};
+	
+	function generatePairsHTML() {
+  return pairs.map(pair => {
+    const id = pair.replace(/\W/g, "");
+    return `
+      <div class="pair-box" id="pairBox_${id}">
+        <h3>${pair}</h3>
+        <label><input name="choice_${id}" type="radio" value="Long" /> Long</label>
+        <label><input name="choice_${id}" type="radio" value="Short" /> Short</label><br />
+        <button onclick="confirmChoice('${id}', '${pair}')">Bestätigen</button>
+        <button onclick="resetChoice('${id}')">Zurücksetzen</button>
+        <div class="action-buttons" id="actions_${id}"></div>
+        <div class="result" id="result_${id}"></div>
+        <div class="stats" id="stats_${id}">✔️ 0 | ❌ 0</div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+function generateCheckboxes() {
+  checkboxList.innerHTML = pairs.map(pair => {
+    const id = pair.replace(/\W/g, "");
+    return `<label style="display:block; margin-bottom:5px;">
+      <input type="checkbox" class="pair-checkbox" data-pair-id="${id}" checked> ${pair}
+    </label>`;
+  }).join('');
+}
+
+function updateVisiblePairs() {
+  const checkedBoxes = document.querySelectorAll('.pair-checkbox:checked');
+  const visibleIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-pair-id'));
+
+  pairs.forEach(pair => {
+    const id = pair.replace(/\W/g, "");
+    const pairDiv = document.getElementById(`pairBox_${id}`);
+    if(pairDiv) pairDiv.style.display = visibleIds.includes(id) ? "" : "none";
+  });
+}
+
+function saveSelection() {
+  const checkedIds = Array.from(document.querySelectorAll('.pair-checkbox:checked'))
+    .map(cb => cb.getAttribute('data-pair-id'));
+  localStorage.setItem('selectedPairs', JSON.stringify(checkedIds));
+}
+
+function loadSelection() {
+  const saved = JSON.parse(localStorage.getItem('selectedPairs') || '[]');
+  if(saved.length === 0) return; // Alle anzeigen, wenn nix gespeichert
+
+  document.querySelectorAll('.pair-checkbox').forEach(cb => {
+    const id = cb.getAttribute('data-pair-id');
+    cb.checked = saved.includes(id);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  container.innerHTML = generatePairsHTML();
+  generateCheckboxes();
+  loadSelection();
+  updateVisiblePairs();
+
+  // Eventlistener für Checkboxen
+  document.querySelectorAll('.pair-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+      updateVisiblePairs();
+      saveSelection();
+    });
+  });
+
+  // Select/Deselect All Buttons
+  document.getElementById('selectAll').addEventListener('click', () => {
+    document.querySelectorAll('.pair-checkbox').forEach(cb => cb.checked = true);
+    updateVisiblePairs();
+    saveSelection();
+  });
+  document.getElementById('deselectAll').addEventListener('click', () => {
+    document.querySelectorAll('.pair-checkbox').forEach(cb => cb.checked = false);
+    updateVisiblePairs();
+    saveSelection();
+  });
+});
+
+// Aufruf beim Laden der Seite:
+document.addEventListener('DOMContentLoaded', () => {
+  container.innerHTML = generatePairsHTML();
+});
+
+    function updateSummary() {
+      let today = new Date();
+      let dayString = today.toLocaleDateString();
+      let monthString = today.getFullYear() + "-" + (today.getMonth() + 1);
+
+      let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0");
+      let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0");
+      let storedDay = localStorage.getItem("dailyDate");
+      if (storedDay !== dayString) {
+        dailySuccess = 0; dailyFail = 0;
+        localStorage.setItem("dailySuccess", "0");
+        localStorage.setItem("dailyFail", "0");
+        localStorage.setItem("dailyDate", dayString);
+      }
+
+      let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0");
+      let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0");
+      let storedMonth = localStorage.getItem("monthlyDate");
+      if (storedMonth !== monthString) {
+        monthlySuccess = 0; monthlyFail = 0;
+        localStorage.setItem("monthlySuccess", "0");
+        localStorage.setItem("monthlyFail", "0");
+        localStorage.setItem("monthlyDate", monthString);
+      }
+
+      const renderBlock = (success, fail, textEl, tag) => {
+        const total = success + fail;
+        if (total === 0) {
+          textEl.textContent = "Noch keine Trades gemacht";
+          return;
+        }
+        let rate = success === 0 && fail > 0 ? -1 : Math.round((success / total) * 100);
+        let display = rate === -1 ? "-100%" : rate + "%";
+        let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
+        textEl.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
+          (rate >= 51 ? `✅ ${tag} <strong>ist</strong> profitabel` : `❌ ${tag} <strong>ist</strong> nicht profitabel`);
+      }
+
+      renderBlock(dailySuccess, dailyFail, dailyText, "Heute");
+
+      let totalSuccess = 0, totalFail = 0;
+      for (let id in tradeData) {
+        totalSuccess += tradeData[id].success || 0;
+        totalFail += tradeData[id].fail || 0;
+      }
+
+      document.getElementById("totalSuccess").textContent = totalSuccess;
+      document.getElementById("totalFail").textContent = totalFail;
+
+      let rate = totalSuccess === 0 && totalFail > 0 ? -1 : Math.round((totalSuccess / (totalSuccess + totalFail)) * 100);
+      let display = rate === -1 ? "-100%" : rate + "%";
+      let color = rate === -1 || rate < 35 ? "#ff4d4d" : rate < 50 ? "#ffc107" : rate < 75 ? "#8bc34a" : "#388e3c";
+      let isAbschluss = localStorage.getItem("lastWeekReset") === today.toLocaleDateString();
+      summaryText.innerHTML = `📈 Erfolgsquote: <span style="color:${color}">${display}</span><br>` +
+        (rate >= 51 ? (isAbschluss ? `✅ Diese Woche <strong>war</strong> profitabel` : `✅ Diese Woche <strong>ist</strong> profitabel`) :
+                      (isAbschluss ? `❌ Diese Woche <strong>war</strong> nicht profitabel` : `❌ Diese Woche <strong>ist</strong> nicht profitabel`));
+
+      renderBlock(monthlySuccess, monthlyFail, monthlyText, "Diesen Monat");
+    }
+
+    function manualReset() {
+      if (confirm("Willst du wirklich ALLES zurücksetzen?")) {
+        for (let id in tradeData) {
+          tradeData[id].success = 0;
+          tradeData[id].fail = 0;
+        }
+        localStorage.setItem("dailySuccess", "0");
+        localStorage.setItem("dailyFail", "0");
+        localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+        localStorage.setItem("monthlySuccess", "0");
+        localStorage.setItem("monthlyFail", "0");
+        localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+        saveToStorage();
+        updateAllStats();
+        updateSummary();
+        document.querySelectorAll(".action-buttons").forEach(div => div.style.display = "none");
+        document.querySelectorAll(".result").forEach(div => div.textContent = "");
+        document.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
+      }
+    }
+
+    function markSuccess(id) {
+      if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
+      tradeData[id].success += 1;
+      const daily = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
+      const monthly = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
+      localStorage.setItem("dailySuccess", daily);
+      localStorage.setItem("monthlySuccess", monthly);
+      localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+      localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+      saveToStorage(); 
+	  updateStats(id); 
+	  updateSummary(); 
+	  localStorage.removeItem("openTrade_" + id);
+      clearUI(id);
+    }
+
+    function markFail(id) {
+      if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
+	  tradeData[id].fail += 1;
+      let daily = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
+      let monthly = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
+      localStorage.setItem("dailyFail", daily);
+      localStorage.setItem("monthlyFail", monthly);
+      localStorage.setItem("dailyDate", new Date().toLocaleDateString());
+      localStorage.setItem("monthlyDate", new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
+      saveToStorage(); 
+	  updateStats(id); 
+	  updateSummary(); 
+	  localStorage.removeItem("openTrade_" + id);
+      clearUI(id);
+    }
+
+function markResult(symbol, tradeId, result) {
+  // Entferne den Trade aus der unteren Leiste
+  const el = document.getElementById(tradeId);
+  if (el) el.remove();
+
+  // Aktualisiere Erfolg/Misserfolg je nach Ergebnis
+  if (!tradeData[symbol]) tradeData[symbol] = { success: 0, fail: 0 };
+
+  if (result === "success") {
+    tradeData[symbol].success++;
+    // Update tägliche und monatliche Zähler in localStorage
+    let dailySuccess = parseInt(localStorage.getItem("dailySuccess") || "0") + 1;
+    let monthlySuccess = parseInt(localStorage.getItem("monthlySuccess") || "0") + 1;
+    localStorage.setItem("dailySuccess", dailySuccess);
+    localStorage.setItem("monthlySuccess", monthlySuccess);
+  } else if (result === "fail") {
+    tradeData[symbol].fail++;
+    let dailyFail = parseInt(localStorage.getItem("dailyFail") || "0") + 1;
+    let monthlyFail = parseInt(localStorage.getItem("monthlyFail") || "0") + 1;
+    localStorage.setItem("dailyFail", dailyFail);
+    localStorage.setItem("monthlyFail", monthlyFail);
+  }
+
+  saveToStorage();
+
+  // Update Statistiken oben (z.B. Anzeige der Erfolge/Misserfolge)
+  updateStats(symbol);
+  updateSummary();
+
+  // Setze UI für das Paar oben zurück (radiobuttons, Ergebnis, Aktionen)
+  clearUI(symbol);
+
+  // Entferne ggf. den offenen Trade aus localStorage
+  localStorage.removeItem("openTrade_" + symbol);
+}
+
+    function saveToStorage() {
+      localStorage.setItem("tradeData", JSON.stringify(tradeData));
+    }
+
+    function loadFromStorage() {
+      const saved = JSON.parse(localStorage.getItem("tradeData") || "{}");
+      Object.assign(tradeData, saved);
+    }
+
+let hideResultTimeout;
+
+function confirmChoice(id, pair) {
+  const selected = document.querySelector(`input[name="choice_${id}"]:checked`);
+  const result = document.getElementById(`result_${id}`);
+  const actions = document.getElementById(`actions_${id}`);
+
+  if (selected) {
+    const dir = selected.value;
+    result.style.color = dir === "Long" ? "lime" : "red";
+    result.textContent = `Du bist ${dir.toUpperCase()} bei ${pair} gegangen.`;
+
+    localStorage.setItem("openTrade_" + id, dir);
+    actions.style.display = "block";
+
+    // Wenn schon ein Timer läuft, löschen
+    if (hideResultTimeout) clearTimeout(hideResultTimeout);
+
+    // Nach 3 Sekunden Text ausblenden
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
+
+    // Hier kommt dein Code zum Trade hinzufügen, z.B.:
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString();
+    const tradeId = id + "_" + Date.now();
+
+    const trade = {
+      id: tradeId,
+      pair: pair,
+      direction: dir,
+      symbol: id,
+      time: timestamp,
+      date: date,
+    };
+
+    removeTradeFromOpenBarByPrefix(id);
+    addOpenTradeToUI(trade);
+
+  } else {
+    result.style.color = "orange";
+    result.textContent = `Bitte Long oder Short auswählen.`;
+
+    if (hideResultTimeout) clearTimeout(hideResultTimeout);
+    hideResultTimeout = setTimeout(() => {
+      result.textContent = "";
+    }, 3000);
+  }
+}
+
+
+function addOpenTradeToUI(trade) {
+  const container = document.getElementById("openTrades");
+
+  // Verhindert Duplikate
+  if (document.getElementById(trade.id)) return;
+
+  const box = document.createElement("div");
+  box.className = "open-trade";
+  box.id = trade.id;
+  box.innerHTML = `
+    <div><strong>${trade.pair}</strong></div>
+    <div class="timestamp">${trade.date} – ${trade.time}</div>
+    <div class="actions">
+      <button onclick="markResult('${trade.symbol}', '${trade.id}', 'success')">✅</button>
+      <button onclick="markResult('${trade.symbol}', '${trade.id}', 'fail')">❌</button>
+    </div>
+  `;
+
+  box.addEventListener("click", () => {
+    box.classList.toggle("expanded");
+  });
+
+  container.prepend(box);
+}
+
+ function resetChoice(id) {
+  // Radiobuttons zurücksetzen
+  const radios = document.getElementsByName(`choice_${id}`);
+  radios.forEach(r => r.checked = false);
+
+  // Ergebnis-Text und Aktionsbuttons verstecken
+  const resultElem = document.getElementById(`result_${id}`);
+  if(resultElem) resultElem.textContent = "";
+
+  const actionsElem = document.getElementById(`actions_${id}`);
+  if(actionsElem) actionsElem.style.display = "none";
+
+  // Erfolgs-/Misserfolgszähler für das Paar zurücksetzen
+  const prevSuccess = tradeData[id]?.success || 0;
+  const prevFail = tradeData[id]?.fail || 0;
+
+  // Tages- & Monatszähler im LocalStorage anpassen
+  const dailySuccess = Math.max(0, parseInt(localStorage.getItem("dailySuccess") || "0") - prevSuccess);
+  const dailyFail = Math.max(0, parseInt(localStorage.getItem("dailyFail") || "0") - prevFail);
+  const monthlySuccess = Math.max(0, parseInt(localStorage.getItem("monthlySuccess") || "0") - prevSuccess);
+  const monthlyFail = Math.max(0, parseInt(localStorage.getItem("monthlyFail") || "0") - prevFail);
+
+  localStorage.setItem("dailySuccess", dailySuccess);
+  localStorage.setItem("dailyFail", dailyFail);
+  localStorage.setItem("monthlySuccess", monthlySuccess);
+  localStorage.setItem("monthlyFail", monthlyFail);
+
+  // Paarzähler zurücksetzen
+  if(tradeData[id]) {
+    tradeData[id].success = 0;
+    tradeData[id].fail = 0;
+  }
+
+  // Speicher aktualisieren
+  saveToStorage();
+
+  // Obere Statistik aktualisieren
+  updateStats(id);
+  updateSummary();
+
+  // Offenen Trade aus unterer Leiste entfernen
+  removeTradeFromOpenBar(id);
+
+  // Offenen Trade aus localStorage löschen
+  localStorage.removeItem("openTrade_" + id);
+  
+  removeTradeFromOpenBarByPrefix(id);
+}
+
+function removeTradeFromOpenBar(tradeId) {
+  const el = document.getElementById(tradeId);
+  if (el) el.remove();
+}
+
+function removeTradeFromOpenBarByPrefix(prefix) {
+  const container = document.getElementById("openTrades");
+  if (!container) return;
+
+  // Finde alle Trades mit id beginnend mit prefix + "_"
+  const toRemove = [];
+  container.querySelectorAll(".open-trade").forEach(el => {
+    if (el.id.startsWith(prefix + "_")) {
+      toRemove.push(el);
+    }
+  });
+
+  // Entferne alle
+  toRemove.forEach(el => el.remove());
+}
+
+    function updateStats(id) {
+      const stats = document.getElementById(`stats_${id}`);
+      const { success, fail } = tradeData[id];
+      stats.innerHTML = `✔️ ${success} | ❌ ${fail}`;
+    }
+
+    function updateAllStats() {
+      for (let id of Object.keys(tradeData)) {
+        updateStats(id);
+      }
+    }
+
+
+
+	function clearUI(id) {
+  const radios = document.getElementsByName(`choice_${id}`);
+  radios.forEach(r => r.checked = false);
+  document.getElementById(`result_${id}`).textContent = "";
+  document.getElementById(`actions_${id}`).style.display = "none";
+}
+    loadFromStorage();
+   pairs.forEach((pair) => {
+  const id = pair.replace(/\W/g, "");
+  if (!tradeData[id]) tradeData[id] = { success: 0, fail: 0 };
+
+  // Wenn vorheriger Trade offen → Anzeigen
+  const savedDir = localStorage.getItem("openTrade_" + id);
+  if (savedDir) {
+    const result = document.getElementById(`result_${id}`);
+    result.textContent = `Du bist ${savedDir.toUpperCase()} bei ${pair} gegangen.`;
+    result.style.color = savedDir === "Long" ? "lime" : "red";
+    document.getElementById(`actions_${id}`).style.display = "block";
+    document.querySelector(`input[name="choice_${id}"][value="${savedDir}"]`).checked = true;
+  }
+
+  updateStats(id);
+});
+function weeklyResetController() {
+  const now = new Date();
+  const todayStr = now.toLocaleDateString();
+  const day = now.getDay(); // Sonntag = 0, Freitag = 5
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const lastWeekReset = localStorage.getItem("lastWeekReset") || "";
+
+  if (hour === 23 && minute === 59 && lastWeekReset !== todayStr) {
+    // 🔔 Freitag 23:59 → nur mit Bestätigung
+    if (day === 5) {
+      const confirmReset = confirm("Willst du die Woche jetzt abschließen und zurücksetzen?");
+      if (!confirmReset) return;
+    }
+
+    // ✅ Sonntag 23:59 → automatisch
+    if (day === 0 || day === 5) {
+      const totalSuccess = Object.values(tradeData).reduce((sum, d) => sum + (d.success || 0), 0);
+      const totalFail = Object.values(tradeData).reduce((sum, d) => sum + (d.fail || 0), 0);
+
+      const monthSuccess = parseInt(localStorage.getItem("monthlySuccess") || "0") + totalSuccess;
+      const monthFail = parseInt(localStorage.getItem("monthlyFail") || "0") + totalFail;
+      localStorage.setItem("monthlySuccess", monthSuccess);
+      localStorage.setItem("monthlyFail", monthFail);
+
+      for (let id in tradeData) {
+        tradeData[id].success = 0;
+        tradeData[id].fail = 0;
+      }
+
+      localStorage.setItem("lastWeekReset", todayStr);
+      saveToStorage();
+      updateAllStats();
+      updateSummary();
+    }
+  }
+}
+
+setInterval(weeklyResetController, 60000);
+weeklyResetController();
+
+    updateSummary();
+  </script>
+
+<script>
+ const sessionText = document.getElementById("sessionText");
+const progressBar = document.getElementById("progressBar");
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+
+ const sessionColors = {
+  "Sydney": "#3388ff",
+  "Tokyo": "#00aaff",
+  "London": "#ffd700",
+  "New York": "#ff4500",
+  "London Killzone": "#ccff00",
+  "New York Killzone": "#ff8800",
+  "Deadzone": "#333"
+};
+
+const sessions = [
+  { name: "Sydney", start: 1380, end: 480 }, // 23:00 – 08:00
+  { name: "Tokyo", start: 60, end: 600 },    // 01:00 – 10:00
+  { name: "London", start: 540, end: 1020 }, // 09:00 – 17:00
+  { name: "New York", start: 870, end: 1380 }, // 14:30 – 23:00
+  { name: "London Killzone", start: 420, end: 660 }, // 07:00 – 11:00
+  { name: "New York Killzone", start: 810, end: 1020 }, // 13:30 – 17:00
+  { name: "Deadzone", start: 1380, end: 0 } // 23:00 – 00:00
+];
+
+  function getMinutesNow() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
+  function getCurrentSessions(minNow) {
+    return sessions.filter(s => {
+      const start = s.start;
+      const end = s.end;
+      if (start > end) {
+        return minNow >= start || minNow < end;
+      } else {
+        return minNow >= start && minNow < end;
+      }
+    });
+  }
+function getPercentFromMinutes(minute) {
+  return (minute / 1439) * 100;
+}
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x + (Math.random() * 10 - 5);
+    this.y = y + (Math.random() * 10 - 5);
+    this.radius = Math.random() * 2 + 1;
+    this.color = color;
+    this.alpha = 1;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = (Math.random() - 0.5) * 0.2;
+    this.life = 60 + Math.random() * 60;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= 1 / this.life;
+    this.life--;
+    if (this.alpha < 0) this.alpha = 0;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+let particles = [];
+
+function addParticlesAt(percent, color, count = 2) {
+  const x = (canvas.width * percent) / 100;
+  const y = canvas.height / 2;
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle(x, y, color));
+  }
+}
+
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const nowMinutes = getMinutesNow();
+  const activeSessions = getCurrentSessions(nowMinutes);
+
+  activeSessions.forEach(s => {
+    const percent = getPercentFromMinutes(s.start % 1440);
+    const color = sessionColors[s.name] || "#888";
+    addParticlesAt(percent, color, 2);
+  });
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.update();
+    if (p.alpha <= 0 || p.life <= 0) {
+      particles.splice(i, 1);
+    } else {
+      p.draw();
+    }
+  }
+
+  // Glow wenn Sessionstart < 5 Minuten her
+  let glow = false;
+  sessions.forEach(session => {
+    let start = session.start;
+    if (start > session.end) {
+      if (nowMinutes < session.end) start -= 1440;
+    }
+    if (nowMinutes >= start && nowMinutes < start + 5) {
+      glow = true;
+    }
+  });
+  progressBar.style.boxShadow = glow ? "0 0 20px 8px yellow" : "";
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+  function updateGradientBar(colors) {
+    if (colors.length === 0) {
+      progressBar.style.background = "#444";
+      progressBar.style.backgroundImage = "";
+      return;
+    }
+
+    const svg = `
+      <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
+        <defs>
+          <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
+            ${colors.map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`).join("")}
+          </linearGradient>
+        </defs>
+        <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
+      </svg>`;
+    const base64 = btoa(svg);
+    progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
+  }
+  
+  
+
+  function updateRealTimeBar() {
+    const now = new Date();
+    const minutes = getMinutesNow();
+    const percent = (minutes / 1439) * 100;
+    progressBar.style.width = percent + "%";
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const mins = String(now.getMinutes()).padStart(2, '0');
+
+    const activeSessions = getCurrentSessions(minutes);
+    const names = activeSessions.map(s => s.name);
+    const colors = names.map(name => sessionColors[name] || "#666");
+
+    updateGradientBar(colors);
+
+    const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
+    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+  }
+  
+
+  setInterval(updateRealTimeBar, 60000);
+  updateRealTimeBar();
+</script>
+
+<div class="open-bar" id="openTrades"></div>
+</body></html>
