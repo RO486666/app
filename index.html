@@ -238,7 +238,7 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
- #sessionHelp {
+   #sessionHelp {
     position: fixed;
     top: 40px; /* unter der Uhrzeit */
     left: 0;
@@ -256,11 +256,14 @@ body {
     overflow: hidden;
     white-space: nowrap;
   }
+
   #sessionHelp span {
-    position: relative;
     display: inline-block;
-    padding-left: 100vw; /* Start rechts außerhalb */
     white-space: nowrap;
+    position: relative;
+
+    /* Animation mit 20s Dauer (5s rein, 10s Pause, 5s raus) */
+    animation: tickerAnim 20s linear infinite;
   }
 @keyframes tickerScroll {
   0% {
