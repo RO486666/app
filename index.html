@@ -19,19 +19,18 @@
     .stats-box { background: #222; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
 
     .position-bar {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #1c1c1c;
-      padding: 10px;
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      border-top: 2px solid #333;
-    }
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #1c1c1c;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  box-sizing: border-box;
+  z-index: 10000; /* kleiner als Reset-Button */
+}
     .trade-box {
       flex: 0 0 auto;
       box-sizing: border-box;
@@ -198,6 +197,22 @@
   font-weight: bold;
 }
 
+#resetBar {
+  position: fixed;
+  bottom: 60px; /* 60px Abstand, damit er über der Positionsleiste ist */
+  left: 0;
+  width: 100%;
+  background: #cc3333;
+  color: white;
+  text-align: center;
+  padding: 14px 0;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  z-index: 10001; /* höher als Positionsleiste */
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+}
 
     .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border-radius: 10px; display: none; z-index: 1000; width: 90%; max-width: 300px; }
     select, input { padding: 8px; margin-top: 10px; width: 100%; border-radius: 5px; border: none; font-size: 16px; }
