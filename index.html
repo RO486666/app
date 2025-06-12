@@ -186,6 +186,18 @@
       font-style: italic;
       user-select: none;
     }
+	
+.session-details-box {
+  display: none;
+  background: #1a1a1a;
+  padding: 15px;
+  margin: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #eee;
+  text-align: left;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
     .progress-container {
       position: relative;
       background: #111;
@@ -209,6 +221,8 @@
       background-repeat: no-repeat;
       z-index: 2;
     }
+	
+	
   </style>
 </head>
 <body>
@@ -218,7 +232,7 @@
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
-
+<div class="session-details-box" id="sessionDetailsBox"></div>
 <div class="alert-below-header" id="alertBox"></div>
 
 <div class="main">
@@ -571,6 +585,17 @@
   const progressContainer = document.querySelector(".progress-container");
   const alertBox = document.getElementById("alertBox");
   const sessionInfoEl = document.getElementById("sessionInfo");
+  const sessionDetailsBox = document.getElementById("sessionDetailsBox");
+  
+  sessionText.addEventListener("click", () => {
+  sessionDetailsBox.style.display = sessionDetailsBox.style.display === "block" ? "none" : "block";
+});
+
+function formatHM(mins) {
+  const h = Math.floor(mins / 60) % 24;
+  const m = mins % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
 
   const sessionColors = {
     Sydney: "#3388ff",
@@ -763,6 +788,18 @@ window.addEventListener("load", () => {
   }
 
   sessionInfoEl.textContent = infoText;
+  if (activeSessions.length > 0) {
+  const currentSession = activeSessions[0];
+  sessionDetailsBox.innerHTML = `
+    <strong>🟡 ${currentSession.name} Session</strong><br>
+    📅 Start: ${formatHM(currentSession.start)} Uhr<br>
+    🕓 Ende: ${formatHM(currentSession.end)} Uhr<br>
+    ${currentSession.killzone ? `⚠️ Killzone: ${formatHM(currentSession.killzone[0])} – ${formatHM(currentSession.killzone[1])} Uhr<br>` : ""}
+    ℹ️ ${currentSession.info}
+  `;
+} else {
+  sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
+}
 
 const minutesToNext = getMinutesToNextSession(minutes);
 
