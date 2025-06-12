@@ -18,7 +18,7 @@
 
     .stats-box { background: #222; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
 
- .position-bar {
+   .position-bar {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -29,7 +29,7 @@
   gap: 10px;
   overflow-x: auto;
   box-sizing: border-box;
-  z-index: 10001; /* größer als ResetBar */
+  z-index: 10000; /* höher als 9999 */
 }
     .trade-box {
       flex: 0 0 auto;
@@ -40,6 +40,8 @@
       padding: 10px;
       border-radius: 10px;
       min-width: 180px;
+	    position: relative; /* oder ggf. z-index: 10001; */
+  z-index: 10001;     /* höher als resetBar */
     }
 	
 .progress-container {
@@ -106,7 +108,7 @@
   overflow: hidden;
 }
 
-//.progress-bar { (kein nutzen)?
+//.progress-bar { was
   position: absolute;
   top: 0;
   left: 0;
@@ -195,23 +197,6 @@
 .result-value {
   margin-top: 5px;
   font-weight: bold;
-}
-
-#resetBar {
-  position: fixed;
-  bottom: 60px; /* Abstand über der Positionsleiste */
-  left: 0;
-  width: 100%;
-  background: #cc3333;
-  color: white;
-  text-align: center;
-  padding: 14px 0;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  z-index: 10000; /* kleiner als PositionBar */
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
 }
 
 
