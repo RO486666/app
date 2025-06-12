@@ -653,20 +653,34 @@ const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_s
 
 function requestNotificationPermission() {
   if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        console.log("Notifications erlaubt");
+      }
+    });
   }
 }
 
-function showNotification(title, body) {
+function showNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted") {
-    const notification = new Notification(title, {
-      body: body,
-      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png', // Icon, optional
-      silent: false,
-    });
-    // Notification automatisch schließen nach 5 Sekunden
-    setTimeout(() => notification.close(), 5000);
+    const options = {
+      body: message,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+      vibrate: [200, 100, 200],  // Vibrieren (wenn Handy das unterstützt)
+      tag: "session-alert"
+    };
+    const notification = new Notification(title, options);
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
   }
+}
+
+// Beispiel: Session-Wechsel Alarm
+function triggerSessionAlert() {
+  alertSound.play();           // Ton abspielen (optional)
+  showNotification("Trade App", "⚠️ Session-Wechsel in 5 Minuten!");
 }
 
   function showAlert(msg) {
@@ -676,7 +690,6 @@ function showNotification(title, body) {
     alertBox.innerHTML = "";
     alertBox.appendChild(el);
     setTimeout(() => (alertBox.innerHTML = ""), 5000);
-	setTimeout(() => (alertBox.innerHTML = ""), 5000);
   // Spiel Sound ab
   alertSound.play();
   // Push Notification zeigen
