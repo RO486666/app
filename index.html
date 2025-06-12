@@ -252,28 +252,10 @@
   </div>
   <div class="popup" id="tradePopup">
     <h3>Trade eingeben</h3>
-   <select id="pairSelect">
-  <option value="">Paar wählen</option>
-  <option value="AUD/CAD">AUD/CAD</option>
-  <option value="AUD/JPY">AUD/JPY</option>
-  <option value="AUD/USD">AUD/USD</option>
-  <option value="CHF/JPY">CHF/JPY</option>
-  <option value="EUR/AUD">EUR/AUD</option>
-  <option value="EUR/CAD">EUR/CAD</option>
-  <option value="EUR/GBP">EUR/GBP</option>
-  <option value="EUR/JPY">EUR/JPY</option>
-  <option value="EUR/USD">EUR/USD</option>
-  <option value="GBP/AUD">GBP/AUD</option>
-  <option value="GBP/JPY">GBP/JPY</option>
-  <option value="GBP/USD">GBP/USD</option>
-  <option value="NZD/JPY">NZD/JPY</option>
-  <option value="NZD/USD">NZD/USD</option>
-  <option value="USD/CAD">USD/CAD</option>
-  <option value="USD/CHF">USD/CHF</option>
-  <option value="USD/JPY">USD/JPY</option>
-  <option value="XAG/USD">XAG/USD</option>
-  <option value="XAU/USD">XAU/USD</option>
-</select>
+  <label>Paare auswählen (mehrere möglich):</label><br>
+  <div id="pairMultiSelect" style="max-height: 150px; overflow-y: auto; background: #222; padding: 5px; border-radius: 6px; color: white; margin-bottom: 10px;">
+    <!-- Checkboxen werden hier per JS rein -->
+  </div>
     <select id="directionSelect">
       <option value="">Richtung wählen</option>
       <option value="Long">Long</option>
@@ -316,66 +298,88 @@
 
   <script>
 const pairs = [
-  "EUR/USD",
-  "USD/JPY",
-  "GBP/USD",
-  "USD/CHF",
-  "AUD/USD",
-  "USD/CAD",
-  "NZD/USD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "GBP/JPY",
+  "AUD/CAD",
   "AUD/JPY",
+  "AUD/USD",
   "CHF/JPY",
   "EUR/AUD",
   "EUR/CAD",
+  "EUR/GBP",
+  "EUR/JPY",
+  "EUR/USD",
   "GBP/AUD",
-  "AUD/CAD",
+  "GBP/JPY",
+  "GBP/USD",
   "NZD/JPY",
-  "XAU/USD",
-  "XAG/USD"
+  "NZD/USD",
+  "USD/CAD",
+  "USD/CHF",
+  "USD/JPY",
+  "XAG/USD",
+  "XAU/USD"
 ];
 
-// alphabetisch sortieren
-const pairsSorted = pairs.slice().sort((a,b) => a.localeCompare(b));
+// Checkboxen für Mehrfachauswahl generieren
+function initMultiPairSelect() {
+  const container = document.getElementById("pairMultiSelect");
+  container.innerHTML = "";
 
-function initTradePopup() {
-  // Select befüllen
-  const pairSelect = document.getElementById("pairSelect");
-  // erst alle Options außer der ersten entfernen
-  while (pairSelect.options.length > 1) {
-    pairSelect.remove(1);
-  }
-  pairsSorted.forEach(pair => {
-    const option = document.createElement("option");
-    option.value = pair;
-    option.textContent = pair;
-    pairSelect.appendChild(option);
-  });
-
-  // Checkboxen im Filter-Container befüllen
-  const toggleContainer = document.getElementById("pairToggleContainer");
-  toggleContainer.innerHTML = ''; // vorher leeren
-
-  pairsSorted.forEach(pair => {
+  pairs.forEach(pair => {
     const label = document.createElement("label");
-    label.style.marginRight = "10px";
+    label.style.marginRight = "15px";
     label.style.cursor = "pointer";
     label.style.userSelect = "none";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.value = pair;
-    checkbox.checked = true;
-    checkbox.addEventListener("change", updateVisiblePairs);
+    checkbox.checked = false;
 
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode(" " + pair));
-    toggleContainer.appendChild(label);
+    container.appendChild(label);
   });
 }
 
+// Fügt für jedes ausgewählte Paar einen Trade hinzu
+function addTrades() {
+  const container = document.getElementById("pairMultiSelect");
+  const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
+  const direction = document.getElementById("directionSelect").value;
+
+  if (!direction) {
+    alert("Bitte wähle eine Richtung!");
+    return;
+  }
+  if (checkboxes.length === 0) {
+    alert("Bitte wähle mindestens ein Paar aus!");
+    return;
+  }
+
+  checkboxes.forEach(box => {
+    const pair = box.value;
+    const now = new Date();
+    const tradeObj = {
+      id: Date.now() + Math.random(),
+      pair: pair,
+      direction: direction,
+      date: now,
+      pnl: null,
+      resultType: null
+    };
+    tradesData.push(tradeObj);
+    renderTradeBox(tradeObj);
+  });
+
+  saveTrades();
+  hidePopups();
+}
+
+// Beim Laden einmal aufrufen
+window.addEventListener("load", () => {
+  initMultiPairSelect();
+  loadTrades();
+});
 
 
 // Filtert die sichtbaren Trades basierend auf Checkboxen
