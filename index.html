@@ -5,32 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trade App Layout</title>
   <style>
-    body { background: #111; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-    .header { background: #1c1c1c; padding: 10px; text-align: center; font-size: 18px; }
-    .session-bar { height: 10px; background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300); margin-top: 5px; }
-    .main { padding: 20px; padding-bottom: 120px; text-align: center; }
-
-    .big-btn { padding: 20px 30px; font-size: 22px; font-weight: bold; border-radius: 15px; border: none; background-color: #00aa44; color: white; margin: 20px auto; width: 80%; max-width: 300px; }
-
-    .tab-buttons { text-align: center; margin-top: 20px; }
-    .tab-buttons button { background: #333; color: white; padding: 10px 15px; border-radius: 5px; margin: 5px; border: none; font-weight: bold; cursor: pointer; }
-    .tab-buttons .active { background: #0077cc; }
-
-    .stats-box { background: #222; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
-
+     body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #1c1c1c;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .session-bar {
+      height: 10px;
+      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
+      margin-top: 5px;
+    }
+    .main {
+      padding: 20px;
+      padding-bottom: 120px; /* Platz für Positionsleiste */
+      text-align: center;
+    }
+    .big-btn {
+      padding: 20px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 15px;
+      border: none;
+      background-color: #00aa44;
+      color: white;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 300px;
+    }
+    .tab-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .tab-buttons button {
+      background: #333;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin: 5px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tab-buttons .active {
+      background: #0077cc;
+    }
+    .stats-box {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: left;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #resetBtn {
+      background: #cc3333;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      font-weight: bold;
+      margin: 20px auto 30px auto;
+      cursor: pointer;
+      display: block;
+      user-select: none;
+    }
     .position-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #1c1c1c;
-  padding: 10px;
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  box-sizing: border-box;
-  z-index: 10000; /* fest am Bildschirm unten */
-}
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #1c1c1c;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      box-sizing: border-box;
+      z-index: 10000; /* über anderen Elementen */
+    }
     .trade-box {
       flex: 0 0 auto;
       box-sizing: border-box;
@@ -40,176 +103,70 @@
       padding: 10px;
       border-radius: 10px;
       min-width: 180px;
+      color: white;
+      user-select: none;
+      z-index: 10001; /* über reset Button */
+      position: relative;
     }
-	
-.progress-container {
-  position: relative;
-  background: #111;
-  height: 24px;
-  width: 100%;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  overflow: visible; /* damit der Glow nicht abgeschnitten wird */
-
-  /* Leuchtender Ring außen */
-    box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0);
-  border-radius: 6px;
-}
-
-.alert-below-header {
-  position: relative;
-  width: 100%;
-  height: 30px;
-  overflow: hidden;
-  background: transparent;
-}
-
-.alert-message {
-  position: absolute;
-  white-space: nowrap;
-  top: 0;
-  color: black;
-  background: #ffaa00;
-  padding: 5px 20px;
-  border-radius: 0 0 10px 10px;
-  animation: slideAcross 5s linear forwards;
-  font-weight: bold;
-}
-
-@keyframes slideAcross {
-  0%   { left: 100%; }
-  10%  { left: 0%; }
-  90%  { left: 0%; }
-  100% { left: -100%; }
-}
-
-
-
-.ticker {
-  width: 100%;
-  background: #222;           /* dunkler Hintergrund */
-  color: #00ff99;             /* Schriftfarbe (z.B. knalliges Grün) */
-  padding: 10px;
-  text-align: center;         /* Text horizontal zentrieren */
-  font-size: 18px;
-  font-weight: bold;
-  font-family: Arial, sans-serif;
-  user-select: none;
-}
-.progress-container {
-  position: relative;
-  background: #111;
-  height: 24px;
-  width: 100%;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  overflow: hidden;
-}
-
-//.progress-bar { was
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%; /* wird per JS gesetzt */
-  background: #222;
-  z-index: 2;
-  transition: width 1s linear;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-@keyframes slideAcross {
-  0%   { left: 100%; }
-  40%  { left: 50%; transform: translateX(-50%); } /* mittig */
-  70%  { left: 50%; transform: translateX(-50%); } /* steht in der Mitte */
-  100% { left: 200%; } /* raus nach rechts */
-}
-
-.alert-message {
-  position: absolute;
-  white-space: nowrap;
-  top: 0;
-  color: black;
-  background: #ffaa00;
-  padding: 5px 20px;
-  border-radius: 0 0 10px 10px;
-  animation: slideAcross 5s ease forwards;
-  font-weight: bold;
-  transform: translateX(0); /* Start ohne Offset */
-}
-
-.session-info {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #aaf0aa; /* angenehmes Grün für Tipps */
-  text-align: center;
-  font-style: italic;
-  user-select: none;
-}
-
-.open-bar {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: #222;
-  border-radius: 10px 0 0 10px;
-  box-shadow: -3px 0 10px rgba(0,0,0,0.5);
-  padding: 10px;
-  z-index: 10000;
-}
-
-.open-bar {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 320px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: #222;
-  border-radius: 10px 0 0 10px;
-  box-shadow: -3px 0 10px rgba(0,0,0,0.5);
-  padding: 10px;
-  z-index: 10000;
-  font-family: Arial, sans-serif;
-}
-.trade-box {
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  color: white;
-  user-select: none;
-}
-
-.trade-box.Long {
-  background-color: #228B22; /* grün */
-}
-
-.trade-box.Short {
-  background-color: #B22222; /* rot */
-}
-
-.result-value {
-  margin-top: 5px;
-  font-weight: bold;
-}
-
-#resetBtn {
-  position: relative; /* kein fixed */
-  z-index: auto;     /* kein spezieller Wert */
-}
-
-
-    .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border-radius: 10px; display: none; z-index: 1000; width: 90%; max-width: 300px; }
-    select, input { padding: 8px; margin-top: 10px; width: 100%; border-radius: 5px; border: none; font-size: 16px; }
-    .popup button { margin-top: 10px; padding: 10px; width: 100%; font-size: 16px; }
+    .trade-box.Long {
+      background-color: #228B22; /* grün */
+    }
+    .trade-box.Short {
+      background-color: #B22222; /* rot */
+    }
+    .result-value {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      z-index: 1000;
+      width: 90%;
+      max-width: 300px;
+      color: white;
+    }
+    label {
+      cursor: pointer;
+      user-select: none;
+      margin-right: 15px;
+      display: inline-block;
+    }
+    #pairMultiSelect {
+      max-height: 150px;
+      overflow-y: auto;
+      background: #222;
+      padding: 5px;
+      border-radius: 6px;
+      color: white;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    select, input {
+      padding: 8px;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    .popup button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-// Copyride Roman Kleis
+
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 <div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
 
@@ -218,49 +175,48 @@
 </div>
 
 <div class="alert-below-header" id="alertBox"></div>
-  
-  
-  
-  <div class="main">
-    <button class="big-btn" onclick="showPopup()">+ Trade starten</button>
 
-    <div class="tab-buttons">
-      <button class="btn active" onclick="switchTab('tag')">Tag</button>
-      <button class="btn" onclick="switchTab('woche')">Woche</button>
-      <button class="btn" onclick="switchTab('monat')">Monat</button>
-    </div>
-    <div class="stats-box" id="tagBox">
-      <h3>📅 Tagesauswertung</h3>
-      <p>Gewinne: 0 | Verluste: 0</p>
-      <p>Gesamt PnL: 0 €</p>
-      <p>Profitfaktor: –</p>
-      <p>Durchschnitt Gewinn/Verlust: –</p>
-    </div>
+<div class="main">
+  <button class="big-btn" onclick="showPopup()">+ Trade starten</button>
 
-
-    <div class="stats-box" id="wocheBox" style="display:none">
-      <h3>📈 Wochenauswertung</h3>
-      <p>Gewinne: 0 | Verluste: 0</p>
-      <p>Gesamt PnL: 0 €</p>
-      <p>Profitfaktor: –</p>
-      <p>Durchschnitt Gewinn/Verlust: –</p>
-    </div>
-
-    <div class="stats-box" id="monatBox" style="display:none">
-      <h3>📊 Monatsauswertung</h3>
-      <p>Gewinne: 0 | Verluste: 0</p>
-      <p>Gesamt PnL: 0 €</p>
-      <p>Profitfaktor: –</p>
-      <p>Durchschnitt Gewinn/Verlust: –</p>
-    </div>
+  <div class="tab-buttons">
+    <button class="btn active" onclick="switchTab('tag')">Tag</button>
+    <button class="btn" onclick="switchTab('woche')">Woche</button>
+    <button class="btn" onclick="switchTab('monat')">Monat</button>
   </div>
- <div class="popup" id="tradePopup">
+
+  <div class="stats-box" id="tagBox">
+    <h3>📅 Tagesauswertung</h3>
+    <p>Gewinne: 0 | Verluste: 0</p>
+    <p>Gesamt PnL: 0 €</p>
+    <p>Profitfaktor: –</p>
+    <p>Durchschnitt Gewinn/Verlust: –</p>
+  </div>
+
+  <div class="stats-box" id="wocheBox" style="display:none">
+    <h3>📈 Wochenauswertung</h3>
+    <p>Gewinne: 0 | Verluste: 0</p>
+    <p>Gesamt PnL: 0 €</p>
+    <p>Profitfaktor: –</p>
+    <p>Durchschnitt Gewinn/Verlust: –</p>
+  </div>
+
+  <div class="stats-box" id="monatBox" style="display:none">
+    <h3>📊 Monatsauswertung</h3>
+    <p>Gewinne: 0 | Verluste: 0</p>
+    <p>Gesamt PnL: 0 €</p>
+    <p>Profitfaktor: –</p>
+    <p>Durchschnitt Gewinn/Verlust: –</p>
+  </div>
+
+  <button id="resetBtn" onclick="resetAll()">Alles zurücksetzen</button>
+</div>
+
+<div class="popup" id="tradePopup">
   <h3>Trade eingeben</h3>
 
   <label>Paare auswählen (mehrere möglich):</label><br>
-  <div id="pairMultiSelect" style="max-height: 150px; overflow-y: auto; background: #222; padding: 5px; border-radius: 6px; color: white; margin-bottom: 10px;">
-    <!-- Checkboxen werden hier per JS rein -->
-  </div>
+  <div id="pairMultiSelect"></div>
 
   <label for="directionSelect">Richtung wählen:</label>
   <select id="directionSelect" style="width: 100%; margin-top: 5px;">
@@ -269,33 +225,18 @@
     <option value="Short">Short</option>
   </select>
 
-  <button onclick="addTrades()" style="margin-top: 15px; width: 100%;">Trades speichern</button>
+  <button onclick="addTrades()">Trades speichern</button>
 </div>
-  <div class="popup" id="resultPopup">
-    <h3>Ergebnis</h3>
-    <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50">
-    <button onclick="saveResult()">Speichern</button>
-  </div>
-  
- 
-<!-- Reset-Button jetzt hier -->
-<button id="resetBtn" onclick="resetAll()" style="
-  background: #cc3333;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  font-weight: bold;
-  margin: 10px auto 30px auto;
-  cursor: pointer;
-  display: block;
-">Alles zurücksetzen</button>
 
-  <div class="position-bar" id="positionBar"></div>
+<div class="popup" id="resultPopup">
+  <h3>Ergebnis</h3>
+  <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50">
+  <button onclick="saveResult()">Speichern</button>
+</div>
 
-  <script>
+<div class="position-bar" id="positionBar"></div>
+
+<script>
 const pairs = [
   "AUD/CAD",
   "AUD/JPY",
@@ -318,7 +259,6 @@ const pairs = [
   "XAU/USD"
 ];
 
-// Checkboxen für Mehrfachauswahl generieren
 function initMultiPairSelect() {
   const container = document.getElementById("pairMultiSelect");
   container.innerHTML = "";
@@ -340,7 +280,6 @@ function initMultiPairSelect() {
   });
 }
 
-// Fügt für jedes ausgewählte Paar einen Trade hinzu
 function addTrades() {
   const container = document.getElementById("pairMultiSelect");
   const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
@@ -377,10 +316,10 @@ function addTrades() {
 function resetAll() {
   if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
 
-  tradesData.length = 0; // Array leeren
-  localStorage.removeItem("tradesData"); // Speicher löschen
-  document.getElementById("positionBar").innerHTML = ""; // UI leeren
-  updateStats(); // Statistik zurücksetzen (alles auf 0)
+  tradesData.length = 0;
+  localStorage.removeItem("tradesData");
+  document.getElementById("positionBar").innerHTML = "";
+  updateStats();
 }
 
 function isSameDay(date1, date2) {
@@ -391,7 +330,7 @@ function isSameDay(date1, date2) {
 
 function isSameWeek(date1, date2) {
   const startOfWeek = new Date(date2);
-  startOfWeek.setDate(date2.getDate() - date2.getDay()); // Sonntag = 0
+  startOfWeek.setDate(date2.getDate() - date2.getDay());
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
   return date1 >= startOfWeek && date1 <= endOfWeek;
@@ -406,13 +345,12 @@ const tradesData = [];
 let activeBox = null;
 let resultType = "win";
 
-// Lädt gespeicherte Trades aus localStorage und rendert sie
 function loadTrades() {
   const saved = localStorage.getItem("tradesData");
   if (saved) {
     const arr = JSON.parse(saved);
-    tradesData.length = 0; // Sicherstellen, dass kein doppeltes Laden entsteht
-    document.getElementById("positionBar").innerHTML = ""; // Alte Boxes weg
+    tradesData.length = 0;
+    document.getElementById("positionBar").innerHTML = "";
     arr.forEach(trade => {
       trade.date = new Date(trade.date);
       tradesData.push(trade);
@@ -421,15 +359,13 @@ function loadTrades() {
       }
     });
   }
-  updateStats(); // Statistik aktualisieren
+  updateStats();
 }
 
-// Speichert alle Trades in localStorage
 function saveTrades() {
   localStorage.setItem("tradesData", JSON.stringify(tradesData));
 }
 
-// Rendert eine Trade-Box in der Positionsleiste
 function renderTradeBox(tradeObj) {
   const box = document.createElement("div");
   box.className = "trade-box " + tradeObj.direction;
@@ -453,7 +389,6 @@ function renderTradeBox(tradeObj) {
   document.getElementById("positionBar").appendChild(box);
 }
 
-// Zeigt Popup für Ergebnis-Eingabe an
 function markResult(btn, type) {
   activeBox = btn.closest(".trade-box");
   resultType = type;
@@ -461,7 +396,6 @@ function markResult(btn, type) {
   document.getElementById("resultPopup").style.display = "block";
 }
 
-// Ergebnis speichern und Statistik aktualisieren
 function saveResult() {
   let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
   if (pnlRaw === "") return;
@@ -480,16 +414,14 @@ function saveResult() {
     trade.resultType = resultType;
   }
 
-  // Trade aus der Anzeige entfernen, wenn Ergebnis eingetragen
   activeBox.remove();
 
-  saveTrades();  // Speichern nach Änderung
+  saveTrades();
 
   hidePopups();
   updateStats();
 }
 
-// Statistik für Tag, Woche, Monat aktualisieren
 function updateStats() {
   const now = new Date();
 
@@ -539,21 +471,18 @@ function updateStats() {
     return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
   }
 
-  // Tag
   const tagBox = document.getElementById("tagBox");
   tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
   tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
   tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
   tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
 
-  // Woche
   const wocheBox = document.getElementById("wocheBox");
   wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
   wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
   wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
   wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
 
-  // Monat
   const monatBox = document.getElementById("monatBox");
   monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
   monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
@@ -561,7 +490,6 @@ function updateStats() {
   monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
 }
 
-// Tab wechseln Funktion
 function switchTab(tab) {
   document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.stats-box').forEach(box => box.style.display = 'none');
@@ -571,7 +499,6 @@ function switchTab(tab) {
   });
 }
 
-// Popups ein/ausblenden
 function showPopup() {
   document.getElementById("tradePopup").style.display = "block";
 }
@@ -581,67 +508,11 @@ function hidePopups() {
   document.getElementById("resultPopup").style.display = "none";
 }
 
-// Init Multi-Pair Checkboxen beim Laden
-function initMultiPairSelect() {
-  const container = document.getElementById("pairMultiSelect");
-  container.innerHTML = "";
-
-  pairs.forEach(pair => {
-    const label = document.createElement("label");
-    label.style.marginRight = "15px";
-    label.style.cursor = "pointer";
-    label.style.userSelect = "none";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = pair;
-    checkbox.checked = false;
-
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + pair));
-    container.appendChild(label);
-  });
-}
-
-// Fügt für jedes ausgewählte Paar einen Trade hinzu
-function addTrades() {
-  const container = document.getElementById("pairMultiSelect");
-  const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
-  const direction = document.getElementById("directionSelect").value;
-
-  if (!direction) {
-    alert("Bitte wähle eine Richtung!");
-    return;
-  }
-  if (checkboxes.length === 0) {
-    alert("Bitte wähle mindestens ein Paar aus!");
-    return;
-  }
-
-  checkboxes.forEach(box => {
-    const pair = box.value;
-    const now = new Date();
-    const tradeObj = {
-      id: Date.now() + Math.random(),
-      pair: pair,
-      direction: direction,
-      date: now,
-      pnl: null,
-      resultType: null
-    };
-    tradesData.push(tradeObj);
-    renderTradeBox(tradeObj);
-  });
-
-  saveTrades();
-  hidePopups();
-}
-
-// Seite initialisieren
 window.addEventListener("load", () => {
   initMultiPairSelect();
   loadTrades();
 });
+  </script>
   </script>
 
 x<script>
