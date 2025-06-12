@@ -724,15 +724,45 @@ window.addEventListener("load", () => {
 
     const hours = String(now.getHours()).padStart(2, "0");
     const mins = String(now.getMinutes()).padStart(2, "0");
+	
     const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
     sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-    if (activeSessions.length > 0) {
-      sessionInfoEl.textContent = activeSessions[0].info || "Keine weiteren Infos.";
-    } else {
-      sessionInfoEl.textContent = "Keine aktive Session – Markt ruhig.";
-    }
+  // ✨ Session Info Textlogik
+  const minuteNow = now.getHours() * 60 + now.getMinutes();
+  const name = activeSessions.length > 0 ? activeSessions[0].name : "";
 
-    const minutesToNext = getMinutesToNextSession(minutes);
+  let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
+
+  if (name === "Tokyo") {
+    if (minuteNow < 180) infoText = "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler.";
+    else if (minuteNow < 360) infoText = "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY.";
+    else infoText = "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
+  }
+  else if (name === "London Killzone") {
+    infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
+  }
+  else if (name === "London") {
+    if (minuteNow < 720) infoText = "💷 London Session – Markt in Bewegung, europäische Daten entscheidend.";
+    else if (minuteNow < 840) infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
+    else infoText = "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
+  }
+  else if (name === "New York Killzone") {
+    infoText = "🔥 New York Killzone – starke Reaktionen auf US-News & Breakouts möglich.";
+  }
+  else if (name === "New York") {
+    if (minuteNow < 1080) infoText = "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich.";
+    else if (minuteNow < 1200) infoText = "📉 New York flacht ab – Markt beruhigt sich langsam.";
+    else infoText = "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
+  }
+  else if (minuteNow >= 720 && minuteNow < 840) {
+    infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
+  }
+  else if (minuteNow >= 1380 || minuteNow < 60) {
+    infoText = "🌙 Nacht-Deadzone – Markt ist extrem ruhig, keine relevanten Bewegungen.";
+  }
+
+  sessionInfoEl.textContent = infoText;
+
 
     if (minutesToNext <= 5 && minutesToNext > 0) {
       if (lastAlertSession !== sessionInfoText && sessionInfoText !== "Session-Zeit: 00:00") {
