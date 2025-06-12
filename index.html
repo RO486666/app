@@ -316,44 +316,40 @@
 
   <script>
      // Hilfsfunktionen für Datum-Vergleich
-	 
-	 const pairs = [
-  "EUR/USD",
-  "USD/JPY",
-  "GBP/USD",
-  "USD/CHF",
-  "AUD/USD",
-  "USD/CAD",
-  "NZD/USD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "GBP/JPY",
-  "AUD/JPY",
-  "CHF/JPY",
-  "EUR/AUD",
-  "EUR/CAD",
-  "GBP/AUD",
-  "AUD/CAD",
-  "NZD/JPY",
-  "XAU/USD",
-  "XAG/USD"
-];
 
 // Befüllt Select und Checkboxen beim Laden
 
 const sortedPairs = pairs.slice().sort((a, b) => a.localeCompare(b));
 
 function initTradePopup() {
-  const pairSelect = document.getElementById("pairSelect");
-  pairs.forEach(pair => {
-    const opt = document.createElement("option");
-    opt.value = pair;
-    opt.textContent = pair;
-    pairSelect.appendChild(opt);
-  });
+  const pairs = [
+    "EUR/USD",
+    "USD/JPY",
+    "GBP/USD",
+    "USD/CHF",
+    "AUD/USD",
+    "USD/CAD",
+    "NZD/USD",
+    "EUR/GBP",
+    "EUR/JPY",
+    "GBP/JPY",
+    "AUD/JPY",
+    "CHF/JPY",
+    "EUR/AUD",
+    "EUR/CAD",
+    "GBP/AUD",
+    "AUD/CAD",
+    "NZD/JPY",
+    "XAU/USD",
+    "XAG/USD"
+  ];
+
+  const pairsSorted = pairs.slice().sort((a, b) => a.localeCompare(b));
 
   const toggleContainer = document.getElementById("pairToggleContainer");
-  pairs.forEach(pair => {
+  toggleContainer.innerHTML = ''; // Vorher alles leeren
+
+  pairsSorted.forEach(pair => {
     const label = document.createElement("label");
     label.style.marginRight = "10px";
     label.style.cursor = "pointer";
@@ -361,15 +357,7 @@ function initTradePopup() {
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.value = pair;
-    checkbox.checked = true; // Standard: alle sichtbar
-    checkbox.addEventListener("change", updateVisiblePairs);
-
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + pair));
-    toggleContainer.appendChild(label);
-  });
-}
+    ch
 
 // Filtert die sichtbaren Trades basierend auf Checkboxen
 function updateVisiblePairs() {
