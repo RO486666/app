@@ -315,44 +315,50 @@
   <div class="position-bar" id="positionBar"></div>
 
   <script>
-     // Hilfsfunktionen für Datum-Vergleich
-	 
 const pairs = [
-  "AUD/CAD",
-  "AUD/JPY",
+  "EUR/USD",
+  "USD/JPY",
+  "GBP/USD",
+  "USD/CHF",
   "AUD/USD",
+  "USD/CAD",
+  "NZD/USD",
+  "EUR/GBP",
+  "EUR/JPY",
+  "GBP/JPY",
+  "AUD/JPY",
   "CHF/JPY",
   "EUR/AUD",
   "EUR/CAD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "EUR/USD",
   "GBP/AUD",
-  "GBP/JPY",
-  "GBP/USD",
+  "AUD/CAD",
   "NZD/JPY",
-  "NZD/USD",
-  "USD/CAD",
-  "USD/CHF",
-  "USD/JPY",
-  "XAG/USD",
-  "XAU/USD"
+  "XAU/USD",
+  "XAG/USD"
 ];
 
-// Befüllt Select und Checkboxen beim Laden
-
+// alphabetisch sortieren
+const pairsSorted = pairs.slice().sort((a,b) => a.localeCompare(b));
 
 function initTradePopup() {
+  // Select befüllen
   const pairSelect = document.getElementById("pairSelect");
-  pairs.forEach(pair => {
-    const opt = document.createElement("option");
-    opt.value = pair;
-    opt.textContent = pair;
-    pairSelect.appendChild(opt);
+  // erst alle Options außer der ersten entfernen
+  while (pairSelect.options.length > 1) {
+    pairSelect.remove(1);
+  }
+  pairsSorted.forEach(pair => {
+    const option = document.createElement("option");
+    option.value = pair;
+    option.textContent = pair;
+    pairSelect.appendChild(option);
   });
 
+  // Checkboxen im Filter-Container befüllen
   const toggleContainer = document.getElementById("pairToggleContainer");
-  pairs.forEach(pair => {
+  toggleContainer.innerHTML = ''; // vorher leeren
+
+  pairsSorted.forEach(pair => {
     const label = document.createElement("label");
     label.style.marginRight = "10px";
     label.style.cursor = "pointer";
@@ -361,7 +367,7 @@ function initTradePopup() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.value = pair;
-    checkbox.checked = true; // Standard: alle sichtbar
+    checkbox.checked = true;
     checkbox.addEventListener("change", updateVisiblePairs);
 
     label.appendChild(checkbox);
@@ -369,6 +375,8 @@ function initTradePopup() {
     toggleContainer.appendChild(label);
   });
 }
+
+
 
 // Filtert die sichtbaren Trades basierend auf Checkboxen
 function updateVisiblePairs() {
