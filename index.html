@@ -216,29 +216,43 @@
   user-select: none;
   cursor: pointer;
 }
-    .progress-container {
-      position: relative;
-      background: #111;
-      height: 24px;
-      width: 100%;
-      border-top: 1px solid #333;
-      border-bottom: 1px solid #333;
-      overflow: hidden;
-      border-radius: 6px;
-      margin-top: 5px;
-    }
-    .progress-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%; /* wird per JS gesetzt */
-      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-      transition: width 1s linear;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      z-index: 2;
-    }
+   .progress-container {
+  position: relative;
+  background: #111;
+  height: 24px;
+  width: 100vw;           /* auf volle Viewportbreite */
+  max-width: 100vw;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+  border-radius: 6px;
+  margin-top: 5px;
+  box-sizing: border-box; /* wichtig für Padding und Border */
+}
+
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%; /* wird per JS gesetzt */
+  background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
+  transition: width 1s linear;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 2;
+}
+	
+	.session-details-box ul {
+  padding-left: 20px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  list-style-type: disc;
+}
+
+.session-details-box li {
+  margin-bottom: 4px;
+}
 	
 	
   </style>
@@ -286,7 +300,17 @@
     <p>Durchschnitt Gewinn/Verlust: –</p>
   </div>
 
-  <button id="resetBtn" onclick="resetAll()">Alles zurücksetzen</button>
+<div id="resetPopup" class="popup" style="display: none;">
+  <h3>Was möchtest du zurücksetzen?</h3>
+  <button id="resetDay">📅 Tag zurücksetzen</button>
+  <button id="resetWeek">📈 Woche zurücksetzen</button>
+  <button id="resetMonth">📊 Monat zurücksetzen</button>
+  <button id="resetAllBtn" style="background: crimson;">Alles löschen</button>
+  <button id="cancelReset" style="background:#555;">Abbrechen</button>
+</div>
+ <button id="resetBtn">Alles zurücksetzen</button>
+  
+
 </div>
 
 <div class="popup" id="tradePopup">
@@ -591,11 +615,89 @@
     document.getElementById("resultPopup").style.display = "none";
   }
   
-  window.addEventListener("load", () => {
-    initMultiPairSelect();
-    loadTrades();
-  });
+  function resetDay() {
+  // Beispiel: Nur heutige Trades löschen
+  const today = new Date();
+  const remaining = tradesData.filter(t => !isSameDay(t.date, today));
+  tradesData.length = 0;
+  tradesData.push(...remaining);
+  saveTrades();
+  loadTrades();
+}
 
+function resetWeek() {
+  const today = new Date();
+  const remaining = tradesData.filter(t => !isSameWeek(t.date, today));
+  tradesData.length = 0;
+  tradesData.push(...remaining);
+  saveTrades();
+  loadTrades();
+}
+
+function resetMonth() {
+  const today = new Date();
+  const remaining = tradesData.filter(t => !isSameMonth(t.date, today));
+  tradesData.length = 0;
+  tradesData.push(...remaining);
+  saveTrades();
+  loadTrades();
+}
+  
+ window.addEventListener("load", () => {
+  initMultiPairSelect();
+  loadTrades();
+
+  const resetBtn = document.getElementById("resetBtn");
+  const resetDayBtn = document.getElementById("resetDay");
+  const resetWeekBtn = document.getElementById("resetWeek");
+  const resetMonthBtn = document.getElementById("resetMonth");
+  const resetAllBtn = document.getElementById("resetAllBtn");
+  const cancelResetBtn = document.getElementById("cancelReset");
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      document.getElementById("resetPopup").style.display = "block";
+    });
+  }
+
+  if (resetDayBtn) {
+    resetDayBtn.addEventListener("click", () => {
+      resetDay();
+      document.getElementById("resetPopup").style.display = "none";
+    });
+  }
+
+  if (resetWeekBtn) {
+    resetWeekBtn.addEventListener("click", () => {
+      resetWeek();
+      document.getElementById("resetPopup").style.display = "none";
+    });
+  }
+
+  if (resetMonthBtn) {
+    resetMonthBtn.addEventListener("click", () => {
+      resetMonth();
+      document.getElementById("resetPopup").style.display = "none";
+    });
+  }
+
+  if (resetAllBtn) {
+    resetAllBtn.addEventListener("click", () => {
+      resetAll();
+      document.getElementById("resetPopup").style.display = "none";
+    });
+  }
+
+  if (cancelResetBtn) {
+    cancelResetBtn.addEventListener("click", () => {
+      document.getElementById("resetPopup").style.display = "none";
+    });
+  }
+});
+  
+  </script>
+  
+<script>
   // Session Bar JS
 
   const sessionText = document.getElementById("sessionText");
@@ -625,15 +727,83 @@ function formatHM(mins) {
     Deadzone: "#333",
   };
 
-  const sessions = [
-      { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien." },
-  { name: "Tokyo", start: 60, end: 600, info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich." },
-  { name: "London", start: 540, end: 1020, info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten." },
-  { name: "New York", start: 870, end: 1380, info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich." },
-  { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase vor London-Open, Stop-Hunts möglich." },
-  { name: "New York Killzone", start: 810, end: 1020, info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader." },
-  { name: "Deadzone", start: 1380, end: 0, info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase." }
-  ];
+const sessions = [
+  {
+    name: "Sydney",
+    start: 1380,
+    end: 480,
+    info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
+    weekDaysInfo: [
+      { day: "Sonntag", text: "🛠️ Vorbereitung auf neue Woche" },
+      { day: "Montag", text: "🌏 Asien-Session startet" },
+      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien" },
+      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung" }
+    ],
+  },
+  {
+    name: "Tokyo",
+    start: 60,
+    end: 600,
+    info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
+    weekDaysInfo: [
+      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz" },
+      { day: "Donnerstag", text: "📈 Japan BIP-Daten" },
+      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach" }
+    ],
+  },
+  {
+    name: "London",
+    start: 540,
+    end: 1020,
+    info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
+    weekDaysInfo: [
+      { day: "Montag", text: "📉 EU Handelsdaten" },
+      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB" },
+      { day: "Donnerstag", text: "📊 Inflationsdaten UK" },
+      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK" }
+    ],
+  },
+  {
+    name: "New York",
+    start: 870,
+    end: 1380,
+    info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
+    weekDaysInfo: [
+      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen" },
+      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten" },
+      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
+    ],
+  },
+  {
+    name: "London Killzone",
+    start: 420,
+    end: 660,
+    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
+    weekDaysInfo: [
+      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
+      { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
+    ],
+  },
+  {
+    name: "New York Killzone",
+    start: 810,
+    end: 1020,
+    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
+    weekDaysInfo: [
+      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
+      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
+    ],
+  },
+  {
+    name: "Deadzone",
+    start: 1380,
+    end: 0,
+    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
+    weekDaysInfo: [
+      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
+    ],
+  }
+];
 
   let lastAlertSession = null;
 
@@ -749,29 +919,31 @@ window.addEventListener("load", () => {
 });
 
   function updateRealTimeBar() {
-    const now = new Date();
-    const minutes = getMinutesNow();
-    const percent = (minutes / 1439) * 100;
-    progressBar.style.width = percent + "%";
+  const now = new Date();
+  const minutes = getMinutesNow();
+  const percent = (minutes / 1439) * 100;
+  console.log("Balkenbreite in %:", percent);
+  progressBar.style.width = percent + "%";
 
-    const activeSessions = getCurrentSessions(minutes);
-    const names = activeSessions.map((s) => s.name);
-    const colors = names.map((name) => sessionColors[name] || "#666");
+  const activeSessions = getCurrentSessions(minutes);
+  const names = activeSessions.map((s) => s.name);
+  const colors = names.map((name) => sessionColors[name] || "#666");
 
-    updateGradientBar(colors);
+  updateGradientBar(colors);
 
-    if (colors.length > 0) {
-      progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
-    } else {
-      progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-    }
+  if (colors.length > 0) {
+    progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
+  } else {
+    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
+  }
 
-    const hours = String(now.getHours()).padStart(2, "0");
-    const mins = String(now.getMinutes()).padStart(2, "0");
-	
-    const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
-    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-  // ✨ Session Info Textlogik
+  const hours = String(now.getHours()).padStart(2, "0");
+  const mins = String(now.getMinutes()).padStart(2, "0");
+
+  const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
+  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+
+  // Session Info Textlogik (deine bestehende Logik, keine Änderungen nötig)
   const minuteNow = now.getHours() * 60 + now.getMinutes();
   const name = activeSessions.length > 0 ? activeSessions[0].name : "";
 
@@ -785,7 +957,7 @@ window.addEventListener("load", () => {
   else if (name === "London Killzone") {
     infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
   }
-  else if (name === "London") {H
+  else if (name === "London") {
     if (minuteNow < 720) infoText = "💷 London Session – Markt in Bewegung, europäische Daten entscheidend.";
     else if (minuteNow < 840) infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
     else infoText = "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
@@ -806,30 +978,43 @@ window.addEventListener("load", () => {
   }
 
   sessionInfoEl.textContent = infoText;
+
   if (activeSessions.length > 0) {
-  const currentSession = activeSessions[0];
-  sessionDetailsBox.innerHTML = `
-    <strong>🟡 ${currentSession.name} Session</strong><br>
-    📅 Start: ${formatHM(currentSession.start)} Uhr<br>
-    🕓 Ende: ${formatHM(currentSession.end)} Uhr<br>
-    ${currentSession.killzone ? `⚠️ Killzone: ${formatHM(currentSession.killzone[0])} – ${formatHM(currentSession.killzone[1])} Uhr<br>` : ""}
-    ℹ️ ${currentSession.info}
-  `;
-} else {
-  sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
-}
+    const currentSession = activeSessions[0];
 
-const minutesToNext = getMinutesToNextSession(minutes);
-
-    if (minutesToNext <= 5 && minutesToNext > 0) {
-      if (lastAlertSession !== sessionInfoText && sessionInfoText !== "Session-Zeit: 00:00") {
-        showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-        lastAlertSession = sessionInfoText;
-      }
-    } else {
-      lastAlertSession = null;
+    let weekDaysHtml = "";
+    if (currentSession.weekDaysInfo) {
+      weekDaysHtml = "<br><strong>📅 Wichtige Tage:</strong><ul style='margin-left:18px;'>";
+      currentSession.weekDaysInfo.forEach(({ day, text }) => {
+        weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
+      });
+      weekDaysHtml += "</ul>";
     }
+
+    sessionDetailsBox.innerHTML = `
+      <strong>🟡 ${currentSession.name} Session</strong><br>
+      📅 Start: ${formatHM(currentSession.start)} Uhr<br>
+      🕓 Ende: ${formatHM(currentSession.end)} Uhr<br>
+      ${currentSession.killzone ? `⚠️ Killzone: ${formatHM(currentSession.killzone[0])} – ${formatHM(currentSession.killzone[1])} Uhr<br>` : ""}
+      ℹ️ ${currentSession.info}
+      ${weekDaysHtml}
+    `;
+  } else {
+    sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
   }
+
+  // Session-Wechsel Alarm-Logik
+  const minutesToNext = getMinutesToNextSession(minutes);
+
+  if (minutesToNext <= 5 && minutesToNext > 0) {
+    if (lastAlertSession !== sessionText.textContent && sessionText.textContent !== "Session-Zeit: 00:00") {
+      showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
+      lastAlertSession = sessionText.textContent;
+    }
+  } else {
+    lastAlertSession = null;
+  }
+}
 
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
