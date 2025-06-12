@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trade App Layout</title>
   <style>
-     body {
+    body {
       background: #111;
       color: white;
       font-family: sans-serif;
@@ -80,10 +80,11 @@
       cursor: pointer;
       display: block;
       user-select: none;
-	    position: relative; /* kein fixed */
-  z-index: auto;
+      position: relative; /* kein fixed */
+      z-index: auto;
     }
     .position-bar {
+      position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
@@ -164,55 +165,54 @@
       font-size: 16px;
       cursor: pointer;
     }
-	
-	
-	.ticker {
-  width: 100%;
-  background: #222;
-  color: #00ff99;
-  padding: 10px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  font-family: Arial, sans-serif;
-  user-select: none;
-}
-
-.session-info {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #aaf0aa;
-  text-align: center;
-  font-style: italic;
-  user-select: none;
-}
-
-.progress-container {
-  position: relative;
-  background: #111;
-  height: 24px;
-  width: 100%;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  overflow: hidden;
-  border-radius: 6px;
-  margin-top: 5px;
-}
-
-
+    .ticker {
+      width: 100%;
+      background: #222;
+      color: #00ff99;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+      user-select: none;
+    }
+    .session-info {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #aaf0aa;
+      text-align: center;
+      font-style: italic;
+      user-select: none;
+    }
+    .progress-container {
+      position: relative;
+      background: #111;
+      height: 24px;
+      width: 100%;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+      overflow: hidden;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%; /* wird per JS gesetzt */
+      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
+      transition: width 1s linear;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      z-index: 2;
+    }
   </style>
 </head>
 <body>
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 <div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
-<div class="progress-container">
-  <div class="progress-bar" id="progressBar"></div>
-</div>
-
-<div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
-<div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
-
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
@@ -273,318 +273,319 @@
 
 <div class="popup" id="resultPopup">
   <h3>Ergebnis</h3>
-  <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50">
+  <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50" />
   <button onclick="saveResult()">Speichern</button>
 </div>
 
 <div class="position-bar" id="positionBar"></div>
 
 <script>
-const pairs = [
-  "AUD/CAD",
-  "AUD/JPY",
-  "AUD/USD",
-  "CHF/JPY",
-  "EUR/AUD",
-  "EUR/CAD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "EUR/USD",
-  "GBP/AUD",
-  "GBP/JPY",
-  "GBP/USD",
-  "NZD/JPY",
-  "NZD/USD",
-  "USD/CAD",
-  "USD/CHF",
-  "USD/JPY",
-  "XAG/USD",
-  "XAU/USD"
-];
+  const pairs = [
+    "AUD/CAD",
+    "AUD/JPY",
+    "AUD/USD",
+    "CHF/JPY",
+    "EUR/AUD",
+    "EUR/CAD",
+    "EUR/GBP",
+    "EUR/JPY",
+    "EUR/USD",
+    "GBP/AUD",
+    "GBP/JPY",
+    "GBP/USD",
+    "NZD/JPY",
+    "NZD/USD",
+    "USD/CAD",
+    "USD/CHF",
+    "USD/JPY",
+    "XAG/USD",
+    "XAU/USD"
+  ];
 
-function initMultiPairSelect() {
-  const container = document.getElementById("pairMultiSelect");
-  container.innerHTML = "";
+  function initMultiPairSelect() {
+    const container = document.getElementById("pairMultiSelect");
+    container.innerHTML = "";
 
-  pairs.forEach(pair => {
-    const label = document.createElement("label");
-    label.style.marginRight = "15px";
-    label.style.cursor = "pointer";
-    label.style.userSelect = "none";
+    pairs.forEach(pair => {
+      const label = document.createElement("label");
+      label.style.marginRight = "15px";
+      label.style.cursor = "pointer";
+      label.style.userSelect = "none";
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = pair;
-    checkbox.checked = false;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = pair;
+      checkbox.checked = false;
 
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + pair));
-    container.appendChild(label);
-  });
-}
-
-function addTrades() {
-  const container = document.getElementById("pairMultiSelect");
-  const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
-  const direction = document.getElementById("directionSelect").value;
-
-  if (!direction) {
-    alert("Bitte wähle eine Richtung!");
-    return;
-  }
-  if (checkboxes.length === 0) {
-    alert("Bitte wähle mindestens ein Paar aus!");
-    return;
-  }
-
-  checkboxes.forEach(box => {
-    const pair = box.value;
-    const now = new Date();
-    const tradeObj = {
-      id: Date.now() + Math.random(),
-      pair: pair,
-      direction: direction,
-      date: now,
-      pnl: null,
-      resultType: null
-    };
-    tradesData.push(tradeObj);
-    renderTradeBox(tradeObj);
-  });
-
-  saveTrades();
-  hidePopups();
-}
-
-function resetAll() {
-  if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
-
-  tradesData.length = 0;
-  localStorage.removeItem("tradesData");
-  document.getElementById("positionBar").innerHTML = "";
-  updateStats();
-}
-
-function isSameDay(date1, date2) {
-  return date1.getDate() === date2.getDate() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getFullYear() === date2.getFullYear();
-}
-
-function isSameWeek(date1, date2) {
-  const startOfWeek = new Date(date2);
-  startOfWeek.setDate(date2.getDate() - date2.getDay());
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  return date1 >= startOfWeek && date1 <= endOfWeek;
-}
-
-function isSameMonth(date1, date2) {
-  return date1.getMonth() === date2.getMonth() &&
-         date1.getFullYear() === date2.getFullYear();
-}
-
-const tradesData = [];
-let activeBox = null;
-let resultType = "win";
-
-function loadTrades() {
-  const saved = localStorage.getItem("tradesData");
-  if (saved) {
-    const arr = JSON.parse(saved);
-    tradesData.length = 0;
-    document.getElementById("positionBar").innerHTML = "";
-    arr.forEach(trade => {
-      trade.date = new Date(trade.date);
-      tradesData.push(trade);
-      if (trade.pnl === null) {
-        renderTradeBox(trade);
-      }
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + pair));
+      container.appendChild(label);
     });
   }
-  updateStats();
-}
 
-function saveTrades() {
-  localStorage.setItem("tradesData", JSON.stringify(tradesData));
-}
+  function addTrades() {
+    const container = document.getElementById("pairMultiSelect");
+    const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
+    const direction = document.getElementById("directionSelect").value;
 
-function renderTradeBox(tradeObj) {
-  const box = document.createElement("div");
-  box.className = "trade-box " + tradeObj.direction;
-  box.dataset.id = tradeObj.id;
-
-  let resultText = "";
-  if (tradeObj.pnl !== null) {
-    resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
-  } else {
-    resultText = `
-      <button onclick="markResult(this, 'win')">✅ Erfolg</button>
-      <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
-      <div class="result-value"></div>
-    `;
-  }
-
-  box.innerHTML = `
-    <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
-    ${resultText}
-  `;
-  document.getElementById("positionBar").appendChild(box);
-}
-
-function markResult(btn, type) {
-  activeBox = btn.closest(".trade-box");
-  resultType = type;
-  document.getElementById("pnlInput").value = "";
-  document.getElementById("resultPopup").style.display = "block";
-}
-
-function saveResult() {
-  let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
-  if (pnlRaw === "") return;
-  let pnl = parseFloat(pnlRaw);
-  if (isNaN(pnl)) return;
-  pnl = Math.abs(pnl);
-  pnl = resultType === "loss" ? -pnl : pnl;
-
-  const resultDiv = activeBox.querySelector(".result-value");
-  resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
-
-  const tradeId = Number(activeBox.dataset.id);
-  const trade = tradesData.find(t => t.id === tradeId);
-  if (trade) {
-    trade.pnl = pnl;
-    trade.resultType = resultType;
-  }
-
-  activeBox.remove();
-
-  saveTrades();
-
-  hidePopups();
-  updateStats();
-}
-
-function updateStats() {
-  const now = new Date();
-
-  function calcStats(filterFn) {
-    const filtered = tradesData.filter(t => t.pnl !== null && filterFn(t.date));
-    const wins = filtered.filter(t => t.pnl > 0);
-    const losses = filtered.filter(t => t.pnl < 0);
-    const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
-
-    const profitFactor = losses.length === 0 ? '–' : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
-    const avg = filtered.length === 0 ? '–' : (totalPnl / filtered.length).toFixed(2);
-
-    const totalTrades = wins.length + losses.length;
-    const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
-
-    return {
-      wins: wins.length,
-      losses: losses.length,
-      totalPnl,
-      avg,
-      totalTrades,
-      profitPercent
-    };
-  }
-
-  const isToday = date => isSameDay(date, now);
-  const isThisWeek = date => isSameWeek(date, now);
-  const isThisMonth = date => isSameMonth(date, now);
-
-  const dayStats = calcStats(isToday);
-  const weekStats = calcStats(isThisWeek);
-  const monthStats = calcStats(isThisMonth);
-
-  function colorText(value, isPnl = false) {
-    if (isPnl) {
-      return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
-    } else {
-      return `<span style="color: ${value > 0 ? '#0f0' : '#f44'}">${value}</span>`;
+    if (!direction) {
+      alert("Bitte wähle eine Richtung!");
+      return;
     }
+    if (checkboxes.length === 0) {
+      alert("Bitte wähle mindestens ein Paar aus!");
+      return;
+    }
+
+    checkboxes.forEach(box => {
+      const pair = box.value;
+      const now = new Date();
+      const tradeObj = {
+        id: Date.now() + Math.random(),
+        pair: pair,
+        direction: direction,
+        date: now,
+        pnl: null,
+        resultType: null
+      };
+      tradesData.push(tradeObj);
+      renderTradeBox(tradeObj);
+    });
+
+    saveTrades();
+    hidePopups();
   }
 
-  function colorProfitPercent(p) {
-    if (p === null) return "–";
-    if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
-    if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
-    if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
-    return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+  function resetAll() {
+    if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
+
+    tradesData.length = 0;
+    localStorage.removeItem("tradesData");
+    document.getElementById("positionBar").innerHTML = "";
+    updateStats();
   }
 
-  const tagBox = document.getElementById("tagBox");
-  tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
-  tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
-  tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-  tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+  function isSameDay(date1, date2) {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
 
-  const wocheBox = document.getElementById("wocheBox");
-  wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
-  wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
-  wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
-  wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+  function isSameWeek(date1, date2) {
+    const startOfWeek = new Date(date2);
+    startOfWeek.setDate(date2.getDate() - date2.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    return date1 >= startOfWeek && date1 <= endOfWeek;
+  }
 
-  const monatBox = document.getElementById("monatBox");
-  monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-  monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
-  monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
-  monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
-}
+  function isSameMonth(date1, date2) {
+    return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+  }
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.stats-box').forEach(box => box.style.display = 'none');
-  document.getElementById(tab + 'Box').style.display = 'block';
-  document.querySelectorAll('.tab-buttons button').forEach(btn => {
-    if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add('active');
+  const tradesData = [];
+  let activeBox = null;
+  let resultType = "win";
+
+  function loadTrades() {
+    const saved = localStorage.getItem("tradesData");
+    if (saved) {
+      const arr = JSON.parse(saved);
+      tradesData.length = 0;
+      document.getElementById("positionBar").innerHTML = "";
+      arr.forEach((trade) => {
+        trade.date = new Date(trade.date);
+        tradesData.push(trade);
+        if (trade.pnl === null) {
+          renderTradeBox(trade);
+        }
+      });
+    }
+    updateStats();
+  }
+
+  function saveTrades() {
+    localStorage.setItem("tradesData", JSON.stringify(tradesData));
+  }
+
+  function renderTradeBox(tradeObj) {
+    const box = document.createElement("div");
+    box.className = "trade-box " + tradeObj.direction;
+    box.dataset.id = tradeObj.id;
+
+    let resultText = "";
+    if (tradeObj.pnl !== null) {
+      resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
+    } else {
+      resultText = `
+        <button onclick="markResult(this, 'win')">✅ Erfolg</button>
+        <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
+        <div class="result-value"></div>
+      `;
+    }
+
+    box.innerHTML = `
+      <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
+      ${resultText}
+    `;
+    document.getElementById("positionBar").appendChild(box);
+  }
+
+  function markResult(btn, type) {
+    activeBox = btn.closest(".trade-box");
+    resultType = type;
+    document.getElementById("pnlInput").value = "";
+    document.getElementById("resultPopup").style.display = "block";
+  }
+
+  function saveResult() {
+    let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
+    if (pnlRaw === "") return;
+    let pnl = parseFloat(pnlRaw);
+    if (isNaN(pnl)) return;
+    pnl = Math.abs(pnl);
+    pnl = resultType === "loss" ? -pnl : pnl;
+
+    const resultDiv = activeBox.querySelector(".result-value");
+    resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
+
+    const tradeId = Number(activeBox.dataset.id);
+    const trade = tradesData.find((t) => t.id === tradeId);
+    if (trade) {
+      trade.pnl = pnl;
+      trade.resultType = resultType;
+    }
+
+    activeBox.remove();
+
+    saveTrades();
+
+    hidePopups();
+    updateStats();
+  }
+
+  function updateStats() {
+    const now = new Date();
+
+    function calcStats(filterFn) {
+      const filtered = tradesData.filter((t) => t.pnl !== null && filterFn(t.date));
+      const wins = filtered.filter((t) => t.pnl > 0);
+      const losses = filtered.filter((t) => t.pnl < 0);
+      const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+
+      const profitFactor =
+        losses.length === 0
+          ? "–"
+          : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
+      const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
+
+      const totalTrades = wins.length + losses.length;
+      const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
+
+      return {
+        wins: wins.length,
+        losses: losses.length,
+        totalPnl,
+        avg,
+        totalTrades,
+        profitPercent,
+      };
+    }
+
+    const isToday = (date) => isSameDay(date, now);
+    const isThisWeek = (date) => isSameWeek(date, now);
+    const isThisMonth = (date) => isSameMonth(date, now);
+
+    const dayStats = calcStats(isToday);
+    const weekStats = calcStats(isThisWeek);
+    const monthStats = calcStats(isThisMonth);
+
+    function colorText(value, isPnl = false) {
+      if (isPnl) {
+        return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
+      } else {
+        return `<span style="color: ${value > 0 ? "#0f0" : "#f44"}">${value}</span>`;
+      }
+    }
+
+    function colorProfitPercent(p) {
+      if (p === null) return "–";
+      if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
+      if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
+      if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
+      return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+    }
+
+    const tagBox = document.getElementById("tagBox");
+    tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+    tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
+    tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+    tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+
+    const wocheBox = document.getElementById("wocheBox");
+    wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+    wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
+    wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
+    wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+
+    const monatBox = document.getElementById("monatBox");
+    monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+    monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
+    monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
+    monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll(".tab-buttons button").forEach((btn) => btn.classList.remove("active"));
+    document.querySelectorAll(".stats-box").forEach((box) => (box.style.display = "none"));
+    document.getElementById(tab + "Box").style.display = "block";
+    document.querySelectorAll(".tab-buttons button").forEach((btn) => {
+      if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add("active");
+    });
+  }
+
+  function showPopup() {
+    document.getElementById("tradePopup").style.display = "block";
+  }
+
+  function hidePopups() {
+    document.getElementById("tradePopup").style.display = "none";
+    document.getElementById("resultPopup").style.display = "none";
+  }
+
+  window.addEventListener("load", () => {
+    initMultiPairSelect();
+    loadTrades();
   });
-}
 
-function showPopup() {
-  document.getElementById("tradePopup").style.display = "block";
-}
+  // Session Bar JS
 
-function hidePopups() {
-  document.getElementById("tradePopup").style.display = "none";
-  document.getElementById("resultPopup").style.display = "none";
-}
-
-window.addEventListener("load", () => {
-  initMultiPairSelect();
-  loadTrades();
-});
-  </script>
-  </script>
-
-x<script>
-// Alles für Sessionbarund info
-
-const sessionText = document.getElementById("sessionText");
+  const sessionText = document.getElementById("sessionText");
   const progressBar = document.getElementById("progressBar");
   const progressContainer = document.querySelector(".progress-container");
   const alertBox = document.getElementById("alertBox");
   const sessionInfoEl = document.getElementById("sessionInfo");
 
   const sessionColors = {
-    "Sydney": "#3388ff",
-    "Tokyo": "#00aaff",
-    "London": "#ffd700",
+    Sydney: "#3388ff",
+    Tokyo: "#00aaff",
+    London: "#ffd700",
     "New York": "#ff4500",
     "London Killzone": "#ccff00",
     "New York Killzone": "#ff8800",
-    "Deadzone": "#333"
+    Deadzone: "#333",
   };
 
   const sessions = [
-   { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt – gute Planung möglich." },
-  { name: "Tokyo", start: 60, end: 600, info: "Asia-Zeit – Breakouts möglich." },
-  { name: "London", start: 540, end: 1020, info: "Volatilität steigt – gute Bewegungen." },
-  { name: "New York", start: 870, end: 1380, info: "Hauptmarkt – oft starke Impulse." },
-  { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase – viele Trades möglich." },
-  { name: "New York Killzone", start: 810, end: 1020, info: "Volatile Phase – erhöhte Aufmerksamkeit." },
-  { name: "Deadzone", start: 1380, end: 0, info: "Wenig Bewegung – keine aktive Session." }
+    { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt – gute Planung möglich." },
+    { name: "Tokyo", start: 60, end: 600, info: "Asia-Zeit – Breakouts möglich." },
+    { name: "London", start: 540, end: 1020, info: "Volatilität steigt – gute Bewegungen." },
+    { name: "New York", start: 870, end: 1380, info: "Hauptmarkt – oft starke Impulse." },
+    { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase – viele Trades möglich." },
+    { name: "New York Killzone", start: 810, end: 1020, info: "Volatile Phase – erhöhte Aufmerksamkeit." },
+    { name: "Deadzone", start: 1380, end: 0, info: "Wenig Bewegung – keine aktive Session." },
   ];
 
   let lastAlertSession = null;
@@ -593,11 +594,9 @@ const sessionText = document.getElementById("sessionText");
     const now = new Date();
     return now.getHours() * 60 + now.getMinutes();
   }
-  
-
 
   function getCurrentSessions(minNow) {
-    return sessions.filter(s => {
+    return sessions.filter((s) => {
       const start = s.start;
       const end = s.end;
       if (start > end) {
@@ -619,7 +618,9 @@ const sessionText = document.getElementById("sessionText");
       <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
         <defs>
           <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
-            ${colors.map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`).join("")}
+            ${colors
+              .map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`)
+              .join("")}
           </linearGradient>
         </defs>
         <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
@@ -629,19 +630,17 @@ const sessionText = document.getElementById("sessionText");
   }
 
   function hexToRgba(hex, alpha) {
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substring(0,2), 16);
-    const g = parseInt(hex.substring(2,4), 16);
-    const b = parseInt(hex.substring(4,6), 16);
+    hex = hex.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
   function getMinutesToNextSession(minNow) {
-    const futureStarts = sessions
-      .map(s => s.start)
-      .filter(start => start > minNow);
+    const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
 
-    if(futureStarts.length === 0) {
+    if (futureStarts.length === 0) {
       return sessions[0].start + 1440 - minNow;
     }
 
@@ -655,7 +654,7 @@ const sessionText = document.getElementById("sessionText");
     el.textContent = msg;
     alertBox.innerHTML = "";
     alertBox.appendChild(el);
-    setTimeout(() => alertBox.innerHTML = "", 5000);
+    setTimeout(() => (alertBox.innerHTML = ""), 5000);
   }
 
   function updateRealTimeBar() {
@@ -665,8 +664,8 @@ const sessionText = document.getElementById("sessionText");
     progressBar.style.width = percent + "%";
 
     const activeSessions = getCurrentSessions(minutes);
-    const names = activeSessions.map(s => s.name);
-    const colors = names.map(name => sessionColors[name] || "#666");
+    const names = activeSessions.map((s) => s.name);
+    const colors = names.map((name) => sessionColors[name] || "#666");
 
     updateGradientBar(colors);
 
@@ -676,16 +675,16 @@ const sessionText = document.getElementById("sessionText");
       progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
     }
 
-    const hours = String(now.getHours()).padStart(2, '0');
-    const mins = String(now.getMinutes()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, "0");
+    const mins = String(now.getMinutes()).padStart(2, "0");
     const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
     sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
-if (activeSessions.length > 0) {
-  sessionInfoEl.textContent = activeSessions[0].info || "Keine weiteren Infos.";
-} else {
-  sessionInfoEl.textContent = "Keine aktive Session – Markt ruhig.";
-}
-    // Warnung 5 Minuten vor Sessionwechsel
+    if (activeSessions.length > 0) {
+      sessionInfoEl.textContent = activeSessions[0].info || "Keine weiteren Infos.";
+    } else {
+      sessionInfoEl.textContent = "Keine aktive Session – Markt ruhig.";
+    }
+
     const minutesToNext = getMinutesToNextSession(minutes);
 
     if (minutesToNext <= 5 && minutesToNext > 0) {
@@ -697,7 +696,6 @@ if (activeSessions.length > 0) {
       lastAlertSession = null;
     }
   }
-  
 
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
