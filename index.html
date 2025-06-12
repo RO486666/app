@@ -279,9 +279,14 @@
       <option value="Long">Long</option>
       <option value="Short">Short</option>
     </select>
-    <button onclick="addTrade()">Trade speichern</button>
+   
+  <div id="pairToggleContainer" style="margin-top: 10px; max-height: 150px; overflow-y: auto; background: #222; padding: 5px; border-radius: 6px; color: white;">
+    <strong>Paare ein-/ausblenden:</strong><br>
+    <!-- Checkboxen per JS rein -->
   </div>
-
+  
+ <button onclick="addTrade()">Trade speichern</button>
+  </div>
   <div class="popup" id="resultPopup">
     <h3>Ergebnis</h3>
     <input type="number" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50">
@@ -311,6 +316,76 @@
 
   <script>
      // Hilfsfunktionen für Datum-Vergleich
+	 
+	 const pairs = [
+  "EUR/USD",
+  "USD/JPY",
+  "GBP/USD",
+  "USD/CHF",
+  "AUD/USD",
+  "USD/CAD",
+  "NZD/USD",
+  "EUR/GBP",
+  "EUR/JPY",
+  "GBP/JPY",
+  "AUD/JPY",
+  "CHF/JPY",
+  "EUR/AUD",
+  "EUR/CAD",
+  "GBP/AUD",
+  "AUD/CAD",
+  "NZD/JPY",
+  "XAU/USD",
+  "XAG/USD"
+];
+
+// Befüllt Select und Checkboxen beim Laden
+
+const pairsSorted = pairs.slice().sort((a,b) => a.localeCompare(b));
+
+function initTradePopup() {
+  const pairSelect = document.getElementById("pairSelect");
+  pairs.forEach(pair => {
+    const opt = document.createElement("option");
+    opt.value = pair;
+    opt.textContent = pair;
+    pairSelect.appendChild(opt);
+  });
+
+  const toggleContainer = document.getElementById("pairToggleContainer");
+  pairs.forEach(pair => {
+    const label = document.createElement("label");
+    label.style.marginRight = "10px";
+    label.style.cursor = "pointer";
+    label.style.userSelect = "none";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = pair;
+    checkbox.checked = true; // Standard: alle sichtbar
+    checkbox.addEventListener("change", updateVisiblePairs);
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + pair));
+    toggleContainer.appendChild(label);
+  });
+}
+
+// Filtert die sichtbaren Trades basierend auf Checkboxen
+function updateVisiblePairs() {
+  const checkedPairs = Array.from(document.querySelectorAll("#pairToggleContainer input[type=checkbox]:checked"))
+    .map(cb => cb.value);
+
+  document.querySelectorAll(".trade-box").forEach(box => {
+    const pairName = box.querySelector("strong").textContent;
+    if (checkedPairs.includes(pairName)) {
+      box.style.display = "block";
+    } else {
+      box.style.display = "none";
+    }
+  });
+}
+
 	 
 	 function resetAll() {
   if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
@@ -545,9 +620,10 @@ window.onload = loadTrades;
   }
 
   // Lade Trades direkt beim Laden der Seite
-  window.onload = function() {
-    loadTrades();
-  };
+  window.addEventListener("load", () => {
+  initTradePopup();
+  loadTrades();
+});
   </script>
 
 x<script>
