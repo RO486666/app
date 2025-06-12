@@ -433,14 +433,6 @@
     `;
     document.getElementById("positionBar").appendChild(box);
   }
-  
-  // Popup schließen wenn außerhalb geklickt wird
-window.addEventListener('click', (event) => {
-  const tradePopup = document.getElementById('tradePopup');
-  if (tradePopup.style.display === 'block' && !tradePopup.contains(event.target)) {
-    hidePopups();
-  }
-});
 
   function markResult(btn, type) {
     activeBox = btn.closest(".trade-box");
