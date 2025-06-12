@@ -554,7 +554,7 @@
     document.getElementById("tradePopup").style.display = "none";
     document.getElementById("resultPopup").style.display = "none";
   }
-
+  
   window.addEventListener("load", () => {
     initMultiPairSelect();
     loadTrades();
@@ -579,13 +579,13 @@
   };
 
   const sessions = [
-    { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt – gute Planung möglich." },
-    { name: "Tokyo", start: 60, end: 600, info: "Asia-Zeit – Breakouts möglich." },
-    { name: "London", start: 540, end: 1020, info: "Volatilität steigt – gute Bewegungen." },
-    { name: "New York", start: 870, end: 1380, info: "Hauptmarkt – oft starke Impulse." },
-    { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase – viele Trades möglich." },
-    { name: "New York Killzone", start: 810, end: 1020, info: "Volatile Phase – erhöhte Aufmerksamkeit." },
-    { name: "Deadzone", start: 1380, end: 0, info: "Wenig Bewegung – keine aktive Session." },
+      { name: "Sydney", start: 1380, end: 480, info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien." },
+  { name: "Tokyo", start: 60, end: 600, info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich." },
+  { name: "London", start: 540, end: 1020, info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten." },
+  { name: "New York", start: 870, end: 1380, info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich." },
+  { name: "London Killzone", start: 420, end: 660, info: "Volatile Phase vor London-Open, Stop-Hunts möglich." },
+  { name: "New York Killzone", start: 810, end: 1020, info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader." },
+  { name: "Deadzone", start: 1380, end: 0, info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase." }
   ];
 
   let lastAlertSession = null;
@@ -647,6 +647,27 @@
     const nextStart = Math.min(...futureStarts);
     return nextStart - minNow;
   }
+  
+  // Sound für Alarm (kannst du auch ersetzen)
+const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
+function requestNotificationPermission() {
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+}
+
+function showNotification(title, body) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    const notification = new Notification(title, {
+      body: body,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png', // Icon, optional
+      silent: false,
+    });
+    // Notification automatisch schließen nach 5 Sekunden
+    setTimeout(() => notification.close(), 5000);
+  }
+}
 
   function showAlert(msg) {
     const el = document.createElement("div");
@@ -655,7 +676,17 @@
     alertBox.innerHTML = "";
     alertBox.appendChild(el);
     setTimeout(() => (alertBox.innerHTML = ""), 5000);
+	setTimeout(() => (alertBox.innerHTML = ""), 5000);
+  // Spiel Sound ab
+  alertSound.play();
+  // Push Notification zeigen
+  showNotification("Trade App Alarm", msg);
   }
+  
+  // Beim Laden einmal Erlaubnis abfragen
+window.addEventListener("load", () => {
+  requestNotificationPermission();
+});
 
   function updateRealTimeBar() {
     const now = new Date();
@@ -688,9 +719,9 @@
     const minutesToNext = getMinutesToNextSession(minutes);
 
     if (minutesToNext <= 5 && minutesToNext > 0) {
-      if (lastAlertSession !== sessionInfo) {
+      if (lastAlertSession !== sessionInfoText && sessionInfoText !== "Session-Zeit: 00:00") {
         showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-        lastAlertSession = sessionInfo;
+        lastAlertSession = sessionInfoText;
       }
     } else {
       lastAlertSession = null;
