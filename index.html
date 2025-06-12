@@ -277,186 +277,234 @@
   <div class="position-bar" id="positionBar"></div>
 
   <script>
-   // Hilfsfunktionen für Datum-Vergleich
-    function isSameDay(date1, date2) {
-      return date1.getDate() === date2.getDate() &&
-             date1.getMonth() === date2.getMonth() &&
-             date1.getFullYear() === date2.getFullYear();
-    }
+     // Hilfsfunktionen für Datum-Vergleich
+  function isSameDay(date1, date2) {
+    return date1.getDate() === date2.getDate() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getFullYear() === date2.getFullYear();
+  }
 
-    function isSameWeek(date1, date2) {
-      const startOfWeek = new Date(date2);
-      startOfWeek.setDate(date2.getDate() - date2.getDay()); // Sonntag = 0
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      return date1 >= startOfWeek && date1 <= endOfWeek;
-    }
+  function isSameWeek(date1, date2) {
+    const startOfWeek = new Date(date2);
+    startOfWeek.setDate(date2.getDate() - date2.getDay()); // Sonntag = 0
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    return date1 >= startOfWeek && date1 <= endOfWeek;
+  }
 
-    function isSameMonth(date1, date2) {
-      return date1.getMonth() === date2.getMonth() &&
-             date1.getFullYear() === date2.getFullYear();
-    }
+  function isSameMonth(date1, date2) {
+    return date1.getMonth() === date2.getMonth() &&
+           date1.getFullYear() === date2.getFullYear();
+  }
 
-    // Globals
-    const tradesData = [];
-    let activeBox = null;
-    let resultType = "win";
+  const tradesData = [];
+  let activeBox = null;
+  let resultType = "win";
 
-    // Tab wechseln
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.stats-box').forEach(box => box.style.display = 'none');
-      document.getElementById(tab + 'Box').style.display = 'block';
-      document.querySelectorAll('.tab-buttons button').forEach(btn => {
-        if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add('active');
-      });
-    }
+  // Lädt gespeicherte Trades aus localStorage und rendert sie
+function loadTrades() {
+  const saved = localStorage.getItem("tradesData");
+  if (saved) {
+    const arr = JSON.parse(saved);
+    tradesData.length = 0; // Sicherstellen, dass kein doppeltes Laden entsteht
+    document.getElementById("positionBar").innerHTML = ""; // Alte Boxes weg
+    arr.forEach(trade => {
+      trade.date = new Date(trade.date);
+      tradesData.push(trade);
+      if (trade.pnl === null) {
+        renderTradeBox(trade);
+      }
+    });
+  }
+  updateStats(); // Statistik aktualisieren
+}
 
-    function showPopup() {
-      document.getElementById("tradePopup").style.display = "block";
-    }
+window.onload = loadTrades;
 
-    function hidePopups() {
-      document.getElementById("tradePopup").style.display = "none";
-      document.getElementById("resultPopup").style.display = "none";
-    }
+  // Speichert alle Trades in localStorage
+  function saveTrades() {
+    localStorage.setItem("tradesData", JSON.stringify(tradesData));
+  }
 
-    // Trade hinzufügen mit Datum und ID
-    function addTrade() {
-      const pair = document.getElementById("pairSelect").value;
-      const direction = document.getElementById("directionSelect").value;
-      if (!pair || !direction) return;
+  // Rendert eine Trade-Box in der Positionsleiste
+  function renderTradeBox(tradeObj) {
+    const box = document.createElement("div");
+    box.className = "trade-box " + tradeObj.direction;
+    box.dataset.id = tradeObj.id;
 
-      const now = new Date();
-      const tradeObj = {
-        id: Date.now(),
-        pair: pair,
-        direction: direction,
-        date: now,
-        pnl: null,
-        resultType: null
-      };
-      tradesData.push(tradeObj);
-
-      const box = document.createElement("div");
-      box.className = "trade-box " + direction;
-      box.dataset.id = tradeObj.id;
-      box.innerHTML = `
-        <strong>${pair}</strong><br>${direction}<br>
+    let resultText = "";
+    if (tradeObj.pnl !== null) {
+      resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
+    } else {
+      resultText = `
         <button onclick="markResult(this, 'win')">✅ Erfolg</button>
         <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
         <div class="result-value"></div>
       `;
-      document.getElementById("positionBar").appendChild(box);
-      hidePopups();
     }
 
-    // Ergebnis markieren (Erfolg/Misserfolg)
-    function markResult(btn, type) {
-      activeBox = btn.closest(".trade-box");
-      resultType = type;
-      document.getElementById("pnlInput").value = "";
-      document.getElementById("resultPopup").style.display = "block";
-    }
+    box.innerHTML = `
+      <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
+      ${resultText}
+    `;
+    document.getElementById("positionBar").appendChild(box);
+  }
 
-    // Ergebnis speichern, Array updaten, Statistik neu berechnen
-    function saveResult() {
-      let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
-      if (pnlRaw === "") return;
-      let pnl = parseFloat(pnlRaw);
-      if (isNaN(pnl)) return;
-      pnl = Math.abs(pnl);
-      pnl = resultType === "loss" ? -pnl : pnl;
+  // Fügt einen neuen Trade hinzu
+  function addTrade() {
+    const pair = document.getElementById("pairSelect").value;
+    const direction = document.getElementById("directionSelect").value;
+    if (!pair || !direction) return;
 
-      const resultDiv = activeBox.querySelector(".result-value");
-      resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
-
-      const tradeId = Number(activeBox.dataset.id);
-      const trade = tradesData.find(t => t.id === tradeId);
-      if (trade) {
-        trade.pnl = pnl;
-        trade.resultType = resultType;
-      }
-	  
-	    activeBox.remove();
-
-      hidePopups();
-      updateStats();
-    }
-
-    // Statistik updaten (Tag, Woche, Monat)
-   function updateStats() {
-  const now = new Date();
-
-  function calcStats(filterFn) {
-    const filtered = tradesData.filter(t => t.pnl !== null && filterFn(t.date));
-    const wins = filtered.filter(t => t.pnl > 0);
-    const losses = filtered.filter(t => t.pnl < 0);
-    const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
-
-    const profitFactor = losses.length === 0 ? '–' : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
-    const avg = filtered.length === 0 ? '–' : (totalPnl / filtered.length).toFixed(2);
-    
-    const totalTrades = wins.length + losses.length;
-    const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
-
-       return {
-      wins: wins.length,
-      losses: losses.length,
-      totalPnl,
-      avg,
-      totalTrades: wins.length + losses.length,
-      profitPercent
+    const now = new Date();
+    const tradeObj = {
+      id: Date.now(),
+      pair: pair,
+      direction: direction,
+      date: now,
+      pnl: null,
+      resultType: null
     };
+
+    tradesData.push(tradeObj);
+    renderTradeBox(tradeObj);
+    saveTrades();  // Speichern nach Änderung
+
+    hidePopups();
   }
 
+  // Zeigt Popup für Ergebnis-Eingabe an
+  function markResult(btn, type) {
+    activeBox = btn.closest(".trade-box");
+    resultType = type;
+    document.getElementById("pnlInput").value = "";
+    document.getElementById("resultPopup").style.display = "block";
+  }
 
-  const isToday = date => isSameDay(date, now);
-  const isThisWeek = date => isSameWeek(date, now);
-  const isThisMonth = date => isSameMonth(date, now);
+  // Ergebnis speichern und Statistik aktualisieren
+  function saveResult() {
+    let pnlRaw = document.getElementById("pnlInput").value.replace(",", ".");
+    if (pnlRaw === "") return;
+    let pnl = parseFloat(pnlRaw);
+    if (isNaN(pnl)) return;
+    pnl = Math.abs(pnl);
+    pnl = resultType === "loss" ? -pnl : pnl;
 
-  const dayStats = calcStats(isToday);
-  const weekStats = calcStats(isThisWeek);
-  const monthStats = calcStats(isThisMonth);
+    const resultDiv = activeBox.querySelector(".result-value");
+    resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
 
-  function colorText(value, isPnl = false) {
-    if (isPnl) {
-      return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
-    } else {
-      return `<span style="color: ${value > 0 ? '#0f0' : '#f44'}">${value}</span>`;
+    const tradeId = Number(activeBox.dataset.id);
+    const trade = tradesData.find(t => t.id === tradeId);
+    if (trade) {
+      trade.pnl = pnl;
+      trade.resultType = resultType;
     }
+
+    // Trade aus der Anzeige entfernen, wenn Ergebnis eingetragen
+    activeBox.remove();
+
+    saveTrades();  // Speichern nach Änderung
+
+    hidePopups();
+    updateStats();
   }
 
-  function colorProfitPercent(p) {
-    if (p === null) return "–";
-    if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
-    if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
-    if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
-    return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+  // Statistik für Tag, Woche, Monat aktualisieren
+  function updateStats() {
+    const now = new Date();
+
+    function calcStats(filterFn) {
+      const filtered = tradesData.filter(t => t.pnl !== null && filterFn(t.date));
+      const wins = filtered.filter(t => t.pnl > 0);
+      const losses = filtered.filter(t => t.pnl < 0);
+      const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+
+      const profitFactor = losses.length === 0 ? '–' : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
+      const avg = filtered.length === 0 ? '–' : (totalPnl / filtered.length).toFixed(2);
+
+      const totalTrades = wins.length + losses.length;
+      const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
+
+      return {
+        wins: wins.length,
+        losses: losses.length,
+        totalPnl,
+        avg,
+        totalTrades,
+        profitPercent
+      };
+    }
+
+    const isToday = date => isSameDay(date, now);
+    const isThisWeek = date => isSameWeek(date, now);
+    const isThisMonth = date => isSameMonth(date, now);
+
+    const dayStats = calcStats(isToday);
+    const weekStats = calcStats(isThisWeek);
+    const monthStats = calcStats(isThisMonth);
+
+    function colorText(value, isPnl = false) {
+      if (isPnl) {
+        return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
+      } else {
+        return `<span style="color: ${value > 0 ? '#0f0' : '#f44'}">${value}</span>`;
+      }
+    }
+
+    function colorProfitPercent(p) {
+      if (p === null) return "–";
+      if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
+      if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
+      if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
+      return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+    }
+
+    // Tag
+    const tagBox = document.getElementById("tagBox");
+    tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+    tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
+    tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+    tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+
+    // Woche
+    const wocheBox = document.getElementById("wocheBox");
+    wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+    wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
+    wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
+    wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+
+    // Monat
+    const monatBox = document.getElementById("monatBox");
+    monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+    monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
+    monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
+    monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
   }
 
-  // Tag
-  const tagBox = document.getElementById("tagBox");
-  tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
-  tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
-  tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-  tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+  // Tab wechseln Funktion
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.stats-box').forEach(box => box.style.display = 'none');
+    document.getElementById(tab + 'Box').style.display = 'block';
+    document.querySelectorAll('.tab-buttons button').forEach(btn => {
+      if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add('active');
+    });
+  }
 
-  // Woche
-  const wocheBox = document.getElementById("wocheBox");
-  wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
-  wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
-  wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-  wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+  // Popups ein/ausblenden
+  function showPopup() {
+    document.getElementById("tradePopup").style.display = "block";
+  }
 
-  // Monat
-  const monatBox = document.getElementById("monatBox");
-  monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-  monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
-  monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-  monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
-}
+  function hidePopups() {
+    document.getElementById("tradePopup").style.display = "none";
+    document.getElementById("resultPopup").style.display = "none";
+  }
 
+  // Lade Trades direkt beim Laden der Seite
+  window.onload = function() {
+    loadTrades();
+  };
   </script>
 
 x<script>
