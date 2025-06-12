@@ -470,75 +470,76 @@
   }
 
   function updateStats() {
-    const now = new Date();
+  const now = new Date();
 
-   function calcStats(filterFn) {
-  const filtered = tradesData.filter((t) => t.pnl !== null && filterFn(t.date));
-  const wins = filtered.filter((t) => t.pnl > 0);
-  const losses = filtered.filter((t) => t.pnl < 0);
-  const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
-  const totalAbsPnl = filtered.reduce((sum, t) => sum + Math.abs(t.pnl), 0);
+  function calcStats(filterFn) {
+    const filtered = tradesData.filter((t) => t.pnl !== null && filterFn(t.date));
+    const wins = filtered.filter((t) => t.pnl > 0);
+    const losses = filtered.filter((t) => t.pnl < 0);
+    const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+    const totalAbsPnl = filtered.reduce((sum, t) => sum + Math.abs(t.pnl), 0);
 
-  const profitFactor =
-    losses.length === 0
-      ? "–"
-      : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
+    const profitFactor =
+      losses.length === 0
+        ? "–"
+        : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
 
-  const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
-  const profitPercent = totalAbsPnl === 0 ? null : ((wins.reduce((sum, t) => sum + t.pnl, 0) / totalAbsPnl) * 100);
+    const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
+    const profitPercent = totalAbsPnl === 0 ? null : ((wins.reduce((sum, t) => sum + t.pnl, 0) / totalAbsPnl) * 100);
 
-  return {
-    wins: wins.length,
-    losses: losses.length,
-    totalPnl,
-    avg,
-    totalTrades: wins.length + losses.length,
-    profitPercent
-  };
+    return {
+      wins: wins.length,
+      losses: losses.length,
+      totalPnl,
+      avg,
+      totalTrades: wins.length + losses.length,
+      profitPercent
+    };
+  }
+
+  const isToday = (date) => isSameDay(date, now);
+  const isThisWeek = (date) => isSameWeek(date, now);
+  const isThisMonth = (date) => isSameMonth(date, now);
+
+  const dayStats = calcStats(isToday);
+  const weekStats = calcStats(isThisWeek);
+  const monthStats = calcStats(isThisMonth);
+
+  function colorText(value, isPnl = false) {
+    if (isPnl) {
+      return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
+    } else {
+      return `<span style="color: ${value > 0 ? "#0f0" : "#f44"}">${value}</span>`;
+    }
+  }
+
+  function colorProfitPercent(p) {
+    if (p === null) return "–";
+    if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
+    if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
+    if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
+    return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
+  }
+
+  const tagBox = document.getElementById("tagBox");
+  tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+  tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
+  tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+  tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+
+  const wocheBox = document.getElementById("wocheBox");
+  wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+  wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
+  wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
+  wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+
+  const monatBox = document.getElementById("monatBox");
+  monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+  monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
+  monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
+  monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
 }
 
-    const isToday = (date) => isSameDay(date, now);
-    const isThisWeek = (date) => isSameWeek(date, now);
-    const isThisMonth = (date) => isSameMonth(date, now);
-
-    const dayStats = calcStats(isToday);
-    const weekStats = calcStats(isThisWeek);
-    const monthStats = calcStats(isThisMonth);
-
-    function colorText(value, isPnl = false) {
-      if (isPnl) {
-        return value >= 0 ? `<span style="color: #0f0;">${value.toFixed(2)} €</span>` : `<span style="color: #f44;">${value.toFixed(2)} €</span>`;
-      } else {
-        return `<span style="color: ${value > 0 ? "#0f0" : "#f44"}">${value}</span>`;
-      }
-    }
-
-    function colorProfitPercent(p) {
-      if (p === null) return "–";
-      if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
-      if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
-      if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
-      return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
-    }
-
-    const tagBox = document.getElementById("tagBox");
-    tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
-    tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
-    tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-    tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
-
-    const wocheBox = document.getElementById("wocheBox");
-    wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
-    wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
-    wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
-    wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
-
-    const monatBox = document.getElementById("monatBox");
-    monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-    monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
-    monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
-    monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
-  }
 
   function switchTab(tab) {
     document.querySelectorAll(".tab-buttons button").forEach((btn) => btn.classList.remove("active"));
