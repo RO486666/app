@@ -741,7 +741,7 @@ window.addEventListener("load", () => {
   else if (name === "London Killzone") {
     infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
   }
-  else if (name === "London") {
+  else if (name === "London") {H
     if (minuteNow < 720) infoText = "💷 London Session – Markt in Bewegung, europäische Daten entscheidend.";
     else if (minuteNow < 840) infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
     else infoText = "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
@@ -763,6 +763,7 @@ window.addEventListener("load", () => {
 
   sessionInfoEl.textContent = infoText;
 
+const minutesToNext = getMinutesToNextSession(minutes);
 
     if (minutesToNext <= 5 && minutesToNext > 0) {
       if (lastAlertSession !== sessionInfoText && sessionInfoText !== "Session-Zeit: 00:00") {
