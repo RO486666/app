@@ -472,30 +472,25 @@
   function updateStats() {
     const now = new Date();
 
-    function calcStats(filterFn) {
-      const filtered = tradesData.filter((t) => t.pnl !== null && filterFn(t.date));
-      const wins = filtered.filter((t) => t.pnl > 0);
-      const losses = filtered.filter((t) => t.pnl < 0);
-      const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+function calcStats(filterFn) {
+  const filtered = tradesData.filter(t => t.pnl !== null && filterFn(t.date));
+  const wins = filtered.filter(t => t.pnl > 0);
+  const losses = filtered.filter(t => t.pnl < 0);
+  const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
+  
+  const totalAbsPnl = filtered.reduce((sum, t) => sum + Math.abs(t.pnl), 0);
+  const profitRatio = totalAbsPnl === 0 ? null : ((wins.reduce((sum, t) => sum + t.pnl, 0) / totalAbsPnl) * 100);
 
-      const profitFactor =
-        losses.length === 0
-          ? "–"
-          : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
-      const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
-
-      const totalTrades = wins.length + losses.length;
-      const profitPercent = totalTrades === 0 ? null : (wins.length / totalTrades) * 100;
-
-      return {
-        wins: wins.length,
-        losses: losses.length,
-        totalPnl,
-        avg,
-        totalTrades,
-        profitPercent,
-      };
-    }
+  // hier den alten profitPercent durch profitRatio ersetzen
+  return {
+    wins: wins.length,
+    losses: losses.length,
+    totalPnl,
+    avg: filtered.length === 0 ? '–' : (totalPnl / filtered.length).toFixed(2),
+    totalTrades: wins.length + losses.length,
+    profitPercent: profitRatio // neue Definition
+  };
+}
 
     const isToday = (date) => isSameDay(date, now);
     const isThisWeek = (date) => isSameWeek(date, now);
