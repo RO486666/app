@@ -272,12 +272,22 @@
     <button onclick="saveResult()">Speichern</button>
   </div>
   
-  
+  <button style="margin-top: 15px; padding: 10px 20px; background:#cc3333; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="resetAll()">Alles zurücksetzen</button>
 
   <div class="position-bar" id="positionBar"></div>
 
   <script>
      // Hilfsfunktionen für Datum-Vergleich
+	 
+	 function resetAll() {
+  if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
+
+  tradesData.length = 0; // Array leeren
+  localStorage.removeItem("tradesData"); // Speicher löschen
+  document.getElementById("positionBar").innerHTML = ""; // UI leeren
+  updateStats(); // Statistik zurücksetzen (alles auf 0)
+}
+	 
   function isSameDay(date1, date2) {
     return date1.getDate() === date2.getDate() &&
            date1.getMonth() === date2.getMonth() &&
