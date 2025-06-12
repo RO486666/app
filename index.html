@@ -269,6 +269,7 @@
   </select>
 
   <button onclick="addTrades()">Trades speichern</button>
+   <button onclick="hidePopups()" style="margin-top:10px; background:#555;">Abbrechen</button>
 </div>
 
 <div class="popup" id="resultPopup">
@@ -432,6 +433,14 @@
     `;
     document.getElementById("positionBar").appendChild(box);
   }
+  
+  // Popup schließen wenn außerhalb geklickt wird
+window.addEventListener('click', (event) => {
+  const tradePopup = document.getElementById('tradePopup');
+  if (tradePopup.style.display === 'block' && !tradePopup.contains(event.target)) {
+    hidePopups();
+  }
+});
 
   function markResult(btn, type) {
     activeBox = btn.closest(".trade-box");
