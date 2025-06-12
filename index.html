@@ -745,5 +745,21 @@ window.addEventListener("load", () => {
   setInterval(updateRealTimeBar, 60000);
   updateRealTimeBar();
 </script>
+
+<script>
+  // Service Worker Registrierung
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("sw.js")
+        .then(reg => {
+          console.log("Service Worker registriert:", reg);
+        })
+        .catch(err => {
+          console.error("Service Worker Registrierung fehlgeschlagen:", err);
+        });
+    });
+  }
+</script>
 </body>
 </html>
