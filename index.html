@@ -986,8 +986,8 @@ window.addEventListener("load", () => {
   if (!progressBar || !progressContainer) return;
   
   const now = new Date();
-  const minutes = getMinutesNow();
-  const percent = (minutes / 1439) * 100;
+const minutes = getMinutesNow();
+const percent = (minutes / 1439) * 100;
   progressBar.style.width = percent + "%";
 
   const activeSessions = getCurrentSessions(minutes);
