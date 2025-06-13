@@ -479,6 +479,26 @@
   function saveTrades() {
     localStorage.setItem("tradesData", JSON.stringify(tradesData));
   }
+  
+  function addSwipeToDelete(box, tradeId) {
+  let startY = null;
+  box.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+  });
+  box.addEventListener("touchmove", e => {
+    if (!startY) return;
+    const currentY = e.touches[0].clientY;
+    const diffY = startY - currentY;
+    // Wenn nach oben gewischt und der Unterschied größer als 50px
+    if (diffY > 50) {
+      removeTrade(tradeId);
+      startY = null; // Swipe verarbeitet
+    }
+  });
+  box.addEventListener("touchend", () => {
+    startY = null;
+  });
+}
 
  function renderTradeBox(tradeObj) {
   const box = document.createElement("div");
@@ -509,6 +529,9 @@
   box.querySelector(".close-btn").addEventListener("click", () => {
     removeTrade(tradeObj.id);
   });
+  
+    // Swipe-up hinzufügen für mobile Touchgeräte
+  addSwipeToDelete(box, tradeObj.id);
 
   document.getElementById("positionBar").appendChild(box);
 }
