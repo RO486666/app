@@ -335,6 +335,8 @@
   <button onclick="saveResult()">Speichern</button>
 </div>
 
+<button id="enableNotificationsBtn">Benachrichtigungen aktivieren</button>
+
 <div class="position-bar" id="positionBar"></div>
 
 <script>
@@ -930,10 +932,21 @@ function requestNotificationPermission() {
     Notification.requestPermission().then(permission => {
       if (permission === "granted") {
         console.log("Notifications erlaubt");
+        alert("Benachrichtigungen sind jetzt aktiviert!");
+        // Hier kannst du starten, was nach Erlaubnis passieren soll
+      } else {
+        alert("Benachrichtigungen wurden nicht erlaubt.");
       }
     });
+  } else if (Notification.permission === "granted") {
+    alert("Benachrichtigungen sind bereits aktiviert.");
+  } else {
+    alert("Benachrichtigungen werden nicht unterstützt.");
   }
 }
+
+document.getElementById("enableNotificationsBtn").addEventListener("click", () => {
+  requestNotificationPermission();
 
 function showNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted") {
