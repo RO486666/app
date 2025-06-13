@@ -5,10 +5,17 @@ const urlsToCache = [
   // Hier weitere Assets eintragen, z.B. CSS, JS, Bilder
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
+    caches.open('my-cache-name').then(cache => {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/script.js',
+        '/icons/icon-192.png',  // <- häufige Fehlerquelle
+        // weitere Ressourcen...
+      ]);
     })
   );
 });
