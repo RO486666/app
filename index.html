@@ -472,20 +472,24 @@
   box.dataset.id = tradeObj.id;
 
   // Close (X) Button zum Entfernen oben rechts
+  // Close (X) Button zum Entfernen oben rechts
   const closeBtn = document.createElement("button");
+  closeBtn.type = "button"; // wichtig für mobile Browser
   closeBtn.textContent = "✖"; // kleines X
   closeBtn.style.position = "absolute";
-  closeBtn.style.top = "5px";
+  closeBtn.style.top = "8px";
   closeBtn.style.right = "8px";
   closeBtn.style.background = "transparent";
   closeBtn.style.border = "none";
   closeBtn.style.color = "white";
-  closeBtn.style.fontSize = "16px";
+  closeBtn.style.fontSize = "20px";
   closeBtn.style.cursor = "pointer";
+  closeBtn.style.zIndex = "10"; // sicherstellen, dass oben
   closeBtn.title = "Trade entfernen";
-  closeBtn.onclick = () => {
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // Verhindert, dass andere Events feuern
     removeTradeById(tradeObj.id);
-  };
+  });
   box.style.position = "relative"; // damit closeBtn richtig positioniert ist
   box.appendChild(closeBtn);
 
@@ -505,19 +509,16 @@
   box.appendChild(contentDiv);
 
   // Swipe-up für Handy (Touch-Event)
-  let startY = null;
-  box.addEventListener("touchstart", (e) => {
-    startY = e.touches[0].clientY;
-  });
-  box.addEventListener("touchmove", (e) => {
+   box.addEventListener("touchmove", (e) => {
     if (!startY) return;
     const currentY = e.touches[0].clientY;
     const diffY = startY - currentY;
     if (diffY > 30) { // Swipe nach oben erkannt
+      e.preventDefault(); // Scroll verhindern, wenn swipe erkannt
       removeTradeById(tradeObj.id);
       startY = null;
     }
-  });
+  }, { passive: false }); // wichtig, sonst verhindert preventDefault nicht
   box.addEventListener("touchend", () => {
     startY = null;
   });
