@@ -510,20 +510,30 @@
   contentDiv.innerHTML = `<strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>${resultText}`;
   box.appendChild(contentDiv);
 
+  // Robustere Swipe-Erkennung (für vertikales Swipen)
+  let touchStartY = 0;
+  let touchCurrentY = 0;
+  let isSwiping = false;
+
+
   // Swipe-up für Handy (Touch-Event)
-   box.addEventListener("touchmove", (e) => {
-    if (!startY) return;
-    const currentY = e.touches[0].clientY;
-    const diffY = startY - currentY;
-    if (diffY > 20) { // Swipe nach oben erkannt
-      e.preventDefault(); // Scroll verhindern, wenn swipe erkannt
-      removeTradeById(tradeObj.id);
-      startY = null;
+    box.addEventListener("touchmove", e => {
+    touchCurrentY = e.touches[0].clientY;
+    const diffY = touchStartY - touchCurrentY;
+
+    if (diffY > 15) { // kleiner Swipe-Up Threshold
+      if (!isSwiping) {
+        isSwiping = true;
+        e.preventDefault(); // verhindert Scrollen
+        removeTradeById(tradeObj.id);
+      }
     }
-  }, { passive: false }); // wichtig, sonst verhindert preventDefault nicht
-  
+  }, { passive: false });
+
   box.addEventListener("touchend", () => {
-    startY = null;
+    touchStartY = 0;
+    touchCurrentY = 0;
+    isSwiping = false;
   });
 
   document.getElementById("positionBar").appendChild(box);
