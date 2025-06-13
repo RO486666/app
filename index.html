@@ -335,8 +335,9 @@
   <button onclick="saveResult()">Speichern</button>
 </div>
 
-<button id="enableNotificationsBtn">Benachrichtigungen aktivieren</button>
-
+<button id="enableNotificationsBtn" style="margin: 10px auto; display: block; padding: 10px 20px; font-size: 16px;">
+  Benachrichtigungen aktivieren
+</button>
 <div class="position-bar" id="positionBar"></div>
 
 <script>
@@ -750,6 +751,14 @@ function resetMonth() {
       document.getElementById("resetPopup").style.display = "none";
     });
   }
+  
+  window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("enableNotificationsBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      requestNotificationPermission();
+    });
+  }
 });
   
   </script>
@@ -945,8 +954,7 @@ function requestNotificationPermission() {
   }
 }
 
-document.getElementById("enableNotificationsBtn").addEventListener("click", () => {
-  requestNotificationPermission();
+
 
 function showNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted") {
