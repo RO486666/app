@@ -199,7 +199,6 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-@media (max-width: 600px) {
   .session-details-box {
     font-size: 13px;
     margin: 10px;
@@ -218,28 +217,26 @@
 }
     .progress-container {
       position: relative;
-  background: #111;
-  height: 24px;
-  width: 100vw;           /* auf volle Viewportbreite */
-  max-width: 100vw;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  overflow: hidden;
-  border-radius: 6px;
-  margin-top: 5px;
-  box-sizing: border-box; /* wichtig für Padding und Border */
+      background: #111;
+      height: 24px;
+      width: 100%;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+      overflow: hidden;
+      border-radius: 6px;
+      margin-top: 5px;
     }
     .progress-bar {
-       position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%; /* wird per JS gesetzt */
-  background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-  transition: width 1s linear;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  z-index: 2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%; /* wird per JS gesetzt */
+      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
+      transition: width 1s linear;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      z-index: 2;
     }
 	
 	.session-details-box ul {
@@ -694,10 +691,16 @@ function resetMonth() {
   }
 });
   
+  console.log("Percent:", percent);
+console.log("Colors:", colors);
+console.log("progressBar exists?", !!progressBar);
+console.log("progressContainer exists?", !!progressContainer);
   </script>
   
 <script>
   // Session Bar JS
+  
+  
 
   const sessionText = document.getElementById("sessionText");
   const progressBar = document.getElementById("progressBar");
@@ -918,10 +921,14 @@ window.addEventListener("load", () => {
 });
 
   function updateRealTimeBar() {
+   const progressBar = document.getElementById("progressBar");
+  const progressContainer = document.querySelector(".progress-container");
+
+  if (!progressBar || !progressContainer) return;
+  
   const now = new Date();
   const minutes = getMinutesNow();
   const percent = (minutes / 1439) * 100;
-  console.log("Balkenbreite in %:", percent);
   progressBar.style.width = percent + "%";
 
   const activeSessions = getCurrentSessions(minutes);
