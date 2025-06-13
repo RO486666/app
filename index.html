@@ -937,8 +937,16 @@ const sessions = [
 const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
 function requestNotificationPermission() {
+  // Prüfen, ob Nutzer schon gefragt wurde (localStorage)
+  if (localStorage.getItem("notificationAsked") === "true") {
+    alert("Benachrichtigungen wurden bereits abgefragt.");
+    return;
+  }
+
   if ("Notification" in window && Notification.permission !== "granted") {
     Notification.requestPermission().then(permission => {
+      localStorage.setItem("notificationAsked", "true"); // Markieren, dass gefragt wurde
+
       if (permission === "granted") {
         console.log("Notifications erlaubt");
         alert("Benachrichtigungen sind jetzt aktiviert!");
@@ -948,6 +956,7 @@ function requestNotificationPermission() {
     });
   } else if (Notification.permission === "granted") {
     alert("Benachrichtigungen sind bereits aktiviert.");
+    localStorage.setItem("notificationAsked", "true");
   } else {
     alert("Benachrichtigungen werden nicht unterstützt.");
   }
