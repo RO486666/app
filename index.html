@@ -118,6 +118,21 @@
     .trade-box.Short {
       background-color: #B22222; /* rot */
     }
+	
+	.trade-box .close-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.trade-box .close-btn:hover {
+  color: #f44;
+}
     .result-value {
       margin-top: 5px;
       font-weight: bold;
@@ -465,28 +480,50 @@
     localStorage.setItem("tradesData", JSON.stringify(tradesData));
   }
 
-  function renderTradeBox(tradeObj) {
-    const box = document.createElement("div");
-    box.className = "trade-box " + tradeObj.direction;
-    box.dataset.id = tradeObj.id;
+ function renderTradeBox(tradeObj) {
+  const box = document.createElement("div");
+  box.className = "trade-box " + tradeObj.direction;
+  box.dataset.id = tradeObj.id;
 
-    let resultText = "";
-    if (tradeObj.pnl !== null) {
-      resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
-    } else {
-      resultText = `
-        <button onclick="markResult(this, 'win')">✅ Erfolg</button>
-        <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
-        <div class="result-value"></div>
-      `;
-    }
-
-    box.innerHTML = `
-      <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
-      ${resultText}
+  let resultText = "";
+  if (tradeObj.pnl !== null) {
+    resultText = `
+      <div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>
+      <button class="close-btn" title="Trade entfernen">✖</button>
     `;
-    document.getElementById("positionBar").appendChild(box);
+  } else {
+    resultText = `
+      <button onclick="markResult(this, 'win')">✅ Erfolg</button>
+      <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
+      <div class="result-value"></div>
+      <button class="close-btn" title="Trade entfernen">✖</button>
+    `;
   }
+
+  box.innerHTML = `
+    <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
+    ${resultText}
+  `;
+
+  // EventListener für Close-Button
+  box.querySelector(".close-btn").addEventListener("click", () => {
+    removeTrade(tradeObj.id);
+  });
+
+  document.getElementById("positionBar").appendChild(box);
+}
+
+function removeTrade(id) {
+  // Trade aus Array entfernen
+  tradesData = tradesData.filter(t => t.id !== id);
+  saveTrades();
+  // PositionBar neu rendern
+  const positionBar = document.getElementById("positionBar");
+  positionBar.innerHTML = "";
+  tradesData.forEach(trade => renderTradeBox(trade));
+  updateStats();
+}
+  
 
   function markResult(btn, type) {
     activeBox = btn.closest(".trade-box");
