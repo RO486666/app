@@ -97,6 +97,7 @@
       overflow-x: auto;
       box-sizing: border-box;
       z-index: 10000; /* über anderen Elementen */
+	  touch-action: pan-y; /* Erlaubt vertikales Scrollen, verhindert horizontale Interferenzen */
     }
     .trade-box {
       flex: 0 0 auto;
@@ -513,12 +514,13 @@
     if (!startY) return;
     const currentY = e.touches[0].clientY;
     const diffY = startY - currentY;
-    if (diffY > 30) { // Swipe nach oben erkannt
+    if (diffY > 20) { // Swipe nach oben erkannt
       e.preventDefault(); // Scroll verhindern, wenn swipe erkannt
       removeTradeById(tradeObj.id);
       startY = null;
     }
   }, { passive: false }); // wichtig, sonst verhindert preventDefault nicht
+  
   box.addEventListener("touchend", () => {
     startY = null;
   });
