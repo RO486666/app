@@ -118,21 +118,6 @@
     .trade-box.Short {
       background-color: #B22222; /* rot */
     }
-	
-	.trade-box .close-btn {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  user-select: none;
-}
-.trade-box .close-btn:hover {
-  color: #f44;
-}
     .result-value {
       margin-top: 5px;
       font-weight: bold;
@@ -213,6 +198,7 @@
   text-align: left;
   box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
+
 
   .session-details-box {
     font-size: 13px;
@@ -479,75 +465,74 @@
   function saveTrades() {
     localStorage.setItem("tradesData", JSON.stringify(tradesData));
   }
-  
-  function addSwipeToDelete(box, tradeId) {
-  let startY = null;
-  box.addEventListener("touchstart", e => {
-    startY = e.touches[0].clientY;
-  });
-  box.addEventListener("touchmove", e => {
-    if (!startY) return;
-    const currentY = e.touches[0].clientY;
-    const diffY = startY - currentY;
-    // Wenn nach oben gewischt und der Unterschied größer als 50px
-    if (diffY > 50) {
-      removeTrade(tradeId);
-      startY = null; // Swipe verarbeitet
-    }
-  });
-  box.addEventListener("touchend", () => {
-    startY = null;
-  });
-}
 
  function renderTradeBox(tradeObj) {
   const box = document.createElement("div");
   box.className = "trade-box " + tradeObj.direction;
   box.dataset.id = tradeObj.id;
 
+  // Close (X) Button zum Entfernen oben rechts
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "✖"; // kleines X
+  closeBtn.style.position = "absolute";
+  closeBtn.style.top = "5px";
+  closeBtn.style.right = "8px";
+  closeBtn.style.background = "transparent";
+  closeBtn.style.border = "none";
+  closeBtn.style.color = "white";
+  closeBtn.style.fontSize = "16px";
+  closeBtn.style.cursor = "pointer";
+  closeBtn.title = "Trade entfernen";
+  closeBtn.onclick = () => {
+    removeTradeById(tradeObj.id);
+  };
+  box.style.position = "relative"; // damit closeBtn richtig positioniert ist
+  box.appendChild(closeBtn);
+
   let resultText = "";
   if (tradeObj.pnl !== null) {
-    resultText = `
-      <div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>
-      <button class="close-btn" title="Trade entfernen">✖</button>
-    `;
+    resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
   } else {
     resultText = `
       <button onclick="markResult(this, 'win')">✅ Erfolg</button>
       <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
       <div class="result-value"></div>
-      <button class="close-btn" title="Trade entfernen">✖</button>
     `;
   }
 
-  box.innerHTML = `
-    <strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>
-    ${resultText}
-  `;
+  const contentDiv = document.createElement("div");
+  contentDiv.innerHTML = `<strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>${resultText}`;
+  box.appendChild(contentDiv);
 
-  // EventListener für Close-Button
-  box.querySelector(".close-btn").addEventListener("click", () => {
-    removeTrade(tradeObj.id);
+  // Swipe-up für Handy (Touch-Event)
+  let startY = null;
+  box.addEventListener("touchstart", (e) => {
+    startY = e.touches[0].clientY;
   });
-  
-    // Swipe-up hinzufügen für mobile Touchgeräte
-  addSwipeToDelete(box, tradeObj.id);
+  box.addEventListener("touchmove", (e) => {
+    if (!startY) return;
+    const currentY = e.touches[0].clientY;
+    const diffY = startY - currentY;
+    if (diffY > 30) { // Swipe nach oben erkannt
+      removeTradeById(tradeObj.id);
+      startY = null;
+    }
+  });
+  box.addEventListener("touchend", () => {
+    startY = null;
+  });
 
   document.getElementById("positionBar").appendChild(box);
 }
 
-function removeTrade(id) {
-  // Trade aus Array entfernen
-  tradesData = tradesData.filter(t => t.id !== id);
-  saveTrades();
-  // PositionBar neu rendern
-  const positionBar = document.getElementById("positionBar");
-  positionBar.innerHTML = "";
-  tradesData.forEach(trade => renderTradeBox(trade));
-  updateStats();
+function removeTradeById(id) {
+  const index = tradesData.findIndex(t => t.id === id);
+  if (index !== -1) {
+    tradesData.splice(index, 1);
+    saveTrades();
+    loadTrades(); // neu rendern
+  }
 }
-  
-
   function markResult(btn, type) {
     activeBox = btn.closest(".trade-box");
     resultType = type;
