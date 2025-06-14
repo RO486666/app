@@ -25,6 +25,7 @@
       background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
       margin-top: 5px;
     }
+	
     .main {
       padding: 20px;
       padding-bottom: 120px; /* Platz für Positionsleiste */
@@ -276,6 +277,8 @@
 	<button class="btn" onclick="switchTab('halbjahr')">Halbjahr</button>
   <button class="btn" onclick="switchTab('jahr')">Jahr</button>
   </div>
+  
+  <div id="sessionProgressDisplay" style="font-size: 13px; color: #aaa; margin-top: 5px;"></div>
 
   <div class="stats-box" id="tagBox">
     <h3>📅 Tagesauswertung</h3>
@@ -627,6 +630,7 @@ function updateStats() {
     const losses = filtered.filter((t) => t.pnl < 0);
     const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
     const totalAbsPnl = filtered.reduce((sum, t) => sum + Math.abs(t.pnl), 0);
+	
 
     const profitFactor =
       losses.length === 0
@@ -873,18 +877,15 @@ window.addEventListener("load", () => {
   </script>
   
 <script>
-  // Session Bar JS
-  
-  
+const sessionText = document.getElementById("sessionText");
+const sessionProgressEl = document.getElementById("sessionProgressDisplay");
+const sessionInfoEl = document.getElementById("sessionInfo");
+const sessionDetailsBox = document.getElementById("sessionDetailsBox");
+const alertBox = document.getElementById("alertBox");
+const progressBar = document.getElementById("progressBar");
+const progressContainer = document.querySelector(".progress-container");
 
-  const sessionText = document.getElementById("sessionText");
-  const progressBar = document.getElementById("progressBar");
-  const progressContainer = document.querySelector(".progress-container");
-  const alertBox = document.getElementById("alertBox");
-  const sessionInfoEl = document.getElementById("sessionInfo");
-  const sessionDetailsBox = document.getElementById("sessionDetailsBox");
-  
-  sessionText.addEventListener("click", () => {
+sessionText.addEventListener("click", () => {
   sessionDetailsBox.style.display = sessionDetailsBox.style.display === "block" ? "none" : "block";
 });
 
@@ -894,164 +895,84 @@ function formatHM(mins) {
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
 }
 
-  const sessionColors = {
-    Sydney: "#3388ff",
-    Tokyo: "#00aaff",
-    London: "#ffd700",
-    "New York": "#ff4500",
-    "London Killzone": "#ccff00",
-    "New York Killzone": "#ff8800",
-    Deadzone: "#333",
-  };
+const sessionColors = {
+  Sydney: "#3388ff",
+  Tokyo: "#00aaff",
+  London: "#ffd700",
+  "New York": "#ff4500",
+  "London Killzone": "#ccff00",
+  "New York Killzone": "#ff8800",
+  Deadzone: "#333",
+};
 
 const sessions = [
-  {
-    name: "Sydney",
-    start: 1380,
-    end: 480,
-    info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
-    weekDaysInfo: [
-      { day: "Sonntag", text: "🛠️ Vorbereitung auf neue Woche" },
-      { day: "Montag", text: "🌏 Asien-Session startet" },
-      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien" },
-      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung" }
-    ],
-  },
-  {
-    name: "Tokyo",
-    start: 60,
-    end: 600,
-    info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz" },
-      { day: "Donnerstag", text: "📈 Japan BIP-Daten" },
-      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach" }
-    ],
-  },
-  {
-    name: "London",
-    start: 540,
-    end: 1020,
-    info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
-    weekDaysInfo: [
-      { day: "Montag", text: "📉 EU Handelsdaten" },
-      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB" },
-      { day: "Donnerstag", text: "📊 Inflationsdaten UK" },
-      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK" }
-    ],
-  },
-  {
-    name: "New York",
-    start: 870,
-    end: 1380,
-    info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
-    weekDaysInfo: [
-      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen" },
-      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten" },
-      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
-    ],
-  },
-  {
-    name: "London Killzone",
-    start: 420,
-    end: 660,
-    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
-    weekDaysInfo: [
-      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
-      { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
-    ],
-  },
-  {
-    name: "New York Killzone",
-    start: 810,
-    end: 1020,
-    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
-      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
-    ],
-  },
-  {
-    name: "Deadzone",
-    start: 1380,
-    end: 0,
-    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
-    weekDaysInfo: [
-      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
-    ],
-  }
+  { name: "Sydney", start: 1380, end: 480, info: "Australische Session, oft ruhiger." },
+  { name: "Tokyo", start: 60, end: 600, info: "Asiatischer Handel – Fokus auf JPY & AUD." },
+  { name: "London Killzone", start: 480, end: 540, info: "Hohe Volatilität – viele Breakouts." },
+  { name: "London", start: 540, end: 1020, info: "Europäische Session mit viel Volumen." },
+  { name: "New York Killzone", start: 840, end: 900, info: "Wichtige US-News & schnelle Bewegungen." },
+  { name: "New York", start: 870, end: 1380, info: "Amerikanische Session – hohe Volatilität." },
+  { name: "Deadzone", start: 720, end: 840, info: "Mittagliche Ruhephase – oft Konsolidierung." }
 ];
 
-  let lastAlertSession = null;
 
-  function getMinutesNow() {
-    const now = new Date();
-    return now.getHours() * 60 + now.getMinutes();
-  }
+let lastAlertSession = null;
 
-  function getCurrentSessions(minNow) {
-    return sessions.filter((s) => {
-      const start = s.start;
-      const end = s.end;
-      if (start > end) {
-        return minNow >= start || minNow < end;
-      } else {
-        return minNow >= start && minNow < end;
-      }
-    });
-  }
+function getMinutesNow() {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
+}
 
-  function updateGradientBar(colors) {
-    if (colors.length === 0) {
-      progressBar.style.background = "#444";
-      progressBar.style.backgroundImage = "";
-      return;
+function getCurrentSessions(minNow) {
+  return sessions.filter((s) => {
+    const start = s.start;
+    const end = s.end;
+    if (start > end) {
+      return minNow >= start || minNow < end;
+    } else {
+      return minNow >= start && minNow < end;
     }
+  });
+}
 
-    const svg = `
-      <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
-        <defs>
-          <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
-            ${colors
-              .map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`)
-              .join("")}
-          </linearGradient>
-        </defs>
-        <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
-      </svg>`;
-    const base64 = btoa(svg);
-    progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
+function updateGradientBar(colors) {
+  if (colors.length === 0) {
+    progressBar.style.background = "#444";
+    progressBar.style.backgroundImage = "";
+    return;
   }
+  const svg = `
+    <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
+      <defs>
+        <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
+          ${colors.map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`).join("")}
+        </linearGradient>
+      </defs>
+      <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
+    </svg>`;
+  const base64 = btoa(svg);
+  progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
+}
 
-  function hexToRgba(hex, alpha) {
-    hex = hex.replace("#", "");
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
+function hexToRgba(hex, alpha) {
+  hex = hex.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
-  function getMinutesToNextSession(minNow) {
-    const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
+function getMinutesToNextSession(minNow) {
+  const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
+  if (futureStarts.length === 0) return sessions[0].start + 1440 - minNow;
+  return Math.min(...futureStarts) - minNow;
+}
 
-    if (futureStarts.length === 0) {
-      return sessions[0].start + 1440 - minNow;
-    }
-
-    const nextStart = Math.min(...futureStarts);
-    return nextStart - minNow;
-  }
-  
-  // Sound für Alarm (kannst du auch ersetzen)
 const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
 function requestNotificationPermission() {
   if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        console.log("Notifications erlaubt");
-      }
-    });
+    Notification.requestPermission();
   }
 }
 
@@ -1060,7 +981,7 @@ function showNotification(title, message) {
     const options = {
       body: message,
       icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-      vibrate: [200, 100, 200],  // Vibrieren (wenn Handy das unterstützt)
+      vibrate: [200, 100, 200],
       tag: "session-alert"
     };
     const notification = new Notification(title, options);
@@ -1071,124 +992,124 @@ function showNotification(title, message) {
   }
 }
 
-// Beispiel: Session-Wechsel Alarm
-function triggerSessionAlert() {
-  alertSound.play();           // Ton abspielen (optional)
-  showNotification("Trade App", "⚠️ Session-Wechsel in 5 Minuten!");
+function showAlert(msg) {
+  const el = document.createElement("div");
+  el.className = "alert-message";
+  el.textContent = msg;
+  alertBox.innerHTML = "";
+  alertBox.appendChild(el);
+  setTimeout(() => (alertBox.innerHTML = ""), 5000);
+  alertSound.play();
+  showNotification("Trade App Alarm", msg);
 }
 
-  function showAlert(msg) {
-    const el = document.createElement("div");
-    el.className = "alert-message";
-    el.textContent = msg;
-    alertBox.innerHTML = "";
-    alertBox.appendChild(el);
-    setTimeout(() => (alertBox.innerHTML = ""), 5000);
-  // Spiel Sound ab
-  alertSound.play();
-  // Push Notification zeigen
-  showNotification("Trade App Alarm", msg);
+function showSessionProgress(activeSessions, currentMinutes) {
+  if (activeSessions.length === 0) {
+    sessionProgressEl.innerHTML = "⏳ Keine aktive Session – kein Countdown";
+    return;
   }
-  
-  // Beim Laden einmal Erlaubnis abfragen
-window.addEventListener("load", () => {
-  requestNotificationPermission();
-});
+  const current = activeSessions[0];
+  let start = current.start;
+  let end = current.end;
+  if (start > end) end += 1440;
+  let nowMins = currentMinutes;
+  if (nowMins < start) nowMins += 1440;
+  const duration = end - start;
+  const progressMins = nowMins - start;
+  const percent = (progressMins / duration) * 100;
+  const timeLeft = end - nowMins;
+  sessionProgressEl.innerHTML = `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> – <strong>${percent.toFixed(0)}%</strong> vorbei`;
+}
 
-  function updateRealTimeBar() {
-   const progressBar = document.getElementById("progressBar");
-  const progressContainer = document.querySelector(".progress-container");
-
-  if (!progressBar || !progressContainer) return;
-  
+function updateRealTimeBar() {
   const now = new Date();
-const minutes = getMinutesNow();
-const percent = (minutes / 1439) * 100;
-  progressBar.style.width = percent + "%";
-
-  const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map((s) => s.name);
-  const colors = names.map((name) => sessionColors[name] || "#666");
-
-  updateGradientBar(colors);
-
-  if (colors.length > 0) {
-    progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
-  } else {
-    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-  }
-
+  const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
   const hours = String(now.getHours()).padStart(2, "0");
   const mins = String(now.getMinutes()).padStart(2, "0");
 
-  const sessionInfo = names.length > 0 ? `– ${names.join(" + ")} läuft` : "– Keine Session aktiv";
-  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} ${sessionInfo}`;
+  // 👉 Wochenende
+  if (weekday === 0 || weekday === 6) {
+    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} – Wochenende`;
+    progressBar.style.width = "0%";
+    progressBar.style.background = "#333";
+    progressBar.style.backgroundImage = "";
+    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
+    sessionInfoEl.textContent = "📴 Wochenende – Markt ist geschlossen.";
+    sessionProgressEl.innerHTML = "⛔ Kein Handel – Wochenende";
+    sessionDetailsBox.innerHTML = "Keine Session-Daten am Wochenende.";
+    return;
+  }
 
-  // Session Info Textlogik (deine bestehende Logik, keine Änderungen nötig)
-  const minuteNow = now.getHours() * 60 + now.getMinutes();
+  // ⏬ Ab hier normaler Werktags-Ablauf
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const percent = (minutes / 1439) * 100;
+
+  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins}`;
+
+  progressBar.style.width = `${percent}%`;
+
+  const activeSessions = getCurrentSessions(minutes);
+  const names = activeSessions.map(s => s.name);
+  const colors = names.map(n => sessionColors[n] || "#666");
+
+  updateGradientBar(colors);
+  showSessionProgress(activeSessions, minutes);
+
+  progressContainer.style.boxShadow = colors.length > 0
+    ? `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`
+    : "0 0 12px 6px rgba(0,0,0,0)";
+
   const name = activeSessions.length > 0 ? activeSessions[0].name : "";
-
   let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
 
   if (name === "Tokyo") {
-    if (minuteNow < 180) infoText = "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler.";
-    else if (minuteNow < 360) infoText = "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY.";
-    else infoText = "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
-  }
-  else if (name === "London Killzone") {
+    infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
+                minutes < 360 ? "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY." :
+                "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
+  } else if (name === "London Killzone") {
     infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
-  }
-  else if (name === "London") {
-    if (minuteNow < 720) infoText = "💷 London Session – Markt in Bewegung, europäische Daten entscheidend.";
-    else if (minuteNow < 840) infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
-    else infoText = "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
-  }
-  else if (name === "New York Killzone") {
+  } else if (name === "London") {
+    infoText = minutes < 720 ? "💷 London Session – Markt in Bewegung, europäische Daten entscheidend." :
+                minutes < 840 ? "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries." :
+                "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
+  } else if (name === "New York Killzone") {
     infoText = "🔥 New York Killzone – starke Reaktionen auf US-News & Breakouts möglich.";
-  }
-  else if (name === "New York") {
-    if (minuteNow < 1080) infoText = "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich.";
-    else if (minuteNow < 1200) infoText = "📉 New York flacht ab – Markt beruhigt sich langsam.";
-    else infoText = "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
-  }
-  else if (minuteNow >= 720 && minuteNow < 840) {
+  } else if (name === "New York") {
+    infoText = minutes < 1080 ? "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich." :
+                minutes < 1200 ? "📉 New York flacht ab – Markt beruhigt sich langsam." :
+                "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
+  } else if (minutes >= 720 && minutes < 840) {
     infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
-  }
-  else if (minuteNow >= 1380 || minuteNow < 60) {
+  } else if (minutes >= 1380 || minutes < 60) {
     infoText = "🌙 Nacht-Deadzone – Markt ist extrem ruhig, keine relevanten Bewegungen.";
   }
 
   sessionInfoEl.textContent = infoText;
 
   if (activeSessions.length > 0) {
-    const currentSession = activeSessions[0];
-
+    const s = activeSessions[0];
     let weekDaysHtml = "";
-    if (currentSession.weekDaysInfo) {
+    if (s.weekDaysInfo) {
       weekDaysHtml = "<br><strong>📅 Wichtige Tage:</strong><ul style='margin-left:18px;'>";
-      currentSession.weekDaysInfo.forEach(({ day, text }) => {
+      s.weekDaysInfo.forEach(({ day, text }) => {
         weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
       });
       weekDaysHtml += "</ul>";
     }
-
     sessionDetailsBox.innerHTML = `
-      <strong>🟡 ${currentSession.name} Session</strong><br>
-      📅 Start: ${formatHM(currentSession.start)} Uhr<br>
-      🕓 Ende: ${formatHM(currentSession.end)} Uhr<br>
-      ${currentSession.killzone ? `⚠️ Killzone: ${formatHM(currentSession.killzone[0])} – ${formatHM(currentSession.killzone[1])} Uhr<br>` : ""}
-      ℹ️ ${currentSession.info}
+      <strong>🟡 ${s.name} Session</strong><br>
+      📅 Start: ${formatHM(s.start)} Uhr<br>
+      🕓 Ende: ${formatHM(s.end)} Uhr<br>
+      ℹ️ ${s.info}
       ${weekDaysHtml}
     `;
   } else {
     sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
   }
 
-  // Session-Wechsel Alarm-Logik
   const minutesToNext = getMinutesToNextSession(minutes);
-
   if (minutesToNext <= 5 && minutesToNext > 0) {
-    if (lastAlertSession !== sessionText.textContent && sessionText.textContent !== "Session-Zeit: 00:00") {
+    if (lastAlertSession !== sessionText.textContent) {
       showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
       lastAlertSession = sessionText.textContent;
     }
@@ -1197,8 +1118,11 @@ const percent = (minutes / 1439) * 100;
   }
 }
 
-  setInterval(updateRealTimeBar, 60000);
+window.addEventListener("load", () => {
+  requestNotificationPermission();
   updateRealTimeBar();
+  setInterval(updateRealTimeBar, 60000);
+});
 </script>
 
 <script>
