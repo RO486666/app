@@ -1192,17 +1192,26 @@ window.addEventListener("load", () => {
     const accountId = await getMyfxAccounts();
     const trades = await getMyfxHistory(accountId);
 
-    trades.forEach(trade => {
-      const tradeObj = {
-        id: Date.now() + Math.random(),
-        pair: trade.symbol,
-        direction: trade.action === "Buy" ? "Long" : "Short",
-        date: new Date(trade.openTime),
-        pnl: parseFloat(trade.profit),
-        resultType: trade.profit >= 0 ? "win" : "loss"
-      };
-      tradesData.push(tradeObj);
-    });
+  trades.forEach(trade => {
+  const alreadyExists = tradesData.some(t =>
+    t.pair === trade.symbol &&
+    new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
+    parseFloat(t.pnl) === parseFloat(trade.profit)
+  );
+
+  if (!alreadyExists) {
+    const tradeObj = {
+      id: Date.now() + Math.random(),
+      pair: trade.symbol,
+      direction: trade.action === "Buy" ? "Long" : "Short",
+      date: new Date(trade.openTime),
+      pnl: parseFloat(trade.profit),
+      resultType: trade.profit >= 0 ? "win" : "loss"
+    };
+    tradesData.push(tradeObj);
+  }
+});
+
 
     saveTrades();
     loadTrades();
