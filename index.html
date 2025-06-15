@@ -1165,11 +1165,16 @@ window.addEventListener("load", () => {
     alert("Login erfolgreich");
   }
   
-    function doMyfxLogin() {
-    const email = document.getElementById("myfxEmail").value;
-    const pw = document.getElementById("myfxPassword").value;
-    loginToMyfxbook(email, pw);
-  }
+function doMyfxLogin() {
+  const email = document.getElementById("myfxEmail").value;
+  const pw = document.getElementById("myfxPassword").value;
+
+  // speichern im localStorage
+  localStorage.setItem("myfxEmail", email);
+  localStorage.setItem("myfxPassword", pw);
+
+  loginToMyfxbook(email, pw);
+}
   
   async function getMyfxAccounts() {
     const res = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${myfxSession}`);
