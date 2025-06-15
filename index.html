@@ -1159,15 +1159,17 @@ window.addEventListener("load", () => {
       const url = `https://www.myfxbook.com/api/login.json?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
       const res = await fetch(url);
       const data = await res.json();
+
       if (data.error || !data.session) {
-        alert("❌ Login fehlgeschlagen!");
+        alert("❌ Login fehlgeschlagen: " + (data.message || "Unbekannter Fehler"));
         return;
       }
+
       myfxSession = data.session;
       localStorage.setItem("myfxSession", myfxSession);
       alert("✅ Login erfolgreich");
     } catch (e) {
-      alert("⚠️ Fehler beim Login (CORS oder Netzwerkproblem)");
+      alert("⚠️ Fehler beim Login (Netzwerk oder CORS)");
     }
   }
 
@@ -1194,7 +1196,10 @@ window.addEventListener("load", () => {
   }
 
   async function syncMyfxbook() {
-    if (!myfxSession) return alert("⚠️ Bitte zuerst einloggen!");
+    if (!myfxSession) {
+      alert("⚠️ Bitte zuerst einloggen!");
+      return;
+    }
 
     const accountId = await getMyfxAccounts();
     const trades = await getMyfxHistory(accountId);
@@ -1225,7 +1230,8 @@ window.addEventListener("load", () => {
     alert(`📥 ${imported} neue Trades importiert!`);
   }
 
-  window.addEventListener("load", () => {
+  // Automatisch E-Mail, Passwort & Session laden
+  window.addEventListener("load", async () => {
     const savedEmail = localStorage.getItem("myfxEmail");
     const savedPw = localStorage.getItem("myfxPassword");
     const savedSession = localStorage.getItem("myfxSession");
@@ -1237,6 +1243,7 @@ window.addEventListener("load", () => {
 
     if (savedSession) {
       myfxSession = savedSession;
+      console.log("✅ Session wiederhergestellt.");
     }
   });
 </script>
