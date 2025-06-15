@@ -460,12 +460,26 @@ function addTrades() {
 }
 
 function resetAll() {
-  if (!confirm("Willst du wirklich ALLE Trades und Statistiken löschen?")) return;
+  if (!confirm("Willst du wirklich ALLE Statistiken und Trades löschen?")) return;
 
+  // 🧹 Nur Statistik & Trade-Daten löschen
   tradesData.length = 0;
   localStorage.removeItem("tradesData");
+  localStorage.removeItem("myfxSummary");
+  localStorage.removeItem("dayStats");
+  localStorage.removeItem("weekStats");
+  localStorage.removeItem("monthStats");
+  localStorage.removeItem("halfYearStats");
+  localStorage.removeItem("yearStats");
+
+  // 🧼 UI zurücksetzen
   document.getElementById("positionBar").innerHTML = "";
+
+  // 🔁 Stats neu berechnen
   updateStats();
+
+  // 🔄 Optional: Neuladen für klare UI
+  location.reload();
 }
 
 function isSameDay(date1, date2) {
