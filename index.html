@@ -288,44 +288,59 @@
   
   <div id="sessionProgressDisplay" style="font-size: 13px; color: #aaa; margin-top: 5px;"></div>
 
-  <div class="stats-box" id="tagBox">
-    <h3>📅 Tagesauswertung</h3>
-    <p>Gewinne: 0 | Verluste: 0</p>
-    <p>Gesamt PnL: 0 €</p>
-    <p>Profitfaktor: –</p>
-    <p>Durchschnitt Gewinn/Verlust: –</p>
-  </div>
-
-  <div class="stats-box" id="wocheBox" style="display:none">
-    <h3>📈 Wochenauswertung</h3>
-    <p>Gewinne: 0 | Verluste: 0</p>
-    <p>Gesamt PnL: 0 €</p>
-    <p>Profitfaktor: –</p>
-    <p>Durchschnitt Gewinn/Verlust: –</p>
-  </div>
-
-  <div class="stats-box" id="monatBox" style="display:none">
-    <h3>📊 Monatsauswertung</h3>
-    <p>Gewinne: 0 | Verluste: 0</p>
-    <p>Gesamt PnL: 0 €</p>
-    <p>Profitfaktor: –</p>
-    <p>Durchschnitt Gewinn/Verlust: –</p>
-  </div>
-  
-  <div class="stats-box" id="halbjahrBox" style="display:none">
-  <h3>📅 Halbjahresauswertung</h3>
+   <div class="stats-box" id="tagBox">
+  <h3>📅 Tagesauswertung</h3>
   <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Gesamt PnL: 0 €</p>
-  <p>Profitfaktor: –</p>
-  <p>Durchschnitt Gewinn/Verlust: –</p>
+  <p>Long-Wins: 0 | Short-Wins: 0</p>
+  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
+  <p>Balance: 0,00 €</p>
+  <p>Deposits: 0,00 €</p>
+  <p>Profit: 0,00 €</p>
+  <p>Anzahl Trades: 0</p>
 </div>
 
-<div class="stats-box" id="jahrBox" style="display:none">
+<div class="stats-box" id="wocheBox" style="display:none">
+  <h3>📈 Wochenauswertung</h3>
+  <p>Gewinne: 0 | Verluste: 0</p>
+  <p>Long-Wins: 0 | Short-Wins: 0</p>
+  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
+  <p>Balance: 0,00 €</p>
+  <p>Deposits: 0,00 €</p>
+  <p>Profit: 0,00 €</p>
+  <p>Anzahl Trades: 0</p>
+</div>
+
+<div class="stats-box" id="monatBox" style="display:none">
+  <h3>📊 Monatsauswertung</h3>
+  <p>Gewinne: 0 | Verluste: 0</p>
+  <p>Long-Wins: 0 | Short-Wins: 0</p>
+  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
+  <p>Balance: 0,00 €</p>
+  <p>Deposits: 0,00 €</p>
+  <p>Profit: 0,00 €</p>
+  <p>Anzahl Trades: 0</p>
+</div>
+
+<div class="stats-box" id="halbjahrBox" style="display:none">
+  <h3>📅 Halbjahresauswertung</h3>
+  <p>Gewinne: 0 | Verluste: 0</p>
+  <p>Long-Wins: 0 | Short-Wins: 0</p>
+  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
+  <p>Balance: 0,00 €</p>
+  <p>Deposits: 0,00 €</p>
+  <p>Profit: 0,00 €</p>
+  <p>Anzahl Trades: 0</p>
+</div>
+
+  <<div class="stats-box" id="jahrBox" style="display:none">
   <h3>📆 Jahresauswertung</h3>
   <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Gesamt PnL: 0 €</p>
-  <p>Profitfaktor: –</p>
-  <p>Durchschnitt Gewinn/Verlust: –</p>
+  <p>Long-Wins: 0 | Short-Wins: 0</p>
+  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
+  <p>Balance: 0,00 €</p>
+  <p>Deposits: 0,00 €</p>
+  <p>Profit: 0,00 €</p>
+  <p>Anzahl Trades: 0</p>
 </div>
 
 <div id="resetPopup" class="popup" style="display: none;">
@@ -669,6 +684,45 @@ function updateStats() {
   }
 }
 
+ function fillBox(box, stats, longShort) {
+    const summaryRaw = localStorage.getItem("myfxSummary");
+    let deposit = 0, balance = stats.totalPnl, profit = stats.totalPnl;
+
+    if (summaryRaw) {
+      try {
+        const myfx = JSON.parse(summaryRaw);
+        if (myfx.deposit !== undefined && myfx.balance !== undefined) {
+          deposit = myfx.deposit;
+          balance = myfx.balance;
+          profit = myfx.balance - myfx.deposit;
+        }
+      } catch (e) {
+        console.warn("Myfx-Daten kaputt:", e);
+      }
+    }
+
+    box.querySelector("p:nth-child(3)").innerHTML =
+      `Long-Wins: ${longShort.longs} | Short-Wins: ${longShort.shorts}<br>` +
+      `Stärke: ${colorSidePercent(longShort.longs, longShort.shorts)}`;
+    box.querySelector("p:nth-child(4)").innerHTML = `Balance: ${colorText(balance, true)}`;
+    box.querySelector("p:nth-child(5)").innerHTML = `Deposits: ${colorText(deposit, true)}`;
+    box.querySelector("p:nth-child(6)").innerHTML = `Profit: ${colorText(profit, true)}`;
+    box.querySelector("p:nth-child(7)").innerHTML = `Anzahl Trades: ${stats.totalTrades}`;
+    box.querySelector("p:nth-child(8)").innerHTML = `Profitabel: ${colorProfitPercent(stats.profitPercent)}`;
+  }
+
+   function getMyfxSummary() {
+    try {
+      const raw = localStorage.getItem("myfxSummary");
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      if (obj.deposit !== undefined && obj.balance !== undefined) return obj;
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
+
   function colorProfitPercent(p) {
     if (p === null) return "–";
     if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
@@ -682,6 +736,7 @@ function updateStats() {
     const shorts = trades.filter(t => t.direction === "Short" && t.pnl > 0).length;
     return { longs, shorts };
   }
+
 
   const isToday = (date) => isSameDay(date, now);
   const isThisWeek = (date) => isSameWeek(date, now);
@@ -709,6 +764,8 @@ function updateStats() {
   tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
   tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
   tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+  tagBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+  fillBox(tagBox, dayStats, dayLongShort);
 
   const wocheBox = document.getElementById("wocheBox");
 wocheBox.querySelector("p:nth-child(2)").innerHTML =
@@ -718,6 +775,8 @@ wocheBox.querySelector("p:nth-child(2)").innerHTML =
 wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
 wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
 wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
+ wocheBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+  fillBox(wocheBox, weekStats, weekLongShort);
 
 
   const monatBox = document.getElementById("monatBox");
@@ -728,6 +787,8 @@ monatBox.querySelector("p:nth-child(2)").innerHTML =
 monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
 monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
 monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
+  monatBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+  fillBox(monatBox, monthStats, monthLongShort);
 
  const halbjahrBox = document.getElementById("halbjahrBox");
 halbjahrBox.querySelector("p:nth-child(2)").innerHTML =
@@ -736,7 +797,8 @@ halbjahrBox.querySelector("p:nth-child(2)").innerHTML =
   `Stärke: ${colorSidePercent(halfYearLongShort.longs, halfYearLongShort.shorts)}`;
 halbjahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(halfYearStats.totalPnl, true)}`;
 halbjahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${halfYearStats.totalTrades}`;
-halbjahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(halfYearStats.profitPercent)}`;
+halbjahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(halfYearStats.profitPercent)}`;halbjahrBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(halfYearStats.wins)} | Verluste: ${colorText(halfYearStats.losses)}`;
+  fillBox(halbjahrBox, halfYearStats, halfYearLongShort);
 
  const jahrBox = document.getElementById("jahrBox");
 jahrBox.querySelector("p:nth-child(2)").innerHTML =
@@ -746,6 +808,8 @@ jahrBox.querySelector("p:nth-child(2)").innerHTML =
 jahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(yearStats.totalPnl, true)}`;
 jahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${yearStats.totalTrades}`;
 jahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(yearStats.profitPercent)}`;
+ jahrBox.querySelector("p:nth-child(2)").innerHTML = `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}`;
+  fillBox(jahrBox, yearStats, yearLongShort);
 
 }
 
@@ -1195,40 +1259,58 @@ window.addEventListener("load", () => {
     return data.history;
   }
 
-  async function syncMyfxbook() {
-    if (!myfxSession) {
-      alert("⚠️ Bitte zuerst einloggen!");
-      return;
-    }
-
-    const accountId = await getMyfxAccounts();
-    const trades = await getMyfxHistory(accountId);
-
-    let imported = 0;
-    trades.forEach(trade => {
-      const exists = tradesData.some(t =>
-        t.pair === trade.symbol &&
-        new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
-        parseFloat(t.pnl) === parseFloat(trade.profit)
-      );
-
-      if (!exists) {
-        tradesData.push({
-          id: Date.now() + Math.random(),
-          pair: trade.symbol,
-          direction: trade.action === "Buy" ? "Long" : "Short",
-          date: new Date(trade.openTime),
-          pnl: parseFloat(trade.profit),
-          resultType: trade.profit >= 0 ? "win" : "loss"
-        });
-        imported++;
-      }
-    });
-
-    saveTrades();
-    loadTrades();
-    alert(`📥 ${imported} neue Trades importiert!`);
+ async function syncMyfxbook() {
+  if (!myfxSession) {
+    alert("⚠️ Bitte zuerst einloggen!");
+    return;
   }
+
+  const accountId = await getMyfxAccounts();
+  const trades = await getMyfxHistory(accountId);
+
+  // 📥 Trades importieren
+  let imported = 0;
+  trades.forEach(trade => {
+    const exists = tradesData.some(t =>
+      t.pair === trade.symbol &&
+      new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
+      parseFloat(t.pnl) === parseFloat(trade.profit)
+    );
+
+    if (!exists) {
+      tradesData.push({
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: parseFloat(trade.profit),
+        resultType: trade.profit >= 0 ? "win" : "loss"
+      });
+      imported++;
+    }
+  });
+
+  // 📦 Summen berechnen
+  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
+
+  // 🧠 Benutzer fragen: hast du was eingezahlt?
+  const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
+  let deposit = 0;
+  if (answer && !isNaN(answer.replace(',', '.'))) {
+    deposit = parseFloat(answer.replace(',', '.'));
+  }
+
+  // ✅ Speichern in localStorage
+  const myfxSummary = {
+    deposit: deposit,
+    balance: balance
+  };
+  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
+
+  saveTrades();
+  loadTrades();
+  alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
+}
 
   // Automatisch E-Mail, Passwort & Session laden
   window.addEventListener("load", async () => {
@@ -1247,7 +1329,6 @@ window.addEventListener("load", () => {
     }
   });
 </script>
-
 
 
 </script>
