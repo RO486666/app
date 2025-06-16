@@ -265,18 +265,49 @@
   <button onclick="doMyfxLogin()">🔐 Myfxbook Login</button>
 </div>
 
-<button onclick="syncMyfxbook()">📥 Myfxbook Trades importieren</button>
+<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
+  📥 Manuell synchronisieren (22:00–23:00)
+</button>
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 <div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
+<!-- HIER EINSETZEN -->
+<div id="sessionProgressDisplay"
+     style="text-align:center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 8px;
+            color: #00ff99;
+            background: #111;
+            padding: 6px;
+            border-radius: 8px;">
+</div>
+
 <div class="session-details-box" id="sessionDetailsBox"></div>
 <div class="alert-below-header" id="alertBox"></div>
 
-<div class="main">
-  <button class="big-btn" onclick="showPopup()">+ Trade starten</button>
+<div class="tab-buttons" style="margin-top: 20px;">
+  <button class="btn active" onclick="switchCalcTab('pos')">📐 Position Size</button>
+  <button class="btn" onclick="switchCalcTab('risk')">📊 Risiko %</button>
+  <button class="btn" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
+  <button class="btn" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
+</div>
+
+<div id="calc-pos" class="calc-box" style="margin-top: 15px;">
+  <p style="text-align:center; color:#aaa;">🔧 Position Size Rechner wird hier angezeigt</p>
+</div>
+<div id="calc-risk" class="calc-box" style="display:none; margin-top: 15px;">
+  <p style="text-align:center; color:#aaa;">📊 Risiko % Rechner kommt hier hin</p>
+</div>
+<div id="calc-lot" class="calc-box" style="display:none; margin-top: 15px;">
+  <p style="text-align:center; color:#aaa;">🧮 Lotgrößen-Rechner</p>
+</div>
+<div id="calc-breakeven" class="calc-box" style="display:none; margin-top: 15px;">
+  <p style="text-align:center; color:#aaa;">🧠 Break-even Bereich</p>
+</div>
 
   <div class="tab-buttons">
     <button class="btn active" onclick="switchTab('tag')">Tag</button>
@@ -352,9 +383,7 @@
   <button id="cancelReset" style="background:#555;">Abbrechen</button>
 </div>
  <button id="resetBtn">Alles zurücksetzen</button>
-  
 
-</div>
 
 <div class="popup" id="tradePopup">
   <h3>Trade eingeben</h3>
@@ -379,6 +408,10 @@
   <input type="text" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50" value="00,00" />
   <button onclick="saveResult()">Speichern</button>
 </div>
+<div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
+<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
+  📥 Manuell synchronisieren (22:00–23:00)
+</button>
 
 <div class="position-bar" id="positionBar"></div>
 
@@ -1213,6 +1246,7 @@ const colors = names.map(n => sessionColors[n] || "#666");
   let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
   
    updateGradientBar(colors);
+   showSessionProgress(activeSessions, minutes); // ✅ HIER rein
 
   if (colors.length > 0) {
     progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
@@ -1300,50 +1334,50 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-  let myfxSession = null;
+let myfxSession = null;
 
-  async function loginToMyfxbook(email, password) {
-    try {
-      const url = `https://www.myfxbook.com/api/login.json?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-      const res = await fetch(url);
-      const data = await res.json();
+async function loginToMyfxbook(email, password) {
+  try {
+    const url = `https://www.myfxbook.com/api/login.json?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-      if (data.error || !data.session) {
-        alert("❌ Login fehlgeschlagen: " + (data.message || "Unbekannter Fehler"));
-        return;
-      }
-
-      myfxSession = data.session;
-      localStorage.setItem("myfxSession", myfxSession);
-      alert("✅ Login erfolgreich");
-    } catch (e) {
-      alert("⚠️ Fehler beim Login (Netzwerk oder CORS)");
+    if (data.error || !data.session) {
+      alert("❌ Login fehlgeschlagen: " + (data.message || "Unbekannter Fehler"));
+      return;
     }
+
+    myfxSession = data.session;
+    localStorage.setItem("myfxSession", myfxSession);
+    alert("✅ Login erfolgreich");
+  } catch (e) {
+    alert("⚠️ Fehler beim Login (Netzwerk oder CORS)");
   }
+}
 
-  function doMyfxLogin() {
-    const email = document.getElementById("myfxEmail").value;
-    const pw = document.getElementById("myfxPassword").value;
-    if (!email || !pw) return alert("Bitte E-Mail & Passwort eingeben!");
+function doMyfxLogin() {
+  const email = document.getElementById("myfxEmail").value;
+  const pw = document.getElementById("myfxPassword").value;
+  if (!email || !pw) return alert("Bitte E-Mail & Passwort eingeben!");
 
-    localStorage.setItem("myfxEmail", email);
-    localStorage.setItem("myfxPassword", pw);
-    loginToMyfxbook(email, pw);
-  }
+  localStorage.setItem("myfxEmail", email);
+  localStorage.setItem("myfxPassword", pw);
+  loginToMyfxbook(email, pw);
+}
 
-  async function getMyfxAccounts() {
-    const res = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${myfxSession}`);
-    const data = await res.json();
-    return data.accounts[0].id;
-  }
+async function getMyfxAccounts() {
+  const res = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${myfxSession}`);
+  const data = await res.json();
+  return data.accounts[0].id;
+}
 
-  async function getMyfxHistory(accountId) {
-    const res = await fetch(`https://www.myfxbook.com/api/get-history.json?session=${myfxSession}&id=${accountId}`);
-    const data = await res.json();
-    return data.history;
-  }
+async function getMyfxHistory(accountId) {
+  const res = await fetch(`https://www.myfxbook.com/api/get-history.json?session=${myfxSession}&id=${accountId}`);
+  const data = await res.json();
+  return data.history;
+}
 
- async function syncMyfxbook() {
+async function syncMyfxbook() {
   if (!myfxSession) {
     alert("⚠️ Bitte zuerst einloggen!");
     return;
@@ -1352,7 +1386,6 @@ window.addEventListener("load", () => {
   const accountId = await getMyfxAccounts();
   const trades = await getMyfxHistory(accountId);
 
-  // 📥 Trades importieren
   let imported = 0;
   trades.forEach(trade => {
     const exists = tradesData.some(t =>
@@ -1360,7 +1393,6 @@ window.addEventListener("load", () => {
       new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
       parseFloat(t.pnl) === parseFloat(trade.profit)
     );
-
     if (!exists) {
       tradesData.push({
         id: Date.now() + Math.random(),
@@ -1374,21 +1406,15 @@ window.addEventListener("load", () => {
     }
   });
 
-  // 📦 Summen berechnen
   const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
 
-  // 🧠 Benutzer fragen: hast du was eingezahlt?
   const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
   let deposit = 0;
   if (answer && !isNaN(answer.replace(',', '.'))) {
     deposit = parseFloat(answer.replace(',', '.'));
   }
 
-  // ✅ Speichern in localStorage
-  const myfxSummary = {
-    deposit: deposit,
-    balance: balance
-  };
+  const myfxSummary = { deposit, balance };
   localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
 
   saveTrades();
@@ -1396,23 +1422,114 @@ window.addEventListener("load", () => {
   alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
 }
 
-  // Automatisch E-Mail, Passwort & Session laden
-  window.addEventListener("load", async () => {
-    const savedEmail = localStorage.getItem("myfxEmail");
-    const savedPw = localStorage.getItem("myfxPassword");
-    const savedSession = localStorage.getItem("myfxSession");
+// ✅ Auto-Sync (leise) um 23:00
+async function syncMyfxbookAuto(depositOverride = 0) {
+  if (!myfxSession) {
+    console.warn("❌ Kein Login – Auto-Sync abgebrochen.");
+    return;
+  }
 
-    if (savedEmail && savedPw) {
-      document.getElementById("myfxEmail").value = savedEmail;
-      document.getElementById("myfxPassword").value = savedPw;
-    }
+  const accountId = await getMyfxAccounts();
+  const trades = await getMyfxHistory(accountId);
 
-    if (savedSession) {
-      myfxSession = savedSession;
-      console.log("✅ Session wiederhergestellt.");
+  let imported = 0;
+  trades.forEach(trade => {
+    const exists = tradesData.some(t =>
+      t.pair === trade.symbol &&
+      new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
+      parseFloat(t.pnl) === parseFloat(trade.profit)
+    );
+    if (!exists) {
+      tradesData.push({
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: parseFloat(trade.profit),
+        resultType: trade.profit >= 0 ? "win" : "loss"
+      });
+      imported++;
     }
   });
+
+  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
+  const myfxSummary = { deposit: depositOverride, balance };
+  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
+
+  const now = new Date();
+  localStorage.setItem("lastSyncFlag", now.toDateString());
+  localStorage.setItem("lastSyncTime", now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  localStorage.removeItem("syncShown");
+
+  saveTrades();
+  loadTrades();
+  console.log(`✅ Auto-Sync abgeschlossen (${imported} Trades)`);
+}
+
+// 🕒 Nur zwischen 22:00–22:59
+function showManualSyncButtonIfNeeded() {
+  const hour = new Date().getHours();
+  const btn = document.getElementById("manualSyncBtn");
+  if (!btn) return;
+  btn.style.display = hour === 22 ? "inline-block" : "none";
+}
+
+// ⏱️ Auto-Sync um 23 Uhr
+function autoSyncIfNeeded() {
+  const now = new Date();
+  const hour = now.getHours();
+  const lastSync = localStorage.getItem("lastSyncDate");
+
+  if (hour === 23 && lastSync !== now.toDateString()) {
+    syncMyfxbookAuto(0);
+    localStorage.setItem("lastSyncDate", now.toDateString());
+  }
+}
+
+// ✅ Einmalige Anzeige beim nächsten Laden
+function showSyncStatusOnce() {
+  const syncFlag = localStorage.getItem("lastSyncFlag");
+  const syncTime = localStorage.getItem("lastSyncTime");
+  const syncShown = localStorage.getItem("syncShown");
+
+  if (syncFlag && syncFlag === new Date().toDateString() && syncShown !== "true") {
+    showSyncStatus(`Letzter Auto-Sync erfolgreich (${syncTime})`);
+    localStorage.setItem("syncShown", "true");
+  }
+}
+
+function showSyncStatus(text) {
+  const el = document.getElementById("syncStatus");
+  if (!el) return;
+  el.innerHTML = `✅ ${text}`;
+  setTimeout(() => el.innerHTML = "", 10000);
+}
+
+// 🚀 On Load
+window.addEventListener("load", async () => {
+  const savedEmail = localStorage.getItem("myfxEmail");
+  const savedPw = localStorage.getItem("myfxPassword");
+  const savedSession = localStorage.getItem("myfxSession");
+
+  if (savedEmail && savedPw) {
+    document.getElementById("myfxEmail").value = savedEmail;
+    document.getElementById("myfxPassword").value = savedPw;
+  }
+
+  if (savedSession) {
+    myfxSession = savedSession;
+    console.log("✅ Session wiederhergestellt.");
+  }
+
+  autoSyncIfNeeded();
+  setInterval(autoSyncIfNeeded, 5 * 60 * 1000);
+  showManualSyncButtonIfNeeded();
+  setInterval(showManualSyncButtonIfNeeded, 5 * 60 * 1000);
+  showSyncStatusOnce();
+});
 </script>
+
+
 
 
 </script>
