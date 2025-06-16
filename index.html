@@ -283,7 +283,7 @@
     <button class="btn" onclick="switchTab('woche')">Woche</button>
     <button class="btn" onclick="switchTab('monat')">Monat</button>
 	<button class="btn" onclick="switchTab('halbjahr')">Halbjahr</button>
-  <button class="btn" onclick="switchTab('jahr')">Jahr</button>
+	<button class="btn" onclick="switchTab('jahr')">Jahr</button>
   </div>
   
   <div id="sessionProgressDisplay" style="font-size: 13px; color: #aaa; margin-top: 5px;"></div>
@@ -332,7 +332,7 @@
   <p>Anzahl Trades: 0</p>
 </div>
 
-  <<div class="stats-box" id="jahrBox" style="display:none">
+  <div class="stats-box" id="jahrBox" style="display:none">
   <h3>📆 Jahresauswertung</h3>
   <p>Gewinne: 0 | Verluste: 0</p>
   <p>Long-Wins: 0 | Short-Wins: 0</p>
@@ -993,13 +993,81 @@ const sessionColors = {
 };
 
 const sessions = [
-  { name: "Sydney", start: 1380, end: 480, info: "Australische Session, oft ruhiger." },
-  { name: "Tokyo", start: 60, end: 600, info: "Asiatischer Handel – Fokus auf JPY & AUD." },
-  { name: "London Killzone", start: 480, end: 540, info: "Hohe Volatilität – viele Breakouts." },
-  { name: "London", start: 540, end: 1020, info: "Europäische Session mit viel Volumen." },
-  { name: "New York Killzone", start: 840, end: 900, info: "Wichtige US-News & schnelle Bewegungen." },
-  { name: "New York", start: 870, end: 1380, info: "Amerikanische Session – hohe Volatilität." },
-  { name: "Deadzone", start: 720, end: 840, info: "Mittagliche Ruhephase – oft Konsolidierung." }
+  {
+    name: "Sydney",
+    start: 1380,
+    end: 480,
+    info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
+    weekDaysInfo: [
+      { day: "Sonntag", text: "🛠️ Vorbereitung auf neue Woche" },
+      { day: "Montag", text: "🌏 Asien-Session startet" },
+      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien" },
+      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung" }
+    ],
+  },
+  {
+    name: "Tokyo",
+    start: 60,
+    end: 600,
+    info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
+    weekDaysInfo: [
+      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz" },
+      { day: "Donnerstag", text: "📈 Japan BIP-Daten" },
+      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach" }
+    ],
+  },
+  {
+    name: "London",
+    start: 540,
+    end: 1020,
+    info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
+    weekDaysInfo: [
+      { day: "Montag", text: "📉 EU Handelsdaten" },
+      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB" },
+      { day: "Donnerstag", text: "📊 Inflationsdaten UK" },
+      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK" }
+    ],
+  },
+  {
+    name: "New York",
+    start: 870,
+    end: 1380,
+    info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
+    weekDaysInfo: [
+      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen" },
+      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten" },
+      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
+    ],
+  },
+  {
+    name: "London Killzone",
+    start: 420,
+    end: 660,
+    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
+    weekDaysInfo: [
+      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
+      { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
+    ],
+  },
+  {
+    name: "New York Killzone",
+    start: 810,
+    end: 1020,
+    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
+    weekDaysInfo: [
+      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
+      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
+    ],
+  },
+  {
+    name: "Deadzone",
+    start: 1380,
+    end: 0,
+    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
+    weekDaysInfo: [
+      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
+    ],
+  }
 ];
 
 
@@ -1127,27 +1195,30 @@ function updateRealTimeBar() {
     return;
   }
 
-  // ⏬ Ab hier normaler Werktags-Ablauf
-  const minutes = now.getHours() * 60 + now.getMinutes();
-  const percent = (minutes / 1439) * 100;
+// ⏬ Ab hier normaler Werktags-Ablauf
+const minutes = now.getHours() * 60 + now.getMinutes();
+const percent = (minutes / 1439) * 100;
 
-  sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins}`;
+const activeSessions = getCurrentSessions(minutes);
+const names = activeSessions.map(s => s.name);
+const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
+sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
 
-  progressBar.style.width = `${percent}%`;
+progressBar.style.width = `${percent}%`;
 
-  const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map(s => s.name);
-  const colors = names.map(n => sessionColors[n] || "#666");
+const colors = names.map(n => sessionColors[n] || "#666");
 
-  updateGradientBar(colors);
-  showSessionProgress(activeSessions, minutes);
-
-  progressContainer.style.boxShadow = colors.length > 0
-    ? `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`
-    : "0 0 12px 6px rgba(0,0,0,0)";
 
   const name = activeSessions.length > 0 ? activeSessions[0].name : "";
   let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
+  
+   updateGradientBar(colors);
+
+  if (colors.length > 0) {
+    progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
+  } else {
+    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
+  }
 
   if (name === "Tokyo") {
     infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
