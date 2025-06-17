@@ -1504,6 +1504,16 @@ function showSyncStatus(text) {
   el.innerHTML = `✅ ${text}`;
   setTimeout(() => el.innerHTML = "", 10000);
 }
+  // Shortcut: STRG + M zeigt den versteckten Button
+  window.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.key.toLowerCase() === "m") {
+      const btn = document.getElementById("manualImportBtn");
+      if (btn) {
+        btn.style.display = "block";
+        alert("Manueller Import aktiviert");
+      }
+    }
+  });
 
 // 🚀 On Load
 window.addEventListener("load", async () => {
