@@ -275,10 +275,15 @@
 <div style="margin-top: 10px;">
   <input type="email" id="myfxEmail" placeholder="Myfxbook Email" />
   <input type="password" id="myfxPassword" placeholder="Myfxbook Passwort" />
-  <button onclick="doMyfxLogin()">🔐 Myfxbook Login</button>
 </div>
+<button onclick="doMyfxLogin()" class="tool-button">
+  🔐 Myfxbook Login
+</button>
 <button id="manualSyncBtn" onclick="syncMyfxbook()" class="tool-button">
   🔁 Manueller Import
+</button>
+<button onclick="getOpenTrades()" class="tool-button">
+  📂 Offene Positionen anzeigen
 </button>
 
 <button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
@@ -749,13 +754,13 @@ function loadTrades() {
     const arr = JSON.parse(saved);
     tradesData.length = 0;
     document.getElementById("positionBar").innerHTML = "";
-    arr.forEach((trade) => {
-      trade.date = new Date(trade.date);
-      tradesData.push(trade);
-      if (trade.pnl === null) {
-        renderTradeBox(trade);
-      }
-    });
+  arr.forEach((trade) => {
+  trade.date = new Date(trade.date);
+  tradesData.push(trade);
+  if (trade.pnl === null) {
+    renderTradeBox(trade);
+  }
+});
   }
   updateStats();
 }
@@ -799,15 +804,15 @@ function renderTradeBox(tradeObj) {
   box.appendChild(closeBtn);
 
   let resultText = "";
-  if (tradeObj.pnl !== null) {
-    resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
-  } else {
-    resultText = `
-      <button onclick="markResult(this, 'win')">✅ Erfolg</button>
-      <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
-      <div class="result-value"></div>
-    `;
-  }
+if (typeof tradeObj.pnl === "number") {
+  resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
+} else {
+  resultText = `
+    <button onclick="markResult(this, 'win')">✅ Erfolg</button>
+    <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
+    <div class="result-value"></div>
+  `;
+}
 
   const contentDiv = document.createElement("div");
   contentDiv.innerHTML = `<strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>${resultText}`;
@@ -1774,11 +1779,11 @@ async function syncMyfxbook() {
 
   let imported = 0;
   trades.forEach(trade => {
-    const exists = tradesData.some(t =>
-      t.pair === trade.symbol &&
-      new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
-      parseFloat(t.pnl) === parseFloat(trade.profit)
-    );
+const exists = tradesData.some(t =>
+  t.pair === trade.symbol &&
+  t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
+  new Date(t.date).getTime() === new Date(trade.openTime).getTime()
+);
     if (!exists) {
       tradesData.push({
         id: Date.now() + Math.random(),
@@ -1791,6 +1796,8 @@ async function syncMyfxbook() {
       imported++;
     }
   });
+  
+  
 
   const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
 
@@ -1807,6 +1814,8 @@ async function syncMyfxbook() {
   loadTrades();
   alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
 }
+
+
 
 // ✅ Auto-Sync (leise) um 23:00
 async function syncMyfxbookAuto(depositOverride = 0) {
@@ -1858,16 +1867,19 @@ function showManualSyncButtonIfNeeded() {
   btn.style.display = "inline-block"; // Immer sichtbar
 }
 
-
-// ⏱️ Auto-Sync um 23 Uhr
+//Sync läuft alle 30 Minuten (00:00, 00:30, 01:00 …).
 function autoSyncIfNeeded() {
   const now = new Date();
-  const hour = now.getHours();
-  const lastSync = localStorage.getItem("lastSyncDate");
+  const hour = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes();
+  const slot = `${hour}:${minutes < 30 ? '00' : '30'}`;
 
-  if (hour === 23 && lastSync !== now.toDateString()) {
-    syncMyfxbookAuto(0);
-    localStorage.setItem("lastSyncDate", now.toDateString());
+  const lastSyncSlot = localStorage.getItem("lastSyncSlot");
+
+  if (slot !== lastSyncSlot) {
+    syncMyfxbookAuto(0); // 0 = kein neuer Deposit
+    localStorage.setItem("lastSyncSlot", slot);
+    console.log(`⏱️ Auto-Sync für Slot ${slot} durchgeführt.`);
   }
 }
 
@@ -1888,6 +1900,56 @@ function showSyncStatus(text) {
   if (!el) return;
   el.innerHTML = `✅ ${text}`;
   setTimeout(() => el.innerHTML = "", 10000);
+}
+
+async function getOpenTrades() {
+  if (!myfxSession) {
+    console.warn("❌ Kein Login – offene Trades nicht abrufbar.");
+    return;
+  }
+
+  const res = await fetch(`https://www.myfxbook.com/api/get-open-trades.json?session=${myfxSession}`);
+  const data = await res.json();
+
+  console.log("📡 Antwort von Myfxbook:", data); // NEU
+
+  if (!data.openTrades || data.openTrades.length === 0) {
+    console.warn("⚠️ Keine offenen Trades im API-Datenobjekt.");
+    alert("❌ Keine offenen Trades in API erhalten");
+    return;
+  }
+
+  let imported = 0;
+
+  data.openTrades.forEach(trade => {
+    console.log("🔍 Prüfe Trade:", trade); // NEU
+
+    const exists = tradesData.some(t =>
+      t.pair === trade.symbol &&
+      t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
+      new Date(t.date).getTime() === new Date(trade.openTime).getTime()
+    );
+
+    console.log("⚙️ Bereits vorhanden:", exists); // NEU
+
+    if (!exists) {
+      const tradeObj = {
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: null
+      };
+      console.log("📥 Neuer Trade wird hinzugefügt:", tradeObj); // NEU
+
+      tradesData.push(tradeObj);
+      renderTradeBox(tradeObj);
+      imported++;
+    }
+  });
+
+  saveTrades();
+  alert(`✅ ${imported} offene Trades importiert.`);
 }
 
 // 🚀 On Load
