@@ -1,11 +1,11 @@
 {
-  "name": "Trade App Layout",
-  "short_name": "TradeApp",
+"name": "TradeMind: Journal & Performance Tracker",
+  "short_name": "TradeMind",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#00aa44",
-  "description": "Eine Trade App mit Layout und Session-Alarm",
+  "description": "Dein smarter Trading-Begleiter – mit Session-Timer, Trade-Analyse, Erfolgsstatistik und Journal-Tracking. Entwickelt für Fokus, Disziplin und Profitabilität.",
   "icons": [
     {
       "src": "icon-192.png",
