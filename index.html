@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<link rel="manifest" href="manifest.json" />
+<link rel="manifest" href="/app/manifest.json" />
 <meta name="theme-color" content="#00aa44" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1709,16 +1709,16 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-  // Service Worker Registrierung
+  // Service Worker Registrierung für GitHub Pages (/app/)
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("sw.js")
+        .register("/app/sw.js", { scope: "/app/" })
         .then(reg => {
-          console.log("Service Worker registriert:", reg);
+          console.log("✅ Service Worker erfolgreich registriert:", reg);
         })
         .catch(err => {
-          console.error("Service Worker Registrierung fehlgeschlagen:", err);
+          console.error("❌ Service Worker Registrierung fehlgeschlagen:", err);
         });
     });
   }
