@@ -409,8 +409,8 @@
   <button onclick="saveResult()">Speichern</button>
 </div>
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
-<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
-  📥 Manuell synchronisieren (22:00–23:00)
+<button id="manualSyncBtn" onclick="syncMyfxbook()">
+  🔁 Manueller Import
 </button>
 
 <div class="position-bar" id="positionBar"></div>
@@ -1466,13 +1466,12 @@ async function syncMyfxbookAuto(depositOverride = 0) {
   console.log(`✅ Auto-Sync abgeschlossen (${imported} Trades)`);
 }
 
-// 🕒 Nur zwischen 22:00–22:59
 function showManualSyncButtonIfNeeded() {
-  const hour = new Date().getHours();
   const btn = document.getElementById("manualSyncBtn");
   if (!btn) return;
-  btn.style.display = hour === 22 ? "inline-block" : "none";
+  btn.style.display = "inline-block"; // Immer sichtbar
 }
+
 
 // ⏱️ Auto-Sync um 23 Uhr
 function autoSyncIfNeeded() {
@@ -1504,16 +1503,6 @@ function showSyncStatus(text) {
   el.innerHTML = `✅ ${text}`;
   setTimeout(() => el.innerHTML = "", 10000);
 }
-  // Shortcut: STRG + M zeigt den versteckten Button
-  window.addEventListener("keydown", function (e) {
-    if (e.ctrlKey && e.key.toLowerCase() === "m") {
-      const btn = document.getElementById("manualImportBtn");
-      if (btn) {
-        btn.style.display = "block";
-        alert("Manueller Import aktiviert");
-      }
-    }
-  });
 
 // 🚀 On Load
 window.addEventListener("load", async () => {
@@ -1533,8 +1522,6 @@ window.addEventListener("load", async () => {
 
   autoSyncIfNeeded();
   setInterval(autoSyncIfNeeded, 5 * 60 * 1000);
-  showManualSyncButtonIfNeeded();
-  setInterval(showManualSyncButtonIfNeeded, 5 * 60 * 1000);
   showSyncStatusOnce();
 });
 </script>
