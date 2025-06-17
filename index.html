@@ -253,9 +253,7 @@
 .session-details-box li {
   margin-bottom: 4px;
 }
-	
-	
-	
+
 .tool-button {
   background-color: #333;
   color: white;
@@ -279,9 +277,12 @@
   <input type="password" id="myfxPassword" placeholder="Myfxbook Passwort" />
   <button onclick="doMyfxLogin()">🔐 Myfxbook Login</button>
 </div>
-
-<button id="manualSyncBtn" onclick="syncMyfxbook()">
+<button id="manualSyncBtn" onclick="syncMyfxbook()" class="tool-button">
   🔁 Manueller Import
+</button>
+
+<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
+  📥 Manuell synchronisieren (22:00–23:00)
 </button>
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
@@ -424,6 +425,9 @@
   <button onclick="saveResult()">Speichern</button>
 </div>
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
+<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
+  📥 Manuell synchronisieren (22:00–23:00)
+</button>
 
 <div class="position-bar" id="positionBar"></div>
 
@@ -1421,24 +1425,18 @@ async function syncMyfxbook() {
   const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
 
   const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
-let deposit = 0;
-const today = new Date().toDateString();
-const lastDepositDate = localStorage.getItem("lastDepositDate");
-
-if (lastDepositDate !== today) {
-  const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
+  let deposit = 0;
   if (answer && !isNaN(answer.replace(',', '.'))) {
     deposit = parseFloat(answer.replace(',', '.'));
   }
-  localStorage.setItem("lastDeposit", deposit.toString());
-  localStorage.setItem("lastDepositDate", today);
-} else {
-  const saved = localStorage.getItem("lastDeposit");
-  if (saved && !isNaN(saved)) {
-    deposit = parseFloat(saved);
-  }
-}
 
+  const myfxSummary = { deposit, balance };
+  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
+
+  saveTrades();
+  loadTrades();
+  alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
+}
 
 // ✅ Auto-Sync (leise) um 23:00
 async function syncMyfxbookAuto(depositOverride = 0) {
