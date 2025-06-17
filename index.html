@@ -1421,18 +1421,24 @@ async function syncMyfxbook() {
   const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
 
   const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
-  let deposit = 0;
+let deposit = 0;
+const today = new Date().toDateString();
+const lastDepositDate = localStorage.getItem("lastDepositDate");
+
+if (lastDepositDate !== today) {
+  const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
   if (answer && !isNaN(answer.replace(',', '.'))) {
     deposit = parseFloat(answer.replace(',', '.'));
   }
-
-  const myfxSummary = { deposit, balance };
-  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
-
-  saveTrades();
-  loadTrades();
-  alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
+  localStorage.setItem("lastDeposit", deposit.toString());
+  localStorage.setItem("lastDepositDate", today);
+} else {
+  const saved = localStorage.getItem("lastDeposit");
+  if (saved && !isNaN(saved)) {
+    deposit = parseFloat(saved);
+  }
 }
+
 
 // ✅ Auto-Sync (leise) um 23:00
 async function syncMyfxbookAuto(depositOverride = 0) {
