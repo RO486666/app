@@ -1,11 +1,11 @@
 const CACHE_NAME = "trade-app-cache-v1";
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/script.js",
+  "/app/",
+  "/app/index.html",
+  "/app/styles.css",
+  "/app/script.js",
   "/app/icon-192.png",
-"/app/icon-512.png"
+  "/app/icon-512.png"
 ];
 
 self.addEventListener('install', event => {
