@@ -416,11 +416,8 @@
 
 <div id="calc-lot" class="calc-box" style="display:none; margin-top: 15px;">
   <div class="stats-box">
-    <label for="lotAccount">📦 Kontogröße (€):</label>
-    <input type="number" id="lotAccount" placeholder="z. B. 1000" />
-
-    <label for="lotRisk">⚠️ Risiko in %:</label>
-    <input type="number" id="lotRisk" placeholder="z. B. 1" step="0.1" />
+    <label for="lotFixedRisk">💰 Risiko in Euro:</label>
+    <input type="number" id="lotFixedRisk" placeholder="z. B. 50" />
 
     <label for="lotSL">🛑 Stop-Loss (in Pips):</label>
     <input type="number" id="lotSL" placeholder="z. B. 20" />
@@ -428,7 +425,7 @@
     <label for="lotPipValue">💡 Pip-Wert pro Lot (€):</label>
     <input type="number" id="lotPipValue" placeholder="z. B. 10" value="10" />
 
-    <button onclick="calculateLotSize()">🧮 Lotgröße berechnen</button>
+    <button onclick="calculateLotFromFixed()">🧮 Lotgröße berechnen</button>
 
     <p id="lotResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
   </div>
@@ -441,27 +438,13 @@
 
   <div id="lotInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
     <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Du gibst an, wie viel Euro du maximal verlieren willst – der Rechner sagt dir, welche Lotgröße das erlaubt.<br><br>
 
-    Der Lotgrößen-Rechner zeigt dir, wie viele Lots du einsetzen darfst, damit du maximal einen bestimmten Prozentsatz deines Kontos riskierst. Er basiert auf:
-
-    <ul style="margin-top:10px; margin-bottom:10px;">
-      <li><strong>📦 Kontogröße:</strong> Dein Kontoguthaben in €</li>
-      <li><strong>⚠️ Risiko in %:</strong> Wie viel Prozent davon du riskieren willst (z. B. 1%)</li>
-      <li><strong>🛑 Stop-Loss (Pips):</strong> Wie weit dein SL entfernt ist</li>
-      <li><strong>💡 Pip-Wert:</strong> Wie viel 1 Pip pro Lot kostet (z. B. 10 € bei Forex)</li>
-    </ul>
-
-    <strong>📐 Formel:</strong><br>
-    <code style="color:#0ff;">Lotgröße = (Kontogröße × Risiko%) / (SL × Pip-Wert)</code><br><br>
-
-    <strong>🔍 Beispiel:</strong><br>
-    Konto: 2000 €<br>
-    Risiko: 1% ⇒ 20 €<br>
+    <strong>Beispiel:</strong><br>
+    Risiko: 100 €<br>
     SL: 25 Pips<br>
-    Pip-Wert: 10 €<br>
-    <strong>→</strong> Lotgröße = 20 / (25 × 10) = <strong>0.08</strong><br><br>
-
-    <em style="color:#aaa;">Je größer dein SL, desto kleiner dein Lot – und umgekehrt.</em>
+    Pip-Wert: 10 €/Lot<br>
+    → <code style="color:#0ff;">Lots = 100 / (25 × 10) = 0.40</code>
   </div>
 </div>
 
@@ -1211,21 +1194,19 @@ function toggleInfoBox() {
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
-function calculateLotSize() {
-  const account = parseFloat(document.getElementById("lotAccount").value);
-  const risk = parseFloat(document.getElementById("lotRisk").value);
+function calculateLotFromFixed() {
+  const riskEuro = parseFloat(document.getElementById("lotFixedRisk").value);
   const sl = parseFloat(document.getElementById("lotSL").value);
   const pipVal = parseFloat(document.getElementById("lotPipValue").value);
   const out = document.getElementById("lotResult");
 
-  if (isNaN(account) || isNaN(risk) || isNaN(sl) || isNaN(pipVal) ||
-      account <= 0 || risk <= 0 || sl <= 0 || pipVal <= 0) {
+  if (isNaN(riskEuro) || isNaN(sl) || isNaN(pipVal) ||
+      riskEuro <= 0 || sl <= 0 || pipVal <= 0) {
     out.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
     out.style.color = "#f44";
     return;
   }
 
-  const riskEuro = account * (risk / 100);
   const lotSize = riskEuro / (sl * pipVal);
 
   out.innerHTML = `✅ Empfohlene Lotgröße: <strong>${lotSize.toFixed(2)}</strong> Lots`;
@@ -1852,3 +1833,4 @@ window.addEventListener("load", async () => {
 </script>
 </body>
 </html>
+
