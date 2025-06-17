@@ -310,6 +310,7 @@
   <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
+  <button class="btn" id="btn-calc-pip" onclick="switchCalcTab('pip')">📏 Pip-Wert</button>
 </div>
 
 
@@ -496,6 +497,38 @@
   </div>
 </div>
 
+<div id="calc-pip" class="calc-box" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+    <label for="pairSelect">🔀 Währungspaar:</label>
+    <select id="pairSelect">
+      <!-- Wird automatisch gefüllt -->
+    </select>
+
+    <label for="lotSize">💼 Lotgröße:</label>
+    <input type="number" id="lotSize" placeholder="z. B. 0.01" value="0.01" step="0.01" />
+
+    <button onclick="calculatePipValue()">📏 Pip-Wert berechnen</button>
+
+    <p id="pipResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="togglePipInfo()" 
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+
+  <div id="pipInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Dieser Rechner zeigt dir, wie viel **1 Pip** bei der gewählten **Lotgröße** und dem **Währungspaar** wert ist.<br><br>
+
+    <strong>📐 Formel:</strong>  
+    Pip-Wert = Standard-Wert pro Lot × Lotgröße<br><br>
+
+    Die Werte basieren auf typischen Marktbedingungen.<br>
+    Bei Rohstoffen (XAU, XAG) ist der Pip-Wert oft höher.
+  </div>
+</div>
 
 
 
@@ -606,48 +639,7 @@
 <div class="position-bar" id="positionBar"></div>
 
 <script>
-  const pairs = [
-  "AUD/CAD",
-  "AUD/JPY",
-  "AUD/USD",
-  "CHF/JPY",
-  "EUR/AUD",
-  "EUR/CAD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "EUR/USD",
-  "GBP/AUD",
-  "GBP/JPY",
-  "GBP/USD",
-  "NZD/JPY",
-  "NZD/USD",
-  "USD/CAD",
-  "USD/CHF",
-  "USD/JPY",
-  "XAG/USD",
-  "XAU/USD"
-];
 
-function initMultiPairSelect() {
-  const container = document.getElementById("pairMultiSelect");
-  container.innerHTML = "";
-
-  pairs.forEach(pair => {
-    const label = document.createElement("label");
-    label.style.marginRight = "15px";
-    label.style.cursor = "pointer";
-    label.style.userSelect = "none";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = pair;
-    checkbox.checked = false;
-
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + pair));
-    container.appendChild(label);
-  });
-}
 
 
 function resetAll() {
@@ -1276,6 +1268,52 @@ function toggleBreakevenInfo() {
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
+const pipValues = {
+  "AUD/CAD": 7.94, "AUD/JPY": 9.17, "AUD/USD": 10,
+  "CHF/JPY": 9.17, "EUR/AUD": 10, "EUR/CAD": 10,
+  "EUR/GBP": 10, "EUR/JPY": 9.17, "EUR/USD": 10,
+  "GBP/AUD": 10, "GBP/JPY": 9.17, "GBP/USD": 10,
+  "NZD/JPY": 9.17, "NZD/USD": 10,
+  "USD/CAD": 7.94, "USD/CHF": 9.26, "USD/JPY": 9.17,
+  "XAG/USD": 5, "XAU/USD": 10
+};
+
+function initPipPairSelect() {
+  const select = document.getElementById("pairSelect");
+  select.innerHTML = "";
+
+  Object.keys(pipValues).forEach(pair => {
+    const option = document.createElement("option");
+    option.value = pair;
+    option.textContent = pair;
+    select.appendChild(option);
+  });
+}
+
+function calculatePipValue() {
+  const pair = document.getElementById("pairSelect").value;
+  const lot = parseFloat(document.getElementById("lotSize").value);
+  const result = document.getElementById("pipResult");
+
+  if (!pair || isNaN(lot) || lot <= 0) {
+    result.innerHTML = "❌ Bitte gültige Lotgröße wählen!";
+    result.style.color = "#f44";
+    return;
+  }
+
+  const pipPerLot = pipValues[pair] || 10;
+  const finalValue = pipPerLot * lot;
+
+  result.innerHTML = `📍 Bei ${pair} mit ${lot.toFixed(2)} Lot ist 1 Pip ≈ <strong>${finalValue.toFixed(2)} €</strong>`;
+  result.style.color = "#0f0";
+}
+
+function togglePipInfo() {
+  const box = document.getElementById("pipInfoBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+
 
 function switchCalcTab(tab) {
   // Alle Rechner ausblenden
@@ -1294,6 +1332,10 @@ function switchCalcTab(tab) {
   const btn = document.getElementById("btn-calc-" + tab);
   if (btn) btn.classList.add("active");
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  initPipPairSelect();
+});
 
 </script>  
   
@@ -1833,4 +1875,3 @@ window.addEventListener("load", async () => {
 </script>
 </body>
 </html>
-
