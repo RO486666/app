@@ -314,6 +314,7 @@
 </div>
 
 
+
 <div id="calc-pos" class="calc-box" style="margin-top: 15px; display:none;">
 
   <div class="stats-box">
@@ -497,6 +498,7 @@
   </div>
 </div>
 
+
 <div id="calc-pip" class="calc-box" style="display:none; margin-top: 15px;">
   <div class="stats-box">
     <label for="pairSelect">🔀 Währungspaar:</label>
@@ -529,6 +531,7 @@
     Bei Rohstoffen (XAU, XAG) ist der Pip-Wert oft höher.
   </div>
 </div>
+
 
 
 
@@ -639,7 +642,48 @@
 <div class="position-bar" id="positionBar"></div>
 
 <script>
+  const pairs = [
+  "AUD/CAD",
+  "AUD/JPY",
+  "AUD/USD",
+  "CHF/JPY",
+  "EUR/AUD",
+  "EUR/CAD",
+  "EUR/GBP",
+  "EUR/JPY",
+  "EUR/USD",
+  "GBP/AUD",
+  "GBP/JPY",
+  "GBP/USD",
+  "NZD/JPY",
+  "NZD/USD",
+  "USD/CAD",
+  "USD/CHF",
+  "USD/JPY",
+  "XAG/USD",
+  "XAU/USD"
+];
 
+function initMultiPairSelect() {
+  const container = document.getElementById("pairMultiSelect");
+  container.innerHTML = "";
+
+  pairs.forEach(pair => {
+    const label = document.createElement("label");
+    label.style.marginRight = "15px";
+    label.style.cursor = "pointer";
+    label.style.userSelect = "none";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = pair;
+    checkbox.checked = false;
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + pair));
+    container.appendChild(label);
+  });
+}
 
 
 function resetAll() {
@@ -1275,7 +1319,7 @@ const pipValues = {
   "GBP/AUD": 10, "GBP/JPY": 9.17, "GBP/USD": 10,
   "NZD/JPY": 9.17, "NZD/USD": 10,
   "USD/CAD": 7.94, "USD/CHF": 9.26, "USD/JPY": 9.17,
-  "XAG/USD": 5, "XAU/USD": 10
+  "XAG/USD": 50, "XAU/USD": 100
 };
 
 function initPipPairSelect() {
@@ -1312,7 +1356,6 @@ function togglePipInfo() {
   const box = document.getElementById("pipInfoBox");
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
-
 
 
 function switchCalcTab(tab) {
