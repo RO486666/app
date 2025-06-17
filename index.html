@@ -306,24 +306,215 @@
 <div class="alert-below-header" id="alertBox"></div>
 
 <div class="tab-buttons" style="margin-top: 20px;">
-  <button class="btn active" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button class="btn" onclick="switchCalcTab('risk')">📊 Risiko %</button>
-  <button class="btn" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
-  <button class="btn" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
+  <button class="btn" id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
+  <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
+  <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
+  <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
 </div>
 
-<div id="calc-pos" class="calc-box" style="margin-top: 15px;">
-  <p style="text-align:center; color:#aaa;">🔧 Position Size Rechner wird hier angezeigt</p>
+
+<div id="calc-pos" class="calc-box" style="margin-top: 15px; display:none;">
+
+  <div class="stats-box">
+    <label for="accountSize">📦 Kontogröße (€):</label>
+    <input type="number" id="accountSize" placeholder="z. B. 1000" />
+
+    <label for="riskPercent">⚠️ Risiko in %:</label>
+    <input type="number" id="riskPercent" placeholder="z. B. 1" step="0.1" />
+
+    <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
+    <input type="number" id="stopLossPips" placeholder="z. B. 20" />
+
+    <label for="pipValue">💡 Pip-Wert pro Lot (€):</label>
+    <input type="number" id="pipValue" placeholder="z. B. 10 (Standard bei Forex)" value="10" />
+
+    <button onclick="calculatePositionSize()">📐 Berechnen</button>
+    <p id="positionSizeResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="toggleInfoBox()" 
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+  <div id="posInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Der Positionsgrößen-Rechner hilft dir zu ermitteln, wie viele Lots du in einem Trade einsetzen darfst, ohne mehr als einen bestimmten Prozentsatz deines Kontos zu riskieren. Die Berechnung basiert auf vier Angaben:
+    <ul style="margin-top:10px; margin-bottom:10px;">
+      <li><strong>📦 Kontogröße:</strong> Dein aktuelles Guthaben in Euro.</li>
+      <li><strong>⚠️ Risiko in %:</strong> Wie viel Prozent deines Kontos du maximal pro Trade verlieren willst (z. B. 1%).</li>
+      <li><strong>🛑 Stop-Loss (Pips):</strong> Die Distanz zwischen Einstieg und Stop-Loss in Pips.</li>
+      <li><strong>💡 Pip-Wert pro Lot:</strong> Wie viel ein Pip pro Standard-Lot wert ist (z. B. 10 € bei EUR/USD).</li>
+    </ul>
+    <strong>📐 Formel:</strong><br>
+    <code style="color:#0ff;">Positionsgröße = (Kontogröße × Risiko%) / (Stop-Loss × Pip-Wert)</code><br><br>
+    <strong>🔍 Beispiel:</strong><br>
+    Kontogröße: 1000 €<br>
+    Risiko: 2%<br>
+    Stop-Loss: 20 Pips<br>
+    Pip-Wert: 10 €/Lot<br><br>
+    <strong>→</strong> Du riskierst 20 € (1000 × 0,02).<br>
+    <strong>→</strong> Bei 20 Pips wären das 1 €/Pip erlaubt (20 € / 20 Pips).<br>
+    <strong>→</strong> Der Pip-Wert ist 10 €/Lot ⇒ <strong>Erlaubte Lotgröße: 0.10</strong><br><br>
+    <em style="color:#aaa;">Hinweis: Bei Indizes oder Gold kann der Pip-Wert unterschiedlich sein!</em>
+  </div>
 </div>
+
 <div id="calc-risk" class="calc-box" style="display:none; margin-top: 15px;">
-  <p style="text-align:center; color:#aaa;">📊 Risiko % Rechner kommt hier hin</p>
+  <div class="stats-box">
+    <label for="riskAccountSize">📦 Kontogröße (€):</label>
+    <input type="number" id="riskAccountSize" placeholder="z. B. 1000" />
+
+    <label for="riskLotSize">🧮 Lotgröße:</label>
+    <input type="number" id="riskLotSize" placeholder="z. B. 0.1" step="0.01" />
+
+    <label for="riskStopLoss">🛑 Stop-Loss (Pips):</label>
+    <input type="number" id="riskStopLoss" placeholder="z. B. 25" />
+
+    <label for="riskPipValue">💡 Pip-Wert pro Lot (€):</label>
+    <input type="number" id="riskPipValue" placeholder="z. B. 10" value="10" />
+
+    <button onclick="calculateRiskPercent()">📊 Risiko berechnen</button>
+
+    <p id="riskResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="toggleRiskInfo()" 
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+
+  <div id="riskInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Der Risiko-%-Rechner zeigt dir, wie viel Geld du bei einem Trade riskierst und wie viel Prozent deines Kontos das ausmacht. Er basiert auf:
+
+    <ul style="margin-top:10px; margin-bottom:10px;">
+      <li><strong>📦 Kontogröße:</strong> Dein Kontoguthaben in Euro</li>
+      <li><strong>🧮 Lotgröße:</strong> Wie groß dein Trade ist (z. B. 0.1 = Mini-Lot)</li>
+      <li><strong>🛑 Stop-Loss (Pips):</strong> Wie weit der SL vom Einstieg entfernt ist</li>
+      <li><strong>💡 Pip-Wert:</strong> Wie viel 1 Pip pro Lot kostet (z. B. 10 €)</li>
+    </ul>
+
+    <strong>📐 Formel:</strong><br>
+    <code style="color:#0ff;">Risiko (€) = Lotgröße × SL × Pip-Wert<br>
+    Risiko-% = Risiko / Kontogröße × 100</code><br><br>
+
+    <strong>🔍 Beispiel:</strong><br>
+    Konto: 1000 €<br>
+    Lot: 0.2<br>
+    SL: 30 Pips<br>
+    Pip-Wert: 10 €<br>
+    → Risiko = 0.2 × 30 × 10 = 60 €<br>
+    → Risiko-% = 60 / 1000 = <strong>6 %</strong><br><br>
+
+    <em style="color:#aaa;">Achte darauf, dass dein Risiko unter 2 % bleibt, um langfristig zu überleben.</em>
+  </div>
 </div>
+
+
+
 <div id="calc-lot" class="calc-box" style="display:none; margin-top: 15px;">
-  <p style="text-align:center; color:#aaa;">🧮 Lotgrößen-Rechner</p>
+  <div class="stats-box">
+    <label for="lotAccount">📦 Kontogröße (€):</label>
+    <input type="number" id="lotAccount" placeholder="z. B. 1000" />
+
+    <label for="lotRisk">⚠️ Risiko in %:</label>
+    <input type="number" id="lotRisk" placeholder="z. B. 1" step="0.1" />
+
+    <label for="lotSL">🛑 Stop-Loss (in Pips):</label>
+    <input type="number" id="lotSL" placeholder="z. B. 20" />
+
+    <label for="lotPipValue">💡 Pip-Wert pro Lot (€):</label>
+    <input type="number" id="lotPipValue" placeholder="z. B. 10" value="10" />
+
+    <button onclick="calculateLotSize()">🧮 Lotgröße berechnen</button>
+
+    <p id="lotResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="toggleLotInfo()" 
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+
+  <div id="lotInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+
+    Der Lotgrößen-Rechner zeigt dir, wie viele Lots du einsetzen darfst, damit du maximal einen bestimmten Prozentsatz deines Kontos riskierst. Er basiert auf:
+
+    <ul style="margin-top:10px; margin-bottom:10px;">
+      <li><strong>📦 Kontogröße:</strong> Dein Kontoguthaben in €</li>
+      <li><strong>⚠️ Risiko in %:</strong> Wie viel Prozent davon du riskieren willst (z. B. 1%)</li>
+      <li><strong>🛑 Stop-Loss (Pips):</strong> Wie weit dein SL entfernt ist</li>
+      <li><strong>💡 Pip-Wert:</strong> Wie viel 1 Pip pro Lot kostet (z. B. 10 € bei Forex)</li>
+    </ul>
+
+    <strong>📐 Formel:</strong><br>
+    <code style="color:#0ff;">Lotgröße = (Kontogröße × Risiko%) / (SL × Pip-Wert)</code><br><br>
+
+    <strong>🔍 Beispiel:</strong><br>
+    Konto: 2000 €<br>
+    Risiko: 1% ⇒ 20 €<br>
+    SL: 25 Pips<br>
+    Pip-Wert: 10 €<br>
+    <strong>→</strong> Lotgröße = 20 / (25 × 10) = <strong>0.08</strong><br><br>
+
+    <em style="color:#aaa;">Je größer dein SL, desto kleiner dein Lot – und umgekehrt.</em>
+  </div>
 </div>
+
 <div id="calc-breakeven" class="calc-box" style="display:none; margin-top: 15px;">
-  <p style="text-align:center; color:#aaa;">🧠 Break-even Bereich</p>
+  <div class="stats-box">
+    <label for="entryPrice">🎯 Einstiegspreis:</label>
+    <input type="number" id="entryPrice" placeholder="z. B. 1.12345" step="0.00001" />
+
+    <label for="spreadPips">📏 Spread (Pips):</label>
+    <input type="number" id="spreadPips" placeholder="z. B. 1.5" step="0.1" />
+
+    <label for="fees">💸 Gebühren (€):</label>
+    <input type="number" id="fees" placeholder="z. B. 2.00" step="0.01" />
+
+    <label for="beLotSize">🧮 Lotgröße:</label>
+    <input type="number" id="beLotSize" placeholder="z. B. 0.1" step="0.01" />
+
+    <label for="bePipValue">💡 Pip-Wert pro Lot (€):</label>
+    <input type="number" id="bePipValue" placeholder="z. B. 10" value="10" />
+
+    <button onclick="calculateBreakeven()">🧠 Break-even berechnen</button>
+
+    <p id="breakevenResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="toggleBreakevenInfo()" 
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+
+  <div id="breakevenInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Der Break-even-Rechner zeigt dir den Preis, bei dem dein Trade exakt auf Null läuft – also weder Gewinn noch Verlust.<br><br>
+
+    Dabei berücksichtigt werden:
+    <ul style="margin-top:10px; margin-bottom:10px;">
+      <li><strong>🎯 Einstiegspreis:</strong> Der Preis, zu dem du den Trade geöffnet hast.</li>
+      <li><strong>📏 Spread:</strong> Unterschied zwischen Bid und Ask in Pips.</li>
+      <li><strong>💸 Gebühren:</strong> z. B. Kommissionen des Brokers.</li>
+      <li><strong>🧮 Lotgröße:</strong> Deine aktuelle Positionsgröße.</li>
+      <li><strong>💡 Pip-Wert:</strong> Wert eines Pips pro Lot (z. B. 10 € bei Forex).</li>
+    </ul>
+
+    <strong>📐 Formel:</strong><br>
+    <code style="color:#0ff;">Break-even = Einstiegspreis ± (Spread + Gebühren ÷ (Lotgröße × Pip-Wert))</code><br><br>
+
+    <em style="color:#aaa;">Ob du + oder – rechnest, hängt davon ab, ob du Long oder Short bist. Dieser Rechner geht vom LONG-Trade aus.</em>
+  </div>
 </div>
+
+
+
 
   <div class="tab-buttons">
     <button class="btn active" onclick="switchTab('tag')">Tag</button>
@@ -475,38 +666,6 @@ function initMultiPairSelect() {
   });
 }
 
-function addTrades() {
-  const container = document.getElementById("pairMultiSelect");
-  const checkboxes = container.querySelectorAll("input[type=checkbox]:checked");
-  const direction = document.getElementById("directionSelect").value;
-
-  if (!direction) {
-    alert("Bitte wähle eine Richtung!");
-    return;
-  }
-  if (checkboxes.length === 0) {
-    alert("Bitte wähle mindestens ein Paar aus!");
-    return;
-  }
-
-  checkboxes.forEach(box => {
-    const pair = box.value;
-    const now = new Date();
-    const tradeObj = {
-      id: Date.now() + Math.random(),
-      pair: pair,
-      direction: direction,
-      date: now,
-      pnl: null,
-      resultType: null
-    };
-    tradesData.push(tradeObj);
-    renderTradeBox(tradeObj);
-  });
-
-  saveTrades();
-  hidePopups();
-}
 
 function resetAll() {
   if (!confirm("Willst du wirklich ALLE Statistiken und Trades löschen?")) return;
@@ -876,13 +1035,26 @@ jahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPe
 }
 
 function switchTab(tab) {
+  // Tab-Buttons zurücksetzen
   document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".stats-box").forEach(box => (box.style.display = "none"));
-  document.getElementById(tab + "Box").style.display = "block";
+
+  // Nur Statistikboxen gezielt ausblenden
+  const statsIds = ["tagBox", "wocheBox", "monatBox", "halbjahrBox", "jahrBox"];
+  statsIds.forEach(id => {
+    const box = document.getElementById(id);
+    if (box) box.style.display = "none";
+  });
+
+  // Gewählte Statistikbox einblenden
+  const target = document.getElementById(tab + "Box");
+  if (target) target.style.display = "block";
+
+  // Aktiven Button wieder markieren
   document.querySelectorAll(".tab-buttons button").forEach((btn) => {
     if (btn.textContent.toLowerCase() === tab) btn.classList.add("active");
   });
 }
+
 
 function colorSidePercent(longWins, shortWins) {
   const total = longWins + shortWins;
@@ -1011,6 +1183,138 @@ window.addEventListener("load", () => {
 
 
   </script>
+  
+<script>
+function calculatePositionSize() {
+  const accountSize = parseFloat(document.getElementById("accountSize").value);
+  const riskPercent = parseFloat(document.getElementById("riskPercent").value);
+  const stopLossPips = parseFloat(document.getElementById("stopLossPips").value);
+  const pipValue = parseFloat(document.getElementById("pipValue").value);
+
+  const resultEl = document.getElementById("positionSizeResult");
+
+  if (isNaN(accountSize) || isNaN(riskPercent) || isNaN(stopLossPips) || isNaN(pipValue) ||
+      accountSize <= 0 || riskPercent <= 0 || stopLossPips <= 0 || pipValue <= 0) {
+    resultEl.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    resultEl.style.color = "#f44";
+    return;
+  }
+
+  const riskAmount = accountSize * (riskPercent / 100);
+  const positionSize = riskAmount / (stopLossPips * pipValue);
+  resultEl.innerHTML = `✅ Max. Lotgröße: <strong>${positionSize.toFixed(2)}</strong> Lots`;
+  resultEl.style.color = "#0f0";
+}
+
+function toggleInfoBox() {
+  const box = document.getElementById("posInfoBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+function calculateLotSize() {
+  const account = parseFloat(document.getElementById("lotAccount").value);
+  const risk = parseFloat(document.getElementById("lotRisk").value);
+  const sl = parseFloat(document.getElementById("lotSL").value);
+  const pipVal = parseFloat(document.getElementById("lotPipValue").value);
+  const out = document.getElementById("lotResult");
+
+  if (isNaN(account) || isNaN(risk) || isNaN(sl) || isNaN(pipVal) ||
+      account <= 0 || risk <= 0 || sl <= 0 || pipVal <= 0) {
+    out.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    out.style.color = "#f44";
+    return;
+  }
+
+  const riskEuro = account * (risk / 100);
+  const lotSize = riskEuro / (sl * pipVal);
+
+  out.innerHTML = `✅ Empfohlene Lotgröße: <strong>${lotSize.toFixed(2)}</strong> Lots`;
+  out.style.color = "#0f0";
+}
+
+function toggleLotInfo() {
+  const box = document.getElementById("lotInfoBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+function calculateRiskPercent() {
+  const account = parseFloat(document.getElementById("riskAccountSize").value);
+  const lot = parseFloat(document.getElementById("riskLotSize").value);
+  const sl = parseFloat(document.getElementById("riskStopLoss").value);
+  const pipVal = parseFloat(document.getElementById("riskPipValue").value);
+  const output = document.getElementById("riskResult");
+
+  if (isNaN(account) || isNaN(lot) || isNaN(sl) || isNaN(pipVal) ||
+      account <= 0 || lot <= 0 || sl <= 0 || pipVal <= 0) {
+    output.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    output.style.color = "#f44";
+    return;
+  }
+
+  const pipTotal = pipVal * lot;
+  const riskEuro = pipTotal * sl;
+  const riskPercent = (riskEuro / account) * 100;
+
+  output.innerHTML = `⚠️ Du riskierst <strong>${riskEuro.toFixed(2)} €</strong>  
+                      (${riskPercent.toFixed(2)} % deines Kontos)`;
+  output.style.color = riskPercent <= 2 ? "#0f0" : (riskPercent <= 5 ? "#ffaa00" : "#f44");
+}
+
+function toggleRiskInfo() {
+  const box = document.getElementById("riskInfoBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+function calculateBreakeven() {
+  const entry = parseFloat(document.getElementById("entryPrice").value);
+  const spread = parseFloat(document.getElementById("spreadPips").value);
+  const fees = parseFloat(document.getElementById("fees").value);
+  const lot = parseFloat(document.getElementById("beLotSize").value);
+  const pipVal = parseFloat(document.getElementById("bePipValue").value);
+  const output = document.getElementById("breakevenResult");
+
+  if (isNaN(entry) || isNaN(spread) || isNaN(fees) || isNaN(lot) || isNaN(pipVal) ||
+      entry <= 0 || spread < 0 || fees < 0 || lot <= 0 || pipVal <= 0) {
+    output.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    output.style.color = "#f44";
+    return;
+  }
+
+  const spreadValue = spread;
+  const feeInPips = fees / (lot * pipVal);
+  const totalPips = spreadValue + feeInPips;
+  const pipSize = 0.0001; // Für Forex (z. B. EUR/USD), ggf. anpassbar
+  const breakEvenPrice = entry + (totalPips * pipSize);
+
+  output.innerHTML = `📍 Break-even liegt bei <strong>${breakEvenPrice.toFixed(5)}</strong>`;
+  output.style.color = "#0ff";
+}
+
+function toggleBreakevenInfo() {
+  const box = document.getElementById("breakevenInfoBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+
+function switchCalcTab(tab) {
+  // Alle Rechner ausblenden
+  document.querySelectorAll(".calc-box").forEach(box => {
+    box.style.display = "none";
+  });
+
+  // Den gewünschten Rechner einblenden
+  const target = document.getElementById("calc-" + tab);
+  if (target) target.style.display = "block";
+
+  // Alle Buttons zurücksetzen
+  document.querySelectorAll(".tab-buttons .btn").forEach(btn => btn.classList.remove("active"));
+
+  // Den aktiven Button markieren
+  const btn = document.getElementById("btn-calc-" + tab);
+  if (btn) btn.classList.add("active");
+}
+
+</script>  
   
 <script>
 const sessionText = document.getElementById("sessionText");
