@@ -1422,21 +1422,20 @@ function initPipPairSelect() {
 
 function calculatePipValue() {
   const pair = document.getElementById("pairSelect").value;
-  const lot = parseFloat(document.getElementById("lotSize").value);
   const result = document.getElementById("pipResult");
 
-  if (!pair || isNaN(lot) || lot <= 0) {
-    result.innerHTML = "❌ Bitte gültige Lotgröße wählen!";
+  if (!pair) {
+    result.innerHTML = "❌ Bitte gültiges Währungspaar wählen!";
     result.style.color = "#f44";
     return;
   }
 
   const pipPerLot = pipValues[pair] || 10;
-  const finalValue = pipPerLot * lot;
 
-  result.innerHTML = `📍 Bei ${pair} mit ${lot.toFixed(2)} Lot ist 1 Pip ≈ <strong>${finalValue.toFixed(2)} €</strong>`;
+  result.innerHTML = `📍 Der Pip-Wert bei <strong>${pair}</strong> beträgt pro 1 Lot: <strong>${pipPerLot.toFixed(2)} €</strong>`;
   result.style.color = "#0f0";
 }
+
 
 function togglePipInfo() {
   const box = document.getElementById("pipInfoBox");
