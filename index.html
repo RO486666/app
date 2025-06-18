@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<link rel="manifest" href="/app/manifest.json" />
+<link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#00aa44" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -907,7 +907,8 @@ function updateStats() {
         : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
 
     const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
-    const profitPercent = totalAbsPnl === 0 ? null : ((wins.reduce((sum, t) => sum + t.pnl, 0) / totalAbsPnl) * 100);
+    const profitPercent = filtered.length === 0 ? null : (wins.length / filtered.length) * 100;
+
 
     return {
       trades: filtered,
@@ -1000,61 +1001,75 @@ function updateStats() {
   const halfYearLongShort = countLongShortWins(halfYearStats.trades);
   const yearLongShort = countLongShortWins(yearStats.trades);
 
-  const tagBox = document.getElementById("tagBox");
-  tagBox.querySelector("p:nth-child(2)").innerHTML =
+ // TAG
+const tagSummary = getMyfxSummary();
+const tagTruePnl = tagSummary ? tagSummary.balance - tagSummary.deposit : dayStats.totalPnl;
+const tagBox = document.getElementById("tagBox");
+tagBox.querySelector("p:nth-child(2)").innerHTML =
   `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}<br>` +
   `Long-Wins: ${dayLongShort.longs} | Short-Wins: ${dayLongShort.shorts}<br>` +
   `Stärke: ${colorSidePercent(dayLongShort.longs, dayLongShort.shorts)}`;
-  tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(dayStats.totalPnl, true)}`;
-  tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-  tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
-  tagBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
-  fillBox(tagBox, dayStats, dayLongShort);
+tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(tagTruePnl, true)}`;
+tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
+tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
+tagBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
+fillBox(tagBox, dayStats, dayLongShort);
 
-  const wocheBox = document.getElementById("wocheBox");
+// WOCHE
+const weekSummary = getMyfxSummary();
+const weekTruePnl = weekSummary ? weekSummary.balance - weekSummary.deposit : weekStats.totalPnl;
+const wocheBox = document.getElementById("wocheBox");
 wocheBox.querySelector("p:nth-child(2)").innerHTML =
   `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}<br>` +
   `Long-Wins: ${weekLongShort.longs} | Short-Wins: ${weekLongShort.shorts}<br>` +
   `Stärke: ${colorSidePercent(weekLongShort.longs, weekLongShort.shorts)}`;
-wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekStats.totalPnl, true)}`;
+wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekTruePnl, true)}`;
 wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
 wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
- wocheBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
-  fillBox(wocheBox, weekStats, weekLongShort);
+wocheBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
+fillBox(wocheBox, weekStats, weekLongShort);
 
-
-  const monatBox = document.getElementById("monatBox");
+// MONAT
+const monatSummary = getMyfxSummary();
+const monatTruePnl = monatSummary ? monatSummary.balance - monatSummary.deposit : monthStats.totalPnl;
+const monatBox = document.getElementById("monatBox");
 monatBox.querySelector("p:nth-child(2)").innerHTML =
   `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}<br>` +
   `Long-Wins: ${monthLongShort.longs} | Short-Wins: ${monthLongShort.shorts}<br>` +
   `Stärke: ${colorSidePercent(monthLongShort.longs, monthLongShort.shorts)}`;
-monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monthStats.totalPnl, true)}`;
+monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monatTruePnl, true)}`;
 monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
 monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
-  monatBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-  fillBox(monatBox, monthStats, monthLongShort);
+monatBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
+fillBox(monatBox, monthStats, monthLongShort);
 
- const halbjahrBox = document.getElementById("halbjahrBox");
+// HALBJAHR
+const halbjahrSummary = getMyfxSummary();
+const halbjahrTruePnl = halbjahrSummary ? halbjahrSummary.balance - halbjahrSummary.deposit : halfYearStats.totalPnl;
+const halbjahrBox = document.getElementById("halbjahrBox");
 halbjahrBox.querySelector("p:nth-child(2)").innerHTML =
   `Gewinne: ${colorText(halfYearStats.wins)} | Verluste: ${colorText(halfYearStats.losses)}<br>` +
   `Long-Wins: ${halfYearLongShort.longs} | Short-Wins: ${halfYearLongShort.shorts}<br>` +
   `Stärke: ${colorSidePercent(halfYearLongShort.longs, halfYearLongShort.shorts)}`;
-halbjahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(halfYearStats.totalPnl, true)}`;
+halbjahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(halbjahrTruePnl, true)}`;
 halbjahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${halfYearStats.totalTrades}`;
-halbjahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(halfYearStats.profitPercent)}`
-    halbjahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-  fillBox(halbjahrBox, halfYearStats, halfYearLongShort);
+halbjahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(halfYearStats.profitPercent)}`;
+halbjahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(halfYearStats.wins)} | Verluste: ${colorText(halfYearStats.losses)}`;
+fillBox(halbjahrBox, halfYearStats, halfYearLongShort);
 
- const jahrBox = document.getElementById("jahrBox");
+// JAHR
+const jahrSummary = getMyfxSummary();
+const jahrTruePnl = jahrSummary ? jahrSummary.balance - jahrSummary.deposit : yearStats.totalPnl;
+const jahrBox = document.getElementById("jahrBox");
 jahrBox.querySelector("p:nth-child(2)").innerHTML =
   `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}<br>` +
   `Long-Wins: ${yearLongShort.longs} | Short-Wins: ${yearLongShort.shorts}<br>` +
   `Stärke: ${colorSidePercent(yearLongShort.longs, yearLongShort.shorts)}`;
-jahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(yearStats.totalPnl, true)}`;
+jahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(jahrTruePnl, true)}`;
 jahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${yearStats.totalTrades}`;
 jahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(yearStats.profitPercent)}`;
- jahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}`;
-  fillBox(jahrBox, yearStats, yearLongShort);
+jahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}`;
+fillBox(jahrBox, yearStats, yearLongShort);
 
 }
 
@@ -1709,16 +1724,16 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-  // Service Worker Registrierung für GitHub Pages (/app/)
+  // Service Worker Registrierung
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("/app/sw.js", { scope: "/app/" })
+        .register("sw.js")
         .then(reg => {
-          console.log("✅ Service Worker erfolgreich registriert:", reg);
+          console.log("Service Worker registriert:", reg);
         })
         .catch(err => {
-          console.error("❌ Service Worker Registrierung fehlgeschlagen:", err);
+          console.error("Service Worker Registrierung fehlgeschlagen:", err);
         });
     });
   }
@@ -1795,6 +1810,8 @@ const exists = tradesData.some(t =>
       });
       imported++;
     }
+	
+	saveTrades();
   });
   
   
@@ -1978,8 +1995,5 @@ window.addEventListener("load", async () => {
 
 
 </script>
-<button onclick="showNotification('🚨 Test', 'Das ist deine Push wie bei WhatsApp!')">
-  🔔 Test Push Notification
-</button>
 </body>
 </html>
