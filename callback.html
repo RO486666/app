@@ -10,7 +10,7 @@
     const code = new URLSearchParams(window.location.search).get("code");
     if (code) {
       localStorage.setItem("ctraderCode", code);
-      window.location.href = "/index.html"; // zurück zur App
+      window.location.href = "/app/index.html"; // zurück zur App
     } else {
       document.body.innerHTML = "<h2>❌ Kein Code erhalten!</h2>";
     }
