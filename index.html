@@ -358,23 +358,29 @@
 </div>
 
 <div id="calc-risk" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="riskAccountSize">📦 Kontogröße (€):</label>
-    <input type="number" id="riskAccountSize" placeholder="z. B. 1000" />
+ <div class="stats-box">
+  <label for="riskAccountSize">📦 Kontogröße (€):</label>
+  <input type="number" id="riskAccountSize" placeholder="z. B. 1000" />
 
-    <label for="riskLotSize">🧮 Lotgröße:</label>
-    <input type="number" id="riskLotSize" placeholder="z. B. 0.1" step="0.01" />
+  <label for="riskLotSize">🧮 Lotgröße:</label>
+  <input type="number" id="riskLotSize" placeholder="z. B. 0.1" step="0.01" />
 
-    <label for="riskStopLoss">🛑 Stop-Loss (Pips):</label>
-    <input type="number" id="riskStopLoss" placeholder="z. B. 25" />
+  <label for="riskStopLoss">🛑 Stop-Loss (Pips):</label>
+  <input type="number" id="riskStopLoss" placeholder="z. B. 25" />
 
-    <label for="riskPipValue">💡 Pip-Wert pro Lot (€):</label>
-    <input type="number" id="riskPipValue" placeholder="z. B. 10" value="10" />
+  <label for="riskPipValue">💡 Pip-Wert pro Lot (€):</label>
+  <input type="number" id="riskPipValue" placeholder="z. B. 10" value="10" />
 
-    <button onclick="calculateRiskPercent()">📊 Risiko berechnen</button>
+  <label for="useTradingView">⚙️ TradingView-Modus:</label>
+  <input type="checkbox" id="useTradingView" onchange="togglePipMode()" />
 
-    <p id="riskResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  <div id="tvNote" style="font-size: 12px; color: #aaa; margin-top: 5px; display:none;">
+    📉 Pip-Wert wird intern mit <strong>6.30 €</strong> angenommen (wie bei TradingView)
   </div>
+
+  <button onclick="calculateRiskPercent()">📊 Risiko berechnen</button>
+  <p id="riskResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+</div>
 
   <div style="text-align:right; margin-bottom: 5px;">
     <span onclick="toggleRiskInfo()" 
@@ -1340,19 +1346,47 @@ function toggleLotInfo() {
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
+
+function togglePipMode() {
+  const pipField = document.getElementById("riskPipValue");
+  const tvNote = document.getElementById("tvNote");
+  const checkbox = document.getElementById("useTradingView");
+
+  if (checkbox.checked) {
+    pipField.disabled = true;
+    pipField.style.background = "#333";
+    tvNote.style.display = "block";
+  } else {
+    pipField.disabled = false;
+    pipField.style.background = "";
+    tvNote.style.display = "none";
+  }
+}
 function calculateRiskPercent() {
   const account = parseFloat(document.getElementById("riskAccountSize").value);
   const lot = parseFloat(document.getElementById("riskLotSize").value);
   const sl = parseFloat(document.getElementById("riskStopLoss").value);
-  const pipVal = parseFloat(document.getElementById("riskPipValue").value);
+  const useTV = document.getElementById("useTradingView").checked;
   const output = document.getElementById("riskResult");
 
-  if (isNaN(account) || isNaN(lot) || isNaN(sl) || isNaN(pipVal) ||
-      account <= 0 || lot <= 0 || sl <= 0 || pipVal <= 0) {
+  let pipVal = useTV ? 6.3 : parseFloat(document.getElementById("riskPipValue").value);
+
+  if (
+    isNaN(account) || isNaN(lot) || isNaN(sl) ||
+    account <= 0 || lot <= 0 || sl <= 0 || isNaN(pipVal) || pipVal <= 0
+  ) {
     output.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
     output.style.color = "#f44";
     return;
   }
+
+  const riskEuro = lot * sl * pipVal;
+  const riskPercent = (riskEuro / account) * 100;
+
+  output.innerHTML = `⚠️ Du riskierst <strong>${riskEuro.toFixed(2)} €</strong>  
+                      (${riskPercent.toFixed(2)} % deines Kontos)`;
+  output.style.color = riskPercent <= 2 ? "#0f0" : (riskPercent <= 5 ? "#ffaa00" : "#f44");
+}
 
   const pipTotal = pipVal * lot;
   const riskEuro = pipTotal * sl;
