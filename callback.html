@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>cTrader Redirect</title>
+</head>
+<body style="background:#111; color:white; font-family:sans-serif; text-align:center; margin-top:50px;">
+  <h2>🔄 Login wird verarbeitet...</h2>
+  <script>
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      localStorage.setItem("ctraderCode", code);
+      window.location.href = "/app/index.html"; // zurück zur App
+    } else {
+      document.body.innerHTML = "<h2>❌ Kein Code erhalten!</h2>";
+    }
+  </script>
+</body>
+</html>
