@@ -305,6 +305,7 @@
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
   <button class="btn" id="btn-calc-pip" onclick="switchCalcTab('pip')">📏 Pip-Wert</button>
+  <button class="btn" id="btn-calc-leverage" onclick="switchCalcTab('leverage')">🔧 Hebel-Rechner</button>
 </div>
 
 
@@ -492,6 +493,41 @@
   </div>
 </div>
 
+<div id="calc-leverage" class="calc-box" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+    <label for="leverageMode">Berechnungsmodus:</label>
+    <select id="leverageMode" onchange="toggleLeverageMode()">
+      <option value="capital">🔁 Hebel ➜ Kapital berechnen</option>
+      <option value="lotcheck">📊 Hebel + Kapital ➜ Lotcheck</option>
+    </select>
+
+    <!-- MODUS 1: Hebel ➜ Kapital -->
+    <div id="capitalMode">
+      <label for="leverageInput1">📦 Kapital (in €):</label>
+      <input type="number" id="leverageInput1" placeholder="z. B. 500" />
+
+      <label for="leverageInput2">💼 Lotgröße:</label>
+      <input type="number" id="leverageInput2" placeholder="z. B. 1.0" step="0.01" />
+
+      <label for="leverageInput3">📈 Hebel:</label>
+      <input type="number" id="leverageInput3" placeholder="z. B. 10" step="1" />
+    </div>
+
+    <!-- MODUS 2: Hebel + Kapital ➜ Lotcheck -->
+    <div id="lotCheckMode" style="display:none">
+      <label for="lotCapital">📦 Kapital (in €):</label>
+      <input type="number" id="lotCapital" placeholder="z. B. 250" />
+
+      <label for="lotLeverage">💡 Hebel (z. B. 500):</label>
+      <input type="number" id="lotLeverage" placeholder="z. B. 500" />
+    </div>
+
+    <button onclick="calculateLeverage()">🔧 Berechnen</button>
+    <p id="leverageResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+  </div>
+</div>
+
+
 
 <div id="calc-pip" class="calc-box" style="display:none; margin-top: 15px;">
   <div class="stats-box">
@@ -525,7 +561,6 @@
     Bei Rohstoffen (XAU, XAG) ist der Pip-Wert oft höher.
   </div>
 </div>
-
 
 
 
@@ -1366,6 +1401,59 @@ function togglePipInfo() {
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
+function toggleLeverageMode() {
+  const mode = document.getElementById("leverageMode").value;
+  document.getElementById("capitalMode").style.display = mode === "capital" ? "block" : "none";
+  document.getElementById("lotCheckMode").style.display = mode === "lotcheck" ? "block" : "none";
+  document.getElementById("leverageResult").innerHTML = "";
+}
+
+function calculateLeverage() {
+  const mode = document.getElementById("leverageMode").value;
+  const resultEl = document.getElementById("leverageResult");
+
+  if (mode === "capital") {
+    const capital = parseFloat(document.getElementById("leverageInput1").value);
+    const lots = parseFloat(document.getElementById("leverageInput2").value);
+    const leverage = parseFloat(document.getElementById("leverageInput3").value);
+
+    if (isNaN(capital) || isNaN(lots) || isNaN(leverage) || capital <= 0 || lots <= 0 || leverage <= 0) {
+      resultEl.innerHTML = "❌ Bitte alles korrekt eingeben!";
+      resultEl.style.color = "#f44";
+      return;
+    }
+
+    const benötigtesKapital = (lots * 100000) / leverage;
+    resultEl.innerHTML = `📦 Du brauchst <strong>${benötigtesKapital.toFixed(2)} €</strong> Kapital für ${lots} Lot bei ${leverage}x Hebel`;
+    resultEl.style.color = "#0f0";
+
+  } else if (mode === "lotcheck") {
+    const capital = parseFloat(document.getElementById("lotCapital").value);
+    const leverage = parseFloat(document.getElementById("lotLeverage").value);
+
+    if (isNaN(capital) || isNaN(leverage) || capital <= 0 || leverage <= 0) {
+      resultEl.innerHTML = "❌ Bitte Kapital und Hebel korrekt eingeben!";
+      resultEl.style.color = "#f44";
+      return;
+    }
+
+    const maxLots = (capital * leverage) / 100000;
+    let output = `💰 <strong>Max. Lotgröße:</strong> ${maxLots.toFixed(2)} Lot<br><br>📊 <strong>Stückelung:</strong><br>`;
+
+    const lotSizes = [1.00, 0.80, 0.50, 0.40, 0.20, 0.10, 0.01];
+    lotSizes.forEach(size => {
+      const times = Math.floor(maxLots / size);
+      output += `▸ ${size.toFixed(2)} Lot = ${times > 0 ? times + "x" : "❌ nicht möglich"}<br>`;
+    });
+
+    resultEl.innerHTML = output;
+    resultEl.style.color = "#0f0";
+  }
+}
+
+
+
+
 
 function switchCalcTab(tab) {
   // Alle Rechner ausblenden
@@ -1389,7 +1477,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initPipPairSelect();
 });
 
-</script>  
+</script>
   
 <script>
 const sessionText = document.getElementById("sessionText");
