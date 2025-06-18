@@ -1388,14 +1388,6 @@ function calculateRiskPercent() {
   output.style.color = riskPercent <= 2 ? "#0f0" : (riskPercent <= 5 ? "#ffaa00" : "#f44");
 }
 
-  const pipTotal = pipVal * lot;
-  const riskEuro = pipTotal * sl;
-  const riskPercent = (riskEuro / account) * 100;
-
-  output.innerHTML = `⚠️ Du riskierst <strong>${riskEuro.toFixed(2)} €</strong>  
-                      (${riskPercent.toFixed(2)} % deines Kontos)`;
-  output.style.color = riskPercent <= 2 ? "#0f0" : (riskPercent <= 5 ? "#ffaa00" : "#f44");
-}
 
 function toggleRiskInfo() {
   const box = document.getElementById("riskInfoBox");
