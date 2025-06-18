@@ -522,11 +522,46 @@
   <input type="number" id="lotLeverage" placeholder="z. B. 500" />
 
   <label for="lotPair">📊 Währungspaar:</label>
-  <select id="lotPair">
-    <option value="default">Standard (z. B. EUR/USD)</option>
-    <option value="XAU/USD">Gold (XAU/USD)</option>
-    <option value="XAG/USD">Silber (XAG/USD)</option>
-  </select>
+<select id="lotPair">
+  <optgroup label="🔁 Forex">
+    <option value="EUR/USD">EUR/USD</option>
+    <option value="GBP/USD">GBP/USD</option>
+    <option value="AUD/USD">AUD/USD</option>
+    <option value="NZD/USD">NZD/USD</option>
+    <option value="USD/CAD">USD/CAD</option>
+    <option value="USD/CHF">USD/CHF</option>
+    <option value="USD/JPY">USD/JPY</option>
+    <option value="EUR/JPY">EUR/JPY</option>
+    <option value="GBP/JPY">GBP/JPY</option>
+    <option value="CHF/JPY">CHF/JPY</option>
+    <option value="AUD/JPY">AUD/JPY</option>
+    <option value="CAD/JPY">CAD/JPY</option>
+    <option value="EUR/GBP">EUR/GBP</option>
+    <option value="EUR/AUD">EUR/AUD</option>
+    <option value="EUR/CAD">EUR/CAD</option>
+    <option value="GBP/AUD">GBP/AUD</option>
+    <option value="GBP/CAD">GBP/CAD</option>
+  </optgroup>
+
+  <optgroup label="🥇 Rohstoffe">
+    <option value="XAU/USD">XAU/USD (Gold)</option>
+    <option value="XAG/USD">XAG/USD (Silber)</option>
+  </optgroup>
+
+  <optgroup label="💹 Indizes">
+    <option value="US30">US30 (Dow Jones)</option>
+    <option value="NAS100">NAS100 (Nasdaq)</option>
+    <option value="SPX500">SPX500 (S&P 500)</option>
+    <option value="GER40">GER40 (DAX)</option>
+    <option value="UK100">UK100 (FTSE)</option>
+  </optgroup>
+
+  <optgroup label="₿ Krypto">
+    <option value="BTC/USD">BTC/USD</option>
+    <option value="ETH/USD">ETH/USD</option>
+  </optgroup>
+</select>
+
 </div>
 
     <button onclick="calculateLeverage()">🔧 Berechnen</button>
@@ -1445,19 +1480,53 @@ function calculateLeverage() {
       return;
     }
 
-    let basis;
-    switch (pair) {
-      case "XAU/USD": basis = 2000; break;
-      case "XAG/USD": basis = 25000; break;
-      case "BTC/USD": basis = 30000; break;
-      case "ETH/USD": basis = 1800; break;
-      case "US30":    basis = 10; break;
-      case "NAS100":  basis = 20; break;
-      case "SPX500":  basis = 10; break;
-      case "GER40":   basis = 25; break;
-      case "UK100":   basis = 10; break;
-      default:        basis = 100000; break; // Standard Forex
-    }
+let basis;
+switch (pair) {
+  // Metalle
+  case "XAU/USD": basis = 2000; break;
+  case "XAG/USD": basis = 25000; break;
+
+  // Krypto
+  case "BTC/USD": basis = 30000; break;
+  case "ETH/USD": basis = 1800; break;
+
+  // Indizes
+  case "US30":    basis = 10; break;
+  case "NAS100":  basis = 20; break;
+  case "SPX500":  basis = 10; break;
+  case "GER40":   basis = 25; break;
+  case "UK100":   basis = 10; break;
+
+  // Forex mit typischer 100k Kontraktgröße
+  case "EUR/USD":
+  case "GBP/USD":
+  case "AUD/USD":
+  case "NZD/USD":
+  case "USD/CAD":
+  case "USD/CHF":
+    basis = 100000; break;
+
+  // Forex mit leicht abweichendem Pip-Wert / Standard je nach Broker
+  case "USD/JPY":
+  case "EUR/JPY":
+  case "GBP/JPY":
+  case "CHF/JPY":
+  case "AUD/JPY":
+  case "CAD/JPY":
+    basis = 100000; break; // Optional auf 1.000.000 JPY setzen, je nach Broker
+
+  // Cross-Paare (ohne USD direkt)
+  case "EUR/GBP":
+  case "EUR/AUD":
+  case "EUR/CAD":
+  case "GBP/AUD":
+  case "GBP/CAD":
+    basis = 100000; break;
+
+  default:
+    basis = 100000; break; // Fallback für unbekannte Paare
+}
+   
 
     const maxLots = (capital * leverage) / basis;
     let output = `💰 <strong>Max. Lotgröße (${pair}):</strong> ${maxLots.toFixed(2)} Lot<br><br>📊 <strong>Stückelung:</strong><br>`;
