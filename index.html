@@ -1772,18 +1772,26 @@ async function getAccounts() {
   const token = localStorage.getItem("ctraderToken");
   if (!token) return alert("❌ Kein Token verfügbar");
 
-  const res = await fetch(`http://localhost:3000/accounts?access_token=${token}`);
-  const data = await res.json();
-  console.log("📊 Konten:", data);
+  try {
+    const res = await fetch(`http://localhost:3000/accounts?access_token=${token}`);
+    const data = await res.json();
+    console.log("📊 Konten:", data);
+  } catch (err) {
+    console.error("Fehler beim Laden der Konten:", err);
+  }
 }
 
 async function getPositions(accountId) {
   const token = localStorage.getItem("ctraderToken");
   if (!token) return alert("❌ Kein Token verfügbar");
 
-  const res = await fetch(`http://localhost:3000/positions?access_token=${token}&account_id=${accountId}`);
-  const data = await res.json();
-  console.log("📂 Positionen:", data);
+  try {
+    const res = await fetch(`http://localhost:3000/positions?access_token=${token}&account_id=${accountId}`);
+    const data = await res.json();
+    console.log("📂 Positionen:", data);
+  } catch (err) {
+    console.error("Fehler beim Laden der Positionen:", err);
+  }
 }
 </script>
 
