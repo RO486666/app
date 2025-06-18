@@ -1738,6 +1738,53 @@ function startCtraderLogin() {
 
 </script>
 
+<script>
+async function exchangeCodeForToken() {
+  const code = localStorage.getItem("ctraderCode");
+  if (!code) {
+    alert("❌ Kein Code vorhanden. Bitte erst über Spotware einloggen.");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+
+    const data = await res.json();
+    if (data.access_token) {
+      localStorage.setItem("ctraderToken", data.access_token);
+      alert("✅ Token gespeichert: Zugriff bereit!");
+    } else {
+      console.error(data);
+      alert("❌ Fehler beim Token-Tausch");
+    }
+  } catch (err) {
+    alert("⚠️ Netzwerkfehler beim Token-Tausch");
+    console.error(err);
+  }
+}
+
+async function getAccounts() {
+  const token = localStorage.getItem("ctraderToken");
+  if (!token) return alert("❌ Kein Token verfügbar");
+
+  const res = await fetch(`http://localhost:3000/accounts?access_token=${token}`);
+  const data = await res.json();
+  console.log("📊 Konten:", data);
+}
+
+async function getPositions(accountId) {
+  const token = localStorage.getItem("ctraderToken");
+  if (!token) return alert("❌ Kein Token verfügbar");
+
+  const res = await fetch(`http://localhost:3000/positions?access_token=${token}&account_id=${accountId}`);
+  const data = await res.json();
+  console.log("📂 Positionen:", data);
+}
+</script>
 
 
 
