@@ -1729,13 +1729,15 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-const ctraderClientId = "15634_88Uy92WLJTl32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp";
+<script>
+const ctraderClientId = "15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp";
 const ctraderRedirectUri = "https://ro486666.github.io/app/callback";
 
 function startCtraderLogin() {
-  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=${encodeURIComponent(ctraderClientId)}&redirect_uri=${encodeURIComponent(ctraderRedirectUri)}&response_type=code&scope=trading`;
+  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=https://ro486666.github.io/app/callback.html&response_type=code&scope=accounts`;
   window.location.href = authUrl;
 }
+</script>
 
 </script>
 
