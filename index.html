@@ -515,12 +515,19 @@
 
     <!-- MODUS 2: Hebel + Kapital ➜ Lotcheck -->
     <div id="lotCheckMode" style="display:none">
-      <label for="lotCapital">📦 Kapital (in €):</label>
-      <input type="number" id="lotCapital" placeholder="z. B. 250" />
+  <label for="lotCapital">📦 Kapital (in €):</label>
+  <input type="number" id="lotCapital" placeholder="z. B. 250" />
 
-      <label for="lotLeverage">💡 Hebel (z. B. 500):</label>
-      <input type="number" id="lotLeverage" placeholder="z. B. 500" />
-    </div>
+  <label for="lotLeverage">💡 Hebel (z. B. 500):</label>
+  <input type="number" id="lotLeverage" placeholder="z. B. 500" />
+
+  <label for="lotPair">📊 Währungspaar:</label>
+  <select id="lotPair">
+    <option value="default">Standard (z. B. EUR/USD)</option>
+    <option value="XAU/USD">Gold (XAU/USD)</option>
+    <option value="XAG/USD">Silber (XAG/USD)</option>
+  </select>
+</div>
 
     <button onclick="calculateLeverage()">🔧 Berechnen</button>
     <p id="leverageResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
@@ -1430,6 +1437,7 @@ function calculateLeverage() {
   } else if (mode === "lotcheck") {
     const capital = parseFloat(document.getElementById("lotCapital").value);
     const leverage = parseFloat(document.getElementById("lotLeverage").value);
+    const pair = document.getElementById("lotPair")?.value || "default";
 
     if (isNaN(capital) || isNaN(leverage) || capital <= 0 || leverage <= 0) {
       resultEl.innerHTML = "❌ Bitte Kapital und Hebel korrekt eingeben!";
@@ -1437,8 +1445,22 @@ function calculateLeverage() {
       return;
     }
 
-    const maxLots = (capital * leverage) / 100000;
-    let output = `💰 <strong>Max. Lotgröße:</strong> ${maxLots.toFixed(2)} Lot<br><br>📊 <strong>Stückelung:</strong><br>`;
+    let basis;
+    switch (pair) {
+      case "XAU/USD": basis = 2000; break;
+      case "XAG/USD": basis = 25000; break;
+      case "BTC/USD": basis = 30000; break;
+      case "ETH/USD": basis = 1800; break;
+      case "US30":    basis = 10; break;
+      case "NAS100":  basis = 20; break;
+      case "SPX500":  basis = 10; break;
+      case "GER40":   basis = 25; break;
+      case "UK100":   basis = 10; break;
+      default:        basis = 100000; break; // Standard Forex
+    }
+
+    const maxLots = (capital * leverage) / basis;
+    let output = `💰 <strong>Max. Lotgröße (${pair}):</strong> ${maxLots.toFixed(2)} Lot<br><br>📊 <strong>Stückelung:</strong><br>`;
 
     const lotSizes = [1.00, 0.80, 0.50, 0.40, 0.20, 0.10, 0.01];
     lotSizes.forEach(size => {
@@ -1450,6 +1472,7 @@ function calculateLeverage() {
     resultEl.style.color = "#0f0";
   }
 }
+
 
 
 
