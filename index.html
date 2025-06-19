@@ -2036,9 +2036,9 @@ setTimeout(() => {
 
 <script>
 function sendPushNotification(title, message) {
+  // Direkt im Browser (z. B. Desktop ohne PWA)
   if ("Notification" in window && Notification.permission === "granted") {
     try {
-      // Direkt im Browser oder Desktop-PWA
       const n = new Notification(title, {
         body: message,
         icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
@@ -2051,27 +2051,31 @@ function sendPushNotification(title, message) {
       };
       return;
     } catch (err) {
-      console.warn("Fallback zu Service Worker Notification", err);
+      console.warn("⚠️ Browser-Notification fehlgeschlagen, versuche SW:", err);
     }
   }
 
-  // Falls obiger Versuch scheitert, Service Worker nutzen
+  // ✅ Fallback für PWA & Handy → Message an SW senden
   if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
-        vibrate: [200, 100, 200],
-        tag: "session-alert",
-        renotify: true
+      registration.active.postMessage({
+        title,
+        options: {
+          body: message,
+          icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
+          vibrate: [200, 100, 200],
+          tag: "session-alert",
+          renotify: true
+        }
       });
     }).catch((err) => {
-      console.error("❌ Fehler beim Service Worker Notification:", err);
+      console.error("❌ Fehler beim Senden an den Service Worker:", err);
     });
   } else {
-    console.warn("❌ Push Notification nicht möglich – keine Erlaubnis oder SW fehlt.");
+    console.warn("❌ Push Notification nicht möglich – keine Berechtigung oder kein Service Worker aktiv.");
   }
 }
+
 
 
 
