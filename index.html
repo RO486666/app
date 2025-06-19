@@ -2060,11 +2060,67 @@ async function getPositions(accountId) {
     console.error("Fehler beim Laden der Positionen:", err);
   }
 }
+<script>
+function diagnoseNotifications() {
+  const output = document.getElementById("notificationStatus");
+  output.style.display = "block";
+
+  let msg = "🔍 <strong>Benachrichtigungs-Check:</strong><br>";
+
+  if (!("Notification" in window)) {
+    msg += "❌ Notifications werden vom Browser nicht unterstützt.<br>";
+  } else {
+    msg += `📱 Notification.permission: <strong>${Notification.permission}</strong><br>`;
+    if (Notification.permission === "granted") {
+      try {
+        const test = new Notification("✅ Test-Notification funktioniert!");
+        msg += "✅ Test-Notification wurde ausgelöst.<br>";
+      } catch (err) {
+        msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
+      }
+    } else if (Notification.permission === "denied") {
+      msg += "🚫 Du hast Benachrichtigungen blockiert.<br>";
+    } else if (Notification.permission === "default") {
+      Notification.requestPermission().then((perm) => {
+        msg += `📩 Neue Erlaubnis: ${perm}<br>`;
+      });
+    }
+  }
+
+  output.innerHTML = msg;
+}
 </script>
+<body>
+<div id="notificationStatus" style="
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #222;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 9999;
+  box-shadow: 0 0 8px #00ff88;
+  max-width: 250px;
+  display: none;
+"></div>
 
-
-
-</script>
-
+<button onclick="diagnoseNotifications()" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #00aa44;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 9999;
+  box-shadow: 0 0 10px #00aa44;
+">
+🧪 Diagnose starten
+</button>
 </body>
 </html>
