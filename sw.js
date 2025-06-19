@@ -38,3 +38,28 @@ self.addEventListener("activate", (event) => {
     )
   );
 });
+
+// ✅ NEU: Push Notification direkt im Service Worker (für `registration.showNotification`)
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url === "/" && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow("/app/");
+      }
+    })
+  );
+});
+
+// ✅ NEU: Direkt auf Message-Basis Notification erlauben
+self.addEventListener("message", (event) => {
+  const { title, options } = event.data || {};
+  if (title) {
+    self.registration.showNotification(title, options);
+  }
+});
