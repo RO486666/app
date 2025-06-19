@@ -1780,6 +1780,20 @@ function showNotification(title, message) {
   }
 }
 
+// 🔔 Rausgezogen – außerhalb der Funktion definieren!
+function showSessionStartNotification(sessionName, message) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    const options = {
+      body: message,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+      vibrate: [100, 50, 100],
+      tag: sessionName + "-start",
+      renotify: false
+    };
+    new Notification(`📣 ${sessionName}-Session gestartet!`, options);
+  }
+}
+
 function showAlert(msg) {
   const el = document.createElement("div");
   el.className = "alert-message";
@@ -1914,20 +1928,9 @@ const colors = names.map(n => sessionColors[n] || "#666");
   } else {
     lastAlertSession = null;
   }
-
-
-function showSessionStartNotification(sessionName, message) {
-  if ("Notification" in window && Notification.permission === "granted") {
-    const options = {
-      body: message,
-      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png', // kannst du ändern
-      vibrate: [100, 50, 100],
-      tag: sessionName + "-start", // verhindert Dopplung
-      renotify: false
-    };
-    new Notification(`📣 ${sessionName}-Session gestartet!`, options);
-  }
 }
+
+
 
 
 window.addEventListener("load", () => {
