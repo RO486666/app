@@ -1934,6 +1934,9 @@ const colors = names.map(n => sessionColors[n] || "#666");
   };
 
   const customText = customMessages[s.name] || s.info;
+  
+  // ✅ DEBUG-MARKER
+    alert("📢 Test: Notification wird jetzt ausgelöst!");
   showSessionStartNotification(s.name, customText);
 }
 
