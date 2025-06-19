@@ -1929,6 +1929,31 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
+<script>
+// Funktion: Push über Service Worker senden
+function sendPushNotification(title, message) {
+  if ('serviceWorker' in navigator && 'Notification' in window) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title, {
+        body: message,
+        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+        vibrate: [200, 100, 200],
+        tag: 'session-alert',
+        renotify: true
+      });
+    }).catch((err) => {
+      console.error("❌ Fehler beim Service Worker Notification:", err);
+    });
+  }
+}
+
+// Notification-Wrapper für Sessions
+function showSessionStartNotification(sessionName, message) {
+  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
+}
+</script>
+
+<script>
 // ✅ Service Worker Registrierung
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -2071,13 +2096,13 @@ function diagnoseNotifications() {
     msg += "❌ Notifications werden vom Browser nicht unterstützt.<br>";
   } else {
     msg += `📱 Notification.permission: <strong>${Notification.permission}</strong><br>`;
-    if (Notification.permission === "granted") {
-      try {
-        const test = new Notification("✅ Test-Notification funktioniert!");
-        msg += "✅ Test-Notification wurde ausgelöst.<br>";
-      } catch (err) {
-        msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
-      }
+   if (Notification.permission === "granted") {
+  try {
+    sendPushNotification("✅ Test-Notification", "🎯 Die Notification funktioniert!");
+    msg += "✅ Test-Notification wurde ausgelöst.<br>";
+  } catch (err) {
+    msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
+  }
     } else if (Notification.permission === "denied") {
       msg += "🚫 Du hast Benachrichtigungen blockiert.<br>";
     } else if (Notification.permission === "default") {
@@ -2090,6 +2115,11 @@ function diagnoseNotifications() {
   output.innerHTML = msg;
 }
 </script>
+
+
+
+</script>
+
 <body>
 <div id="notificationStatus" style="
   position: fixed;
