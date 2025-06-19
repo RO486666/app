@@ -309,8 +309,6 @@
   <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
-  <button class="btn" id="btn-calc-pip" onclick="switchCalcTab('pip')">📏 Pip-Wert</button>
-  <button class="btn" id="btn-calc-leverage" onclick="switchCalcTab('leverage')">🔧 Hebel-Rechner</button>
 </div>
 
 
@@ -327,8 +325,60 @@
     <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
     <input type="number" id="stopLossPips" placeholder="z. B. 20" />
 
-    <label for="pipValue">💡 Pip-Wert pro Lot (€):</label>
-    <input type="number" id="pipValue" placeholder="z. B. 10 (Standard bei Forex)" value="10" />
+<label for="symbolSelector">💱 Trading-Paar:</label>
+<select id="symbolSelector">
+  <optgroup label="🌍 Forex Standard">
+    <option value="AUD/USD">AUD/USD</option>
+    <option value="EUR/USD">EUR/USD</option>
+    <option value="GBP/USD">GBP/USD</option>
+    <option value="NZD/USD">NZD/USD</option>
+    <option value="USD/CHF">USD/CHF</option>
+    <option value="USD/CAD">USD/CAD</option>
+  </optgroup>
+
+  <optgroup label="💴 Forex Yen-Paare">
+    <option value="USD/JPY">USD/JPY</option>
+    <option value="EUR/JPY">EUR/JPY</option>
+    <option value="GBP/JPY">GBP/JPY</option>
+    <option value="CHF/JPY">CHF/JPY</option>
+    <option value="AUD/JPY">AUD/JPY</option>
+    <option value="NZD/JPY">NZD/JPY</option>
+    <option value="CAD/JPY">CAD/JPY</option>
+  </optgroup>
+
+  <optgroup label="🔁 Cross-Paare">
+    <option value="EUR/GBP">EUR/GBP</option>
+    <option value="EUR/AUD">EUR/AUD</option>
+    <option value="EUR/CAD">EUR/CAD</option>
+    <option value="GBP/AUD">GBP/AUD</option>
+    <option value="GBP/CAD">GBP/CAD</option>
+    <option value="AUD/CAD">AUD/CAD</option>
+  </optgroup>
+
+  <optgroup label="🥇 Metalle">
+    <option value="XAU/USD">XAU/USD</option>
+    <option value="XAG/USD">XAG/USD</option>
+  </optgroup>
+
+  <optgroup label="🪙 Krypto">
+    <option value="BTC/USD">BTC/USD</option>
+    <option value="ETH/USD">ETH/USD</option>
+  </optgroup>
+
+  <optgroup label="📊 Indizes">
+    <option value="US30">US30</option>
+    <option value="NAS100">NAS100</option>
+    <option value="SPX500">SPX500</option>
+    <option value="GER40">GER40</option>
+    <option value="UK100">UK100</option>
+  </optgroup>
+</select>
+
+<label for="leverage">⚙️ Hebel:</label>
+<input type="number" id="leverage" value="500" min="1" placeholder="z. B. 500" />
+
+
+
 
     <button onclick="calculatePositionSize()">📐 Berechnen</button>
     <p id="positionSizeResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
@@ -582,38 +632,6 @@
 
 
 
-<div id="calc-pip" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="pairSelect">🔀 Währungspaar:</label>
-    <select id="pairSelect">
-      <!-- Wird automatisch gefüllt -->
-    </select>
-
-    <label for="lotSize">💼 Lotgröße:</label>
-    <input type="number" id="lotSize" placeholder="z. B. 0.01" value="0.01" step="0.01" />
-
-    <button onclick="calculatePipValue()">📏 Pip-Wert berechnen</button>
-
-    <p id="pipResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-  </div>
-
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="togglePipInfo()" 
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-
-  <div id="pipInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Dieser Rechner zeigt dir, wie viel **1 Pip** bei der gewählten **Lotgröße** und dem **Währungspaar** wert ist.<br><br>
-
-    <strong>📐 Formel:</strong>  
-    Pip-Wert = Standard-Wert pro Lot × Lotgröße<br><br>
-
-    Die Werte basieren auf typischen Marktbedingungen.<br>
-    Bei Rohstoffen (XAU, XAG) ist der Pip-Wert oft höher.
-  </div>
-</div>
 
 
 
@@ -1305,22 +1323,124 @@ function calculatePositionSize() {
   const accountSize = parseFloat(document.getElementById("accountSize").value);
   const riskPercent = parseFloat(document.getElementById("riskPercent").value);
   const stopLossPips = parseFloat(document.getElementById("stopLossPips").value);
-  const pipValue = parseFloat(document.getElementById("pipValue").value);
-
+  const leverage = parseFloat(document.getElementById("leverage").value);
+  const symbol = document.getElementById("symbolSelector").value;
+  const manualLots = parseFloat(document.getElementById("manualLots")?.value);
   const resultEl = document.getElementById("positionSizeResult");
 
-  if (isNaN(accountSize) || isNaN(riskPercent) || isNaN(stopLossPips) || isNaN(pipValue) ||
-      accountSize <= 0 || riskPercent <= 0 || stopLossPips <= 0 || pipValue <= 0) {
+  const pipValues = {
+    "XAU/USD": 100, "XAG/USD": 50,
+    "BTC/USD": 30000, "ETH/USD": 1800,
+    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
+    "AUD/USD": 10, "EUR/USD": 10, "GBP/USD": 10, "NZD/USD": 10,
+    "USD/CHF": 9.26, "USD/CAD": 7.94,
+    "USD/JPY": 9.17, "EUR/JPY": 9.17, "GBP/JPY": 9.17,
+    "CHF/JPY": 9.17, "AUD/JPY": 9.17, "NZD/JPY": 9.17, "CAD/JPY": 9.17,
+    "EUR/GBP": 10, "EUR/AUD": 10, "EUR/CAD": 10,
+    "GBP/AUD": 10, "GBP/CAD": 10, "AUD/CAD": 7.94
+  };
+
+  const basisWerte = {
+    "XAU/USD": 200000, "XAG/USD": 125000, "BTC/USD": 30000, "ETH/USD": 1800,
+    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
+    "EUR/USD": 100000, "GBP/USD": 100000, "AUD/USD": 100000, "NZD/USD": 100000,
+    "USD/CAD": 100000, "USD/CHF": 100000, "USD/JPY": 100000, "EUR/JPY": 100000,
+    "GBP/JPY": 100000, "CHF/JPY": 100000, "AUD/JPY": 100000, "NZD/JPY": 100000,
+    "CAD/JPY": 100000, "EUR/GBP": 100000, "EUR/AUD": 100000, "EUR/CAD": 100000,
+    "GBP/AUD": 100000, "GBP/CAD": 100000, "AUD/CAD": 100000
+  };
+
+  const pipValueStandard = pipValues[symbol];
+  const basis = basisWerte[symbol] || 100000;
+
+  if (
+    isNaN(accountSize) || isNaN(riskPercent) || isNaN(stopLossPips) ||
+    isNaN(leverage) || accountSize <= 0 || riskPercent <= 0 ||
+    stopLossPips <= 0 || leverage <= 0 || !pipValueStandard
+  ) {
     resultEl.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
     resultEl.style.color = "#f44";
     return;
   }
 
   const riskAmount = accountSize * (riskPercent / 100);
-  const positionSize = riskAmount / (stopLossPips * pipValue);
-  resultEl.innerHTML = `✅ Max. Lotgröße: <strong>${positionSize.toFixed(2)}</strong> Lots`;
+  let baseLot = riskAmount / (stopLossPips * (pipValueStandard));
+  const maxLots = (accountSize * leverage) / basis;
+  let output = "";
+
+  if (0.01 > maxLots) {
+    resultEl.innerHTML = `❌ Mit diesem Hebel kannst du dir keine <strong>0.01 Lots</strong> leisten.<br>
+      📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(4)} Lots</strong><br><br>
+      Bitte Hebel oder Kapital erhöhen.`;
+    resultEl.style.color = "#f44";
+    return;
+  }
+const originalLot = baseLot;
+  if (baseLot < 0.01) {
+    output += `⚠️ Empfohlene Größe: <strong>${baseLot.toFixed(4)}</strong> Lots (unter 0.01)<br>`;
+    output += `🔒 Mindestgröße: 0.01 Lots – Risiko kleiner als erwartet.<br><br>`;
+    baseLot = 0.01;
+  }
+
+  // 📉 Risiko korrekt berechnen mit pipValue angepasst an Lotgröße
+  const pipValueActual = pipValueStandard * baseLot;
+  const risikoEuroEmpfohlen = stopLossPips * pipValueActual;
+  const risikoProzentEmpfohlen = (risikoEuroEmpfohlen / accountSize) * 100;
+  
+  function getRiskComment(riskPercent) {
+  if (riskPercent < 1) return "✅ Sehr konservativ";
+  if (riskPercent < 2) return "🟢 Konservativ";
+  if (riskPercent < 5) return "🟡 Neutral";
+  if (riskPercent < 10) return "🟠 Erhöhtes Risiko";
+  if (riskPercent < 20) return "🔴 Sehr hohes Risiko";
+  return "🔥 Extrem riskant – nur für Profis!";
+}
+
+output += `<br>${getRiskComment(risikoProzentEmpfohlen)}<br><br>`;
+
+
+ let risikoTitel = "📉 Dein Risiko:";
+if (risikoProzentEmpfohlen >= 10) risikoTitel = "⚠️ Dein Risiko (nicht empfohlen):";
+else if (risikoProzentEmpfohlen >= 5) risikoTitel = "🟠 Dein Risiko (grenzwertig):";
+else if (risikoProzentEmpfohlen >= 2) risikoTitel = "🟡 Dein Risiko (moderat):";
+else risikoTitel = "✅ Dein Risiko (empfohlen):";
+
+output += `<strong>${risikoTitel}</strong><br>`;
+  output += `💸 <strong>${risikoEuroEmpfohlen.toFixed(2)} €</strong> (${risikoProzentEmpfohlen.toFixed(2)} % von ${accountSize} €)<br><br>`;
+
+  const steps = [1, 2, 3, 4, 5];
+  output += `✅ Empfohlen: <strong>${(baseLot * steps[0]).toFixed(2)}</strong> Lots<br>`;
+  output += `🟡 Riskant: ${(baseLot * steps[1]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[1]).toFixed(1)}%)<br>`;
+  output += `🟡 Riskant: ${(baseLot * steps[2]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[2]).toFixed(1)}%)<br>`;
+  output += `🔥 Hoch: ${(baseLot * steps[3]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[3]).toFixed(1)}%)<br>`;
+  output += `🧮 Sehr hoch: ${(baseLot * steps[4]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[4]).toFixed(1)}%)<br>`;
+  output += `⚠️ Mehr als ${(baseLot * steps[4]).toFixed(2)} Lots = über deinem Risiko-Limit<br><hr>`;
+  output += `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br>`;
+
+if (!isNaN(manualLots) && manualLots > 0) {
+  const pipValueManuell = pipValueStandard * manualLots;
+  const risikoEuroManuell = stopLossPips * pipValueManuell;
+  const risikoProzentManuell = (risikoEuroManuell / accountSize) * 100;
+
+  output += `<hr><strong>📉 Risiko bei manueller Lotgröße (${manualLots}):</strong><br>`;
+  output += `💸 <strong>${risikoEuroManuell.toFixed(2)} €</strong> (${risikoProzentManuell.toFixed(2)} % von ${accountSize} €)<br>`;
+}
+
+
+  resultEl.innerHTML = output;
   resultEl.style.color = "#0f0";
 }
+
+
+
+
+
+
+
+
+
+
+
 
 function toggleInfoBox() {
   const box = document.getElementById("posInfoBox");
@@ -1429,51 +1549,7 @@ function toggleBreakevenInfo() {
   box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
-const pipValues = {
-  "AUD/CAD": 7.94, "AUD/JPY": 9.17, "AUD/USD": 10,
-  "CHF/JPY": 9.17, "EUR/AUD": 10, "EUR/CAD": 10,
-  "EUR/GBP": 10, "EUR/JPY": 9.17, "EUR/USD": 10,
-  "GBP/AUD": 10, "GBP/JPY": 9.17, "GBP/USD": 10,
-  "NZD/JPY": 9.17, "NZD/USD": 10,
-  "USD/CAD": 7.94, "USD/CHF": 9.26, "USD/JPY": 9.17,
-  "XAG/USD": 50, "XAU/USD": 100
-};
 
-function initPipPairSelect() {
-  const select = document.getElementById("pairSelect");
-  select.innerHTML = "";
-
-  Object.keys(pipValues).forEach(pair => {
-    const option = document.createElement("option");
-    option.value = pair;
-    option.textContent = pair;
-    select.appendChild(option);
-  });
-}
-
-function calculatePipValue() {
-  const pair = document.getElementById("pairSelect").value;
-  const lotSize = parseFloat(document.getElementById("lotSize").value);
-  const result = document.getElementById("pipResult");
-
-  if (!pair || isNaN(lotSize) || lotSize <= 0) {
-    result.innerHTML = "❌ Bitte gültiges Währungspaar und Lotgröße eingeben!";
-    result.style.color = "#f44";
-    return;
-  }
-
-  const pipPerLot = pipValues[pair] || 10;
-  const actualPipValue = pipPerLot * lotSize;
-
-  result.innerHTML = `📍 Der Pip-Wert bei <strong>${pair}</strong> beträgt bei <strong>${lotSize}</strong> Lot: <strong>${actualPipValue.toFixed(2)} €</strong>`;
-  result.style.color = "#0f0";
-}
-
-
-function togglePipInfo() {
-  const box = document.getElementById("pipInfoBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-}
 
 function toggleLeverageMode() {
   const mode = document.getElementById("leverageMode").value;
