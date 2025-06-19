@@ -1814,7 +1814,7 @@ function showAlert(msg) {
   alertBox.appendChild(el);
   setTimeout(() => (alertBox.innerHTML = ""), 5000);
   alertSound.play();
-  showNotification("Trade App Alarm", msg);
+  showNotification("Trade App Alarm", msg);  // 🔊 Alarm-Benachrichtigung
 
   // 🔔 Session Push wie WhatsApp
   const customMessages = {
@@ -1831,10 +1831,11 @@ function showAlert(msg) {
   const activeSessions = getCurrentSessions(minutes);
   if (activeSessions.length > 0) {
     const s = activeSessions[0];
-    const msg = customMessages[s.name] || s.info;
-    sendPushNotification(`📣 ${s.name}-Session startet`, msg);
+    const pushMessage = customMessages[s.name] || s.info;
+    sendPushNotification(`📣 ${s.name}-Session startet`, pushMessage);
   }
 }
+
 
 
 function showSessionProgress(activeSessions, currentMinutes) {
