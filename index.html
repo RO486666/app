@@ -1765,44 +1765,25 @@ const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_s
 
 function requestNotificationPermission() {
   if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      console.log("🔐 Notification permission:", permission);
-    });
+    Notification.requestPermission();
   }
 }
 
-
 function showNotification(title, message) {
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    // ✅ Für installierte Apps (PWA)
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-        vibrate: [200, 100, 200],
-        tag: "session-alert",
-        renotify: true
-      });
-    }).catch(err => {
-      console.error("❌ SW Notification fehlgeschlagen:", err);
-    });
-  } else if ("Notification" in window && Notification.permission === "granted") {
-    // ✅ Fallback für normale Browser-Tabs
-    const notification = new Notification(title, {
+  if ("Notification" in window && Notification.permission === "granted") {
+    const options = {
       body: message,
       icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
       vibrate: [200, 100, 200],
       tag: "session-alert"
-    });
+    };
+    const notification = new Notification(title, options);
     notification.onclick = () => {
       window.focus();
       notification.close();
     };
-  } else {
-    console.warn("❌ Keine Notification-Berechtigung oder keine Unterstützung.");
   }
 }
-
 
 
 
