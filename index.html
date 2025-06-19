@@ -272,6 +272,11 @@
 </head>
 <body>
 
+<label style="color:white;">
+  <input type="checkbox" id="pushToggle" checked>
+  🔕 Benachrichtigungen aktivieren
+</label>
+
 <button onclick="startCtraderLogin()" class="tool-button">🔐 Mit cTrader verbinden</button>
 <button onclick="exchangeCodeForToken()">🔄 Code ➜ Token tauschen</button>
 <button onclick="getAccounts()">📊 Konten laden</button>
@@ -1901,22 +1906,34 @@ const colors = names.map(n => sessionColors[n] || "#666");
     sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
   }
 
-  const minutesToNext = getMinutesToNextSession(minutes);
-  if (minutesToNext <= 5 && minutesToNext > 0) {
-    const currentActive = sessionText.textContent;
-    if (lastAlertSession !== currentActive) {
-      showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-      lastAlertSession = currentActive;
+const minutesToNext = getMinutesToNextSession(minutes);
+if (minutesToNext <= 5 && minutesToNext > 0) {
+  const currentActive = sessionText.textContent;
+  if (lastAlertSession !== currentActive) {
+    showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
+    lastAlertSession = currentActive;
 
-      if (activeSessions.length > 0) {
-        const s = activeSessions[0];
-        showSessionStartNotification(s.name, s.info);
-      }
+    if (activeSessions.length > 0) {
+      const s = activeSessions[0];
+
+      const customMessages = {
+        "Tokyo": "🌏 Tokyo geöffnet – JPY-Paare beginnen sich zu bewegen.",
+        "London Killzone": "⚔️ London Killzone aktiv – Liquiditätssuche beginnt!",
+        "London": "💷 London Session gestartet – europäische Volatilität beginnt.",
+        "New York Killzone": "🔥 NY Killzone läuft – auf Breakouts achten!",
+        "New York": "🇺🇸 New York Session gestartet – starker US-Einfluss jetzt aktiv.",
+        "Sydney": "🌙 Sydney Session läuft – ruhiger Start in den Markt.",
+        "Deadzone": "😴 Deadzone – geringe Volatilität, keine aktiven Teilnehmer."
+      };
+
+      const customText = customMessages[s.name] || s.info;
+      showSessionStartNotification(s.name, customText);
     }
-  } else {
-    lastAlertSession = null;
   }
+} else {
+  lastAlertSession = null;
 }
+
 
 
 
@@ -2008,13 +2025,15 @@ function sendPushNotification(title, message) {
   }
 }
 
-
-
-// Notification-Wrapper für Sessions
+// ✅ Nur diese hier behalten – mit Toggle!
 function showSessionStartNotification(sessionName, message) {
+  const pushEnabled = document.getElementById("pushToggle")?.checked;
+  if (!pushEnabled) return;
+
   sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
 }
 </script>
+
 
 
 <script>
