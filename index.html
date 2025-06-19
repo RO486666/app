@@ -1932,6 +1932,30 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  const installBtn = document.createElement('button');
+  installBtn.textContent = "📲 App installieren";
+  installBtn.className = "big-btn";
+  installBtn.style.position = "fixed";
+  installBtn.style.bottom = "80px";
+  installBtn.style.left = "50%";
+  installBtn.style.transform = "translateX(-50%)";
+  document.body.appendChild(installBtn);
+
+  installBtn.addEventListener('click', () => {
+    installBtn.remove();
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choiceResult => {
+      console.log("Installationswahl:", choiceResult.outcome);
+      deferredPrompt = null;
+    });
+  });
+});
+
 
 </script>
 
