@@ -1928,43 +1928,7 @@ window.addEventListener("load", () => {
 });
 </script>
 
-<script>
-<script>
-// Funktion: Push über Service Worker senden
-function sendPushNotification(title, message) {
-  if (!("Notification" in window)) {
-    alert("❌ Push wird nicht unterstützt.");
-    return;
-  }
 
-  if (Notification.permission !== "granted") {
-    alert("⚠️ Benachrichtigungen sind blockiert.");
-    return;
-  }
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-        vibrate: [200, 100, 200],
-        tag: 'session-alert',
-        renotify: true
-      });
-    }).catch((err) => {
-      console.error("❌ Fehler beim Service Worker Notification:", err);
-    });
-  } else {
-    alert("❌ Kein Service Worker gefunden.");
-  }
-}
-
-
-// Notification-Wrapper für Sessions
-function showSessionStartNotification(sessionName, message) {
-  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
-}
-</script>
 
 <script>
 // ✅ Service Worker Registrierung
@@ -2025,7 +1989,32 @@ setTimeout(() => {
 }, 3000);
 </script>
 
+<script>
+function sendPushNotification(title, message) {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title, {
+        body: message,
+        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
+        vibrate: [200, 100, 200],
+        tag: "session-alert",
+        renotify: true
+      });
+    }).catch((err) => {
+      console.error("❌ Fehler beim Service Worker Notification:", err);
+    });
+  } else {
+    alert("⚠️ Kein Service Worker verfügbar.");
+  }
+}
 
+
+
+// Notification-Wrapper für Sessions
+function showSessionStartNotification(sessionName, message) {
+  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
+}
+</script>
 
 
 <script>
