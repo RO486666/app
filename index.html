@@ -1771,35 +1771,19 @@ function requestNotificationPermission() {
 
 function showNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted") {
-    try {
-      // Desktop-PWA bevorzugt direktes Notification-Objekt
-      const notification = new Notification(title, {
-        body: message,
-        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-        vibrate: [200, 100, 200],
-        tag: "session-alert"
-      });
-      notification.onclick = () => {
-        window.focus();
-        notification.close();
-      };
-    } catch (e) {
-      // Fallback für Service Worker (z. B. auf Android)
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.showNotification(title, {
-            body: message,
-            icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-            vibrate: [200, 100, 200],
-            tag: "session-alert",
-            renotify: true
-          });
-        });
-      }
-    }
+    const options = {
+      body: message,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+      vibrate: [200, 100, 200],
+      tag: "session-alert"
+    };
+    const notification = new Notification(title, options);
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
   }
 }
-
 
 
 
@@ -1828,11 +1812,10 @@ function showAlert(msg) {
   const activeSessions = getCurrentSessions(minutes);
   if (activeSessions.length > 0) {
     const s = activeSessions[0];
-    const text = customMessages[s.name] || s.info;
-    sendPushNotification(`📣 ${s.name}-Session startet`, text);
+    const msg = customMessages[s.name] || s.info;
+    sendPushNotification(`📣 ${s.name}-Session startet`, msg);
   }
 }
-
 
 
 function showSessionProgress(activeSessions, currentMinutes) {
@@ -2194,9 +2177,36 @@ function diagnoseNotifications() {
   display: none;
 "></div>
 
+<button onclick="diagnoseNotifications()" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #00aa44;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 9999;
+  box-shadow: 0 0 10px #00aa44;
+">
+🧪 Diagnose starten
 
-
-
+<button onclick="showAlert('⚠️ Dies ist ein Testalarm für die Session-Benachrichtigung!')" style="
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  padding: 12px 16px;
+  background: #00aa44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00aa44;
+  font-size: 16px;
+  z-index: 9999;
+">
+🔔 Test-Alarm auslösen
 
 <button onclick="sendPushNotification('🔔 Test', 'Dies ist eine direkte Push Notification!')" style="
   position: fixed;
