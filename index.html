@@ -1453,17 +1453,19 @@ function initPipPairSelect() {
 
 function calculatePipValue() {
   const pair = document.getElementById("pairSelect").value;
+  const lotSize = parseFloat(document.getElementById("lotSize").value);
   const result = document.getElementById("pipResult");
 
-  if (!pair) {
-    result.innerHTML = "❌ Bitte gültiges Währungspaar wählen!";
+  if (!pair || isNaN(lotSize) || lotSize <= 0) {
+    result.innerHTML = "❌ Bitte gültiges Währungspaar und Lotgröße eingeben!";
     result.style.color = "#f44";
     return;
   }
 
   const pipPerLot = pipValues[pair] || 10;
+  const actualPipValue = pipPerLot * lotSize;
 
-  result.innerHTML = `📍 Der Pip-Wert bei <strong>${pair}</strong> beträgt pro 1 Lot: <strong>${pipPerLot.toFixed(2)} €</strong>`;
+  result.innerHTML = `📍 Der Pip-Wert bei <strong>${pair}</strong> beträgt bei <strong>${lotSize}</strong> Lot: <strong>${actualPipValue.toFixed(2)} €</strong>`;
   result.style.color = "#0f0";
 }
 
