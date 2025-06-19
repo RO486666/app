@@ -1901,14 +1901,34 @@ const colors = names.map(n => sessionColors[n] || "#666");
 
   const minutesToNext = getMinutesToNextSession(minutes);
   if (minutesToNext <= 5 && minutesToNext > 0) {
-    if (lastAlertSession !== sessionText.textContent) {
+    const currentActive = sessionText.textContent;
+    if (lastAlertSession !== currentActive) {
       showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-      lastAlertSession = sessionText.textContent;
+      lastAlertSession = currentActive;
+
+      if (activeSessions.length > 0) {
+        const s = activeSessions[0];
+        showSessionStartNotification(s.name, s.info);
+      }
     }
   } else {
     lastAlertSession = null;
   }
+
+
+function showSessionStartNotification(sessionName, message) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    const options = {
+      body: message,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png', // kannst du ändern
+      vibrate: [100, 50, 100],
+      tag: sessionName + "-start", // verhindert Dopplung
+      renotify: false
+    };
+    new Notification(`📣 ${sessionName}-Session gestartet!`, options);
+  }
 }
+
 
 window.addEventListener("load", () => {
   requestNotificationPermission();
