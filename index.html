@@ -1780,19 +1780,7 @@ function showNotification(title, message) {
   }
 }
 
-// 🔔 Rausgezogen – außerhalb der Funktion definieren!
-function showSessionStartNotification(sessionName, message) {
-  if ("Notification" in window && Notification.permission === "granted") {
-    const options = {
-      body: message,
-      icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
-      vibrate: [100, 50, 100],
-      tag: sessionName + "-start",
-      renotify: false
-    };
-    new Notification(`📣 ${sessionName}-Session gestartet!`, options);
-  }
-}
+
 
 function showAlert(msg) {
   const el = document.createElement("div");
@@ -1921,22 +1909,9 @@ const colors = names.map(n => sessionColors[n] || "#666");
       lastAlertSession = currentActive;
 
       if (activeSessions.length > 0) {
-  const s = activeSessions[0];
-
-  const customMessages = {
-    "Tokyo": "🌏 Tokyo geöffnet – Fokus auf JPY & Breakouts möglich.",
-    "London Killzone": "⚔️ London Killzone aktiv – erhöhte Volatilität und Liquiditätssuche.",
-    "London": "💷 London Session startet – EU-Daten & starke Marktbewegungen erwartet.",
-    "New York Killzone": "🔥 NY Killzone läuft – US-News und Breakouts stehen an.",
-    "New York": "🇺🇸 New York Session beginnt – Achtung auf Trendfortsetzungen.",
-    "Deadzone": "😴 Deadzone – niedrige Volatilität, Markt bewegt sich kaum.",
-    "Sydney": "🌙 Sydney Session läuft – Vorbereitung auf Asienmarkt beginnt."
-  };
-
-  const customText = customMessages[s.name] || s.info;
-  showSessionStartNotification(s.name, customText);
-}
-
+        const s = activeSessions[0];
+        showSessionStartNotification(s.name, s.info);
+      }
     }
   } else {
     lastAlertSession = null;
@@ -2090,22 +2065,5 @@ async function getPositions(accountId) {
 
 
 </script>
-
-<button onclick="showSessionStartNotification('Test', '📲 Notification funktioniert!')" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #00aa44;
-  color: white;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  z-index: 9999;
-  box-shadow: 0 0 10px #00aa44;
-">
-🔔 Test Push
-</button>
 </body>
 </html>
