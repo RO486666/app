@@ -1756,10 +1756,18 @@ function hexToRgba(hex, alpha) {
 }
 
 function getMinutesToNextSession(minNow) {
-  const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
-  if (futureStarts.length === 0) return sessions[0].start + 1440 - minNow;
-  return Math.min(...futureStarts) - minNow;
+  let nextStarts = sessions.map(s => {
+    let start = s.start;
+    if (s.start > s.end && minNow > s.start) {
+      start += 1440;
+    }
+    return start;
+  }).filter(start => start > minNow);
+
+  if (nextStarts.length === 0) return sessions[0].start + 1440 - minNow;
+  return Math.min(...nextStarts) - minNow;
 }
+
 
 
 const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
