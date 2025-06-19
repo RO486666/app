@@ -1769,6 +1769,38 @@ function requestNotificationPermission() {
   }
 }
 
+function showNotification(title, message) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    try {
+      // Desktop-PWA bevorzugt direktes Notification-Objekt
+      const notification = new Notification(title, {
+        body: message,
+        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+        vibrate: [200, 100, 200],
+        tag: "session-alert"
+      });
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    } catch (e) {
+      // Fallback für Service Worker (z. B. auf Android)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification(title, {
+            body: message,
+            icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827409.png',
+            vibrate: [200, 100, 200],
+            tag: "session-alert",
+            renotify: true
+          });
+        });
+      }
+    }
+  }
+}
+
+
 
 
 function showAlert(msg) {
