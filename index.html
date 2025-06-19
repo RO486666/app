@@ -1922,7 +1922,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/app/sw.js", { scope: "/app/" }) // 🔥 DER wichtige Part!
+      .register("sw.js") // KEIN /app/ und KEIN scope
       .then(reg => {
         console.log("✅ Service Worker registriert:", reg);
       })
@@ -1931,6 +1931,7 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
 
 </script>
 
