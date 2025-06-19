@@ -1796,7 +1796,27 @@ function showAlert(msg) {
   setTimeout(() => (alertBox.innerHTML = ""), 5000);
   alertSound.play();
   showNotification("Trade App Alarm", msg);
+
+  // 🔔 Session Push wie WhatsApp
+  const customMessages = {
+    "Tokyo": "🌏 Tokyo geöffnet – JPY-Paare beginnen sich zu bewegen.",
+    "London Killzone": "⚔️ London Killzone aktiv – Liquiditätssuche beginnt!",
+    "London": "💷 London Session gestartet – europäische Volatilität beginnt.",
+    "New York Killzone": "🔥 NY Killzone läuft – auf Breakouts achten!",
+    "New York": "🇺🇸 New York Session gestartet – starker US-Einfluss jetzt aktiv.",
+    "Sydney": "🌙 Sydney Session läuft – ruhiger Start in den Markt.",
+    "Deadzone": "😴 Deadzone – geringe Volatilität, keine aktiven Teilnehmer."
+  };
+
+  const minutes = getMinutesNow();
+  const activeSessions = getCurrentSessions(minutes);
+  if (activeSessions.length > 0) {
+    const s = activeSessions[0];
+    const msg = customMessages[s.name] || s.info;
+    sendPushNotification(`📣 ${s.name}-Session startet`, msg);
+  }
 }
+
 
 function showSessionProgress(activeSessions, currentMinutes) {
   if (activeSessions.length === 0) {
@@ -2013,15 +2033,20 @@ function sendPushNotification(title, message) {
   }
 }
 
-// ✅ Nur diese hier behalten – mit Toggle!
+
 function showSessionStartNotification(sessionName, message) {
   const pushEnabled = document.getElementById("pushToggle")?.checked;
   if (!pushEnabled) return;
 
   sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
 }
-</script>
 
+
+// Notification-Wrapper für Sessions
+function showSessionStartNotification(sessionName, message) {
+  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
+}
+</script>
 
 
 <script>
@@ -2094,6 +2119,13 @@ async function getPositions(accountId) {
     console.error("Fehler beim Laden der Positionen:", err);
   }
 }
+
+// ✅ Session-Benachrichtigung (via Service Worker)
+function showSessionStartNotification(sessionName, message) {
+  const title = `📣 ${sessionName}-Session gestartet!`;
+  sendPushNotification(title, message);
+}
+
 
 function diagnoseNotifications() {
   const output = document.getElementById("notificationStatus");
