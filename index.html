@@ -1812,10 +1812,11 @@ function showAlert(msg) {
   const activeSessions = getCurrentSessions(minutes);
   if (activeSessions.length > 0) {
     const s = activeSessions[0];
-    const msg = customMessages[s.name] || s.info;
-    sendPushNotification(`📣 ${s.name}-Session startet`, msg);
+    const text = customMessages[s.name] || s.info;
+    sendPushNotification(`📣 ${s.name}-Session startet`, text);
   }
 }
+
 
 
 function showSessionProgress(activeSessions, currentMinutes) {
