@@ -1932,7 +1932,17 @@ window.addEventListener("load", () => {
 <script>
 // Funktion: Push über Service Worker senden
 function sendPushNotification(title, message) {
-  if ('serviceWorker' in navigator && 'Notification' in window) {
+  if (!("Notification" in window)) {
+    alert("❌ Push wird nicht unterstützt.");
+    return;
+  }
+
+  if (Notification.permission !== "granted") {
+    alert("⚠️ Benachrichtigungen sind blockiert.");
+    return;
+  }
+
+  if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {
       registration.showNotification(title, {
         body: message,
@@ -1944,8 +1954,11 @@ function sendPushNotification(title, message) {
     }).catch((err) => {
       console.error("❌ Fehler beim Service Worker Notification:", err);
     });
+  } else {
+    alert("❌ Kein Service Worker gefunden.");
   }
 }
+
 
 // Notification-Wrapper für Sessions
 function showSessionStartNotification(sessionName, message) {
