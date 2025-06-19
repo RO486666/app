@@ -1944,6 +1944,14 @@ const colors = names.map(n => sessionColors[n] || "#666");
 }
 
 
+console.log("📢 DEBUG | Notification-Block läuft:", {
+  permission: Notification.permission,
+  lastAlertSession,
+  currentActive: sessionText.textContent,
+  minutesToNext,
+  activeSessions: activeSessions.map(s => s.name)
+});
+
 
 
 window.addEventListener("load", () => {
