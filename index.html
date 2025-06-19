@@ -1756,19 +1756,10 @@ function hexToRgba(hex, alpha) {
 }
 
 function getMinutesToNextSession(minNow) {
-  let nextStarts = sessions.map(s => {
-    let start = s.start;
-    if (s.start > s.end && minNow > s.start) {
-      start += 1440;
-    }
-    return start;
-  }).filter(start => start > minNow);
-
-  if (nextStarts.length === 0) return sessions[0].start + 1440 - minNow;
-  return Math.min(...nextStarts) - minNow;
+  const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
+  if (futureStarts.length === 0) return sessions[0].start + 1440 - minNow;
+  return Math.min(...futureStarts) - minNow;
 }
-
-
 
 const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
@@ -1915,34 +1906,22 @@ const colors = names.map(n => sessionColors[n] || "#666");
     sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
   }
 
-const minutesToNext = getMinutesToNextSession(minutes);
-if (minutesToNext <= 5 && minutesToNext > 0) {
-  const currentActive = sessionText.textContent;
-  if (lastAlertSession !== currentActive) {
-    showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-    lastAlertSession = currentActive;
+  const minutesToNext = getMinutesToNextSession(minutes);
+  if (minutesToNext <= 5 && minutesToNext > 0) {
+    const currentActive = sessionText.textContent;
+    if (lastAlertSession !== currentActive) {
+      showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
+      lastAlertSession = currentActive;
 
-    if (activeSessions.length > 0) {
-      const s = activeSessions[0];
-
-      const customMessages = {
-        "Tokyo": "🌏 Tokyo geöffnet – JPY-Paare beginnen sich zu bewegen.",
-        "London Killzone": "⚔️ London Killzone aktiv – Liquiditätssuche beginnt!",
-        "London": "💷 London Session gestartet – europäische Volatilität beginnt.",
-        "New York Killzone": "🔥 NY Killzone läuft – auf Breakouts achten!",
-        "New York": "🇺🇸 New York Session gestartet – starker US-Einfluss jetzt aktiv.",
-        "Sydney": "🌙 Sydney Session läuft – ruhiger Start in den Markt.",
-        "Deadzone": "😴 Deadzone – geringe Volatilität, keine aktiven Teilnehmer."
-      };
-
-      const customText = customMessages[s.name] || s.info;
-      showSessionStartNotification(s.name, customText);
+      if (activeSessions.length > 0) {
+        const s = activeSessions[0];
+        showSessionStartNotification(s.name, s.info);
+      }
     }
+  } else {
+    lastAlertSession = null;
   }
-} else {
-  lastAlertSession = null;
 }
-
 
 
 
