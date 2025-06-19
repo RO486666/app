@@ -1939,6 +1939,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function showInstallButton() {
+  if (localStorage.getItem("installPromptHandled") === "true") return;
   if (document.getElementById("installBtn")) return;
 
   const installBtn = document.createElement("button");
@@ -1954,6 +1955,7 @@ function showInstallButton() {
 
   installBtn.addEventListener("click", () => {
     installBtn.remove();
+    localStorage.setItem("installPromptHandled", "true"); // ✅ Nur einmal fragen
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then((choiceResult) => {
