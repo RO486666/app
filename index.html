@@ -2178,7 +2178,8 @@ const ctraderClientId = "15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSz
 const ctraderRedirectUri = "http://localhost:3000/callback"; // ✅ Lokale Weiterleitung
 
 function startCtraderLogin() {
-  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=${ctraderClientId}&redirect_uri=${ctraderRedirectUri}&response_type=code&scope=accounts`;
+  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=http://localhost:3000/callback&response_type=code&scope=accounts`;
+
   window.location.href = authUrl;
 }
 
