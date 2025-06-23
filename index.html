@@ -2175,11 +2175,13 @@ function showSessionStartNotification(sessionName, message) {
 <script>
 
 const ctraderClientId = "15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp";
-const ctraderRedirectUri = "https://ro486666.github.io/callback.html"; // ✅ RICHTIG
+const ctraderRedirectUri = "https://ro486666.github.io/app/callback.html";
+ // ✅ RICHTIG
 
 
 function startCtraderLogin() {
-  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=https://ro486666.github.io/callback.html&response_type=code&scope=accounts`;
+  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=https://ro486666.github.io/app/callback.html&response_type=code&scope=accounts`;
+
 
 
   window.location.href = authUrl;
