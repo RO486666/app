@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>cTrader Redirect</title>
+  <meta charset="UTF-8" />
+  <title>Callback</title>
 </head>
-<body style="background:#111; color:white; font-family:sans-serif; text-align:center; margin-top:50px;">
-  <h2>🔄 Login wird verarbeitet...</h2>
+<body style="font-family:sans-serif;background:#111;color:#0f0;padding:2rem;">
+  <h1>📥 Verarbeite Login...</h1>
+  <div id="log"></div>
+
   <script>
     const code = new URLSearchParams(window.location.search).get("code");
+    document.getElementById("log").innerText = code 
+      ? `✅ Code empfangen: ${code}` 
+      : "❌ Kein Code erhalten.";
+
     if (code) {
       localStorage.setItem("ctraderCode", code);
-      window.location.href = "/app/index.html";
-    } else {
-      document.body.innerHTML = "<h2>❌ Kein Code erhalten!</h2>";
+      setTimeout(() => {
+        window.location.href = "/app/index.html";
+      }, 3000);
     }
   </script>
 </body>
 </html>
-
