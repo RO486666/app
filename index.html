@@ -2180,9 +2180,10 @@ const ctraderRedirectUri = "https://ro486666.github.io/app/callback.html";
 
 
 function startCtraderLogin() {
-  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=https://ro486666.github.io/app/callback.html&response_type=code&scope=accounts`;
+  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=http://localhost:3000/callback&response_type=code&scope=accounts`;
   window.location.href = authUrl;
 }
+
 
 </script>
 
