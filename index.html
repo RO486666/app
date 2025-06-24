@@ -277,12 +277,11 @@
   🔕 Benachrichtigungen aktivieren
 </label>
 
-<button onclick="startCtraderLogin()" class="tool-button">🔐 Mit cTrader verbinden</button>
-<button onclick="exchangeCodeForToken()">🔄 Code ➜ Token tauschen</button>
-<button onclick="getAccounts()">📊 Konten laden</button>
-<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
-  📥 Manuell synchronisieren (22:00–23:00)
+<button onclick="syncMyfxbook()" id="manualSyncBtn" class="tool-button">
+  📥 Manuell synchronisieren
 </button>
+
+
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 <div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
@@ -735,9 +734,7 @@
   <button onclick="saveResult()">Speichern</button>
 </div>
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
-<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
-  📥 Manuell synchronisieren (22:00–23:00)
-</button>
+
 
 <div class="position-bar" id="positionBar"></div>
 
@@ -2172,77 +2169,8 @@ function showSessionStartNotification(sessionName, message) {
 </script>
 
 
-<script>
-
-const ctraderClientId = "15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp";
-const ctraderRedirectUri = "http://localhost:3000/callback"; // ✅ Lokale Weiterleitung
-
-function startCtraderLogin() {
-  const authUrl = `https://connect.spotware.com/apps/oauth/authorize?client_id=15634_88Uy92WLJTI32Y4G6mz5Mn3WG0AFUGB5WPhKtp4XUrWlgpvSzp&redirect_uri=http://localhost:3000/callback&response_type=code&scope=accounts`;
-
-  window.location.href = authUrl;
-}
-
-
-
-</script>
-
-
 
 <script>
-async function exchangeCodeForToken() {
-  const code = localStorage.getItem("ctraderCode");
-  if (!code) {
-    alert("❌ Kein Code vorhanden. Bitte erst über Spotware einloggen.");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:3000/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code })
-    });
-
-    const data = await res.json();
-    if (data.access_token) {
-      localStorage.setItem("ctraderToken", data.access_token);
-      alert("✅ Token gespeichert: Zugriff bereit!");
-    } else {
-      console.error(data);
-      alert("❌ Fehler beim Token-Tausch");
-    }
-  } catch (err) {
-    alert("⚠️ Netzwerkfehler beim Token-Tausch");
-    console.error(err);
-  }
-}
-
-async function getAccounts() {
-  const token = localStorage.getItem("ctraderToken");
-  if (!token) return alert("❌ Kein Token verfügbar");
-
-  try {
-    const res = await fetch(`http://localhost:3000/accounts?access_token=${token}`);
-    const data = await res.json();
-    console.log("📊 Konten:", data);
-  } catch (err) {
-    console.error("Fehler beim Laden der Konten:", err);
-  }
-}
-
-async function getPositions(accountId) {
-  const token = localStorage.getItem("ctraderToken");
-  if (!token) return alert("❌ Kein Token verfügbar");
-
-  try {
-    const res = await fetch(`http://localhost:3000/positions?access_token=${token}&account_id=${accountId}`);
-    const data = await res.json();
-    console.log("📂 Positionen:", data);
-  } catch (err) {
-    console.error("Fehler beim Laden der Positionen:", err);
-  }
-}
 
 // ✅ Session-Benachrichtigung (via Service Worker)
 function showSessionStartNotification(sessionName, message) {
@@ -2284,7 +2212,88 @@ function diagnoseNotifications() {
 
 
 </script>
+<script>
+async function syncMyfxbook() {
+  const email = localStorage.getItem("myfx_email");
+  const password = localStorage.getItem("myfx_password");
 
+  if (!email || !password) {
+    console.warn("❌ Kein Login gespeichert");
+    return;
+  }
+
+  try {
+    const loginRes = await fetch("https://www.myfxbook.com/api/login.json", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+    });
+    const loginData = await loginRes.json();
+
+    if (!loginData.session) {
+      console.warn("❌ Login fehlgeschlagen");
+      return;
+    }
+
+    const session = loginData.session;
+    const accRes = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${session}`);
+    const accData = await accRes.json();
+
+    if (!accData.accounts || accData.accounts.length === 0) {
+      console.warn("❌ Keine Konten gefunden");
+      return;
+    }
+
+    const konto = accData.accounts[0]; // erstes Konto
+    localStorage.setItem("myfxSummary", JSON.stringify({
+      balance: konto.balance,
+      deposit: konto.deposit
+    }));
+
+    const status = document.getElementById("syncStatus");
+    if (status) {
+      status.innerHTML = `✅ Myfxbook Sync: ${new Date().toLocaleTimeString()}`;
+      setTimeout(() => status.innerHTML = "", 4000);
+    }
+
+    console.log("✅ Myfxbook Daten aktualisiert:", konto);
+    updateStats?.();
+  } catch (err) {
+    console.error("❌ Fehler bei Myfxbook:", err);
+  }
+}
+
+function checkAutoSyncTimes() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+
+  // z. B. 08:00 und 22:00
+  const currentTime = `${h}:${m}`;
+  const syncTimes = ["8:0", "22:0"];
+  const syncedTodayKey = `synced_${now.toDateString()}_${h}`;
+
+  if (syncTimes.includes(currentTime) && !localStorage.getItem(syncedTodayKey)) {
+    syncMyfxbook();
+    localStorage.setItem(syncedTodayKey, "1"); // einmal pro Stunde nur
+  }
+}
+
+// check jede Minute
+setInterval(checkAutoSyncTimes, 60 * 1000);
+
+function saveMyfxLogin() {
+  const email = document.getElementById("myfxEmail").value;
+  const pass = document.getElementById("myfxPass").value;
+  if (!email || !pass) return alert("❌ Eingaben fehlen");
+
+  localStorage.setItem("myfx_email", email);
+  localStorage.setItem("myfx_password", pass);
+  alert("✅ Login gespeichert!");
+}
+
+
+</script>
 <body>
 
 <button onclick="sendPushNotification('🔔 Test', 'Dies ist eine direkte Push Notification!')" style="
