@@ -277,17 +277,22 @@
   🔕 Benachrichtigungen aktivieren
 </label>
 
-<div id="myfxLoginBox" style="padding:15px; max-width:350px; margin:15px auto; background:#222; border-radius:10px;">
-  <h3 style="color:#0f0;">Myfxbook Login</h3>
-  <input id="myfxEmail" type="email" placeholder="E-Mail" style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;" />
-  <input id="myfxPass" type="password" placeholder="Passwort" style="width:100%;padding:8px;border-radius:6px;" />
-  <button onclick="saveMyfxLogin()" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:6px;background:#00aa44;color:white;font-weight:bold;">
-    🔐 Login speichern
-  </button>
+<div style="margin-top: 10px;">
+  <input type="email" id="myfxEmail" placeholder="Myfxbook Email" />
+  <input type="password" id="myfxPassword" placeholder="Myfxbook Passwort" />
 </div>
+<button onclick="doMyfxLogin()" class="tool-button">
+  🔐 Myfxbook Login
+</button>
+<button id="manualSyncBtn" onclick="syncMyfxbook()" class="tool-button">
+  🔁 Manueller Import
+</button>
+<button onclick="getOpenTrades()" class="tool-button">
+  📂 Offene Positionen anzeigen
+</button>
 
-<button onclick="syncMyfxbook()" id="manualSyncBtn" class="tool-button">
-  📥 Manuell synchronisieren
+<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
+  📥 Manuell synchronisieren (22:00–23:00)
 </button>
 
 
@@ -2222,89 +2227,253 @@ function diagnoseNotifications() {
 
 </script>
 <script>
-async function syncMyfxbook() {
-  const email = localStorage.getItem("myfx_email");
-  const password = localStorage.getItem("myfx_password");
+let myfxSession = null;
 
-  if (!email || !password) {
-    console.warn("❌ Kein Login gespeichert");
-    return;
-  }
-
+async function loginToMyfxbook(email, password) {
   try {
-    const loginRes = await fetch("https://www.myfxbook.com/api/login.json", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-    });
-    const loginData = await loginRes.json();
+    const url = `https://www.myfxbook.com/api/login.json?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-    if (!loginData.session) {
-      console.warn("❌ Login fehlgeschlagen");
+    if (data.error || !data.session) {
+      alert("❌ Login fehlgeschlagen: " + (data.message || "Unbekannter Fehler"));
       return;
     }
 
-    const session = loginData.session;
-    const accRes = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${session}`);
-    const accData = await accRes.json();
-
-    if (!accData.accounts || accData.accounts.length === 0) {
-      console.warn("❌ Keine Konten gefunden");
-      return;
-    }
-
-    const konto = accData.accounts[0]; // erstes Konto
-    localStorage.setItem("myfxSummary", JSON.stringify({
-      balance: konto.balance,
-      deposit: konto.deposit
-    }));
-
-    const status = document.getElementById("syncStatus");
-    if (status) {
-      status.innerHTML = `✅ Myfxbook Sync: ${new Date().toLocaleTimeString()}`;
-      setTimeout(() => status.innerHTML = "", 4000);
-    }
-
-    console.log("✅ Myfxbook Daten aktualisiert:", konto);
-    updateStats?.();
-  } catch (err) {
-    console.error("❌ Fehler bei Myfxbook:", err);
+    myfxSession = data.session;
+    localStorage.setItem("myfxSession", myfxSession);
+    alert("✅ Login erfolgreich");
+  } catch (e) {
+    alert("⚠️ Fehler beim Login (Netzwerk oder CORS)");
   }
 }
 
-function checkAutoSyncTimes() {
-  const now = new Date();
-  const h = now.getHours();
-  const m = now.getMinutes();
+function doMyfxLogin() {
+  const email = document.getElementById("myfxEmail").value;
+  const pw = document.getElementById("myfxPassword").value;
+  if (!email || !pw) return alert("Bitte E-Mail & Passwort eingeben!");
 
-  // z. B. 08:00 und 22:00
-  const currentTime = `${h}:${m}`;
-  const syncTimes = ["8:0", "22:0"];
-  const syncedTodayKey = `synced_${now.toDateString()}_${h}`;
-
-  if (syncTimes.includes(currentTime) && !localStorage.getItem(syncedTodayKey)) {
-    syncMyfxbook();
-    localStorage.setItem(syncedTodayKey, "1"); // einmal pro Stunde nur
-  }
+  localStorage.setItem("myfxEmail", email);
+  localStorage.setItem("myfxPassword", pw);
+  loginToMyfxbook(email, pw);
 }
 
-// check jede Minute
-setInterval(checkAutoSyncTimes, 60 * 1000);
+async function getMyfxAccounts() {
+  const res = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${myfxSession}`);
+  const data = await res.json();
+  return data.accounts[0].id;
+}
 
-function saveMyfxLogin() {
-  const email = document.getElementById("myfxEmail").value.trim();
-  const pass = document.getElementById("myfxPass").value.trim();
-  if (!email || !pass) {
-    alert("❌ Bitte E-Mail und Passwort eingeben");
+async function getMyfxHistory(accountId) {
+  const res = await fetch(`https://www.myfxbook.com/api/get-history.json?session=${myfxSession}&id=${accountId}`);
+  const data = await res.json();
+  return data.history;
+}
+
+async function syncMyfxbook() {
+  if (!myfxSession) {
+    alert("⚠️ Bitte zuerst einloggen!");
     return;
   }
-  localStorage.setItem("myfx_email", email);
-  localStorage.setItem("myfx_password", pass);
-  alert("✅ Login gespeichert!");
+
+  const accountId = await getMyfxAccounts();
+  const trades = await getMyfxHistory(accountId);
+
+  let imported = 0;
+  trades.forEach(trade => {
+const exists = tradesData.some(t =>
+  t.pair === trade.symbol &&
+  t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
+  new Date(t.date).getTime() === new Date(trade.openTime).getTime()
+);
+    if (!exists) {
+      tradesData.push({
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: parseFloat(trade.profit),
+        resultType: trade.profit >= 0 ? "win" : "loss"
+      });
+      imported++;
+    }
+  });
+  
+  
+
+  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
+
+  const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
+  let deposit = 0;
+  if (answer && !isNaN(answer.replace(',', '.'))) {
+    deposit = parseFloat(answer.replace(',', '.'));
+  }
+
+  const myfxSummary = { deposit, balance };
+  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
+
+  saveTrades();
+  loadTrades();
+  alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
 }
 
 
 
+// ✅ Auto-Sync (leise) um 23:00
+async function syncMyfxbookAuto(depositOverride = 0) {
+  if (!myfxSession) {
+    console.warn("❌ Kein Login – Auto-Sync abgebrochen.");
+    return;
+  }
+
+  const accountId = await getMyfxAccounts();
+  const trades = await getMyfxHistory(accountId);
+
+  let imported = 0;
+  trades.forEach(trade => {
+    const exists = tradesData.some(t =>
+      t.pair === trade.symbol &&
+      new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
+      parseFloat(t.pnl) === parseFloat(trade.profit)
+    );
+    if (!exists) {
+      tradesData.push({
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: parseFloat(trade.profit),
+        resultType: trade.profit >= 0 ? "win" : "loss"
+      });
+      imported++;
+    }
+  });
+
+  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
+  const myfxSummary = { deposit: depositOverride, balance };
+  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
+
+  const now = new Date();
+  localStorage.setItem("lastSyncFlag", now.toDateString());
+  localStorage.setItem("lastSyncTime", now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  localStorage.removeItem("syncShown");
+
+  saveTrades();
+  loadTrades();
+  console.log(`✅ Auto-Sync abgeschlossen (${imported} Trades)`);
+}
+
+function showManualSyncButtonIfNeeded() {
+  const btn = document.getElementById("manualSyncBtn");
+  if (!btn) return;
+  btn.style.display = "inline-block"; // Immer sichtbar
+}
+
+//Sync läuft alle 30 Minuten (00:00, 00:30, 01:00 …).
+function autoSyncIfNeeded() {
+  const now = new Date();
+  const hour = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes();
+  const slot = `${hour}:${minutes < 30 ? '00' : '30'}`;
+
+  const lastSyncSlot = localStorage.getItem("lastSyncSlot");
+
+  if (slot !== lastSyncSlot) {
+    syncMyfxbookAuto(0); // 0 = kein neuer Deposit
+    localStorage.setItem("lastSyncSlot", slot);
+    console.log(`⏱️ Auto-Sync für Slot ${slot} durchgeführt.`);
+  }
+}
+
+// ✅ Einmalige Anzeige beim nächsten Laden
+function showSyncStatusOnce() {
+  const syncFlag = localStorage.getItem("lastSyncFlag");
+  const syncTime = localStorage.getItem("lastSyncTime");
+  const syncShown = localStorage.getItem("syncShown");
+
+  if (syncFlag && syncFlag === new Date().toDateString() && syncShown !== "true") {
+    showSyncStatus(`Letzter Auto-Sync erfolgreich (${syncTime})`);
+    localStorage.setItem("syncShown", "true");
+  }
+}
+
+function showSyncStatus(text) {
+  const el = document.getElementById("syncStatus");
+  if (!el) return;
+  el.innerHTML = `✅ ${text}`;
+  setTimeout(() => el.innerHTML = "", 10000);
+}
+
+async function getOpenTrades() {
+  if (!myfxSession) {
+    console.warn("❌ Kein Login – offene Trades nicht abrufbar.");
+    return;
+  }
+
+  const res = await fetch(`https://www.myfxbook.com/api/get-open-trades.json?session=${myfxSession}`);
+  const data = await res.json();
+
+  console.log("📡 Antwort von Myfxbook:", data); // NEU
+
+  if (!data.openTrades || data.openTrades.length === 0) {
+    console.warn("⚠️ Keine offenen Trades im API-Datenobjekt.");
+    alert("❌ Keine offenen Trades in API erhalten");
+    return;
+  }
+
+  let imported = 0;
+
+  data.openTrades.forEach(trade => {
+    console.log("🔍 Prüfe Trade:", trade); // NEU
+
+    const exists = tradesData.some(t =>
+      t.pair === trade.symbol &&
+      t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
+      new Date(t.date).getTime() === new Date(trade.openTime).getTime()
+    );
+
+    console.log("⚙️ Bereits vorhanden:", exists); // NEU
+
+    if (!exists) {
+      const tradeObj = {
+        id: Date.now() + Math.random(),
+        pair: trade.symbol,
+        direction: trade.action === "Buy" ? "Long" : "Short",
+        date: new Date(trade.openTime),
+        pnl: null
+      };
+      console.log("📥 Neuer Trade wird hinzugefügt:", tradeObj); // NEU
+
+      tradesData.push(tradeObj);
+      renderTradeBox(tradeObj);
+      imported++;
+    }
+  });
+
+  saveTrades();
+  alert(`✅ ${imported} offene Trades importiert.`);
+}
+
+// 🚀 On Load
+window.addEventListener("load", async () => {
+  const savedEmail = localStorage.getItem("myfxEmail");
+  const savedPw = localStorage.getItem("myfxPassword");
+  const savedSession = localStorage.getItem("myfxSession");
+
+  if (savedEmail && savedPw) {
+    document.getElementById("myfxEmail").value = savedEmail;
+    document.getElementById("myfxPassword").value = savedPw;
+  }
+
+  if (savedSession) {
+    myfxSession = savedSession;
+    console.log("✅ Session wiederhergestellt.");
+  }
+
+  autoSyncIfNeeded();
+  setInterval(autoSyncIfNeeded, 5 * 60 * 1000);
+  showSyncStatusOnce();
+});
 </script>
 <body>
 
