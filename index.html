@@ -277,6 +277,15 @@
   🔕 Benachrichtigungen aktivieren
 </label>
 
+<div id="myfxLoginBox" style="padding:15px; max-width:350px; margin:15px auto; background:#222; border-radius:10px;">
+  <h3 style="color:#0f0;">Myfxbook Login</h3>
+  <input id="myfxEmail" type="email" placeholder="E-Mail" style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;" />
+  <input id="myfxPass" type="password" placeholder="Passwort" style="width:100%;padding:8px;border-radius:6px;" />
+  <button onclick="saveMyfxLogin()" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:6px;background:#00aa44;color:white;font-weight:bold;">
+    🔐 Login speichern
+  </button>
+</div>
+
 <button onclick="syncMyfxbook()" id="manualSyncBtn" class="tool-button">
   📥 Manuell synchronisieren
 </button>
@@ -2283,14 +2292,17 @@ function checkAutoSyncTimes() {
 setInterval(checkAutoSyncTimes, 60 * 1000);
 
 function saveMyfxLogin() {
-  const email = document.getElementById("myfxEmail").value;
-  const pass = document.getElementById("myfxPass").value;
-  if (!email || !pass) return alert("❌ Eingaben fehlen");
-
+  const email = document.getElementById("myfxEmail").value.trim();
+  const pass = document.getElementById("myfxPass").value.trim();
+  if (!email || !pass) {
+    alert("❌ Bitte E-Mail und Passwort eingeben");
+    return;
+  }
   localStorage.setItem("myfx_email", email);
   localStorage.setItem("myfx_password", pass);
   alert("✅ Login gespeichert!");
 }
+
 
 
 </script>
