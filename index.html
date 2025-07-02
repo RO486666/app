@@ -272,29 +272,6 @@
 </head>
 <body>
 
-<label style="color:white;">
-  <input type="checkbox" id="pushToggle" checked>
-  🔕 Benachrichtigungen aktivieren
-</label>
-
-<div style="margin-top: 10px;">
-  <input type="email" id="myfxEmail" placeholder="Myfxbook Email" />
-  <input type="password" id="myfxPassword" placeholder="Myfxbook Passwort" />
-</div>
-<button onclick="doMyfxLogin()" class="tool-button">
-  🔐 Myfxbook Login
-</button>
-<button id="manualSyncBtn" onclick="syncMyfxbook()" class="tool-button">
-  🔁 Manueller Import
-</button>
-<button onclick="getOpenTrades()" class="tool-button">
-  📂 Offene Positionen anzeigen
-</button>
-
-<button id="manualSyncBtn" onclick="syncMyfxbook()" style="display:none">
-  📥 Manuell synchronisieren (22:00–23:00)
-</button>
-
 
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
@@ -385,6 +362,7 @@
     <option value="GER40">GER40</option>
     <option value="UK100">UK100</option>
   </optgroup>
+  
 </select>
 
 <label for="leverage">⚙️ Hebel:</label>
@@ -648,99 +626,7 @@
 
 
 
-  <div class="tab-buttons">
-    <button class="btn active" onclick="switchTab('tag')">Tag</button>
-    <button class="btn" onclick="switchTab('woche')">Woche</button>
-    <button class="btn" onclick="switchTab('monat')">Monat</button>
-	<button class="btn" onclick="switchTab('halbjahr')">Halbjahr</button>
-	<button class="btn" onclick="switchTab('jahr')">Jahr</button>
-  </div>
-  
-  <div id="sessionProgressDisplay" style="font-size: 13px; color: #aaa; margin-top: 5px;"></div>
 
-   <div class="stats-box" id="tagBox">
-  <h3>📅 Tagesauswertung</h3>
-  <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Long-Wins: 0 | Short-Wins: 0</p>
-  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
-  <p>Balance: 0,00 €</p>
-  <p>Deposits: 0,00 €</p>
-  <p>Profit: 0,00 €</p>
-  <p>Anzahl Trades: 0</p>
-</div>
-
-<div class="stats-box" id="wocheBox" style="display:none">
-  <h3>📈 Wochenauswertung</h3>
-  <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Long-Wins: 0 | Short-Wins: 0</p>
-  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
-  <p>Balance: 0,00 €</p>
-  <p>Deposits: 0,00 €</p>
-  <p>Profit: 0,00 €</p>
-  <p>Anzahl Trades: 0</p>
-</div>
-
-<div class="stats-box" id="monatBox" style="display:none">
-  <h3>📊 Monatsauswertung</h3>
-  <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Long-Wins: 0 | Short-Wins: 0</p>
-  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
-  <p>Balance: 0,00 €</p>
-  <p>Deposits: 0,00 €</p>
-  <p>Profit: 0,00 €</p>
-  <p>Anzahl Trades: 0</p>
-</div>
-
-<div class="stats-box" id="halbjahrBox" style="display:none">
-  <h3>📅 Halbjahresauswertung</h3>
-  <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Long-Wins: 0 | Short-Wins: 0</p>
-  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
-  <p>Balance: 0,00 €</p>
-  <p>Deposits: 0,00 €</p>
-  <p>Profit: 0,00 €</p>
-  <p>Anzahl Trades: 0</p>
-</div>
-
-  <div class="stats-box" id="jahrBox" style="display:none">
-  <h3>📆 Jahresauswertung</h3>
-  <p>Gewinne: 0 | Verluste: 0</p>
-  <p>Long-Wins: 0 | Short-Wins: 0</p>
-  <p>Stärke: Long: 0.0% | Short: 0.0%</p>
-  <p>Balance: 0,00 €</p>
-  <p>Deposits: 0,00 €</p>
-  <p>Profit: 0,00 €</p>
-  <p>Anzahl Trades: 0</p>
-</div>
-
-<div id="resetPopup" class="popup" style="display: none;">
-  <h3>Was möchtest du zurücksetzen?</h3>
-  <button id="resetDay">📅 Tag zurücksetzen</button>
-  <button id="resetWeek">📈 Woche zurücksetzen</button>
-  <button id="resetMonth">📊 Monat zurücksetzen</button>
-  <button id="resetAllBtn" style="background: crimson;">Alles löschen</button>
-  <button id="cancelReset" style="background:#555;">Abbrechen</button>
-</div>
- <button id="resetBtn">Alles zurücksetzen</button>
-
-
-<div class="popup" id="tradePopup">
-  <h3>Trade eingeben</h3>
-
-  <label>Paare auswählen (mehrere möglich):</label><br>
-  <div id="pairMultiSelect"></div>
-
-
-  <label for="directionSelect">Postion wählen:</label>
-  <select id="directionSelect" style="width: 100%; margin-top: 5px;">
-    <option value="">Bitte wählen</option>
-    <option value="Long">Long</option>
-    <option value="Short">Short</option>
-  </select>
-
-  <button onclick="addTrades()">Trades speichern</button>
-   <button onclick="hidePopups()" style="margin-top:10px; background:#555;">Abbrechen</button>
-</div>
 
 <div class="popup" id="resultPopup">
   <h3>Ergebnis</h3>
@@ -753,581 +639,11 @@
 <div class="position-bar" id="positionBar"></div>
 
 <script>
-  const pairs = [
-  "AUD/CAD",
-  "AUD/JPY",
-  "AUD/USD",
-  "CHF/JPY",
-  "EUR/AUD",
-  "EUR/CAD",
-  "EUR/GBP",
-  "EUR/JPY",
-  "EUR/USD",
-  "GBP/AUD",
-  "GBP/JPY",
-  "GBP/USD",
-  "NZD/JPY",
-  "NZD/USD",
-  "USD/CAD",
-  "USD/CHF",
-  "USD/JPY",
-  "XAG/USD",
-  "XAU/USD"
-];
 
-function initMultiPairSelect() {
-  const container = document.getElementById("pairMultiSelect");
-  container.innerHTML = "";
+</script>
 
-  pairs.forEach(pair => {
-    const label = document.createElement("label");
-    label.style.marginRight = "15px";
-    label.style.cursor = "pointer";
-    label.style.userSelect = "none";
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = pair;
-    checkbox.checked = false;
 
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + pair));
-    container.appendChild(label);
-  });
-}
-
-
-function resetAll() {
-  if (!confirm("Willst du wirklich ALLE Statistiken und Trades löschen?")) return;
-
-  // 🧹 Nur Statistik & Trade-Daten löschen
-  tradesData.length = 0;
-  localStorage.removeItem("tradesData");
-  localStorage.removeItem("myfxSummary");
-  localStorage.removeItem("dayStats");
-  localStorage.removeItem("weekStats");
-  localStorage.removeItem("monthStats");
-  localStorage.removeItem("halfYearStats");
-  localStorage.removeItem("yearStats");
-
-  // 🧼 UI zurücksetzen
-  document.getElementById("positionBar").innerHTML = "";
-
-  // 🔁 Stats neu berechnen
-  updateStats();
-
-  // 🔄 Optional: Neuladen für klare UI
-  location.reload();
-}
-
-function isSameDay(date1, date2) {
-  return (
-    date1.getDate() === date2.getDate() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getFullYear() === date2.getFullYear()
-  );
-}
-
-function isSameWeek(date1, date2) {
-  const startOfWeek = new Date(date2);
-  startOfWeek.setDate(date2.getDate() - date2.getDay());
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  return date1 >= startOfWeek && date1 <= endOfWeek;
-}
-
-function isSameMonth(date1, date2) {
-  return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
-}
-
-function isSameHalfYear(date1, date2) {
-  const half1 = date2.getMonth() < 6; // Jan-Jun ist erstes Halbjahr
-  const half2 = date1.getMonth() < 6;
-  return half1 === half2 && date1.getFullYear() === date2.getFullYear();
-}
-
-function isSameYear(date1, date2) {
-  return date1.getFullYear() === date2.getFullYear();
-}
-
-const tradesData = [];
-let activeBox = null;
-let resultType = "win";
-
-function loadTrades() {
-  const saved = localStorage.getItem("tradesData");
-  if (saved) {
-    const arr = JSON.parse(saved);
-    tradesData.length = 0;
-    document.getElementById("positionBar").innerHTML = "";
-  arr.forEach((trade) => {
-  trade.date = new Date(trade.date);
-  tradesData.push(trade);
-  if (trade.pnl === null) {
-    renderTradeBox(trade);
-  }
-});
-  }
-  updateStats();
-}
-
-function saveTrades() {
-  localStorage.setItem("tradesData", JSON.stringify(tradesData));
-}
-
-function renderTradeBox(tradeObj) {
-  const box = document.createElement("div");
-  box.className = "trade-box " + tradeObj.direction;
-  box.dataset.id = tradeObj.id;
-
-  // Touchstart Listener
-  let touchStartY = 0;
-  let isSwiping = false;
-  box.addEventListener("touchstart", (e) => {
-    touchStartY = e.touches[0].clientY;
-    isSwiping = false;
-  }, { passive: true });
-
-  // Close (X) Button zum Entfernen oben rechts
-  const closeBtn = document.createElement("button");
-  closeBtn.type = "button"; // wichtig für mobile Browser
-  closeBtn.textContent = "✖"; // kleines X
-  closeBtn.style.position = "absolute";
-  closeBtn.style.top = "8px";
-  closeBtn.style.right = "8px";
-  closeBtn.style.background = "transparent";
-  closeBtn.style.border = "none";
-  closeBtn.style.color = "white";
-  closeBtn.style.fontSize = "20px";
-  closeBtn.style.cursor = "pointer";
-  closeBtn.style.zIndex = "10"; // sicherstellen, dass oben
-  closeBtn.title = "Trade entfernen";
-  closeBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // Verhindert, dass andere Events feuern
-    removeTradeById(tradeObj.id);
-  });
-  box.style.position = "relative"; // damit closeBtn richtig positioniert ist
-  box.appendChild(closeBtn);
-
-  let resultText = "";
-if (typeof tradeObj.pnl === "number") {
-  resultText = `<div class="result-value">PnL: ${tradeObj.pnl.toFixed(2)} €</div>`;
-} else {
-  resultText = `
-    <button onclick="markResult(this, 'win')">✅ Erfolg</button>
-    <button onclick="markResult(this, 'loss')">❌ Misserfolg</button>
-    <div class="result-value"></div>
-  `;
-}
-
-  const contentDiv = document.createElement("div");
-  contentDiv.innerHTML = `<strong>${tradeObj.pair}</strong><br>${tradeObj.direction}<br>${resultText}`;
-  box.appendChild(contentDiv);
-
-  // Swipe-up für Handy (Touch-Event)
-  box.addEventListener("touchmove", e => {
-    const touchCurrentY = e.touches[0].clientY;
-    const diffY = touchStartY - touchCurrentY;
-
-    if (diffY > 15) { // kleiner Swipe-Up Threshold
-      if (!isSwiping) {
-        isSwiping = true;
-        e.preventDefault(); // verhindert Scrollen
-        removeTradeById(tradeObj.id);
-      }
-    }
-  }, { passive: false });
-
-  box.addEventListener("touchend", () => {
-    touchStartY = 0;
-    isSwiping = false;
-  });
-
-  document.getElementById("positionBar").appendChild(box);
-}
-
-function removeTradeById(id) {
-  const index = tradesData.findIndex(t => t.id === id);
-  if (index !== -1) {
-    tradesData.splice(index, 1);
-    saveTrades();
-    loadTrades(); // neu rendern
-  }
-}
-
-function markResult(btn, type) {
-  activeBox = btn.closest(".trade-box");
-  resultType = type;
-  document.getElementById("pnlInput").value = "";
-  document.getElementById("resultPopup").style.display = "block";
-}
-
-function saveResult() {
-  let pnlRaw = document.getElementById("pnlInput").value;
-  if (pnlRaw === "") return;
-
-  // Tausenderpunkte entfernen und Komma durch Punkt ersetzen
-  pnlRaw = pnlRaw.replace(/\./g, '').replace(',', '.');
-
-  let pnl = parseFloat(pnlRaw);
-  if (isNaN(pnl)) return;
-
-  pnl = Math.abs(pnl);
-  pnl = resultType === "loss" ? -pnl : pnl;
-
-  const resultDiv = activeBox.querySelector(".result-value");
-  resultDiv.innerText = `PnL: ${pnl.toFixed(2)} €`;
-
-  const tradeId = activeBox.dataset.id;
-  const trade = tradesData.find((t) => t.id == tradeId);
-  if (trade) {
-    trade.pnl = pnl;
-    trade.resultType = resultType;
-  }
-
-  activeBox.remove();
-
-  saveTrades();
-
-  hidePopups();
-  updateStats();
-}
-
-
-
-
-function updateStats() {
-  const now = new Date();
-
-  function calcStats(filterFn) {
-    const filtered = tradesData.filter((t) => t.pnl !== null && filterFn(t.date));
-    const wins = filtered.filter((t) => t.pnl > 0);
-    const losses = filtered.filter((t) => t.pnl < 0);
-    const totalPnl = filtered.reduce((sum, t) => sum + t.pnl, 0);
-    const totalAbsPnl = filtered.reduce((sum, t) => sum + Math.abs(t.pnl), 0);
-	
-
-    const profitFactor =
-      losses.length === 0
-        ? "–"
-        : (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2);
-
-    const avg = filtered.length === 0 ? "–" : (totalPnl / filtered.length).toFixed(2);
-    const profitPercent = filtered.length === 0 ? null : (wins.length / filtered.length) * 100;
-
-
-    return {
-      trades: filtered,
-      wins: wins.length,
-      losses: losses.length,
-      totalPnl,
-      avg,
-      totalTrades: wins.length + losses.length,
-      profitPercent
-    };
-  }
-
-  function colorText(value, isPnl = false) {
-  if (isPnl) {
-    return value >= 0
-      ? `<span style="color: #0f0;">${value.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</span>`
-      : `<span style="color: #f44;">${value.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</span>`;
-  } else {
-    return `<span style="color: ${value > 0 ? "#0f0" : "#f44"}">${value}</span>`;
-  }
-}
-
- function fillBox(box, stats, longShort) {
-    const summaryRaw = localStorage.getItem("myfxSummary");
-    let deposit = 0, balance = stats.totalPnl, profit = stats.totalPnl;
-
-    if (summaryRaw) {
-      try {
-        const myfx = JSON.parse(summaryRaw);
-        if (myfx.deposit !== undefined && myfx.balance !== undefined) {
-          deposit = myfx.deposit;
-          balance = myfx.balance;
-          profit = myfx.balance - myfx.deposit;
-        }
-      } catch (e) {
-        console.warn("Myfx-Daten kaputt:", e);
-      }
-    }
-
- 
-    box.querySelector("p:nth-child(4)").innerHTML = `Balance: ${colorText(balance, true)}`;
-    box.querySelector("p:nth-child(5)").innerHTML = `Deposits: ${colorText(deposit, true)}`;
-    box.querySelector("p:nth-child(6)").innerHTML = `Profit: ${colorText(profit, true)}`;
-    box.querySelector("p:nth-child(7)").innerHTML = `Anzahl Trades: ${stats.totalTrades}`;
-    box.querySelector("p:nth-child(8)").innerHTML = `Profitabel: ${colorProfitPercent(stats.profitPercent)}`;
-  }
-
-   function getMyfxSummary() {
-    try {
-      const raw = localStorage.getItem("myfxSummary");
-      if (!raw) return null;
-      const obj = JSON.parse(raw);
-      if (obj.deposit !== undefined && obj.balance !== undefined) return obj;
-    } catch (e) {
-      return null;
-    }
-    return null;
-  }
-
-  function colorProfitPercent(p) {
-    if (p === null) return "–";
-    if (p < 35) return `<span style="color:#f44">${p.toFixed(1)}%</span>`;
-    if (p < 50) return `<span style="color:#ffcc00">${p.toFixed(1)}%</span>`;
-    if (p < 75) return `<span style="color:#9acd32">${p.toFixed(1)}%</span>`;
-    return `<span style="color:#008000">${p.toFixed(1)}%</span>`;
-  }
-
-  function countLongShortWins(trades) {
-    const longs = trades.filter(t => t.direction === "Long" && t.pnl > 0).length;
-    const shorts = trades.filter(t => t.direction === "Short" && t.pnl > 0).length;
-    return { longs, shorts };
-  }
-
-
-  const isToday = (date) => isSameDay(date, now);
-  const isThisWeek = (date) => isSameWeek(date, now);
-  const isThisMonth = (date) => isSameMonth(date, now);
-  const isThisHalfYear = (date) => isSameHalfYear(date, now);
-  const isThisYear = (date) => isSameYear(date, now);
-
-  const dayStats = calcStats(isToday);
-  const weekStats = calcStats(isThisWeek);
-  const monthStats = calcStats(isThisMonth);
-  const halfYearStats = calcStats(isThisHalfYear);
-  const yearStats = calcStats(isThisYear);
-
-  const dayLongShort = countLongShortWins(dayStats.trades);
-  const weekLongShort = countLongShortWins(weekStats.trades);
-  const monthLongShort = countLongShortWins(monthStats.trades);
-  const halfYearLongShort = countLongShortWins(halfYearStats.trades);
-  const yearLongShort = countLongShortWins(yearStats.trades);
-
- // TAG
-const tagSummary = getMyfxSummary();
-const tagTruePnl = tagSummary ? tagSummary.balance - tagSummary.deposit : dayStats.totalPnl;
-const tagBox = document.getElementById("tagBox");
-tagBox.querySelector("p:nth-child(2)").innerHTML =
-  `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}<br>` +
-  `Long-Wins: ${dayLongShort.longs} | Short-Wins: ${dayLongShort.shorts}<br>` +
-  `Stärke: ${colorSidePercent(dayLongShort.longs, dayLongShort.shorts)}`;
-tagBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(tagTruePnl, true)}`;
-tagBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${dayStats.totalTrades}`;
-tagBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(dayStats.profitPercent)}`;
-tagBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(dayStats.wins)} | Verluste: ${colorText(dayStats.losses)}`;
-fillBox(tagBox, dayStats, dayLongShort);
-
-// WOCHE
-const weekSummary = getMyfxSummary();
-const weekTruePnl = weekSummary ? weekSummary.balance - weekSummary.deposit : weekStats.totalPnl;
-const wocheBox = document.getElementById("wocheBox");
-wocheBox.querySelector("p:nth-child(2)").innerHTML =
-  `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}<br>` +
-  `Long-Wins: ${weekLongShort.longs} | Short-Wins: ${weekLongShort.shorts}<br>` +
-  `Stärke: ${colorSidePercent(weekLongShort.longs, weekLongShort.shorts)}`;
-wocheBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(weekTruePnl, true)}`;
-wocheBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${weekStats.totalTrades}`;
-wocheBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(weekStats.profitPercent)}`;
-wocheBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(weekStats.wins)} | Verluste: ${colorText(weekStats.losses)}`;
-fillBox(wocheBox, weekStats, weekLongShort);
-
-// MONAT
-const monatSummary = getMyfxSummary();
-const monatTruePnl = monatSummary ? monatSummary.balance - monatSummary.deposit : monthStats.totalPnl;
-const monatBox = document.getElementById("monatBox");
-monatBox.querySelector("p:nth-child(2)").innerHTML =
-  `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}<br>` +
-  `Long-Wins: ${monthLongShort.longs} | Short-Wins: ${monthLongShort.shorts}<br>` +
-  `Stärke: ${colorSidePercent(monthLongShort.longs, monthLongShort.shorts)}`;
-monatBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(monatTruePnl, true)}`;
-monatBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${monthStats.totalTrades}`;
-monatBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(monthStats.profitPercent)}`;
-monatBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(monthStats.wins)} | Verluste: ${colorText(monthStats.losses)}`;
-fillBox(monatBox, monthStats, monthLongShort);
-
-// HALBJAHR
-const halbjahrSummary = getMyfxSummary();
-const halbjahrTruePnl = halbjahrSummary ? halbjahrSummary.balance - halbjahrSummary.deposit : halfYearStats.totalPnl;
-const halbjahrBox = document.getElementById("halbjahrBox");
-halbjahrBox.querySelector("p:nth-child(2)").innerHTML =
-  `Gewinne: ${colorText(halfYearStats.wins)} | Verluste: ${colorText(halfYearStats.losses)}<br>` +
-  `Long-Wins: ${halfYearLongShort.longs} | Short-Wins: ${halfYearLongShort.shorts}<br>` +
-  `Stärke: ${colorSidePercent(halfYearLongShort.longs, halfYearLongShort.shorts)}`;
-halbjahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(halbjahrTruePnl, true)}`;
-halbjahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${halfYearStats.totalTrades}`;
-halbjahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(halfYearStats.profitPercent)}`;
-halbjahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(halfYearStats.wins)} | Verluste: ${colorText(halfYearStats.losses)}`;
-fillBox(halbjahrBox, halfYearStats, halfYearLongShort);
-
-// JAHR
-const jahrSummary = getMyfxSummary();
-const jahrTruePnl = jahrSummary ? jahrSummary.balance - jahrSummary.deposit : yearStats.totalPnl;
-const jahrBox = document.getElementById("jahrBox");
-jahrBox.querySelector("p:nth-child(2)").innerHTML =
-  `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}<br>` +
-  `Long-Wins: ${yearLongShort.longs} | Short-Wins: ${yearLongShort.shorts}<br>` +
-  `Stärke: ${colorSidePercent(yearLongShort.longs, yearLongShort.shorts)}`;
-jahrBox.querySelector("p:nth-child(3)").innerHTML = `Gesamt PnL: ${colorText(jahrTruePnl, true)}`;
-jahrBox.querySelector("p:nth-child(4)").innerHTML = `Anzahl Trades: ${yearStats.totalTrades}`;
-jahrBox.querySelector("p:nth-child(5)").innerHTML = `Profitabel: ${colorProfitPercent(yearStats.profitPercent)}`;
-jahrBox.querySelector("p:nth-child(6)").innerHTML = `Gewinne: ${colorText(yearStats.wins)} | Verluste: ${colorText(yearStats.losses)}`;
-fillBox(jahrBox, yearStats, yearLongShort);
-
-}
-
-function switchTab(tab) {
-  // Tab-Buttons zurücksetzen
-  document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
-
-  // Nur Statistikboxen gezielt ausblenden
-  const statsIds = ["tagBox", "wocheBox", "monatBox", "halbjahrBox", "jahrBox"];
-  statsIds.forEach(id => {
-    const box = document.getElementById(id);
-    if (box) box.style.display = "none";
-  });
-
-  // Gewählte Statistikbox einblenden
-  const target = document.getElementById(tab + "Box");
-  if (target) target.style.display = "block";
-
-  // Aktiven Button wieder markieren
-  document.querySelectorAll(".tab-buttons button").forEach((btn) => {
-    if (btn.textContent.toLowerCase() === tab) btn.classList.add("active");
-  });
-}
-
-
-function colorSidePercent(longWins, shortWins) {
-  const total = longWins + shortWins;
-  if (total === 0) return "–";
-
-  const longPercent = (longWins / total) * 100;
-  const shortPercent = (shortWins / total) * 100;
-
-  const longColor = longPercent > shortPercent ? "#0f0" : "#f44";
-  const shortColor = shortPercent > longPercent ? "#0f0" : "#f44";
-
-  return `
-    <span style="color:${longColor}">Long: ${longPercent.toFixed(1)}%</span> | 
-    <span style="color:${shortColor}">Short: ${shortPercent.toFixed(1)}%</span>
-  `;
-}
-
-
-function showPopup() {
-  document.getElementById("tradePopup").style.display = "block";
-}
-
-function hidePopups() {
-  document.getElementById("tradePopup").style.display = "none";
-  document.getElementById("resultPopup").style.display = "none";
-}
-
-function resetDay() {
-  const today = new Date();
-  const remaining = tradesData.filter(t => !isSameDay(t.date, today));
-  tradesData.length = 0;
-  tradesData.push(...remaining);
-  saveTrades();
-  loadTrades();
-}
-
-function resetWeek() {
-  const today = new Date();
-  const remaining = tradesData.filter(t => !isSameWeek(t.date, today));
-  tradesData.length = 0;
-  tradesData.push(...remaining);
-  saveTrades();
-  loadTrades();
-}
-
-function resetMonth() {
-  const today = new Date();
-  const remaining = tradesData.filter(t => !isSameMonth(t.date, today));
-  tradesData.length = 0;
-  tradesData.push(...remaining);
-  saveTrades();
-  loadTrades();
-}
-
-window.addEventListener("load", () => {
-  initMultiPairSelect();
-  loadTrades();
-
-  const resetBtn = document.getElementById("resetBtn");
-  const resetDayBtn = document.getElementById("resetDay");
-  const resetWeekBtn = document.getElementById("resetWeek");
-  const resetMonthBtn = document.getElementById("resetMonth");
-  const resetAllBtn = document.getElementById("resetAllBtn");
-  const cancelResetBtn = document.getElementById("cancelReset");
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      document.getElementById("resetPopup").style.display = "block";
-    });
-  }
-
-  if (resetDayBtn) {
-    resetDayBtn.addEventListener("click", () => {
-      resetDay();
-      document.getElementById("resetPopup").style.display = "none";
-    });
-  }
-
-  if (resetWeekBtn) {
-    resetWeekBtn.addEventListener("click", () => {
-      resetWeek();
-      document.getElementById("resetPopup").style.display = "none";
-    });
-  }
-
-  if (resetMonthBtn) {
-    resetMonthBtn.addEventListener("click", () => {
-      resetMonth();
-      document.getElementById("resetPopup").style.display = "none";
-    });
-  }
-
-  if (resetAllBtn) {
-    resetAllBtn.addEventListener("click", () => {
-      resetAll();
-      document.getElementById("resetPopup").style.display = "none";
-    });
-  }
-
-  if (cancelResetBtn) {
-    cancelResetBtn.addEventListener("click", () => {
-      document.getElementById("resetPopup").style.display = "none";
-    });
-  }
-});
-  window.addEventListener('load', () => {
-    const pnlInput = document.getElementById("pnlInput");
-
-    function formatNumberDE(value) {
-      const number = Number(value.toString().replace(/\./g, '').replace(',', '.'));
-      if (isNaN(number)) return '00,00';
-
-      return number.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    pnlInput.addEventListener('focus', () => {
-      if (pnlInput.value === '00,00') {
-        pnlInput.value = '';
-      }
-    });
-
-    pnlInput.addEventListener('blur', () => {
-      pnlInput.value = formatNumberDE(pnlInput.value);
-    });
-  });
-
-
-  </script>
   
 <script>
 function calculatePositionSize() {
@@ -2014,26 +1330,40 @@ const colors = names.map(n => sessionColors[n] || "#666");
 
   sessionInfoEl.textContent = infoText;
 
-  if (activeSessions.length > 0) {
-    const s = activeSessions[0];
+ if (activeSessions.length > 0) {
+  let fullInfo = "";
+
+  activeSessions.forEach(s => {
     let weekDaysHtml = "";
     if (s.weekDaysInfo) {
-      weekDaysHtml = "<br><strong>📅 Wichtige Tage:</strong><ul style='margin-left:18px;'>";
+      weekDaysHtml = "<ul style='margin-left:18px; margin-top:4px;'>";
       s.weekDaysInfo.forEach(({ day, text }) => {
         weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
       });
       weekDaysHtml += "</ul>";
     }
-    sessionDetailsBox.innerHTML = `
-      <strong>🟡 ${s.name} Session</strong><br>
+
+    const label = s.name.includes("Killzone") ? "🔥" :
+                  s.name.includes("New York") ? "🇺🇸" :
+                  s.name.includes("London") ? "💷" :
+                  s.name.includes("Tokyo") ? "🌏" :
+                  s.name.includes("Sydney") ? "🌙" : "🟡";
+
+    fullInfo += `
+      <strong>${label} ${s.name}</strong><br>
       📅 Start: ${formatHM(s.start)} Uhr<br>
       🕓 Ende: ${formatHM(s.end)} Uhr<br>
       ℹ️ ${s.info}
       ${weekDaysHtml}
+      <hr style="border: none; border-top: 1px solid #444; margin: 10px 0;">
     `;
-  } else {
-    sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
-  }
+  });
+
+  sessionDetailsBox.innerHTML = fullInfo;
+} else {
+  sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
+}
+
 
   const minutesToNext = getMinutesToNextSession(minutes);
   if (minutesToNext <= 5 && minutesToNext > 0) {
@@ -2125,14 +1455,15 @@ setTimeout(() => {
 
 <script>
 function sendPushNotification(title, message) {
-  // Direkt im Browser (z. B. Desktop ohne PWA)
+  // ✅ Direkt im aktiven Browserfenster (Desktop, Android-Chrome)
   if ("Notification" in window && Notification.permission === "granted") {
     try {
       const n = new Notification(title, {
         body: message,
         icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
         vibrate: [200, 100, 200],
-        tag: "session-alert"
+        tag: "session-alert",
+        renotify: true
       });
       n.onclick = () => {
         window.focus();
@@ -2144,55 +1475,31 @@ function sendPushNotification(title, message) {
     }
   }
 
-  // ✅ Fallback für PWA & Handy → Message an SW senden
+  // ✅ Fallback für PWA im Hintergrund oder in Standby
   if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then((registration) => {
-      registration.active.postMessage({
-        title,
-        options: {
-          body: message,
-          icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
-          vibrate: [200, 100, 200],
-          tag: "session-alert",
-          renotify: true
-        }
+      registration.showNotification(title, {
+        body: message,
+        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
+        vibrate: [200, 100, 200],
+        tag: "session-alert",
+        renotify: true
       });
-    }).catch((err) => {
-      console.error("❌ Fehler beim Senden an den Service Worker:", err);
+    }).catch(err => {
+      console.error("❌ ServiceWorker-Notification fehlgeschlagen:", err);
     });
   } else {
-    console.warn("❌ Push Notification nicht möglich – keine Berechtigung oder kein Service Worker aktiv.");
+    console.warn("❌ Keine Notification möglich – keine Berechtigung oder kein SW.");
   }
 }
 
-
-
-
-function showSessionStartNotification(sessionName, message) {
-  const pushEnabled = document.getElementById("pushToggle")?.checked;
-  if (!pushEnabled) return;
-
-  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
-}
-
-
-// Notification-Wrapper für Sessions
-function showSessionStartNotification(sessionName, message) {
-  sendPushNotification(`📣 ${sessionName}-Session gestartet!`, message);
-}
-</script>
-
-
-
-<script>
-
-// ✅ Session-Benachrichtigung (via Service Worker)
+// ✅ Einheitlicher Notification-Aufruf für Sessionstarts
 function showSessionStartNotification(sessionName, message) {
   const title = `📣 ${sessionName}-Session gestartet!`;
   sendPushNotification(title, message);
 }
 
-
+// ✅ Optional: Diagnosetool zum Testen der Berechtigung
 function diagnoseNotifications() {
   const output = document.getElementById("notificationStatus");
   output.style.display = "block";
@@ -2203,13 +1510,13 @@ function diagnoseNotifications() {
     msg += "❌ Notifications werden vom Browser nicht unterstützt.<br>";
   } else {
     msg += `📱 Notification.permission: <strong>${Notification.permission}</strong><br>`;
-   if (Notification.permission === "granted") {
-  try {
-    sendPushNotification("✅ Test-Notification", "🎯 Die Notification funktioniert!");
-    msg += "✅ Test-Notification wurde ausgelöst.<br>";
-  } catch (err) {
-    msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
-  }
+    if (Notification.permission === "granted") {
+      try {
+        sendPushNotification("✅ Test-Notification", "🎯 Die Notification funktioniert!");
+        msg += "✅ Test-Notification wurde ausgelöst.<br>";
+      } catch (err) {
+        msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
+      }
     } else if (Notification.permission === "denied") {
       msg += "🚫 Du hast Benachrichtigungen blockiert.<br>";
     } else if (Notification.permission === "default") {
@@ -2221,7 +1528,25 @@ function diagnoseNotifications() {
 
   output.innerHTML = msg;
 }
+
+function enableNotifications() {
+  Notification.requestPermission().then(permission => {
+    const statusBox = document.getElementById("notificationStatus");
+    statusBox.style.display = "block";
+
+    if (permission === "granted") {
+      sendPushNotification("✅ Erlaubt", "Du bekommst ab jetzt Benachrichtigungen!");
+      statusBox.innerHTML = "✅ Benachrichtigungen erlaubt!";
+    } else if (permission === "denied") {
+      statusBox.innerHTML = "❌ Benachrichtigungen blockiert. Aktiviere sie im Schloss-Symbol der Adresszeile.";
+    } else {
+      statusBox.innerHTML = "ℹ️ Keine Entscheidung getroffen.";
+    }
+  });
+}
+
 </script>
+
 
 
 
@@ -2477,21 +1802,14 @@ window.addEventListener("load", async () => {
 </script>
 <body>
 
-<button onclick="sendPushNotification('🔔 Test', 'Dies ist eine direkte Push Notification!')" style="
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  padding: 12px 16px;
-  background: #0055ff;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #0055ff;
-  font-size: 16px;
-  z-index: 9999;
-">
-📲 Push direkt testen
+<button onclick="enableNotifications()">🔓 Benachrichtigungen aktivieren</button>
+<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
+
+<button onclick="showSessionStartNotification('TEST Session', '🔔 Das ist eine Test-Benachrichtigung!')">
+📲 Test Session Notification
 </button>
+<button onclick="diagnoseNotifications()">🔍 Benachrichtigung prüfen</button>
+<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
 
 </button>
 </button>
