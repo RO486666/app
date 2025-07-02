@@ -1426,23 +1426,21 @@ setTimeout(() => {
 <script>
 function sendPushNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted") {
-    try {
-      const n = new Notification(title, {
+    // Immer Service Worker verwenden, auch im Vordergrund!
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title, {
         body: message,
         icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
         vibrate: [200, 100, 200],
         tag: "session-alert",
         renotify: true
       });
-      n.onclick = () => {
-        window.focus();
-        n.close();
-      };
-      return;
-    } catch (err) {
-      console.warn("⚠️ Browser-Notification fehlgeschlagen, versuche SW:", err);
-    }
+    }).catch(err => {
+      console.error("❌ Notification via Service Worker fehlgeschlagen:", err);
+    });
   }
+}
+
 
   // ✅ Fallback für PWA, auch im Hintergrund
   if ("serviceWorker" in navigator) {
