@@ -1425,7 +1425,6 @@ setTimeout(() => {
 
 <script>
 function sendPushNotification(title, message) {
-  // ✅ Direkt im aktiven Browserfenster (Desktop, Android-Chrome)
   if ("Notification" in window && Notification.permission === "granted") {
     try {
       const n = new Notification(title, {
@@ -1445,19 +1444,20 @@ function sendPushNotification(title, message) {
     }
   }
 
-// ✅ Fallback für PWA, auch im Hintergrund
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.ready.then((registration) => {
-    registration.showNotification(title, {
-      body: message,
-      icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
-      vibrate: [200, 100, 200],
-      tag: "session-alert",
-      renotify: true
+  // ✅ Fallback für PWA, auch im Hintergrund
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title, {
+        body: message,
+        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
+        vibrate: [200, 100, 200],
+        tag: "session-alert",
+        renotify: true
+      });
+    }).catch(err => {
+      console.error("❌ ServiceWorker-Notification fehlgeschlagen:", err);
     });
-  }).catch(err => {
-    console.error("❌ ServiceWorker-Notification fehlgeschlagen:", err);
-  });
+  }
 }
 
 
