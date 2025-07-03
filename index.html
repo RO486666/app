@@ -267,6 +267,33 @@
 .tool-button:hover {
   background-color: #444;
 }
+.tool-box {
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.tool-box input,
+.tool-box button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.tool-box button {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 	
   </style>
 </head>
@@ -299,6 +326,7 @@
   <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
+  <button class="btn" id="btn-calc-equity" onclick="switchCalcTab('equity')">📈 Equity-Sim</button>
 </div>
 
 
@@ -620,6 +648,48 @@
     <p id="leverageResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
   </div>
 </div>
+
+<div id="calc-equity" class="calc-box" style="display:none;">
+  <div class="tool-box">
+    <h3 style="margin-top:0;">📈 Equity-Simulator</h3>
+
+    <div class="form-group">
+      <label>Startkapital (€):</label>
+      <input type="number" id="eq_start" value="1000">
+    </div>
+
+    <div class="form-group">
+      <label>Risiko % pro Trade:</label>
+      <input type="number" id="eq_risk" value="1" step="0.1">
+    </div>
+
+    <div class="form-group">
+      <label>Trefferquote (%):</label>
+      <input type="number" id="eq_winrate" value="55" step="0.1">
+    </div>
+
+    <div class="form-group">
+      <label>CRV-Min:</label>
+      <input type="number" id="eq_crv_min" value="1.5" step="0.1">
+    </div>
+
+    <div class="form-group">
+      <label>CRV-Max:</label>
+      <input type="number" id="eq_crv_max" value="3.0" step="0.1">
+    </div>
+
+    <div class="form-group">
+      <label>Anzahl Trades:</label>
+      <input type="number" id="eq_trades" value="100">
+    </div>
+
+    <button onclick="simulateEquity()">▶️ Simulieren</button>
+
+    <canvas id="equityChart" style="margin-top:15px; height:200px;"></canvas>
+    <div id="equityStats" style="margin-top:10px; font-size: 14px;"></div>
+  </div>
+</div>
+
 
 
 
@@ -1000,12 +1070,87 @@ function switchCalcTab(tab) {
   if (btn) btn.classList.add("active");
 }
 
+// 🆕 Equity-Simulator integrieren
+function simulateEquity() {
+  const start = parseFloat(document.getElementById("eq_start").value);
+  const riskPercent = parseFloat(document.getElementById("eq_risk").value);
+  const winrate = parseFloat(document.getElementById("eq_winrate").value);
+  const crvMin = parseFloat(document.getElementById("eq_crv_min").value);
+  const crvMax = parseFloat(document.getElementById("eq_crv_max").value);
+  const trades = parseInt(document.getElementById("eq_trades").value);
+
+  let equity = start;
+  const data = [equity];
+  let maxDrawdown = 0;
+  let peak = start;
+  let winStreak = 0, maxWinStreak = 0;
+  let lossStreak = 0, maxLossStreak = 0;
+
+  for (let i = 1; i <= trades; i++) {
+    const isWin = Math.random() * 100 < winrate;
+    const crv = crvMin + Math.random() * (crvMax - crvMin);
+    const risk = equity * (riskPercent / 100);
+    let profit = isWin ? risk * crv : -risk;
+
+    equity += profit;
+    data.push(equity);
+
+    if (equity > peak) peak = equity;
+    const dd = ((peak - equity) / peak) * 100;
+    if (dd > maxDrawdown) maxDrawdown = dd;
+
+    if (isWin) {
+      winStreak++;
+      lossStreak = 0;
+    } else {
+      lossStreak++;
+      winStreak = 0;
+    }
+    if (winStreak > maxWinStreak) maxWinStreak = winStreak;
+    if (lossStreak > maxLossStreak) maxLossStreak = lossStreak;
+  }
+
+  const ctx = document.getElementById("equityChart").getContext("2d");
+  if (window.equityChartInstance) window.equityChartInstance.destroy();
+  window.equityChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: data.length }, (_, i) => i),
+      datasets: [{
+        label: 'Equity-Kurve',
+        data: data,
+        borderWidth: 2,
+        borderColor: 'lime',
+        backgroundColor: 'rgba(0,255,0,0.1)',
+        fill: true,
+        tension: 0.25,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Trade #' } },
+        y: { title: { display: true, text: 'Kontostand €' } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  document.getElementById("equityStats").innerHTML = `
+    📈 Endkapital: <strong>${equity.toFixed(2)} €</strong><br>
+    📉 Max Drawdown: <strong>${maxDrawdown.toFixed(2)} %</strong><br>
+    ⟳ Beste Serie: <strong>${maxWinStreak}</strong><br>
+    ❌ Schlechteste Serie: <strong>${maxLossStreak}</strong>`;
+}
+
+
 window.addEventListener("DOMContentLoaded", () => {
   initPipPairSelect();
 });
 
 </script>
-  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const sessionText = document.getElementById("sessionText");
 const sessionProgressEl = document.getElementById("sessionProgressDisplay");
@@ -1517,260 +1662,8 @@ function enableNotifications() {
 }
 </script>
 
-
-
-
-
-</script>
 <script>
-let myfxSession = null;
 
-async function loginToMyfxbook(email, password) {
-  try {
-    const url = `https://www.myfxbook.com/api/login.json?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.error || !data.session) {
-      alert("❌ Login fehlgeschlagen: " + (data.message || "Unbekannter Fehler"));
-      return;
-    }
-
-    myfxSession = data.session;
-    localStorage.setItem("myfxSession", myfxSession);
-    alert("✅ Login erfolgreich");
-  } catch (e) {
-    alert("⚠️ Fehler beim Login (Netzwerk oder CORS)");
-  }
-}
-
-function doMyfxLogin() {
-  const email = document.getElementById("myfxEmail").value;
-  const pw = document.getElementById("myfxPassword").value;
-  if (!email || !pw) return alert("Bitte E-Mail & Passwort eingeben!");
-
-  localStorage.setItem("myfxEmail", email);
-  localStorage.setItem("myfxPassword", pw);
-  loginToMyfxbook(email, pw);
-}
-
-async function getMyfxAccounts() {
-  const res = await fetch(`https://www.myfxbook.com/api/get-my-accounts.json?session=${myfxSession}`);
-  const data = await res.json();
-  return data.accounts[0].id;
-}
-
-async function getMyfxHistory(accountId) {
-  const res = await fetch(`https://www.myfxbook.com/api/get-history.json?session=${myfxSession}&id=${accountId}`);
-  const data = await res.json();
-  return data.history;
-}
-
-async function syncMyfxbook() {
-  if (!myfxSession) {
-    alert("⚠️ Bitte zuerst einloggen!");
-    return;
-  }
-
-  const accountId = await getMyfxAccounts();
-  const trades = await getMyfxHistory(accountId);
-
-  let imported = 0;
-  trades.forEach(trade => {
-const exists = tradesData.some(t =>
-  t.pair === trade.symbol &&
-  t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
-  new Date(t.date).getTime() === new Date(trade.openTime).getTime()
-);
-    if (!exists) {
-      tradesData.push({
-        id: Date.now() + Math.random(),
-        pair: trade.symbol,
-        direction: trade.action === "Buy" ? "Long" : "Short",
-        date: new Date(trade.openTime),
-        pnl: parseFloat(trade.profit),
-        resultType: trade.profit >= 0 ? "win" : "loss"
-      });
-      imported++;
-    }
-  });
-  
-  
-
-  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
-
-  const answer = prompt("Hast du eine Einzahlung gemacht? Wenn ja, wie viel? (in Euro)");
-  let deposit = 0;
-  if (answer && !isNaN(answer.replace(',', '.'))) {
-    deposit = parseFloat(answer.replace(',', '.'));
-  }
-
-  const myfxSummary = { deposit, balance };
-  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
-
-  saveTrades();
-  loadTrades();
-  alert(`📥 ${imported} neue Trades importiert!\nBalance: ${balance.toFixed(2)} €, Deposit: ${deposit.toFixed(2)} €`);
-}
-
-
-
-// ✅ Auto-Sync (leise) um 23:00
-async function syncMyfxbookAuto(depositOverride = 0) {
-  if (!myfxSession) {
-    console.warn("❌ Kein Login – Auto-Sync abgebrochen.");
-    return;
-  }
-
-  const accountId = await getMyfxAccounts();
-  const trades = await getMyfxHistory(accountId);
-
-  let imported = 0;
-  trades.forEach(trade => {
-    const exists = tradesData.some(t =>
-      t.pair === trade.symbol &&
-      new Date(t.date).getTime() === new Date(trade.openTime).getTime() &&
-      parseFloat(t.pnl) === parseFloat(trade.profit)
-    );
-    if (!exists) {
-      tradesData.push({
-        id: Date.now() + Math.random(),
-        pair: trade.symbol,
-        direction: trade.action === "Buy" ? "Long" : "Short",
-        date: new Date(trade.openTime),
-        pnl: parseFloat(trade.profit),
-        resultType: trade.profit >= 0 ? "win" : "loss"
-      });
-      imported++;
-    }
-  });
-
-  const balance = trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
-  const myfxSummary = { deposit: depositOverride, balance };
-  localStorage.setItem("myfxSummary", JSON.stringify(myfxSummary));
-
-  const now = new Date();
-  localStorage.setItem("lastSyncFlag", now.toDateString());
-  localStorage.setItem("lastSyncTime", now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-  localStorage.removeItem("syncShown");
-
-  saveTrades();
-  loadTrades();
-  console.log(`✅ Auto-Sync abgeschlossen (${imported} Trades)`);
-}
-
-function showManualSyncButtonIfNeeded() {
-  const btn = document.getElementById("manualSyncBtn");
-  if (!btn) return;
-  btn.style.display = "inline-block"; // Immer sichtbar
-}
-
-//Sync läuft alle 30 Minuten (00:00, 00:30, 01:00 …).
-function autoSyncIfNeeded() {
-  const now = new Date();
-  const hour = now.getHours().toString().padStart(2, '0');
-  const minutes = now.getMinutes();
-  const slot = `${hour}:${minutes < 30 ? '00' : '30'}`;
-
-  const lastSyncSlot = localStorage.getItem("lastSyncSlot");
-
-  if (slot !== lastSyncSlot) {
-    syncMyfxbookAuto(0); // 0 = kein neuer Deposit
-    localStorage.setItem("lastSyncSlot", slot);
-    console.log(`⏱️ Auto-Sync für Slot ${slot} durchgeführt.`);
-  }
-}
-
-// ✅ Einmalige Anzeige beim nächsten Laden
-function showSyncStatusOnce() {
-  const syncFlag = localStorage.getItem("lastSyncFlag");
-  const syncTime = localStorage.getItem("lastSyncTime");
-  const syncShown = localStorage.getItem("syncShown");
-
-  if (syncFlag && syncFlag === new Date().toDateString() && syncShown !== "true") {
-    showSyncStatus(`Letzter Auto-Sync erfolgreich (${syncTime})`);
-    localStorage.setItem("syncShown", "true");
-  }
-}
-
-function showSyncStatus(text) {
-  const el = document.getElementById("syncStatus");
-  if (!el) return;
-  el.innerHTML = `✅ ${text}`;
-  setTimeout(() => el.innerHTML = "", 10000);
-}
-
-async function getOpenTrades() {
-  if (!myfxSession) {
-    console.warn("❌ Kein Login – offene Trades nicht abrufbar.");
-    return;
-  }
-
-  const res = await fetch(`https://www.myfxbook.com/api/get-open-trades.json?session=${myfxSession}`);
-  const data = await res.json();
-
-  console.log("📡 Antwort von Myfxbook:", data); // NEU
-
-  if (!data.openTrades || data.openTrades.length === 0) {
-    console.warn("⚠️ Keine offenen Trades im API-Datenobjekt.");
-    alert("❌ Keine offenen Trades in API erhalten");
-    return;
-  }
-
-  let imported = 0;
-
-  data.openTrades.forEach(trade => {
-    console.log("🔍 Prüfe Trade:", trade); // NEU
-
-    const exists = tradesData.some(t =>
-      t.pair === trade.symbol &&
-      t.direction === (trade.action === "Buy" ? "Long" : "Short") &&
-      new Date(t.date).getTime() === new Date(trade.openTime).getTime()
-    );
-
-    console.log("⚙️ Bereits vorhanden:", exists); // NEU
-
-    if (!exists) {
-      const tradeObj = {
-        id: Date.now() + Math.random(),
-        pair: trade.symbol,
-        direction: trade.action === "Buy" ? "Long" : "Short",
-        date: new Date(trade.openTime),
-        pnl: null
-      };
-      console.log("📥 Neuer Trade wird hinzugefügt:", tradeObj); // NEU
-
-      tradesData.push(tradeObj);
-      renderTradeBox(tradeObj);
-      imported++;
-    }
-  });
-
-  saveTrades();
-  alert(`✅ ${imported} offene Trades importiert.`);
-}
-
-// 🚀 On Load
-window.addEventListener("load", async () => {
-  const savedEmail = localStorage.getItem("myfxEmail");
-  const savedPw = localStorage.getItem("myfxPassword");
-  const savedSession = localStorage.getItem("myfxSession");
-
-  if (savedEmail && savedPw) {
-    document.getElementById("myfxEmail").value = savedEmail;
-    document.getElementById("myfxPassword").value = savedPw;
-  }
-
-  if (savedSession) {
-    myfxSession = savedSession;
-    console.log("✅ Session wiederhergestellt.");
-  }
-
-  autoSyncIfNeeded();
-  setInterval(autoSyncIfNeeded, 5 * 60 * 1000);
-  showSyncStatusOnce();
-});
-</script>
 <body>
 
 <button onclick="enableNotifications()">🔓 Benachrichtigungen aktivieren</button>
