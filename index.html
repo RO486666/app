@@ -1214,22 +1214,43 @@ function showAlert(msg) {
 
 
 function showSessionProgress(activeSessions, currentMinutes) {
-  if (activeSessions.length === 0) {
-    sessionProgressEl.innerHTML = "⏳ Keine aktive Session – kein Countdown";
-    return;
+  let output = "";
+
+  // 🔸 Aktuelle Session anzeigen
+  if (activeSessions.length > 0) {
+    const current = activeSessions[0];
+    let start = current.start;
+    let end = current.end;
+    if (start > end) end += 1440;
+    let nowMins = currentMinutes;
+    if (nowMins < start) nowMins += 1440;
+    const duration = end - start;
+    const progressMins = nowMins - start;
+    const percent = (progressMins / duration) * 100;
+    const timeLeft = end - nowMins;
+
+    output += `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> in <strong>${current.name}</strong><br>`;
+  } else {
+    output += `⏱️ Aktuell <strong>keine Session aktiv</strong><br>`;
   }
-  const current = activeSessions[0];
-  let start = current.start;
-  let end = current.end;
-  if (start > end) end += 1440;
-  let nowMins = currentMinutes;
-  if (nowMins < start) nowMins += 1440;
-  const duration = end - start;
-  const progressMins = nowMins - start;
-  const percent = (progressMins / duration) * 100;
-  const timeLeft = end - nowMins;
-  sessionProgressEl.innerHTML = `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> – <strong>${percent.toFixed(0)}%</strong> vorbei`;
+
+  // 🔜 Nächste Session anzeigen
+  const futureSessions = sessions
+    .map(s => ({
+      ...s,
+      startMins: s.start > currentMinutes ? s.start : s.start + 1440
+    }))
+    .sort((a, b) => a.startMins - b.startMins);
+
+  const next = futureSessions[0];
+  const minsToNext = next.startMins - currentMinutes;
+
+  output += `🔜 Nächste: <strong>${next.name}</strong> in <strong>${formatHM(minsToNext)}</strong>`;
+
+  // Ausgabe einfügen
+  sessionProgressEl.innerHTML = output;
 }
+
 
 function updateRealTimeBar() {
   const now = new Date();
