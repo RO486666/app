@@ -1425,8 +1425,7 @@ setTimeout(() => {
 
 <script>
 function sendPushNotification(title, message) {
-  if ("Notification" in window && Notification.permission === "granted") {
-    // Immer Service Worker verwenden, auch im Vordergrund!
+  if ("Notification" in window && Notification.permission === "granted" && "serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {
       registration.showNotification(title, {
         body: message,
@@ -1438,26 +1437,10 @@ function sendPushNotification(title, message) {
     }).catch(err => {
       console.error("❌ Notification via Service Worker fehlgeschlagen:", err);
     });
+  } else {
+    console.warn("❌ Keine Notification möglich – Erlaubnis oder SW fehlen.");
   }
 }
-
-
-  // ✅ Fallback für PWA, auch im Hintergrund
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
-        vibrate: [200, 100, 200],
-        tag: "session-alert",
-        renotify: true
-      });
-    }).catch(err => {
-      console.error("❌ ServiceWorker-Notification fehlgeschlagen:", err);
-    });
-  }
-}
-
 
 // ✅ Einheitlicher Notification-Aufruf für Sessionstarts
 function showSessionStartNotification(sessionName, message) {
@@ -1465,7 +1448,7 @@ function showSessionStartNotification(sessionName, message) {
   sendPushNotification(title, message);
 }
 
-// ✅ Optional: Diagnosetool zum Testen der Berechtigung
+// ✅ Diagnosetool zum Testen
 function diagnoseNotifications() {
   const output = document.getElementById("notificationStatus");
   output.style.display = "block";
@@ -1495,6 +1478,7 @@ function diagnoseNotifications() {
   output.innerHTML = msg;
 }
 
+// ✅ Aktivierungs-Button
 function enableNotifications() {
   Notification.requestPermission().then(permission => {
     const statusBox = document.getElementById("notificationStatus");
@@ -1510,8 +1494,8 @@ function enableNotifications() {
     }
   });
 }
-
 </script>
+
 
 
 
