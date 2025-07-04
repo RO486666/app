@@ -306,7 +306,24 @@
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
-<!-- HIER EINSETZEN -->
+<div id="daySummary" class="ticker" style="background:#333; color:#ffcc00; font-size:16px; cursor:pointer;">
+  🗓️ Lade Tagesinfo...
+</div>
+<div id="dayDetails" style="
+  display: none;
+  background: #1c1c1c;
+  color: white;
+  margin: 10px 15px;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  text-align: left;
+  user-select: none;
+">
+</div>
+
 <div id="sessionProgressDisplay"
      style="text-align:center;
             font-size: 16px;
@@ -1519,11 +1536,243 @@ const colors = names.map(n => sessionColors[n] || "#666");
 }
 
 
+function updateDaySummary() {
+  const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+  const infos = {
+    "Montag": "🚀 Start in die Woche – neue Impulse, frische Trends möglich.",
+    "Dienstag": "📈 Stabilisierung oder Fortsetzung der Wochenrichtung.",
+    "Mittwoch": "⚠️ Midweek-Reversal möglich – Bewegung oder Trendbruch.",
+    "Donnerstag": "📊 Viele Wirtschaftsdaten – Markt in Bewegung.",
+    "Freitag": "📅 Ruhiger Ausklang – Wochengewinn sichern, keine Paniktrades.",
+    "Samstag": "📴 Wochenende – Markt geschlossen.",
+    "Sonntag": "🛠️ Vorbereitung & Analyse für die neue Woche."
+  };
+
+  const now = new Date();
+  const dayIndex = now.getDay();
+  const dayName = days[dayIndex];
+  const info = infos[dayName] || "📆 Trading-Tag";
+
+  const el = document.getElementById("daySummary");
+  el.textContent = `🗓️ ${dayName} – ${info}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const daySummaryEl = document.getElementById("daySummary");
+  const dayDetailsEl = document.getElementById("dayDetails");
+
+const dayDetailsMap = {
+  "Montag": `
+🔵 <strong>Montag</strong><br><br>
+<strong>📌 Setup:</strong><br>
+Wochenstart – noch keine klare Richtung. Fokus auf erste Liquiditätsreaktionen.<br>
+Setup-Möglichkeiten für Swing & Intraday, aber nur bei sauberem Kontext.<br><br>
+
+<strong>✅ Strategie:</strong><br>
+Vorsichtiger Einstieg nach London-Open (09:00–10:00 Uhr)<br>
+Strukturaufbau auf H1/H4 beobachten, noch keine aggressiven Breakouts.<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+Volumen steigt langsam an – viele Trader warten auf Dienstag.<br>
+Oft "Range-Montage" – Setups können antäuschen.<br><br>
+
+<strong>📊 Wirtschaftsdaten:</strong><br>
+<ul>
+  <li>🇪🇺 EU-Handelsdaten, Sentiment-Indikatoren</li>
+  <li>🇩🇪 Ifo oder ZEW möglich</li>
+  <li>💬 Kaum US-Daten – NY-Session eher träge</li>
+</ul><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Bleib geduldig – heute wird nichts entschieden.<br>
+Setup nur handeln, wenn es in übergeordnete Struktur passt.<br><br>
+
+<strong>🧾 To-do am Montag:</strong><br>
+<ul>
+  <li>📅 Wochenziele notieren</li>
+  <li>🔍 Watchlist-Paare analysieren</li>
+  <li>📈 H1/H4 Bias notieren</li>
+  <li>⏱️ Fokus auf NY-Liquidität testen</li>
+</ul>
+`,
+
+  "Dienstag": `
+🟢 <strong>Dienstag</strong><br><br>
+<strong>📌 Setup:</strong><br>
+Intraday-Trading meist am klarsten – oft Trendfortsetzung oder Breakout-Nachbestätigung.<br>
+Scalping & Daytrading laufen meist technisch sauber.<br><br>
+
+<strong>✅ Strategie:</strong><br>
+Nutze klare Struktur nach Montag → z. B. Break of Structure + Retest.<br>
+Optimaler Tag für Liquiditätszonen, FVG oder Breaker-Block-Einstiege.<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+Viel stabiler als Montag – London & NY liefern klare Bewegungen.<br>
+Volumen ist konstant, gute Range-Ausbrüche am Vormittag.<br><br>
+
+<strong>📊 Wirtschaftsdaten:</strong><br>
+<ul>
+  <li>🇪🇺 EZB oder UK Reden möglich</li>
+  <li>🇺🇸 Erste US-Marktbewegungen</li>
+  <li>📢 Manchmal Reden von Notenbankern</li>
+</ul><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Heute ist ein Arbeitstag – Fokus, keine Hektik.<br>
+Nutze den Flow, aber bleib strukturiert.<br><br>
+
+<strong>🧾 To-do am Dienstag:</strong><br>
+<ul>
+  <li>⚙️ Trade-Log abgleichen mit Montagsplan</li>
+  <li>✅ Mögliche Swing-Kandidaten markieren</li>
+  <li>📓 Setup-Kategorie zuweisen</li>
+</ul>
+`,
+
+  "Mittwoch": `
+🟡 <strong>Mittwoch</strong><br><br>
+<strong>📌 Setup:</strong><br>
+Midweek = Wendepunkt. Viele Reversal, viele Fehlausbrüche.<br>
+Nur sichere Entries – Swing-Setups vorher validieren.<br><br>
+
+<strong>✅ Strategie:</strong><br>
+Marktstruktur analysieren: ist der Wochenbias noch gültig?<br>
+Antizyklische Reaktionen in Killzones möglich (NY besonders wachsam).<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+Erhöhte Volatilität – häufige Umschwünge, Intraday-Highs/Lows werden geholt.<br>
+Scalping gut möglich, aber mit Risikoabsicherung.<br><br>
+
+<strong>📊 Wirtschaftsdaten:</strong><br>
+<ul>
+  <li>🏦 FOMC/Fed Minutes → starke Bewegungen!</li>
+  <li>🇪🇺 EU/UK Inflationsdaten</li>
+  <li>📉 Crude Oil Inventories (US)</li>
+</ul><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Wachsam bleiben – heute gewinnt nur, wer flexibel ist.<br>
+Bias nicht festfahren – reagiere auf den Markt.<br><br>
+
+<strong>🧾 To-do am Mittwoch:</strong><br>
+<ul>
+  <li>📈 Wochen-Midpoint markieren</li>
+  <li>💡 Offene Trades beobachten – Exit prüfen</li>
+  <li>📊 Volumenstatistik (bisher) notieren</li>
+</ul>
+`,
+
+  "Donnerstag": `
+🟠 <strong>Donnerstag</strong><br><br>
+<strong>📌 Setup:</strong><br>
+Momentum-Tag – viele Impulse durch News.<br>
+Guter Tag für FVG/Breaker & aggressive Entries nach Stophunt.<br><br>
+
+<strong>✅ Strategie:</strong><br>
+NY-Killzone dominieren oft – Fokus auf USD, Gold, NAS100.<br>
+Liquidität um 14:30 Uhr fast immer aktiv – warten auf Reaktion!<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+London ist meist klar, NY liefert starke Trend-Moves.<br>
+Donnerstag prägt oft das Wochenergebnis entscheidend.<br><br>
+
+<strong>📊 Wirtschaftsdaten:</strong><br>
+<ul>
+  <li>🇺🇸 US GDP, PCE, CPI oder Jobless Claims</li>
+  <li>💬 Fed Sprecher / Powell oft hier</li>
+  <li>🇩🇪 Deutsche BIP-Daten</li>
+</ul><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Heute darf man mutiger sein – aber sauber bleiben.<br>
+Nicht gegen das Momentum handeln – sondern mit Timing!<br><br>
+
+<strong>🧾 To-do am Donnerstag:</strong><br>
+<ul>
+  <li>🧠 Gewinne absichern für Freitag</li>
+  <li>📓 Trade-Revue der Woche vorbereiten</li>
+  <li>⚠️ „Do Not Overtrade“-Hinweis setzen</li>
+</ul>
+`,
+
+  "Freitag": `
+🔴 <strong>Freitag</strong><br><br>
+<strong>📌 Setup:</strong><br>
+Kein Swing-Trading empfohlen – größere Bewegungen meist vorbei.<br>
+Nutze saubere Strukturen in engen Zeitfenstern (Scalping-Setups).<br><br>
+
+<strong>✅ Strategie:</strong><br>
+Scalping während London & NY Overlap (08:00–13:00 Uhr)<br>
+Nur Momentum bei klarer Liquiditätsjagd handeln – keine Breakouts blind.<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+Ab 13:00–14:00 Uhr wird es merklich ruhiger.<br>
+Trader & Banken schließen Positionen zum Wochenabschluss.<br>
+Bewegungen werden erratisch, Spreads steigen leicht.<br><br>
+
+<strong>📊 Wirtschaftsdaten:</strong><br>
+<ul>
+  <li>👷 US-Arbeitsmarktdaten (oft 14:30 Uhr)</li>
+  <li>📈 NFP oder „Unemployment Rate“ jeden 1. Freitag im Monat</li>
+  <li>💬 Häufig Fed-Sprecher oder Wochenrückblicke</li>
+</ul><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Kein FOMO, kein Revenge-Trading.<br>
+Was diese Woche nicht lief – wird nächste Woche nicht durch Freitag repariert.<br>
+Gönn dir früh Feierabend, sei stolz auf Disziplin.<br><br>
+
+<strong>🧾 To-do am Freitag:</strong><br>
+<ul>
+  <li>📊 Wochenstatistik eintragen (Gewinne/Verluste, Trefferquote)</li>
+  <li>📸 Equity-Kurve screenshoten</li>
+  <li>📓 Setup-Bewertung im Journal (Was lief gut, was nicht)</li>
+  <li>✅ Clean Close: alle Positionen geschlossen?</li>
+</ul>
+`,
+
+  "Samstag": `
+📴 <strong>Samstag</strong><br><br>
+Kein Handel – Wochenende.<br>
+📓 Rückblick auf Trades der Woche<br>
+🧘 Erholung & Abstand zum Markt<br>
+📊 Vorbereitung für Sonntagsplanung
+`,
+
+  "Sonntag": `
+📴 <strong>Sonntag</strong><br><br>
+Noch kein Handel – aber Vorbereitung ist 🔑.<br><br>
+<ul>
+  <li>📅 Kalender prüfen (Wirtschaftsdaten & Events)</li>
+  <li>📊 Setup-Screener & Wochenstruktur analysieren</li>
+  <li>🧠 Mentales Ziel setzen: 1 Regel für die Woche</li>
+</ul>
+`
+};
+
+  if (daySummaryEl && dayDetailsEl) {
+    daySummaryEl.addEventListener("click", () => {
+      const now = new Date();
+      const dayName = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"][now.getDay()];
+      const content = dayDetailsMap[dayName] || "📆 Keine Details für diesen Tag.";
+
+      const visible = dayDetailsEl.style.display === "block";
+      dayDetailsEl.style.display = visible ? "none" : "block";
+      if (!visible) dayDetailsEl.innerHTML = content;
+    });
+  }
+
+  updateDaySummary();
+});
+
+
 
 
 window.addEventListener("load", () => {
   requestNotificationPermission();
   updateRealTimeBar();
+  updateDaySummary(); // 📅 Wochentag-Anzeige aktualisieren
+
   setInterval(updateRealTimeBar, 60000);
 });
 </script>
