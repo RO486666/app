@@ -400,10 +400,8 @@
 
 <div class="tab-buttons" style="margin-top: 20px;">
   <button class="btn" id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
-  <button class="btn" id="btn-calc-equity" onclick="switchCalcTab('equity')">📈 Equity-Sim</button>
 </div>
 </div>
 
@@ -509,30 +507,6 @@
   </div>
 </div>
 
-<div id="calc-risk" class="calc-box" style="display:none; margin-top: 15px;">
- <div class="stats-box">
-  <label for="riskAccountSize">📦 Kontogröße (€):</label>
-  <input type="number" id="riskAccountSize" placeholder="z. B. 1000" />
-
-  <label for="riskLotSize">🧮 Lotgröße:</label>
-  <input type="number" id="riskLotSize" placeholder="z. B. 0.1" step="0.01" />
-
-  <label for="riskStopLoss">🛑 Stop-Loss (Pips):</label>
-  <input type="number" id="riskStopLoss" placeholder="z. B. 25" />
-
-  <label for="riskPipValue">💡 Pip-Wert pro Lot (€):</label>
-  <input type="number" id="riskPipValue" placeholder="z. B. 10" value="10" />
-
-  <label for="useTradingView">⚙️ TradingView-Modus:</label>
-  <input type="checkbox" id="useTradingView" onchange="togglePipMode()" />
-
-  <div id="tvNote" style="font-size: 12px; color: #aaa; margin-top: 5px; display:none;">
-    📉 Pip-Wert wird intern mit <strong>6.30 €</strong> angenommen (wie bei TradingView)
-  </div>
-
-  <button onclick="calculateRiskPercent()">📊 Risiko berechnen</button>
-  <p id="riskResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-</div>
 
   <div style="text-align:right; margin-bottom: 5px;">
     <span onclick="toggleRiskInfo()" 
@@ -727,46 +701,7 @@
   </div>
 </div>
 
-<div id="calc-equity" class="calc-box" style="display:none;">
-  <div class="tool-box">
-    <h3 style="margin-top:0;">📈 Equity-Simulator</h3>
 
-    <div class="form-group">
-      <label>Startkapital (€):</label>
-      <input type="number" id="eq_start" value="1000">
-    </div>
-
-    <div class="form-group">
-      <label>Risiko % pro Trade:</label>
-      <input type="number" id="eq_risk" value="1" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>Trefferquote (%):</label>
-      <input type="number" id="eq_winrate" value="55" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>CRV-Min:</label>
-      <input type="number" id="eq_crv_min" value="1.5" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>CRV-Max:</label>
-      <input type="number" id="eq_crv_max" value="3.0" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>Anzahl Trades:</label>
-      <input type="number" id="eq_trades" value="100">
-    </div>
-
-    <button onclick="simulateEquity()">▶️ Simulieren</button>
-
-    <canvas id="equityChart" style="margin-top:15px; height:200px;"></canvas>
-    <div id="equityStats" style="margin-top:10px; font-size: 14px;"></div>
-  </div>
-</div>
 
   <!-- 📆 Kalender -->
 <div id="journalCalendarBox" class="stats-box" style="margin-top: 20px;">
@@ -1660,79 +1595,6 @@ function switchCalcTab(tab) {
   if (btn) btn.classList.add("active");
 }
 
-// 🆕 Equity-Simulator integrieren
-function simulateEquity() {
-  const start = parseFloat(document.getElementById("eq_start").value);
-  const riskPercent = parseFloat(document.getElementById("eq_risk").value);
-  const winrate = parseFloat(document.getElementById("eq_winrate").value);
-  const crvMin = parseFloat(document.getElementById("eq_crv_min").value);
-  const crvMax = parseFloat(document.getElementById("eq_crv_max").value);
-  const trades = parseInt(document.getElementById("eq_trades").value);
-
-  let equity = start;
-  const data = [equity];
-  let maxDrawdown = 0;
-  let peak = start;
-  let winStreak = 0, maxWinStreak = 0;
-  let lossStreak = 0, maxLossStreak = 0;
-
-  for (let i = 1; i <= trades; i++) {
-    const isWin = Math.random() * 100 < winrate;
-    const crv = crvMin + Math.random() * (crvMax - crvMin);
-    const risk = equity * (riskPercent / 100);
-    let profit = isWin ? risk * crv : -risk;
-
-    equity += profit;
-    data.push(equity);
-
-    if (equity > peak) peak = equity;
-    const dd = ((peak - equity) / peak) * 100;
-    if (dd > maxDrawdown) maxDrawdown = dd;
-
-    if (isWin) {
-      winStreak++;
-      lossStreak = 0;
-    } else {
-      lossStreak++;
-      winStreak = 0;
-    }
-    if (winStreak > maxWinStreak) maxWinStreak = winStreak;
-    if (lossStreak > maxLossStreak) maxLossStreak = lossStreak;
-  }
-
-  const ctx = document.getElementById("equityChart").getContext("2d");
-  if (window.equityChartInstance) window.equityChartInstance.destroy();
-  window.equityChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: data.length }, (_, i) => i),
-      datasets: [{
-        label: 'Equity-Kurve',
-        data: data,
-        borderWidth: 2,
-        borderColor: 'lime',
-        backgroundColor: 'rgba(0,255,0,0.1)',
-        fill: true,
-        tension: 0.25,
-        pointRadius: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { title: { display: true, text: 'Trade #' } },
-        y: { title: { display: true, text: 'Kontostand €' } }
-      },
-      plugins: { legend: { display: false } }
-    }
-  });
-
-  document.getElementById("equityStats").innerHTML = `
-    📈 Endkapital: <strong>${equity.toFixed(2)} €</strong><br>
-    📉 Max Drawdown: <strong>${maxDrawdown.toFixed(2)} %</strong><br>
-    ⟳ Beste Serie: <strong>${maxWinStreak}</strong><br>
-    ❌ Schlechteste Serie: <strong>${maxLossStreak}</strong>`;
-}
 
 
 window.addEventListener("DOMContentLoaded", () => {
