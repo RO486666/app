@@ -723,69 +723,133 @@
 <div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
   <div class="stats-box" style="display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: auto;">
 
-<label>📆 Datum (optional):</label>
-<input type="date" id="journalManualDate" class="input" />
+<label>🧭 Strategie-Modus:</label>
+<select id="tradingMode" onchange="updateBiasOptions()">
+  <option value="day">Daytrading</option>
+  <option value="swing">Swing-Trading</option>
+</select>
 
-  <label>💱 Symbol:</label>
-  <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
-  <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
+    <label>📆 Datum:</label>
+    <input type="date" id="journalManualDate" class="input" />
 
-  <label>📈 Richtung:</label>
-  <select id="journalDirection" class="input">
-    <option value="Long">Long</option>
-    <option value="Short">Short</option>
-  </select>
+    <label>💱 Symbol:</label>
+    <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
+    <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
 
-  <div style="display: flex; gap: 10px;">
-    <div style="flex: 1;">
-      <label>🎯 Einstieg:</label>
-      <input type="number" id="journalEntry" class="input" />
+    <label>📈 Richtung:</label>
+    <select id="journalDirection" class="input">
+      <option value="Long">Long</option>
+      <option value="Short">Short</option>
+    </select>
+
+
+    <div style="display: flex; gap: 10px;">
+      <div style="flex: 1;">
+        <label>📦 Lotgröße:</label>
+        <input type="number" id="journalLots" step="0.01" class="input" />
+      </div>
+      <div style="flex: 1;">
+        <label>📊 PnL (€):</label>
+        <input type="number" id="journalPnL" class="input" />
+      </div>
     </div>
-    <div style="flex: 1;">
-      <label>🏁 Ausstieg:</label>
-      <input type="number" id="journalExit" class="input" />
-    </div>
+
+    <label>😐 Fokus vor dem Trade:</label>
+    <div id="starsBefore" class="star-rating" style="margin-bottom: 5px;"></div>
+    <input type="hidden" id="emotionBefore" value="5" />
+
+    <label>😤 Nach dem Trade:</label>
+    <div id="starsAfter" class="star-rating" style="margin-bottom: 5px;"></div>
+    <input type="hidden" id="emotionAfter" value="5" />
+
+    <label>🧠 Setup:</label>
+    <select id="journalSetup" class="input">
+      <option value="">– Setup wählen –</option>
+      <option value="Breakout">Breakout</option>
+      <option value="Rejection">Rejection</option>
+      <option value="Liquidity Grab">Liquidity Grab</option>
+      <option value="News Spike">News Spike</option>
+      <option value="Orderblock Reentry">Orderblock Reentry</option>
+    </select>
+	
+	<div style="display: flex; gap: 10px;">
+  <div style="flex: 1;">
+    <label>🎯 Einstieg:</label>
+    <input type="number" id="journalEntry" class="input" />
   </div>
-
-  <div style="display: flex; gap: 10px;">
-    <div style="flex: 1;">
-      <label>📦 Lotgröße:</label>
-      <input type="number" id="journalLots" step="0.01" class="input" />
-    </div>
-    <div style="flex: 1;">
-      <label>📊 PnL (€):</label>
-      <input type="number" id="journalPnL" class="input" />
-    </div>
+  <div style="flex: 1;">
+    <label>🏁 Ausstieg:</label>
+    <input type="number" id="journalExit" class="input" />
   </div>
-
-  <label>😐 Fokus vor dem Trade:</label>
-  <div id="starsBefore" class="star-rating" style="margin-bottom: 5px;"></div>
-  <input type="hidden" id="emotionBefore" value="5" />
-
-  <label>😤 Nach dem Trade:</label>
-  <div id="starsAfter" class="star-rating" style="margin-bottom: 5px;"></div>
-  <input type="hidden" id="emotionAfter" value="5" />
-
-  <label><input type="checkbox" id="rulesFollowed" /> ✅ Regel befolgt?</label>
-
-  <label>📝 Kommentar:</label>
-  <textarea id="journalNotes" rows="3" class="input" style="border-radius: 6px;"></textarea>
-
-  <label>📸 Screenshot (optional):</label>
-  <input type="file" id="journalScreenshot" accept="image/*" class="input" />
-
-  <button onclick="saveJournalEntry()" style="
-    background-color: #0077cc;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  ">💾 Eintrag speichern</button>
 </div>
+
+<label style="margin-top: 10px;">✅ Setup-Check (Swing/Daytrading):</label>
+
+<!-- Bias Timeframes (werden separat gespeichert, zählen nicht in Regelzähler) -->
+<label style="margin-top: 10px;">🧭 Multi-Timeframe Bias geprüft auf:</label>
+<div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px; color: #ccc;">
+  <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
+  <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
+  <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
+  <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
+  <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
+  <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
+</div>
+
+<!-- Regel-Checkboxen -->
+<div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 5px; font-size: 14px; color: #ddd; margin-top:10px;">
+<label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
+  🧱 Preis reagiert an Area of Interest (z. B. Daily/4H AOI oder OB)</label>
+
+<label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
+  🎯 Entry-Confirmation vorhanden (z. B. LTF-Shift, Wick-Rejection)</label>
+
+<label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
+  💡 Nähe zu psychologischem Level (00/50 oder Key Level)</label>
+
+<label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
+  🕒 Richtiges Zeitfenster (London / NY Killzone aktiv)</label>
+
+<label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
+  📏 Mindestens 1:2.5 RR möglich laut Struktur</label>
+
+<label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
+  📉 Marktstruktur Shift (z. B. BOS, CHoCH, Swing-Shift)</label>
+
+<label><input type="checkbox" id="ruleEntrySignal" onchange="updateSetupScoreDisplay()" />
+  🎯 Entry-Signal (Break, Reject, Wick, FVG-Tap etc.)</label>
+
+</div>
+
+<!-- Live Setup-Bewertung -->
+<div id="setupScoreDisplay" style="margin-top:10px; font-size:14px; color:#ccc;">
+  📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+</div>
+
+
+
+    <label>📝 Kommentar:</label>
+    <textarea id="journalNotes" rows="3" class="input" style="border-radius: 6px;"></textarea>
+
+    <label>📸 Screenshot (optional):</label>
+    <input type="file" id="journalScreenshot" accept="image/*" class="input" />
+
+   <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
+  background-color: #0077cc;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+">💾 Eintrag speichern</button>
+
+
+  </div>
+</div>
+
 
 
 <div style="margin-top:20px; text-align:center;">
@@ -815,40 +879,70 @@
 
 <script>
 let currentMonthOffset = 0;
-
+function onRuleChanged() {
+  updateRuleCount();
+  updateSetupScoreDisplay(); // 🔁 Kein Delay mehr
+}
 function saveJournalEntry() {
   const fileInput = document.getElementById("journalScreenshot");
   const file = fileInput.files[0];
   const manualDate = document.getElementById("journalManualDate")?.value;
+  const tradingMode = document.getElementById("tradingMode")?.value || "day";
+  const editId = document.getElementById("saveJournalEntryButton").dataset.editId;
+  const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
+
+  const selectedBiasFrames = Array.from(document.querySelectorAll('#biasTimeframes input:checked'))
+    .map(cb => cb.value);
+
+  const entry = {
+    id: editId ? parseInt(editId) : Date.now(),
+    date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
+    pair: document.getElementById("journalSymbol").value.trim(),
+    direction: document.getElementById("journalDirection").value,
+    entry: parseFloat(document.getElementById("journalEntry").value),
+    exit: parseFloat(document.getElementById("journalExit").value),
+    lots: parseFloat(document.getElementById("journalLots").value),
+    pnl: parseFloat(document.getElementById("journalPnL").value),
+    emotionBefore: parseInt(document.getElementById("emotionBefore").value),
+    emotionAfter: parseInt(document.getElementById("emotionAfter").value),
+    tradingMode,
+    biasTimeframes: selectedBiasFrames,
+    ruleAOI: document.getElementById("ruleAOI")?.checked || false,
+    ruleEntry: document.getElementById("ruleEntry")?.checked || false,
+    rulePsych: document.getElementById("rulePsych")?.checked || false,
+    ruleSession: document.getElementById("ruleSession")?.checked || false,
+    ruleRR: document.getElementById("ruleRR")?.checked || false,
+    ruleLTFShift: document.getElementById("ruleLTFShift")?.checked || false,
+    ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
+    notes: document.getElementById("journalNotes").value.trim(),
+    screenshot: null
+  };
 
   const saveData = (imageData) => {
-    const entry = {
-      id: Date.now(),
-      date: manualDate
-        ? new Date(manualDate).toISOString()
-        : new Date().toISOString(),
-      pair: document.getElementById("journalSymbol").value.trim(),
-      direction: document.getElementById("journalDirection").value,
-      entry: parseFloat(document.getElementById("journalEntry").value),
-      exit: parseFloat(document.getElementById("journalExit").value),
-      lots: parseFloat(document.getElementById("journalLots").value),
-      pnl: parseFloat(document.getElementById("journalPnL").value),
-      emotionBefore: parseInt(document.getElementById("emotionBefore").value),
-      emotionAfter: parseInt(document.getElementById("emotionAfter").value),
-      rulesFollowed: document.getElementById("rulesFollowed").checked,
-      notes: document.getElementById("journalNotes").value.trim(),
-      screenshot: imageData || null
-    };
+    // 📸 Bild übernehmen
+    if (!imageData && editId) {
+      const existing = allEntries.find(e => e.id == editId);
+      if (existing?.screenshot) entry.screenshot = existing.screenshot;
+    } else {
+      entry.screenshot = imageData || null;
+    }
 
-    const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
-    allEntries.push(entry);
+    if (editId) {
+      const index = allEntries.findIndex(e => e.id == editId);
+      if (index !== -1) allEntries[index] = entry;
+      delete document.getElementById("saveJournalEntryButton").dataset.editId;
+    } else {
+      allEntries.push(entry);
+    }
+
     localStorage.setItem("journalData", JSON.stringify(allEntries));
-
     alert("✅ Journal-Eintrag gespeichert!");
     fileInput.value = "";
     buildJournalCalendar(currentMonthOffset);
+    document.getElementById("calc-journal").style.display = "none"; // ✅ Journal ausblenden
   };
 
+  // 📦 Bild lesen (falls vorhanden)
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => saveData(e.target.result);
@@ -857,6 +951,55 @@ function saveJournalEntry() {
     saveData(null);
   }
 }
+
+
+
+
+
+
+function getSetupScore(entry) {
+  const tfList = entry.biasTimeframes || [];
+  const mode = entry.tradingMode || "day";
+
+  // ❗ Mindestens 2 Bias-TFs erforderlich → kein gültiger Entry
+  if (tfList.length < 2) return { score: 0, valid: false };
+
+  let score = 0;
+
+  // ✅ Bias Timeframes (max 30 %)
+  score += Math.min(tfList.length, 3) * 10;
+
+  // AOI (10 %)
+  if (entry.ruleAOI) score += 10;
+
+  // AOI-Zeitframe korrekt (10 %)
+  const isAOICorrect =
+    (mode === "swing" && tfList.includes("4H") && tfList.includes("D1")) ||
+    (mode === "day" && tfList.includes("1H"));
+  if (isAOICorrect) score += 10;
+
+  // Entry Confirmation (10 %)
+  if (entry.ruleEntry) score += 10;
+
+  // Psychologische Levels (5 %)
+  if (entry.rulePsych) score += 5;
+
+  // Session-Zeitfenster (5 %)
+  if (entry.ruleSession) score += 5;
+
+  // CRV erfüllt (5 %)
+  if (entry.ruleRR) score += 5;
+  
+  if (entry.ruleLTFShift) score += 10;
+if (entry.ruleEntrySignal) score += 10;
+
+  return {
+    score: Math.min(score, 95),
+    valid: true
+  };
+}
+
+
 function openLightbox(src) {
   const overlay = document.getElementById("lightboxOverlay");
   const img = document.getElementById("lightboxImage");
@@ -871,6 +1014,81 @@ function closeLightbox() {
   img.src = "";
 }
 
+function updateBiasOptions() {
+  const mode = document.getElementById("tradingMode").value;
+  const checkboxes = document.querySelectorAll('#biasTimeframes input');
+
+  checkboxes.forEach(cb => {
+    const tf = cb.value;
+    if (mode === "swing") {
+      cb.parentElement.style.display = ["D1", "4H", "W1"].includes(tf) ? "inline-block" : "none";
+    } else {
+      cb.parentElement.style.display = ["D1", "4H", "1H"].includes(tf) ? "inline-block" : "none";
+    }
+  });
+}
+
+function getLiveSetupScoreFromForm() {
+  const tfList = Array.from(document.querySelectorAll('#biasTimeframes input:checked')).map(cb => cb.value);
+  const mode = document.getElementById("tradingMode")?.value || "day";
+
+  let score = 0;
+
+  // ✅ Bias-TFs (max 3 x 10 %)
+  score += Math.min(tfList.length, 3) * 10;
+
+  // AOI
+  if (document.getElementById("ruleAOI")?.checked) score += 10;
+
+  // AOI-Zeitframe korrekt
+  const aoicheck =
+    (mode === "swing" && tfList.includes("4H") && tfList.includes("D1")) ||
+    (mode === "day" && tfList.includes("1H"));
+  if (aoicheck) score += 10;
+
+  if (document.getElementById("ruleEntry")?.checked) score += 10;
+  if (document.getElementById("rulePsych")?.checked) score += 5;
+  if (document.getElementById("ruleSession")?.checked) score += 5;
+  if (document.getElementById("ruleRR")?.checked) score += 5;
+  if (document.getElementById("ruleLTFShift")?.checked) score += 10;
+if (document.getElementById("ruleEntrySignal")?.checked) score += 10;
+
+
+  return {
+    score: Math.min(score, 95),
+    validBias: tfList.length >= 2
+  };
+}
+
+
+
+
+function updateSetupScoreDisplay() {
+  const result = getLiveSetupScoreFromForm();
+  const score = result.score;
+  const hasBias = result.validBias;
+
+  let verdict = "❌ Nicht gültig (mind. 2 Bias-TFs)";
+  let color = "#ff4444";
+
+  if (hasBias && score >= 40) {
+    verdict = "✅ Valides Setup";
+    color = "#00ff88";
+  } else if (hasBias && score >= 20) {
+    verdict = "⚠️ Wackliges Setup";
+    color = "#ffaa00";
+  } else if (hasBias) {
+    verdict = "❌ Regelbruch";
+  }
+
+  document.getElementById("setupScoreDisplay").innerHTML = `
+    📊 Setup-Score: <strong style="color:${color}">${score}%</strong> – ${verdict}
+  `;
+}
+
+
+
+updateSetupScoreDisplay();
 
 function renderStars(value) {
   const v = Math.max(1, Math.min(10, parseInt(value) || 0));
@@ -979,13 +1197,24 @@ function buildJournalCalendar(monthOffset = 0) {
     titleEl.textContent = `📅 ${currentMonth.toLocaleString("de-DE", { month: "long" })} ${year}`;
   }
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
   const dailyStats = getPnLStatsByDay(entries);
-  let activeCalendarCell = null;
-const manualDateInput = document.getElementById("journalManualDate");
+  const days = {};
+  entries.forEach(e => {
+    const d = new Date(e.date).toISOString().split("T")[0];
+    days[d] = (days[d] || 0) + parseFloat(e.pnl || 0);
+  });
 
+  const greenDays = Object.values(days).filter(pnl => pnl > 0).length;
+  const redDays = Object.values(days).filter(pnl => pnl < 0).length;
+  const totalDays = greenDays + redDays;
+  const greenRate = totalDays ? (greenDays / totalDays * 100).toFixed(1) : null;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const manualDateInput = document.getElementById("journalManualDate");
+
+  let activeCalendarCell = null;
   const calendar = document.createElement("div");
   calendar.style.display = "grid";
   calendar.style.gridTemplateColumns = "repeat(7, 1fr)";
@@ -1003,77 +1232,62 @@ const manualDateInput = document.getElementById("journalManualDate");
     calendar.appendChild(document.createElement("div"));
   }
 
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const pnl = dailyStats[dateStr] || 0;
 
-for (let day = 1; day <= daysInMonth; day++) {
-  const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  const pnl = dailyStats[dateStr] || 0;
-
-  const cell = document.createElement("div");
-  cell.textContent = day;
-  cell.style.padding = "10px";
-  cell.style.borderRadius = "6px";
-  cell.style.textAlign = "center";
-  cell.style.cursor = "pointer";
-  cell.style.transition = "outline 0.2s ease";
-
-  // ✅ Farbe nach PnL
-  if (pnl > 0) {
-    cell.style.background = "#228B22"; // grün
+    const cell = document.createElement("div");
+    cell.textContent = day;
+    cell.style.padding = "10px";
+    cell.style.borderRadius = "6px";
+    cell.style.textAlign = "center";
+    cell.style.cursor = "pointer";
+    cell.style.transition = "outline 0.2s ease";
+    cell.style.background = pnl > 0 ? "#228B22" : (pnl < 0 ? "#B22222" : "#777");
     cell.style.color = "white";
-  } else if (pnl < 0) {
-    cell.style.background = "#B22222"; // rot
-    cell.style.color = "white";
-  } else {
-    cell.style.background = "#777"; // neutral
-    cell.style.color = "white";
+
+    cell.onclick = () => {
+      showEntriesForDate(dateStr);
+      if (activeCalendarCell) activeCalendarCell.style.outline = "";
+      cell.style.outline = "2px solid #3399ff";
+      activeCalendarCell = cell;
+      if (manualDateInput) manualDateInput.value = dateStr;
+
+      const journalBox = document.getElementById("calc-journal");
+      if (journalBox) {
+        journalBox.style.display = "block";
+        window.scrollTo({ top: journalBox.offsetTop - 40, behavior: "smooth" });
+      }
+    };
+
+    calendar.appendChild(cell);
   }
-
-cell.onclick = () => {
-  showEntriesForDate(dateStr);
-
-  if (activeCalendarCell) {
-    activeCalendarCell.style.outline = "";
-  }
-
-  cell.style.outline = "2px solid #3399ff";
-  activeCalendarCell = cell;
-
-  if (manualDateInput) {
-    manualDateInput.value = dateStr;
-  }
-
-  // 📘 Journal sichtbar machen
-  const journalBox = document.getElementById("calc-journal");
-  if (journalBox) {
-    journalBox.style.display = "block";
-    window.scrollTo({
-      top: journalBox.offsetTop - 40,
-      behavior: "smooth"
-    });
-  }
-};
-
-
-  calendar.appendChild(cell);
-}
-
-
 
   document.getElementById("calendarContainer").innerHTML = "";
-  activeCalendarCell = null;
   document.getElementById("calendarContainer").appendChild(calendar);
 
   const currentMonthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
   const monthlyEntries = entries
     .filter(e => e.date.startsWith(currentMonthKey))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
+	let validSetups = 0;
+let shakySetups = 0;
+let failedSetups = 0;
+
+monthlyEntries.forEach(e => {
+  const score = getSetupScore(e);
+  if (score >= 40) validSetups++;
+  else if (score >= 20) shakySetups++;
+  else failedSetups++;
+});
+
 
   // 📈 Equity-Kurve
   let equity = 0;
-  const equityData = [0];
-  const labels = ['Start'];
   let peak = 0;
   let maxDrawdown = 0;
+  const equityData = [0];
+  const labels = ['Start'];
 
   monthlyEntries.forEach((e, i) => {
     equity += parseFloat(e.pnl || 0);
@@ -1089,7 +1303,7 @@ cell.onclick = () => {
   window.calendarEquityChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
         label: 'Equity-Kurve',
         data: equityData,
@@ -1111,52 +1325,70 @@ cell.onclick = () => {
     }
   });
 
-  // 📊 Monatsstatistik + Zusatzwerte
-  const pnlList = monthlyEntries.map(e => parseFloat(e.pnl || 0));
-  const days = {};
-  monthlyEntries.forEach(e => {
-    const day = new Date(e.date).toISOString().split("T")[0];
-    days[day] = (days[day] || 0) + parseFloat(e.pnl || 0);
-  });
-
+  // 📊 Statistik
   const pnlPerDay = Object.values(days);
- const winTrades = monthlyEntries.filter(e => parseFloat(e.pnl) > 0);
-const lossTrades = monthlyEntries.filter(e => parseFloat(e.pnl) < 0);
-
+  const winTrades = monthlyEntries.filter(e => parseFloat(e.pnl) > 0);
+  const lossTrades = monthlyEntries.filter(e => parseFloat(e.pnl) < 0);
+  const totalWin = winTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+  const totalLoss = lossTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
   const avgPerDay = pnlPerDay.length ? pnlPerDay.reduce((a, b) => a + b, 0) / pnlPerDay.length : 0;
-const bestDay = pnlPerDay.length ? Math.max(...pnlPerDay) : null;
-const worstDay = pnlPerDay.length ? Math.min(...pnlPerDay) : null;
+  const bestDay = pnlPerDay.length ? Math.max(...pnlPerDay) : null;
+  const worstDay = pnlPerDay.length ? Math.min(...pnlPerDay) : null;
+  const profitFactor = totalLoss !== 0 ? Math.abs(totalWin / totalLoss).toFixed(2) : "∞";
+  const winRate = monthlyEntries.length > 0 ? (winTrades.length / monthlyEntries.length * 100).toFixed(1) : "–";
 
-const totalWin = winTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
-const totalLoss = lossTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+// 🔍 Klassifikationstage vorbereiten
+const rulesByDay = {}; // { "2025-07-23": [true, false, true] }
 
-  const profitFactor = totalLoss !== 0 ? Math.abs(totalWin / totalLoss) : "∞";
-  const tradesWon = monthlyEntries.filter(e => parseFloat(e.pnl) > 0).length;
-  const tradesTotal = monthlyEntries.length;
-  const winRate = tradesTotal > 0 ? (tradesWon / tradesTotal) * 100 : 0;
+monthlyEntries.forEach(e => {
+  const day = new Date(e.date).toISOString().split("T")[0];
+  if (!rulesByDay[day]) rulesByDay[day] = [];
+  rulesByDay[day].push([
+    e.ruleBias ?? false,
+    e.ruleSession ?? false,
+    e.ruleSetupValid ?? false
+  ]);
+});
 
-  document.getElementById("calendarStats").innerHTML = `
- <div id="monthlyOverview" style="margin-bottom:15px;">
-    📊 Monat ${currentMonthKey} – <strong style="color:${equity >= 0 ? '#0f0' : '#f44'}">${equity.toFixed(2)} €</strong><br>
+// Tagesklassifikation
+let perfectDays = 0;
+let shakyDays = 0;
+let failDays = 0;
+
+for (const ruleSets of Object.values(rulesByDay)) {
+  let merged = [false, false, false];
+  ruleSets.forEach(rules => {
+    for (let i = 0; i < 3; i++) {
+      merged[i] = merged[i] || rules[i]; // irgendeine Regel erfüllt zählt
+    }
+  });
+  const count = merged.filter(x => x).length;
+  if (count === 3) perfectDays++;
+  else if (count >= 1) shakyDays++;
+  else failDays++;
+}
+
+
+document.getElementById("calendarStats").innerHTML = `
+  <div id="monthlyOverview" style="margin-bottom:15px;">
+    📅 Monat ${currentMonthKey} – <strong style="color:${equity >= 0 ? '#0f0' : '#f44'}">${equity.toFixed(2)} €</strong><br>
     💚 Bester Tag: <strong>${bestDay !== null ? bestDay.toFixed(2) : "–"} €</strong><br>
     💔 Schlechtester Tag: <strong>${worstDay !== null ? worstDay.toFixed(2) : "–"} €</strong><br>
     📉 Max Drawdown: <strong>${maxDrawdown.toFixed(2)}%</strong><br>
     📈 Trades: <strong>${monthlyEntries.length}</strong><br>
-    
     🧾 Gewinn-Trades: <strong>${winTrades.length}</strong> / Verlust-Trades: <strong>${lossTrades.length}</strong><br>
-
     🧮 Ø/Tag: <strong>${avgPerDay.toFixed(2)} €</strong><br>
     ⚖️ Profitfaktor: <strong>${profitFactor}</strong><br>
-    🎯 Trefferquote: <strong>${winRate.toFixed(1)}%</strong>
-  </div>
-
-  <canvas id="calendarEquityChart" height="150" style="margin: 10px auto 5px auto; display:block;"></canvas>
+    🎯 Trefferquote: <strong>${winRate}%</strong><br><br>
 
 
-  <div id="calendarEquityStats" style="color: #ccc;">
-    <!-- Tagesansicht kommt hier dynamisch rein, wenn man auf einen Tag klickt -->
+    🧠 <strong>Setup-Auswertung:</strong><br>
+    ✅ Valide Setups: <strong>${validSetups}</strong><br>
+    ⚠️ Wacklige Setups: <strong>${shakySetups}</strong><br>
+    ❌ Regelbruch-Setups: <strong>${failedSetups}</strong>
   </div>
 `;
+
 }
 
 function changeMonth(offset) {
@@ -1164,30 +1396,101 @@ function changeMonth(offset) {
   buildJournalCalendar(currentMonthOffset);
 }
 
+function editEntry(entryId) {
+  const all = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const entry = all.find(e => e.id === entryId);
+  if (!entry) return alert("❌ Eintrag nicht gefunden.");
+
+  // 🧠 Werte ins Formular laden
+  document.getElementById("journalManualDate").value = entry.date.split("T")[0];
+  document.getElementById("journalSymbol").value = entry.pair;
+  document.getElementById("journalDirection").value = entry.direction;
+  document.getElementById("journalEntry").value = entry.entry;
+  document.getElementById("journalExit").value = entry.exit;
+  document.getElementById("journalLots").value = entry.lots;
+  document.getElementById("journalPnL").value = entry.pnl;
+  document.getElementById("emotionBefore").value = entry.emotionBefore;
+  document.getElementById("emotionAfter").value = entry.emotionAfter;
+  document.getElementById("journalNotes").value = entry.notes || "";
+
+  // Regeln
+  ["AOI", "Entry", "Psych", "Session", "RR", "LTFShift", "EntrySignal"].forEach(id => {
+    const el = document.getElementById("rule" + id);
+    if (el) el.checked = !!entry["rule" + id];
+  });
+
+  // Bias-TFs
+  document.querySelectorAll('#biasTimeframes input').forEach(cb => {
+    cb.checked = entry.biasTimeframes?.includes(cb.value) || false;
+  });
+
+  // Trading Mode
+  document.getElementById("tradingMode").value = entry.tradingMode || "day";
+  updateBiasOptions();
+
+  // Score live anzeigen
+  updateSetupScoreDisplay();
+
+  // 🧠 Signal zum Überschreiben statt neu anlegen
+  document.getElementById("saveJournalEntryButton").dataset.editId = entryId;
+
+  // Formular anzeigen
+  document.getElementById("calc-journal").style.display = "block";
+  window.scrollTo({ top: document.getElementById("calc-journal").offsetTop - 40, behavior: "smooth" });
+}
+
+
 function showEntriesForDate(dateStr) {
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
   const filtered = entries.filter(e => e.date.startsWith(dateStr));
   const list = document.getElementById("journalEntryList");
   list.innerHTML = `<h4>📅 ${dateStr} – ${filtered.length} Eintrag(e)</h4>`;
+
   if (filtered.length === 0) {
     list.innerHTML += "<p>❌ Keine Einträge gefunden.</p>";
     return;
   }
 
   filtered.forEach(entry => {
+    // 🔍 Setup Score berechnen
+    const result = getSetupScore(entry);
+const score = result.score;
+const valid = result.valid;
+
+   let verdict = "❌ Regelbruch";
+if (!valid) {
+  verdict = "❌ Nicht gültig (Bias fehlt)";
+} else if (score >= 40) {
+  verdict = "✅ Valides Setup";
+} else if (score >= 20) {
+  verdict = "⚠️ Wackliges Setup";
+}
+
+
+    // Bias Timeframes anzeigen
+    const biasStr = entry.biasTimeframes?.join(" + ") || "–";
+    const modeStr = entry.tradingMode || "–";
+
     list.innerHTML += `
       <div style="background:#333; padding:10px; border-radius:8px; margin-top:8px;">
         <strong>${entry.pair}</strong> (${entry.direction})<br>
         🎯 ${entry.entry} → ${entry.exit} | 💰 ${entry.pnl} €<br>
         ${renderStars(entry.emotionBefore)} Fokus<br>
         ${renderStars(entry.emotionAfter)} Nach dem Trade<br>
+        🧭 Modus: <strong>${modeStr}</strong><br>
+        📐 Bias-TFs: <strong>${biasStr}</strong><br>
+        📊 Setup Score: <strong>${score}%</strong> – ${verdict}<br>
         📝 ${entry.notes || "–"}<br>
-        ${entry.screenshot ? `<img src="${entry.screenshot}" class="journal-screenshot" alt="Screenshot" onclick="openLightbox('${entry.screenshot}')" />` : ""}
+		<button onclick="editEntry(${entry.id})" style="margin-top: 5px; background:#0077cc; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+  ✏️ Bearbeiten
+</button>
 
+        ${entry.screenshot ? `<img src="${entry.screenshot}" class="journal-screenshot" alt="Screenshot" onclick="openLightbox('${entry.screenshot}')" />` : ""}
       </div>
     `;
   });
 }
+
 
 function resetCurrentMonth() {
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
@@ -1230,6 +1533,11 @@ window.addEventListener("DOMContentLoaded", () => {
   buildJournalCalendar();
   setupStarRating("starsBefore", "emotionBefore");
   setupStarRating("starsAfter", "emotionAfter");
+
+  // Optional nur, wenn Bias beim Laden gesetzt ist:
+  if (document.querySelector('#biasTimeframes input:checked')) {
+    updateSetupScoreDisplay();
+  }
 });
 </script>
 
