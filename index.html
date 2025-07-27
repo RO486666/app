@@ -294,10 +294,45 @@
   cursor: pointer;
 }
 
+.crypto-animate {
+  font-weight: bold;
+  font-size: 18px;
+  color: #00ffcc;
+  text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  animation: glowPulse 2s infinite alternate;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.crypto-animate .coin {
+  display: inline-block;
+  animation: spinCoin 1.5s linear infinite;
+  font-size: 22px;
+}
+
+@keyframes spinCoin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+@keyframes glowPulse {
+  0% {
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+  }
+  100% {
+    text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+  }
+}
+
 	
   </style>
 </head>
 <body>
+
+
+
+
 
 
 
@@ -344,6 +379,18 @@
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
   <button class="btn" id="btn-calc-equity" onclick="switchCalcTab('equity')">📈 Equity-Sim</button>
+    <!-- ✨ Neuer Journal-Button -->
+  <button class="btn" id="btn-calc-journal" onclick="switchCalcTab('journal')" style="
+    background-color: #0077cc;
+    color: white;
+    margin-top: 10px;
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: inline-block;
+  ">📘 Journal</button>
+</div>
 </div>
 
 
@@ -709,6 +756,59 @@
 
 
 
+<div id="journalCalendarBox" class="stats-box" style="margin-top: 30px;">
+  <h3 style="text-align:center;">🗓️ Journal-Kalender</h3>
+  <div id="calendarContainer"></div>
+  <div id="journalEntryList" style="margin-top: 15px;"></div>
+</div>
+
+<div id="calc-journal" class="calc-box" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+<label>💱 Symbol:</label>
+<input type="text" id="journalSymbol" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
+<div id="symbolSuggestions" style="
+  background:#222; color:white; text-align:left; padding:5px; 
+  border-radius:6px; margin-top:5px; display:none; max-height:100px; overflow-y:auto;">
+</div>
+
+
+    <label>📈 Richtung:</label>
+    <select id="journalDirection">
+      <option value="Long">Long</option>
+      <option value="Short">Short</option>
+    </select>
+
+    <label>🎯 Einstieg:</label>
+    <input type="number" id="journalEntry" />
+
+    <label>🏁 Ausstieg:</label>
+    <input type="number" id="journalExit" />
+
+    <label>📦 Lotgröße:</label>
+    <input type="number" id="journalLots" step="0.01" />
+
+    <label>📊 PnL (€):</label>
+    <input type="number" id="journalPnL" />
+
+    <label>😐 Emotion vor dem Trade:</label>
+    <input type="text" id="emotionBefore" placeholder="z. B. ruhig, nervös" />
+
+    <label>😤 Emotion nach dem Trade:</label>
+    <input type="text" id="emotionAfter" placeholder="z. B. zufrieden, enttäuscht" />
+
+    <label><input type="checkbox" id="rulesFollowed" /> ✅ Regel befolgt?</label>
+
+    <label>📝 Kommentar:</label>
+    <textarea id="journalNotes" rows="4" style="width:100%; border-radius:6px;"></textarea>
+	
+	<label>📸 Screenshot (optional):</label>
+<input type="file" id="journalScreenshot" accept="image/*" />
+
+
+    <button onclick="saveJournalEntry()">💾 Speichern</button>
+  </div>
+</div>
+
 
 
 
@@ -726,6 +826,168 @@
 <div class="position-bar" id="positionBar"></div>
 
 <script>
+function saveJournalEntry() {
+  const fileInput = document.getElementById("journalScreenshot");
+  const file = fileInput.files[0];
+
+  const saveData = (imageData) => {
+    const entry = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      pair: document.getElementById("journalSymbol").value.trim(),
+      direction: document.getElementById("journalDirection").value,
+      entry: parseFloat(document.getElementById("journalEntry").value),
+      exit: parseFloat(document.getElementById("journalExit").value),
+      lots: parseFloat(document.getElementById("journalLots").value),
+      pnl: parseFloat(document.getElementById("journalPnL").value),
+      emotionBefore: document.getElementById("emotionBefore").value.trim(),
+      emotionAfter: document.getElementById("emotionAfter").value.trim(),
+      rulesFollowed: document.getElementById("rulesFollowed").checked,
+      notes: document.getElementById("journalNotes").value.trim(),
+      screenshot: imageData || null
+    };
+
+    const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
+    allEntries.push(entry);
+    localStorage.setItem("journalData", JSON.stringify(allEntries));
+
+    alert("✅ Journal-Eintrag gespeichert!");
+    fileInput.value = ""; // Reset Screenshot-Feld
+  };
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      saveData(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    saveData(null);
+  }
+}
+
+
+const knownSymbols = [
+  "EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD", "NZD/USD", "USD/CAD",
+  "EUR/JPY", "GBP/JPY", "CHF/JPY", "AUD/JPY", "CAD/JPY", "EUR/GBP",
+  "XAU/USD", "XAG/USD", "BTC/USD", "ETH/USD", "US30", "NAS100", "SPX500", "GER40", "UK100"
+];
+
+function suggestSymbol() {
+  const input = document.getElementById("journalSymbol");
+  const suggestionsBox = document.getElementById("symbolSuggestions");
+  const query = input.value.toUpperCase().trim();
+
+  if (!query || query.length < 1) {
+    suggestionsBox.style.display = "none";
+    suggestionsBox.innerHTML = "";
+    return;
+  }
+
+  const matches = knownSymbols.filter(sym => sym.includes(query));
+  if (matches.length === 0) {
+    suggestionsBox.style.display = "none";
+    suggestionsBox.innerHTML = "";
+    return;
+  }
+
+  suggestionsBox.innerHTML = matches.map(sym => `
+    <div style="padding:4px; cursor:pointer;" onclick="selectSymbol('${sym}')">${sym}</div>
+  `).join("");
+  suggestionsBox.style.display = "block";
+}
+
+function selectSymbol(symbol) {
+  document.getElementById("journalSymbol").value = symbol;
+  document.getElementById("symbolSuggestions").style.display = "none";
+  document.getElementById("symbolSuggestions").innerHTML = "";
+}
+
+function buildJournalCalendar(monthOffset = 0) {
+  const now = new Date();
+  const currentMonth = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth(); // 0-basiert
+
+  const firstDay = new Date(year, month, 1).getDay(); // Wochentag
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+
+  const calendar = document.createElement("div");
+  calendar.style.display = "grid";
+  calendar.style.gridTemplateColumns = "repeat(7, 1fr)";
+  calendar.style.gap = "5px";
+
+  // Wochentagsnamen
+  ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].forEach(day => {
+    const d = document.createElement("div");
+    d.textContent = day;
+    d.style.textAlign = "center";
+    d.style.color = "#0ff";
+    calendar.appendChild(d);
+  });
+
+  // Leere Felder für Anfang der Woche
+  for (let i = 0; i < firstDay; i++) {
+    calendar.appendChild(document.createElement("div"));
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const cell = document.createElement("div");
+    cell.textContent = day;
+    cell.style.padding = "10px";
+    cell.style.borderRadius = "6px";
+    cell.style.textAlign = "center";
+    cell.style.cursor = "pointer";
+    cell.style.background = "#222";
+
+    const tradesToday = entries.filter(e => e.date.startsWith(dateStr));
+    const pnlSum = tradesToday.reduce((sum, t) => sum + (parseFloat(t.pnl) || 0), 0);
+
+    if (tradesToday.length > 0) {
+      cell.style.background = pnlSum > 0 ? "#228B22" : pnlSum < 0 ? "#B22222" : "#444";
+      cell.style.color = "white";
+    }
+
+    cell.onclick = () => showEntriesForDate(dateStr);
+    calendar.appendChild(cell);
+  }
+
+  const container = document.getElementById("calendarContainer");
+  container.innerHTML = "";
+  container.appendChild(calendar);
+}
+
+function showEntriesForDate(dateStr) {
+  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const filtered = entries.filter(e => e.date.startsWith(dateStr));
+
+  const list = document.getElementById("journalEntryList");
+  list.innerHTML = `<h4>📅 ${dateStr} – ${filtered.length} Eintrag(e)</h4>`;
+
+  if (filtered.length === 0) {
+    list.innerHTML += "<p>❌ Keine Einträge gefunden.</p>";
+    return;
+  }
+
+  filtered.forEach(entry => {
+    list.innerHTML += `
+      <div style="background:#333; padding:10px; border-radius:8px; margin-top:8px;">
+        <strong>${entry.pair}</strong> (${entry.direction})<br>
+        🎯 ${entry.entry} → ${entry.exit} | 💰 ${entry.pnl} €<br>
+        😐 ${entry.emotionBefore} → 😤 ${entry.emotionAfter}<br>
+        📝 ${entry.notes || "–"}<br>
+        ${entry.screenshot ? `<img src="${entry.screenshot}" style="margin-top:10px; max-width:100%; border-radius:8px;" />` : ""}
+      </div>
+    `;
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  buildJournalCalendar();
+});
+
 
 </script>
 
@@ -1244,36 +1506,50 @@ const sessions = [
       { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
     ],
   },
-  {
-    name: "London Killzone",
-    start: 420,
-    end: 660,
-    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
-    weekDaysInfo: [
-      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
-      { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
-    ],
-  },
-  {
-    name: "New York Killzone",
-    start: 810,
-    end: 1020,
-    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
-      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
-    ],
-  },
-  {
-    name: "Deadzone",
-    start: 1380,
-    end: 0,
-    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
-    weekDaysInfo: [
-      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
-    ],
-  }
+{
+  name: "London Killzone",
+  start: 420,
+  end: 660,
+  info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
+  weekDaysInfo: [
+    { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
+    { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
+  ],
+},
+{
+  name: "New York Killzone",
+  start: 810,
+  end: 1020,
+  info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
+  weekDaysInfo: [
+    { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
+    { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
+  ],
+},
+{
+  name: "Deadzone",
+  start: 1380,
+  end: 0,
+  info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
+  weekDaysInfo: [
+    { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
+  ],
+},
+{
+  name: "Crypto",
+  start: 0,
+  end: 1440,
+  info: "Krypto läuft 24/7 – Spitzenvolumen oft bei Überschneidung mit NY & Asien.",
+  weekDaysInfo: [
+    { day: "Montag", text: "🚀 Reaktion auf Wochenstart – Gap-Moves checken" },
+    { day: "Mittwoch", text: "📉 Midweek-Reversal bei BTC häufig" },
+    { day: "Freitag", text: "💸 Ausbruch vor Wochenende, dann Flat Market" },
+    { day: "Samstag", text: "🧘 Wenig Volumen – Fokus auf Konsolidierungen" },
+    { day: "Sonntag", text: "⏳ Pre-Move für Montag oft sichtbar" }
+  ],
+}
 ];
+
 
 
 let lastAlertSession = null;
@@ -1419,45 +1695,85 @@ function updateRealTimeBar() {
   const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
   const hours = String(now.getHours()).padStart(2, "0");
   const mins = String(now.getMinutes()).padStart(2, "0");
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const percent = (minutes / 1439) * 100;
 
-  // 👉 Wochenende
-  if (weekday === 0 || weekday === 6) {
-    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} – Wochenende`;
-    progressBar.style.width = "0%";
-    progressBar.style.background = "#333";
-    progressBar.style.backgroundImage = "";
-    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-    sessionInfoEl.textContent = "📴 Wochenende – Markt ist geschlossen.";
-    sessionProgressEl.innerHTML = "⛔ Kein Handel – Wochenende";
-    sessionDetailsBox.innerHTML = "Keine Session-Daten am Wochenende.";
-    return;
+  // Fortschrittsbalken immer aktualisieren
+  progressBar.style.width = `${percent}%`;
+
+  // 👉 Krypto-Wochenende (Samstag & Sonntag)
+// 👉 Krypto-Wochenende (Freitagabend, Samstag, Sonntag)
+if (weekday === 0 || weekday === 6 || (weekday === 5 && minutes >= 1080)) {
+  const activeSessions = getCurrentSessions(minutes);
+  const names = activeSessions.map(s => s.name);
+  const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
+  sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
+
+  sessionInfoEl.innerHTML = `
+    📴 Forex & Indizes geschlossen –
+    <span class="crypto-animate">
+      <span class="coin">🪙</span> Krypto 24/7!
+    </span>
+  `;
+
+  sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
+
+  // 🔀 Dynamischer Tages-Content
+  let weekendInfo = "";
+
+  if (weekday === 5 && minutes >= 1080) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Freitagabend:</strong><br>
+      • 🕖 Letzte Volatilität vor dem Wochenschluss (18–22 Uhr)<br>
+      • 🔁 Take-Profits & Wochenschluss-Spikes<br>
+      • 📉 BTC oft rückläufig durch Positionsschließungen<br>
+      • ⚠️ Fakeouts & Liquiditätsgrabs vor der Ruhephase<br><br>
+      🚀 Bereite deine Watchlist fürs Wochenende vor!
+    `;
+  } else if (weekday === 6) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Samstag:</strong><br>
+      • 😴 Niedriges Volumen – kaum Institutionelle aktiv<br>
+      • 🔄 Meist Seitwärtsphasen → ideal für Range-Trading<br>
+      • ❄️ Impulsarme Märkte, gute Zeit für technische Analyse<br>
+      • 📐 Setups vorbereiten & Trading-Journal pflegen<br><br>
+      🧘 Fokus auf Klarheit statt Action – perfekter Analyse-Tag.
+    `;
+  } else if (weekday === 0) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Sonntag:</strong><br>
+      • ⏳ Pre-Move-Phase startet oft ab 18–20 Uhr<br>
+      • 🧠 Smart Money beginnt Positionierung für Montag<br>
+      • 🪤 False Breakouts oder „Liquidity Sweeps“ typisch<br>
+      • 🔥 Volumen steigt spürbar, besonders vor News-Wochen<br><br>
+      🚀 Nutze den Sonntagabend für Setup-Feintuning & Ausblick!
+    `;
   }
 
-// ⏬ Ab hier normaler Werktags-Ablauf
-const minutes = now.getHours() * 60 + now.getMinutes();
-const percent = (minutes / 1439) * 100;
+  sessionDetailsBox.innerHTML = weekendInfo;
+  return;
+}
 
-const activeSessions = getCurrentSessions(minutes);
-const names = activeSessions.map(s => s.name);
-const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
-sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
 
-progressBar.style.width = `${percent}%`;
+  // ⏬ Werktag-Session-Logik
+  const activeSessions = getCurrentSessions(minutes);
+  const names = activeSessions.map(s => s.name);
+  const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
+  sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
 
-const colors = names.map(n => sessionColors[n] || "#666");
+  const colors = names.map(n => sessionColors[n] || "#666");
+  updateGradientBar(colors);
+  showSessionProgress(activeSessions, minutes);
 
+  progressContainer.style.boxShadow = colors.length > 0
+    ? `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`
+    : "0 0 12px 6px rgba(0,0,0,0)";
 
   const name = activeSessions.length > 0 ? activeSessions[0].name : "";
   let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
-  
-   updateGradientBar(colors);
-   showSessionProgress(activeSessions, minutes); // ✅ HIER rein
-
-  if (colors.length > 0) {
-    progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
-  } else {
-    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-  }
 
   if (name === "Tokyo") {
     infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
@@ -1475,6 +1791,17 @@ const colors = names.map(n => sessionColors[n] || "#666");
     infoText = minutes < 1080 ? "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich." :
                 minutes < 1200 ? "📉 New York flacht ab – Markt beruhigt sich langsam." :
                 "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
+  } else if (name === "Crypto") {
+    if (weekday === 6) {
+      infoText = "🧘 Samstag – ruhige Konsolidierungen, optimal für Range-Trading.";
+    } else if (weekday === 0) {
+      infoText = minutes < 1080 ? "😴 Sonntagvormittag – flacher Markt, aber Pre-Move kann sich aufbauen." :
+                  "⏳ Sonntagabend – mögliche Pre-Moves vor dem Forex-Start.";
+    } else if (weekday === 5 && minutes >= 1080) {
+      infoText = "💸 Freitagabend – letzte Volatilität, oft BTC-Ausbrüche vor dem Wochenende.";
+    } else {
+      infoText = "🪙 Krypto läuft 24/7 – typischer Fokus: BTC/ETH & News-getriebene Altcoins.";
+    }
   } else if (minutes >= 720 && minutes < 840) {
     infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
   } else if (minutes >= 1380 || minutes < 60) {
@@ -1483,41 +1810,43 @@ const colors = names.map(n => sessionColors[n] || "#666");
 
   sessionInfoEl.textContent = infoText;
 
- if (activeSessions.length > 0) {
-  let fullInfo = "";
+  // 📋 Aktive Session-Details + Wochentagstexte
+  if (activeSessions.length > 0) {
+    let fullInfo = "";
 
-  activeSessions.forEach(s => {
-    let weekDaysHtml = "";
-    if (s.weekDaysInfo) {
-      weekDaysHtml = "<ul style='margin-left:18px; margin-top:4px;'>";
-      s.weekDaysInfo.forEach(({ day, text }) => {
-        weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
-      });
-      weekDaysHtml += "</ul>";
-    }
+    activeSessions.forEach(s => {
+      let weekDaysHtml = "";
+      if (s.weekDaysInfo) {
+        weekDaysHtml = "<ul style='margin-left:18px; margin-top:4px;'>";
+        s.weekDaysInfo.forEach(({ day, text }) => {
+          weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
+        });
+        weekDaysHtml += "</ul>";
+      }
 
-    const label = s.name.includes("Killzone") ? "🔥" :
-                  s.name.includes("New York") ? "🇺🇸" :
-                  s.name.includes("London") ? "💷" :
-                  s.name.includes("Tokyo") ? "🌏" :
-                  s.name.includes("Sydney") ? "🌙" : "🟡";
+      const label = s.name.includes("Killzone") ? "🔥" :
+                    s.name.includes("New York") ? "🇺🇸" :
+                    s.name.includes("London") ? "💷" :
+                    s.name.includes("Tokyo") ? "🌏" :
+                    s.name.includes("Sydney") ? "🌙" :
+                    s.name.includes("Crypto") ? "🪙" : "🟡";
 
-    fullInfo += `
-      <strong>${label} ${s.name}</strong><br>
-      📅 Start: ${formatHM(s.start)} Uhr<br>
-      🕓 Ende: ${formatHM(s.end)} Uhr<br>
-      ℹ️ ${s.info}
-      ${weekDaysHtml}
-      <hr style="border: none; border-top: 1px solid #444; margin: 10px 0;">
-    `;
-  });
+      fullInfo += `
+        <strong>${label} ${s.name}</strong><br>
+        📅 Start: ${formatHM(s.start)} Uhr<br>
+        🕓 Ende: ${formatHM(s.end)} Uhr<br>
+        ℹ️ ${s.info}
+        ${weekDaysHtml}
+        <hr style="border: none; border-top: 1px solid #444; margin: 10px 0;">
+      `;
+    });
 
-  sessionDetailsBox.innerHTML = fullInfo;
-} else {
-  sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
-}
+    sessionDetailsBox.innerHTML = fullInfo;
+  } else {
+    sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
+  }
 
-
+  // ⏰ Session-Wechsel-Warnung
   const minutesToNext = getMinutesToNextSession(minutes);
   if (minutesToNext <= 5 && minutesToNext > 0) {
     const currentActive = sessionText.textContent;
@@ -1536,17 +1865,40 @@ const colors = names.map(n => sessionColors[n] || "#666");
 }
 
 
+
 function updateDaySummary() {
   const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const infos = {
-    "Montag": "🚀 Start in die Woche – neue Impulse, frische Trends möglich.",
-    "Dienstag": "📈 Stabilisierung oder Fortsetzung der Wochenrichtung.",
-    "Mittwoch": "⚠️ Midweek-Reversal möglich – Bewegung oder Trendbruch.",
-    "Donnerstag": "📊 Viele Wirtschaftsdaten – Markt in Bewegung.",
-    "Freitag": "📅 Ruhiger Ausklang – Wochengewinn sichern, keine Paniktrades.",
-    "Samstag": "📴 Wochenende – Markt geschlossen.",
-    "Sonntag": "🛠️ Vorbereitung & Analyse für die neue Woche."
+    "Montag": `
+🚀 Start in die Woche – neue Impulse, frische Trends möglich.
+🪙 Krypto oft ruhig nach Sonntag – Fokus auf BTC-Reaktion.
+    `,
+    "Dienstag": `
+📈 Trend-Fortsetzung oder technische Korrekturen im Forex.
+🪙 BTC & Altcoins reagieren oft auf Marktstimmung.
+    `,
+    "Mittwoch": `
+⚠️ Midweek-Reversal möglich – Vorsicht bei Trendwechseln.
+🪙 BTC häufig impulsiv – Fakeouts nicht selten.
+    `,
+    "Donnerstag": `
+📊 News-Donnerstag – viele Wirtschaftsreleases.
+🪙 Volatile Altcoins – gute Chancen für Breakouts.
+    `,
+    "Freitag": `
+📅 Wochenabschluss – Gewinne sichern, keine Paniktrades.
+🪙 Abends oft BTC-Volatilität vor dem Krypto-Wochenende.
+    `,
+    "Samstag": `
+📴 Forex geschlossen – Markt schläft.
+🪙 Nur Krypto aktiv – ideale Zeit für Range-Trading & Analyse.
+    `,
+    "Sonntag": `
+🛠️ Vorbereitung auf neue Woche – Forex inaktiv.
+🪙 BTC Pre-Move oft ab 18–20 Uhr – Setup planen!
+    `
   };
+
 
   const now = new Date();
   const dayIndex = now.getDay();
@@ -1560,195 +1912,176 @@ function updateDaySummary() {
 document.addEventListener("DOMContentLoaded", () => {
   const daySummaryEl = document.getElementById("daySummary");
   const dayDetailsEl = document.getElementById("dayDetails");
-
 const dayDetailsMap = {
   "Montag": `
 🔵 <strong>Montag</strong><br><br>
 <strong>📌 Setup:</strong><br>
-Wochenstart – noch keine klare Richtung. Fokus auf erste Liquiditätsreaktionen.<br>
-Setup-Möglichkeiten für Swing & Intraday, aber nur bei sauberem Kontext.<br><br>
+Wochenstart – noch keine klare Richtung. Fokus auf erste Liquiditätsreaktionen.<br><br>
 
 <strong>✅ Strategie:</strong><br>
-Vorsichtiger Einstieg nach London-Open (09:00–10:00 Uhr)<br>
-Strukturaufbau auf H1/H4 beobachten, noch keine aggressiven Breakouts.<br><br>
+Vorsichtiger Einstieg nach London-Open (09:00–10:00 Uhr)<br><br>
 
 <strong>🕓 Marktverhalten:</strong><br>
-Volumen steigt langsam an – viele Trader warten auf Dienstag.<br>
-Oft "Range-Montage" – Setups können antäuschen.<br><br>
+Volumen steigt langsam an – viele Trader warten auf Dienstag.<br><br>
 
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
   <li>🇪🇺 EU-Handelsdaten, Sentiment-Indikatoren</li>
-  <li>🇩🇪 Ifo oder ZEW möglich</li>
   <li>💬 Kaum US-Daten – NY-Session eher träge</li>
 </ul><br>
 
 <strong>🧠 Mentaler Fokus:</strong><br>
-Bleib geduldig – heute wird nichts entschieden.<br>
-Setup nur handeln, wenn es in übergeordnete Struktur passt.<br><br>
+Geduldig bleiben – erste Impulse beobachten.<br><br>
 
 <strong>🧾 To-do am Montag:</strong><br>
 <ul>
   <li>📅 Wochenziele notieren</li>
-  <li>🔍 Watchlist-Paare analysieren</li>
-  <li>📈 H1/H4 Bias notieren</li>
-  <li>⏱️ Fokus auf NY-Liquidität testen</li>
-</ul>
+  <li>📈 H1/H4 Bias eintragen</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+BTC reagiert oft träge nach dem Wochenende – Strukturaufbau bis Montagabend.<br>
+ETH/BTC-Paare zeigen erste Signale für Volatilität der Woche.
 `,
 
   "Dienstag": `
 🟢 <strong>Dienstag</strong><br><br>
 <strong>📌 Setup:</strong><br>
-Intraday-Trading meist am klarsten – oft Trendfortsetzung oder Breakout-Nachbestätigung.<br>
-Scalping & Daytrading laufen meist technisch sauber.<br><br>
+Intraday-Trading meist am klarsten – oft Trendfortsetzung oder Retest.<br><br>
 
 <strong>✅ Strategie:</strong><br>
-Nutze klare Struktur nach Montag → z. B. Break of Structure + Retest.<br>
-Optimaler Tag für Liquiditätszonen, FVG oder Breaker-Block-Einstiege.<br><br>
+Nutze saubere Marktstruktur → Breakouts + Retest möglich.<br><br>
 
 <strong>🕓 Marktverhalten:</strong><br>
-Viel stabiler als Montag – London & NY liefern klare Bewegungen.<br>
-Volumen ist konstant, gute Range-Ausbrüche am Vormittag.<br><br>
+Konstant – London & NY liefern gute Bewegungen.<br><br>
 
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
   <li>🇪🇺 EZB oder UK Reden möglich</li>
-  <li>🇺🇸 Erste US-Marktbewegungen</li>
-  <li>📢 Manchmal Reden von Notenbankern</li>
+  <li>🇺🇸 US-Einstiegsdaten</li>
 </ul><br>
 
 <strong>🧠 Mentaler Fokus:</strong><br>
-Heute ist ein Arbeitstag – Fokus, keine Hektik.<br>
-Nutze den Flow, aber bleib strukturiert.<br><br>
+Keine Hektik – Struktur traden.<br><br>
 
 <strong>🧾 To-do am Dienstag:</strong><br>
 <ul>
-  <li>⚙️ Trade-Log abgleichen mit Montagsplan</li>
-  <li>✅ Mögliche Swing-Kandidaten markieren</li>
-  <li>📓 Setup-Kategorie zuweisen</li>
-</ul>
+  <li>⚙️ Trade-Log abgleichen</li>
+  <li>📓 Swing-Kandidaten markieren</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+BTC/ETH ziehen meist am Dienstag an – viele Altcoins folgen.<br>
+Guter Tag für FVG/Breaker-Entry in Krypto.
 `,
 
   "Mittwoch": `
 🟡 <strong>Mittwoch</strong><br><br>
 <strong>📌 Setup:</strong><br>
-Midweek = Wendepunkt. Viele Reversal, viele Fehlausbrüche.<br>
-Nur sichere Entries – Swing-Setups vorher validieren.<br><br>
+Midweek-Reversal – viele Fehlausbrüche möglich.<br><br>
 
 <strong>✅ Strategie:</strong><br>
-Marktstruktur analysieren: ist der Wochenbias noch gültig?<br>
-Antizyklische Reaktionen in Killzones möglich (NY besonders wachsam).<br><br>
+Reversal-Potenziale beachten, Killzones gezielt handeln.<br><br>
 
 <strong>🕓 Marktverhalten:</strong><br>
-Erhöhte Volatilität – häufige Umschwünge, Intraday-Highs/Lows werden geholt.<br>
-Scalping gut möglich, aber mit Risikoabsicherung.<br><br>
+Volatilität steigt – Intraday-Highs/Lows werden geholt.<br><br>
 
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
-  <li>🏦 FOMC/Fed Minutes → starke Bewegungen!</li>
+  <li>🏦 FOMC/Fed Minutes</li>
   <li>🇪🇺 EU/UK Inflationsdaten</li>
-  <li>📉 Crude Oil Inventories (US)</li>
 </ul><br>
 
 <strong>🧠 Mentaler Fokus:</strong><br>
-Wachsam bleiben – heute gewinnt nur, wer flexibel ist.<br>
-Bias nicht festfahren – reagiere auf den Markt.<br><br>
+Flexibel bleiben – Bias kann kippen.<br><br>
 
 <strong>🧾 To-do am Mittwoch:</strong><br>
 <ul>
-  <li>📈 Wochen-Midpoint markieren</li>
-  <li>💡 Offene Trades beobachten – Exit prüfen</li>
-  <li>📊 Volumenstatistik (bisher) notieren</li>
-</ul>
+  <li>📈 Midweek-Revue</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+BTC macht oft genau am Mittwoch seine Wochenrichtung klar oder Fake-Move – Fokus auf Liquiditätszonen.
 `,
 
   "Donnerstag": `
 🟠 <strong>Donnerstag</strong><br><br>
 <strong>📌 Setup:</strong><br>
-Momentum-Tag – viele Impulse durch News.<br>
-Guter Tag für FVG/Breaker & aggressive Entries nach Stophunt.<br><br>
+Momentum-Tag – viele Impulse durch News.<br><br>
 
 <strong>✅ Strategie:</strong><br>
-NY-Killzone dominieren oft – Fokus auf USD, Gold, NAS100.<br>
-Liquidität um 14:30 Uhr fast immer aktiv – warten auf Reaktion!<br><br>
+NY-Killzone aktiv handeln – Fokus auf USD, Gold, NAS100.<br><br>
 
 <strong>🕓 Marktverhalten:</strong><br>
-London ist meist klar, NY liefert starke Trend-Moves.<br>
-Donnerstag prägt oft das Wochenergebnis entscheidend.<br><br>
+London & NY klar – guter Trend-Tag.<br><br>
 
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
-  <li>🇺🇸 US GDP, PCE, CPI oder Jobless Claims</li>
-  <li>💬 Fed Sprecher / Powell oft hier</li>
-  <li>🇩🇪 Deutsche BIP-Daten</li>
+  <li>🇺🇸 GDP, PCE, CPI</li>
 </ul><br>
 
 <strong>🧠 Mentaler Fokus:</strong><br>
-Heute darf man mutiger sein – aber sauber bleiben.<br>
-Nicht gegen das Momentum handeln – sondern mit Timing!<br><br>
+Mutig, aber sauber – Reaktionen abwarten.<br><br>
 
 <strong>🧾 To-do am Donnerstag:</strong><br>
 <ul>
-  <li>🧠 Gewinne absichern für Freitag</li>
-  <li>📓 Trade-Revue der Woche vorbereiten</li>
-  <li>⚠️ „Do Not Overtrade“-Hinweis setzen</li>
-</ul>
+  <li>🧠 Gewinne sichern</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+Donnerstag ist oft der „Catch-up-Tag“ für Altcoins – hohe Dynamik bei Krypto-Volumen im NY-Overlap.
 `,
 
   "Freitag": `
 🔴 <strong>Freitag</strong><br><br>
 <strong>📌 Setup:</strong><br>
-Kein Swing-Trading empfohlen – größere Bewegungen meist vorbei.<br>
-Nutze saubere Strukturen in engen Zeitfenstern (Scalping-Setups).<br><br>
+Scalping & Intraday – große Bewegungen meist vorbei.<br><br>
 
 <strong>✅ Strategie:</strong><br>
-Scalping während London & NY Overlap (08:00–13:00 Uhr)<br>
-Nur Momentum bei klarer Liquiditätsjagd handeln – keine Breakouts blind.<br><br>
+Nur Liquiditätsjagden handeln – keine blind Breakouts.<br><br>
 
 <strong>🕓 Marktverhalten:</strong><br>
-Ab 13:00–14:00 Uhr wird es merklich ruhiger.<br>
-Trader & Banken schließen Positionen zum Wochenabschluss.<br>
-Bewegungen werden erratisch, Spreads steigen leicht.<br><br>
+Ruhiger ab 13:00 Uhr – Positionsschließung dominiert.<br><br>
 
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
-  <li>👷 US-Arbeitsmarktdaten (oft 14:30 Uhr)</li>
-  <li>📈 NFP oder „Unemployment Rate“ jeden 1. Freitag im Monat</li>
-  <li>💬 Häufig Fed-Sprecher oder Wochenrückblicke</li>
+  <li>📈 US-Arbeitsmarktdaten (oft 14:30 Uhr)</li>
 </ul><br>
 
 <strong>🧠 Mentaler Fokus:</strong><br>
-Kein FOMO, kein Revenge-Trading.<br>
-Was diese Woche nicht lief – wird nächste Woche nicht durch Freitag repariert.<br>
-Gönn dir früh Feierabend, sei stolz auf Disziplin.<br><br>
+Kein FOMO, kein Revenge-Trading.<br><br>
 
 <strong>🧾 To-do am Freitag:</strong><br>
 <ul>
-  <li>📊 Wochenstatistik eintragen (Gewinne/Verluste, Trefferquote)</li>
-  <li>📸 Equity-Kurve screenshoten</li>
-  <li>📓 Setup-Bewertung im Journal (Was lief gut, was nicht)</li>
-  <li>✅ Clean Close: alle Positionen geschlossen?</li>
-</ul>
+  <li>📊 Wochenstatistik eintragen</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+Ab 18:00 Uhr: BTC beginnt Pre-Move für Wochenende.<br>
+BTC/ETH brechen oft vor dem „Krypto-Samstag“ aus – Watchlist ready machen.
 `,
 
   "Samstag": `
 📴 <strong>Samstag</strong><br><br>
-Kein Handel – Wochenende.<br>
-📓 Rückblick auf Trades der Woche<br>
-🧘 Erholung & Abstand zum Markt<br>
-📊 Vorbereitung für Sonntagsplanung
+Kein Handel in Forex – aber Krypto läuft.<br><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+• Wenig Volumen – ideal für Struktur-Analyse<br>
+• Range-Trading auf BTC/ETH sehr effektiv<br>
+• Vorbereitung auf Sonntag → Pre-Move beachten
 `,
 
   "Sonntag": `
 📴 <strong>Sonntag</strong><br><br>
-Noch kein Handel – aber Vorbereitung ist 🔑.<br><br>
-<ul>
-  <li>📅 Kalender prüfen (Wirtschaftsdaten & Events)</li>
-  <li>📊 Setup-Screener & Wochenstruktur analysieren</li>
-  <li>🧠 Mentales Ziel setzen: 1 Regel für die Woche</li>
-</ul>
+Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+• Ab 18:00 Uhr: BTC/ETH zeigen oft erste Richtung<br>
+• Pre-Move für die Woche sichtbar<br>
+• Setups validieren & Einstiegslevel berechnen
 `
 };
+
 
   if (daySummaryEl && dayDetailsEl) {
     daySummaryEl.addEventListener("click", () => {
