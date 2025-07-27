@@ -325,6 +325,31 @@
   }
 }
 
+.star-rating {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  display: inline-flex;
+}
+.star-rating span {
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+}
+.star-rating span.selected {
+  color: gold;
+}
+
+
+.journal-screenshot {
+  max-width: 100%;
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: block;
+}
+
 	
   </style>
 </head>
@@ -379,17 +404,6 @@
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
   <button class="btn" id="btn-calc-equity" onclick="switchCalcTab('equity')">📈 Equity-Sim</button>
-    <!-- ✨ Neuer Journal-Button -->
-  <button class="btn" id="btn-calc-journal" onclick="switchCalcTab('journal')" style="
-    background-color: #0077cc;
-    color: white;
-    margin-top: 10px;
-    font-size: 16px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    display: inline-block;
-  ">📘 Journal</button>
 </div>
 </div>
 
@@ -754,63 +768,101 @@
   </div>
 </div>
 
-
-
-<div id="journalCalendarBox" class="stats-box" style="margin-top: 30px;">
-  <h3 style="text-align:center;">🗓️ Journal-Kalender</h3>
-  <div id="calendarContainer"></div>
-  <div id="journalEntryList" style="margin-top: 15px;"></div>
-</div>
-
-<div id="calc-journal" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-<label>💱 Symbol:</label>
-<input type="text" id="journalSymbol" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
-<div id="symbolSuggestions" style="
-  background:#222; color:white; text-align:left; padding:5px; 
-  border-radius:6px; margin-top:5px; display:none; max-height:100px; overflow-y:auto;">
-</div>
-
-
-    <label>📈 Richtung:</label>
-    <select id="journalDirection">
-      <option value="Long">Long</option>
-      <option value="Short">Short</option>
-    </select>
-
-    <label>🎯 Einstieg:</label>
-    <input type="number" id="journalEntry" />
-
-    <label>🏁 Ausstieg:</label>
-    <input type="number" id="journalExit" />
-
-    <label>📦 Lotgröße:</label>
-    <input type="number" id="journalLots" step="0.01" />
-
-    <label>📊 PnL (€):</label>
-    <input type="number" id="journalPnL" />
-
-    <label>😐 Emotion vor dem Trade:</label>
-    <input type="text" id="emotionBefore" placeholder="z. B. ruhig, nervös" />
-
-    <label>😤 Emotion nach dem Trade:</label>
-    <input type="text" id="emotionAfter" placeholder="z. B. zufrieden, enttäuscht" />
-
-    <label><input type="checkbox" id="rulesFollowed" /> ✅ Regel befolgt?</label>
-
-    <label>📝 Kommentar:</label>
-    <textarea id="journalNotes" rows="4" style="width:100%; border-radius:6px;"></textarea>
-	
-	<label>📸 Screenshot (optional):</label>
-<input type="file" id="journalScreenshot" accept="image/*" />
-
-
-    <button onclick="saveJournalEntry()">💾 Speichern</button>
+  <!-- 📆 Kalender -->
+<div id="journalCalendarBox" class="stats-box" style="margin-top: 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <button onclick="changeMonth(-1)">⬅️</button>
+    <h3 id="calendarTitle">🗓️ Journal-Kalender</h3>
+    <button onclick="changeMonth(1)">➡️</button>
   </div>
+
+  <canvas id="calendarEquityChart" height="150" style="margin:10px auto 5px auto; display:block;"></canvas>
+
+  <div id="calendarEquityStats" style="color: #ccc; margin-top: 5px;"></div>
+  <div id="calendarContainer" style="margin-top: 10px;"></div>
+  <div id="calendarStats" style="margin-top: 5px; color: #ccc;"></div>
+  <div id="journalEntryList" style="margin-top: 0;"></div>
+</div>
+
+<!-- 📘 Journal-Eingabe -->
+<div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
+  <div class="stats-box" style="display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: auto;">
+
+<label>📆 Datum (optional):</label>
+<input type="date" id="journalManualDate" class="input" />
+
+  <label>💱 Symbol:</label>
+  <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
+  <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
+
+  <label>📈 Richtung:</label>
+  <select id="journalDirection" class="input">
+    <option value="Long">Long</option>
+    <option value="Short">Short</option>
+  </select>
+
+  <div style="display: flex; gap: 10px;">
+    <div style="flex: 1;">
+      <label>🎯 Einstieg:</label>
+      <input type="number" id="journalEntry" class="input" />
+    </div>
+    <div style="flex: 1;">
+      <label>🏁 Ausstieg:</label>
+      <input type="number" id="journalExit" class="input" />
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <div style="flex: 1;">
+      <label>📦 Lotgröße:</label>
+      <input type="number" id="journalLots" step="0.01" class="input" />
+    </div>
+    <div style="flex: 1;">
+      <label>📊 PnL (€):</label>
+      <input type="number" id="journalPnL" class="input" />
+    </div>
+  </div>
+
+  <label>😐 Fokus vor dem Trade:</label>
+  <div id="starsBefore" class="star-rating" style="margin-bottom: 5px;"></div>
+  <input type="hidden" id="emotionBefore" value="5" />
+
+  <label>😤 Nach dem Trade:</label>
+  <div id="starsAfter" class="star-rating" style="margin-bottom: 5px;"></div>
+  <input type="hidden" id="emotionAfter" value="5" />
+
+  <label><input type="checkbox" id="rulesFollowed" /> ✅ Regel befolgt?</label>
+
+  <label>📝 Kommentar:</label>
+  <textarea id="journalNotes" rows="3" class="input" style="border-radius: 6px;"></textarea>
+
+  <label>📸 Screenshot (optional):</label>
+  <input type="file" id="journalScreenshot" accept="image/*" class="input" />
+
+  <button onclick="saveJournalEntry()" style="
+    background-color: #0077cc;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  ">💾 Eintrag speichern</button>
 </div>
 
 
+<div style="margin-top:20px; text-align:center;">
+  <button onclick="resetCurrentMonth()" style="margin:5px; background:#cc6600; color:white; padding:8px 15px; border:none; border-radius:5px;">🗓️ Monat zurücksetzen</button>
+  <button onclick="resetSelectedDay()" style="margin:5px; background:#0066cc; color:white; padding:8px 15px; border:none; border-radius:5px;">📅 Tag zurücksetzen</button>
+  <button onclick="resetAllJournal()" style="margin:5px; background:#990000; color:white; padding:8px 15px; border:none; border-radius:5px;">🗑️ Alles löschen</button>
+</div>
 
+<!-- 🔍 Lightbox für vergrößerte Bilder -->
+<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
+  <img id="lightboxImage" src="" alt="Full Screenshot" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
+</div>
 
 
 
@@ -824,24 +876,30 @@
 
 
 <div class="position-bar" id="positionBar"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+let currentMonthOffset = 0;
+
 function saveJournalEntry() {
   const fileInput = document.getElementById("journalScreenshot");
   const file = fileInput.files[0];
+  const manualDate = document.getElementById("journalManualDate")?.value;
 
   const saveData = (imageData) => {
     const entry = {
       id: Date.now(),
-      date: new Date().toISOString(),
+      date: manualDate
+        ? new Date(manualDate).toISOString()
+        : new Date().toISOString(),
       pair: document.getElementById("journalSymbol").value.trim(),
       direction: document.getElementById("journalDirection").value,
       entry: parseFloat(document.getElementById("journalEntry").value),
       exit: parseFloat(document.getElementById("journalExit").value),
       lots: parseFloat(document.getElementById("journalLots").value),
       pnl: parseFloat(document.getElementById("journalPnL").value),
-      emotionBefore: document.getElementById("emotionBefore").value.trim(),
-      emotionAfter: document.getElementById("emotionAfter").value.trim(),
+      emotionBefore: parseInt(document.getElementById("emotionBefore").value),
+      emotionAfter: parseInt(document.getElementById("emotionAfter").value),
       rulesFollowed: document.getElementById("rulesFollowed").checked,
       notes: document.getElementById("journalNotes").value.trim(),
       screenshot: imageData || null
@@ -852,26 +910,94 @@ function saveJournalEntry() {
     localStorage.setItem("journalData", JSON.stringify(allEntries));
 
     alert("✅ Journal-Eintrag gespeichert!");
-    fileInput.value = ""; // Reset Screenshot-Feld
+    fileInput.value = "";
+    buildJournalCalendar(currentMonthOffset);
   };
 
   if (file) {
     const reader = new FileReader();
-    reader.onload = function (e) {
-      saveData(e.target.result);
-    };
+    reader.onload = (e) => saveData(e.target.result);
     reader.readAsDataURL(file);
   } else {
     saveData(null);
   }
 }
+function openLightbox(src) {
+  const overlay = document.getElementById("lightboxOverlay");
+  const img = document.getElementById("lightboxImage");
+  img.src = src;
+  overlay.style.display = "flex";
+}
 
+function closeLightbox() {
+  const overlay = document.getElementById("lightboxOverlay");
+  const img = document.getElementById("lightboxImage");
+  overlay.style.display = "none";
+  img.src = "";
+}
+
+
+function renderStars(value) {
+  const v = Math.max(1, Math.min(10, parseInt(value) || 0));
+  return "⭐".repeat(v) + "☆".repeat(10 - v) + ` (${v}/10)`;
+}
+
+function setupStarRating(containerId, inputId) {
+  const container = document.getElementById(containerId);
+  const input = document.getElementById(inputId);
+
+  for (let i = 10; i >= 1; i--) {
+    const star = document.createElement("span");
+    star.innerHTML = "★";
+    star.dataset.value = i;
+    star.onclick = () => {
+      input.value = i;
+      updateStarVisuals(containerId, i);
+    };
+    container.appendChild(star);
+  }
+
+  updateStarVisuals(containerId, parseInt(input.value));
+}
+
+function updateStarVisuals(containerId, value) {
+  const container = document.getElementById(containerId);
+  const stars = container.querySelectorAll("span");
+  stars.forEach(s => {
+    s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
+  });
+}
 
 const knownSymbols = [
+  // 🔹 Forex
   "EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD", "NZD/USD", "USD/CAD",
-  "EUR/JPY", "GBP/JPY", "CHF/JPY", "AUD/JPY", "CAD/JPY", "EUR/GBP",
-  "XAU/USD", "XAG/USD", "BTC/USD", "ETH/USD", "US30", "NAS100", "SPX500", "GER40", "UK100"
+  "EUR/JPY", "GBP/JPY", "CHF/JPY", "AUD/JPY", "CAD/JPY", "EUR/GBP", "EUR/CHF",
+  "GBP/CHF", "AUD/NZD", "EUR/AUD", "EUR/CAD", "GBP/CAD", "GBP/NZD", "NZD/JPY", "NZD/CAD",
+
+  // 🔹 Krypto (CFDs)
+  "BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD", "LTC/USD", "ADA/USD", "BCH/USD",
+
+  // 🔹 Metalle (Spot & Futures CFDs)
+  "XAU/USD", // Gold
+  "XAG/USD", // Silber
+  "XPT/USD", // Platin
+  "XPD/USD", // Palladium
+  "COPPER/USD", // Kupfer
+  "ALUMINIUM/USD",
+  "LEAD/USD",
+  "ZINC/USD",
+
+  // 🔹 Energie/Rohstoffe
+  "WTI/USD",       // WTI Crude Oil
+  "BRENT/USD",     // Brent Crude Oil
+  "NATGAS/USD",    // Natural Gas
+  "SOYBEAN/USD",   // Sojabohnen
+  "SUGAR/USD",     // Zucker
+
+  // 🔹 Indizes (zur Orientierung – obwohl du nur 1–4 wolltest)
+  "US30", "NAS100", "SPX500", "GER40", "UK100"
 ];
+
 
 function suggestSymbol() {
   const input = document.getElementById("journalSymbol");
@@ -885,16 +1011,10 @@ function suggestSymbol() {
   }
 
   const matches = knownSymbols.filter(sym => sym.includes(query));
-  if (matches.length === 0) {
-    suggestionsBox.style.display = "none";
-    suggestionsBox.innerHTML = "";
-    return;
-  }
-
   suggestionsBox.innerHTML = matches.map(sym => `
     <div style="padding:4px; cursor:pointer;" onclick="selectSymbol('${sym}')">${sym}</div>
   `).join("");
-  suggestionsBox.style.display = "block";
+  suggestionsBox.style.display = matches.length ? "block" : "none";
 }
 
 function selectSymbol(symbol) {
@@ -903,22 +1023,39 @@ function selectSymbol(symbol) {
   document.getElementById("symbolSuggestions").innerHTML = "";
 }
 
+function getPnLStatsByDay(entries) {
+  const daily = {};
+  entries.forEach(entry => {
+    const date = new Date(entry.date).toISOString().split("T")[0];
+    daily[date] = (daily[date] || 0) + (parseFloat(entry.pnl) || 0);
+  });
+  return daily;
+}
+
 function buildJournalCalendar(monthOffset = 0) {
   const now = new Date();
   const currentMonth = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
   const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth(); // 0-basiert
+  const month = currentMonth.getMonth();
+  currentMonthOffset = monthOffset;
 
-  const firstDay = new Date(year, month, 1).getDay(); // Wochentag
+  const titleEl = document.getElementById("calendarTitle");
+  if (titleEl) {
+    titleEl.textContent = `📅 ${currentMonth.toLocaleString("de-DE", { month: "long" })} ${year}`;
+  }
+
+  const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const dailyStats = getPnLStatsByDay(entries);
+  let activeCalendarCell = null;
+const manualDateInput = document.getElementById("journalManualDate");
 
   const calendar = document.createElement("div");
   calendar.style.display = "grid";
   calendar.style.gridTemplateColumns = "repeat(7, 1fr)";
   calendar.style.gap = "5px";
 
-  // Wochentagsnamen
   ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].forEach(day => {
     const d = document.createElement("div");
     d.textContent = day;
@@ -927,45 +1064,176 @@ function buildJournalCalendar(monthOffset = 0) {
     calendar.appendChild(d);
   });
 
-  // Leere Felder für Anfang der Woche
   for (let i = 0; i < firstDay; i++) {
     calendar.appendChild(document.createElement("div"));
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const cell = document.createElement("div");
-    cell.textContent = day;
-    cell.style.padding = "10px";
-    cell.style.borderRadius = "6px";
-    cell.style.textAlign = "center";
-    cell.style.cursor = "pointer";
-    cell.style.background = "#222";
 
-    const tradesToday = entries.filter(e => e.date.startsWith(dateStr));
-    const pnlSum = tradesToday.reduce((sum, t) => sum + (parseFloat(t.pnl) || 0), 0);
+for (let day = 1; day <= daysInMonth; day++) {
+  const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const pnl = dailyStats[dateStr] || 0;
 
-    if (tradesToday.length > 0) {
-      cell.style.background = pnlSum > 0 ? "#228B22" : pnlSum < 0 ? "#B22222" : "#444";
-      cell.style.color = "white";
-    }
+  const cell = document.createElement("div");
+  cell.textContent = day;
+  cell.style.padding = "10px";
+  cell.style.borderRadius = "6px";
+  cell.style.textAlign = "center";
+  cell.style.cursor = "pointer";
+  cell.style.transition = "outline 0.2s ease";
 
-    cell.onclick = () => showEntriesForDate(dateStr);
-    calendar.appendChild(cell);
+  // ✅ Farbe nach PnL
+  if (pnl > 0) {
+    cell.style.background = "#228B22"; // grün
+    cell.style.color = "white";
+  } else if (pnl < 0) {
+    cell.style.background = "#B22222"; // rot
+    cell.style.color = "white";
+  } else {
+    cell.style.background = "#777"; // neutral
+    cell.style.color = "white";
   }
 
-  const container = document.getElementById("calendarContainer");
-  container.innerHTML = "";
-  container.appendChild(calendar);
+cell.onclick = () => {
+  showEntriesForDate(dateStr);
+
+  if (activeCalendarCell) {
+    activeCalendarCell.style.outline = "";
+  }
+
+  cell.style.outline = "2px solid #3399ff";
+  activeCalendarCell = cell;
+
+  if (manualDateInput) {
+    manualDateInput.value = dateStr;
+  }
+
+  // 📘 Journal sichtbar machen
+  const journalBox = document.getElementById("calc-journal");
+  if (journalBox) {
+    journalBox.style.display = "block";
+    window.scrollTo({
+      top: journalBox.offsetTop - 40,
+      behavior: "smooth"
+    });
+  }
+};
+
+
+  calendar.appendChild(cell);
+}
+
+
+
+  document.getElementById("calendarContainer").innerHTML = "";
+  activeCalendarCell = null;
+  document.getElementById("calendarContainer").appendChild(calendar);
+
+  const currentMonthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const monthlyEntries = entries
+    .filter(e => e.date.startsWith(currentMonthKey))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // 📈 Equity-Kurve
+  let equity = 0;
+  const equityData = [0];
+  const labels = ['Start'];
+  let peak = 0;
+  let maxDrawdown = 0;
+
+  monthlyEntries.forEach((e, i) => {
+    equity += parseFloat(e.pnl || 0);
+    equityData.push(equity);
+    labels.push(`#${i + 1}`);
+    if (equity > peak) peak = equity;
+    const dd = ((peak - equity) / peak) * 100;
+    if (dd > maxDrawdown) maxDrawdown = dd;
+  });
+
+  const ctx = document.getElementById("calendarEquityChart").getContext("2d");
+  if (window.calendarEquityChartInstance) window.calendarEquityChartInstance.destroy();
+  window.calendarEquityChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Equity-Kurve',
+        data: equityData,
+        borderWidth: 2,
+        borderColor: '#00ff99',
+        backgroundColor: 'rgba(0,255,153,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Trades im Monat' } },
+        y: { title: { display: true, text: 'Kumulierte Performance (€)' } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // 📊 Monatsstatistik + Zusatzwerte
+  const pnlList = monthlyEntries.map(e => parseFloat(e.pnl || 0));
+  const days = {};
+  monthlyEntries.forEach(e => {
+    const day = new Date(e.date).toISOString().split("T")[0];
+    days[day] = (days[day] || 0) + parseFloat(e.pnl || 0);
+  });
+
+  const pnlPerDay = Object.values(days);
+ const winTrades = monthlyEntries.filter(e => parseFloat(e.pnl) > 0);
+const lossTrades = monthlyEntries.filter(e => parseFloat(e.pnl) < 0);
+
+  const avgPerDay = pnlPerDay.length ? pnlPerDay.reduce((a, b) => a + b, 0) / pnlPerDay.length : 0;
+const bestDay = pnlPerDay.length ? Math.max(...pnlPerDay) : null;
+const worstDay = pnlPerDay.length ? Math.min(...pnlPerDay) : null;
+
+const totalWin = winTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+const totalLoss = lossTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+
+  const profitFactor = totalLoss !== 0 ? Math.abs(totalWin / totalLoss) : "∞";
+  const tradesWon = monthlyEntries.filter(e => parseFloat(e.pnl) > 0).length;
+  const tradesTotal = monthlyEntries.length;
+  const winRate = tradesTotal > 0 ? (tradesWon / tradesTotal) * 100 : 0;
+
+  document.getElementById("calendarStats").innerHTML = `
+ <div id="monthlyOverview" style="margin-bottom:15px;">
+    📊 Monat ${currentMonthKey} – <strong style="color:${equity >= 0 ? '#0f0' : '#f44'}">${equity.toFixed(2)} €</strong><br>
+    💚 Bester Tag: <strong>${bestDay !== null ? bestDay.toFixed(2) : "–"} €</strong><br>
+    💔 Schlechtester Tag: <strong>${worstDay !== null ? worstDay.toFixed(2) : "–"} €</strong><br>
+    📉 Max Drawdown: <strong>${maxDrawdown.toFixed(2)}%</strong><br>
+    📈 Trades: <strong>${monthlyEntries.length}</strong><br>
+    
+    🧾 Gewinn-Trades: <strong>${winTrades.length}</strong> / Verlust-Trades: <strong>${lossTrades.length}</strong><br>
+
+    🧮 Ø/Tag: <strong>${avgPerDay.toFixed(2)} €</strong><br>
+    ⚖️ Profitfaktor: <strong>${profitFactor}</strong><br>
+    🎯 Trefferquote: <strong>${winRate.toFixed(1)}%</strong>
+  </div>
+
+  <canvas id="calendarEquityChart" height="150" style="margin: 10px auto 5px auto; display:block;"></canvas>
+
+
+  <div id="calendarEquityStats" style="color: #ccc;">
+    <!-- Tagesansicht kommt hier dynamisch rein, wenn man auf einen Tag klickt -->
+  </div>
+`;
+}
+
+function changeMonth(offset) {
+  currentMonthOffset += offset;
+  buildJournalCalendar(currentMonthOffset);
 }
 
 function showEntriesForDate(dateStr) {
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
   const filtered = entries.filter(e => e.date.startsWith(dateStr));
-
   const list = document.getElementById("journalEntryList");
   list.innerHTML = `<h4>📅 ${dateStr} – ${filtered.length} Eintrag(e)</h4>`;
-
   if (filtered.length === 0) {
     list.innerHTML += "<p>❌ Keine Einträge gefunden.</p>";
     return;
@@ -976,20 +1244,63 @@ function showEntriesForDate(dateStr) {
       <div style="background:#333; padding:10px; border-radius:8px; margin-top:8px;">
         <strong>${entry.pair}</strong> (${entry.direction})<br>
         🎯 ${entry.entry} → ${entry.exit} | 💰 ${entry.pnl} €<br>
-        😐 ${entry.emotionBefore} → 😤 ${entry.emotionAfter}<br>
+        ${renderStars(entry.emotionBefore)} Fokus<br>
+        ${renderStars(entry.emotionAfter)} Nach dem Trade<br>
         📝 ${entry.notes || "–"}<br>
-        ${entry.screenshot ? `<img src="${entry.screenshot}" style="margin-top:10px; max-width:100%; border-radius:8px;" />` : ""}
+        ${entry.screenshot ? `<img src="${entry.screenshot}" class="journal-screenshot" alt="Screenshot" onclick="openLightbox('${entry.screenshot}')" />` : ""}
+
       </div>
     `;
   });
 }
 
+function resetCurrentMonth() {
+  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+  const filtered = entries.filter(e => !e.date.startsWith(monthKey));
+  localStorage.setItem("journalData", JSON.stringify(filtered));
+  buildJournalCalendar(currentMonthOffset);
+  document.getElementById("journalEntryList").innerHTML = "";
+  alert(`✅ Alle Einträge für ${monthKey} wurden gelöscht.`);
+}
+
+function resetSelectedDay() {
+  const selectedDate = document.getElementById("journalManualDate")?.value;
+  if (!selectedDate) {
+    alert("⚠️ Kein Tag ausgewählt.");
+    return;
+  }
+
+  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const filtered = entries.filter(e => !e.date.startsWith(selectedDate));
+  localStorage.setItem("journalData", JSON.stringify(filtered));
+  buildJournalCalendar(currentMonthOffset);
+  document.getElementById("journalEntryList").innerHTML = "";
+  alert(`📅 Alle Einträge für ${selectedDate} wurden gelöscht.`);
+}
+
+function resetAllJournal() {
+  if (confirm("⚠️ Bist du sicher, dass du ALLES löschen willst?")) {
+    localStorage.removeItem("journalData");
+    localStorage.removeItem("manualNotes");
+    buildJournalCalendar(currentMonthOffset);
+    document.getElementById("journalEntryList").innerHTML = "";
+    document.getElementById("calc-journal").style.display = "none";
+    alert("🗑️ Journal vollständig gelöscht.");
+  }
+}
+
+
 window.addEventListener("DOMContentLoaded", () => {
   buildJournalCalendar();
+  setupStarRating("starsBefore", "emotionBefore");
+  setupStarRating("starsAfter", "emotionAfter");
 });
-
-
 </script>
+
+
+
+
 
 
 
@@ -1701,61 +2012,59 @@ function updateRealTimeBar() {
   // Fortschrittsbalken immer aktualisieren
   progressBar.style.width = `${percent}%`;
 
-  // 👉 Krypto-Wochenende (Samstag & Sonntag)
-// 👉 Krypto-Wochenende (Freitagabend, Samstag, Sonntag)
-if (weekday === 0 || weekday === 6 || (weekday === 5 && minutes >= 1080)) {
-  const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map(s => s.name);
-  const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
-  sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
+  // ✅ Definiere echten Krypto-Wochenende-Zeitraum
+  const isCryptoWeekend =
+    (weekday === 6) || // Samstag
+    (weekday === 0) || // Sonntag
+    (weekday === 5 && minutes >= 1380); // Freitag ab 23:00
 
-  sessionInfoEl.innerHTML = `
-    📴 Forex & Indizes geschlossen –
-    <span class="crypto-animate">
-      <span class="coin">🪙</span> Krypto 24/7!
-    </span>
-  `;
-
-  sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
-
-  // 🔀 Dynamischer Tages-Content
-  let weekendInfo = "";
-
-  if (weekday === 5 && minutes >= 1080) {
-    weekendInfo = `
-      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-      📅 <strong>Freitagabend:</strong><br>
-      • 🕖 Letzte Volatilität vor dem Wochenschluss (18–22 Uhr)<br>
-      • 🔁 Take-Profits & Wochenschluss-Spikes<br>
-      • 📉 BTC oft rückläufig durch Positionsschließungen<br>
-      • ⚠️ Fakeouts & Liquiditätsgrabs vor der Ruhephase<br><br>
-      🚀 Bereite deine Watchlist fürs Wochenende vor!
+  if (isCryptoWeekend) {
+    sessionText.textContent = `🕒 ${hours}:${mins} | Krypto-Wochenende aktiv`;
+    sessionInfoEl.innerHTML = `
+      📴 Forex & Indizes geschlossen –
+      <span class="crypto-animate">
+        <span class="coin">🪙</span> Krypto 24/7!
+      </span>
     `;
-  } else if (weekday === 6) {
-    weekendInfo = `
-      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-      📅 <strong>Samstag:</strong><br>
-      • 😴 Niedriges Volumen – kaum Institutionelle aktiv<br>
-      • 🔄 Meist Seitwärtsphasen → ideal für Range-Trading<br>
-      • ❄️ Impulsarme Märkte, gute Zeit für technische Analyse<br>
-      • 📐 Setups vorbereiten & Trading-Journal pflegen<br><br>
-      🧘 Fokus auf Klarheit statt Action – perfekter Analyse-Tag.
-    `;
-  } else if (weekday === 0) {
-    weekendInfo = `
-      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-      📅 <strong>Sonntag:</strong><br>
-      • ⏳ Pre-Move-Phase startet oft ab 18–20 Uhr<br>
-      • 🧠 Smart Money beginnt Positionierung für Montag<br>
-      • 🪤 False Breakouts oder „Liquidity Sweeps“ typisch<br>
-      • 🔥 Volumen steigt spürbar, besonders vor News-Wochen<br><br>
-      🚀 Nutze den Sonntagabend für Setup-Feintuning & Ausblick!
-    `;
+    sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
+
+    let weekendInfo = "";
+
+    if (weekday === 5 && minutes >= 1380) {
+      weekendInfo = `
+        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+        📅 <strong>Freitagabend:</strong><br>
+        • 🕖 Letzte Volatilität vor dem Wochenschluss (18–22 Uhr)<br>
+        • 🔁 Take-Profits & Wochenschluss-Spikes<br>
+        • 📉 BTC oft rückläufig durch Positionsschließungen<br>
+        • ⚠️ Fakeouts & Liquiditätsgrabs vor der Ruhephase<br><br>
+        🚀 Bereite deine Watchlist fürs Wochenende vor!
+      `;
+    } else if (weekday === 6) {
+      weekendInfo = `
+        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+        📅 <strong>Samstag:</strong><br>
+        • 😴 Niedriges Volumen – kaum Institutionelle aktiv<br>
+        • 🔄 Meist Seitwärtsphasen → ideal für Range-Trading<br>
+        • ❄️ Impulsarme Märkte, gute Zeit für technische Analyse<br>
+        • 📐 Setups vorbereiten & Trading-Journal pflegen<br><br>
+        🧘 Fokus auf Klarheit statt Action – perfekter Analyse-Tag.
+      `;
+    } else if (weekday === 0) {
+      weekendInfo = `
+        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+        📅 <strong>Sonntag:</strong><br>
+        • ⏳ Pre-Move-Phase startet oft ab 18–20 Uhr<br>
+        • 🧠 Smart Money beginnt Positionierung für Montag<br>
+        • 🪤 False Breakouts oder „Liquidity Sweeps“ typisch<br>
+        • 🔥 Volumen steigt spürbar, besonders vor News-Wochen<br><br>
+        🚀 Nutze den Sonntagabend für Setup-Feintuning & Ausblick!
+      `;
+    }
+
+    sessionDetailsBox.innerHTML = weekendInfo;
+    return; // 👉 Verhindert normale Session-Anzeige
   }
-
-  sessionDetailsBox.innerHTML = weekendInfo;
-  return;
-}
 
 
   // ⏬ Werktag-Session-Logik
