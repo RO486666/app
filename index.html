@@ -814,10 +814,13 @@
   📏 Mindestens 1:2.5 RR möglich laut Struktur</label>
 
 <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
-  📉 Marktstruktur Shift (z. B. BOS, CHoCH, Swing-Shift)</label>
+  📉 Strukturveränderung (z. B. neues Hoch/Tief, Trendbruch, Umkehr)</label>
+
 
 <label><input type="checkbox" id="ruleEntrySignal" onchange="updateSetupScoreDisplay()" />
-  🎯 Entry-Signal (Break, Reject, Wick, FVG-Tap etc.)</label>
+  🎯 Einstiegsmuster sichtbar (z. B. Engulfing, Pinbar, Morning Star, Inside Bar, Breakout)</label>
+
+
 
 </div>
 
@@ -873,8 +876,6 @@
 </div>
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
 
-
-<div class="position-bar" id="positionBar"></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
