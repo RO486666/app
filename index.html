@@ -788,7 +788,8 @@
 
   <div>
     <label>📊 PnL (€):</label>
-    <input type="number" id="journalPnL" class="input" style="width: 100%; background-color: white; color: black;" />
+<input type="text" id="journalPnL" pattern="^-?\d+(\.\d{1,2})?$" inputmode="decimal" placeholder="z. B. -50.00" class="input" style="width: 100%; background-color: white; color: black;" />
+
   </div>
 </div>
 
@@ -980,7 +981,8 @@ function saveJournalEntry() {
     entry: parseFloat(document.getElementById("journalEntry").value),
     exit: parseFloat(document.getElementById("journalExit").value),
     lots: parseFloat(document.getElementById("journalLots").value),
-    pnl: parseFloat(document.getElementById("journalPnL").value),
+ pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
+
     emotionBefore: parseInt(document.getElementById("emotionBefore").value),
     emotionAfter: parseInt(document.getElementById("emotionAfter").value),
     tradingMode,
