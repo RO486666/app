@@ -1765,9 +1765,16 @@ function showEntriesForDate(dateStr) {
             ${imgAfter}
           </div>
 
-          <button onclick="editEntry(${entry.id})" style="margin-top: 10px; background:#0077cc; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
-            ✏️ Bearbeiten
-          </button>
+          <div style="display:flex; gap:10px; margin-top: 10px;">
+  <button onclick="editEntry(${entry.id})"
+          style="background:#0077cc; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+    ✏️ Bearbeiten
+  </button>
+  <button onclick="deleteEntry(${entry.id})"
+          style="background:#cc3333; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+    🗑️ Löschen
+  </button>
+</div>
         </div>
       </details>
     `;
@@ -1776,6 +1783,17 @@ function showEntriesForDate(dateStr) {
 
 
 
+function deleteEntry(entryId) {
+  if (!confirm("❌ Diesen Eintrag wirklich löschen?")) return;
+
+  const all = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const updated = all.filter(e => e.id !== entryId);
+
+  localStorage.setItem("journalData", JSON.stringify(updated));
+  buildJournalCalendar(currentMonthOffset);
+  document.getElementById("journalEntryList").innerHTML = "";
+  alert("🗑️ Eintrag gelöscht.");
+}
 
 
 
