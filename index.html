@@ -721,38 +721,69 @@
 
 <!-- 📘 Journal-Eingabe -->
 <div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
-  <div class="stats-box" style="display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: auto;">
+  <div class="stats-box" style="display: flex; flex-direction: column; gap: 14px; max-width: 500px; margin: auto; padding: 20px; border-radius: 12px; background: #1a1a1a; color: #eee;">
 
-<label>🧭 Strategie-Modus:</label>
-<select id="tradingMode" onchange="updateBiasOptions()">
-  <option value="day">Daytrading</option>
-  <option value="swing">Swing-Trading</option>
-</select>
+    <label>🧭 Strategie-Modus:</label>
+    <select id="tradingMode" onchange="updateBiasOptions()" class="input" style="width: 100%;">
+
+      <option value="day">Daytrading</option>
+      <option value="swing">Swing-Trading</option>
+    </select>
 
     <label>📆 Datum:</label>
-    <input type="date" id="journalManualDate" class="input" />
+    <input type="date" id="journalManualDate" class="input" style="width: 100%;" />
 
     <label>💱 Symbol:</label>
-    <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" />
+    <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" style="width: 100%;" />
     <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
 
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 130px;">
+        <label>🎯 Einstieg:</label>
+        <input type="number" id="journalEntry" class="input" style="width: 100%;" />
+      </div>
+      <div style="flex: 1; min-width: 130px;">
+        <label>🏁 Ausstieg:</label>
+        <input type="number" id="journalExit" class="input" style="width: 100%;" />
+      </div>
+    </div>
+
     <label>📈 Richtung:</label>
-    <select id="journalDirection" class="input">
+    <select id="journalDirection" class="input" style="width: 100%;">
       <option value="Long">Long</option>
       <option value="Short">Short</option>
     </select>
 
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+<div>
+  <label>📦 Lotgröße:</label>
+  <select id="journalLots" class="input" style="width: 100%; background-color: white; color: black;">
+    <option value="">– Bitte wählen –</option>
+    <option value="0.01">0.01</option>
+    <option value="0.02">0.02</option>
+    <option value="0.03">0.03</option>
+    <option value="0.05">0.05</option>
+    <option value="0.10">0.10</option>
+    <option value="0.25">0.25</option>
+    <option value="0.50">0.50</option>
+    <option value="1.00">1.00</option>
+    <option value="2.00">2.00</option>
+    <option value="3.00">3.00</option>
+    <option value="5.00">5.00</option>
+    <option value="10.00">10.00</option>
+    <option value="25.00">25.00</option>
+    <option value="50.00">50.00</option>
+    <option value="100.00">100.00</option>
+  </select>
+</div>
 
-    <div style="display: flex; gap: 10px;">
-      <div style="flex: 1;">
-        <label>📦 Lotgröße:</label>
-        <input type="number" id="journalLots" step="0.01" class="input" />
-      </div>
-      <div style="flex: 1;">
-        <label>📊 PnL (€):</label>
-        <input type="number" id="journalPnL" class="input" />
-      </div>
-    </div>
+
+  <div>
+    <label>📊 PnL (€):</label>
+    <input type="number" id="journalPnL" class="input" style="width: 100%; background-color: white; color: black;" />
+  </div>
+</div>
+
 
     <label>😐 Fokus vor dem Trade:</label>
     <div id="starsBefore" class="star-rating" style="margin-bottom: 5px;"></div>
@@ -763,7 +794,7 @@
     <input type="hidden" id="emotionAfter" value="5" />
 
     <label>🧠 Setup:</label>
-    <select id="journalSetup" class="input">
+    <select id="journalSetup" class="input" style="width: 100%;">
       <option value="">– Setup wählen –</option>
       <option value="Breakout">Breakout</option>
       <option value="Rejection">Rejection</option>
@@ -771,87 +802,116 @@
       <option value="News Spike">News Spike</option>
       <option value="Orderblock Reentry">Orderblock Reentry</option>
     </select>
-	
-	<div style="display: flex; gap: 10px;">
-  <div style="flex: 1;">
-    <label>🎯 Einstieg:</label>
-    <input type="number" id="journalEntry" class="input" />
+
+<div id="setupBoxWrapper"
+  style="margin-top: 10px; border-radius: 12px; padding: 16px;
+         background: linear-gradient(135deg, #3d1e1e, #6b2f2f);
+         border: 2px solid #aa3333;
+         color: #eee;
+         box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);
+         transition: all 0.3s ease;">
+
+  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px;">✅ Setup-Check</label>
+
+  <label style="margin-top: 5px;">🧭 Multi-Timeframe Bias:</label>
+  <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px;">
+    <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
+    <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
+    <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
+    <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
+    <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
+    <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
   </div>
-  <div style="flex: 1;">
-    <label>🏁 Ausstieg:</label>
-    <input type="number" id="journalExit" class="input" />
+
+<div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; margin-top:10px; color: #eee;">
+  
+  <label>
+    <input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
+    🧱 AOI (z. B. 4H/D1 OB)
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ Preis reagiert klar sichtbar an Key-Zone (Orderblock, FVG, POI)
+  </small>
+
+  <label>
+    <input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
+    🎯 Entry-Bestätigung (z. B. Wick-Rejection)
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ Entry nach Rejection, Equal High/Low Raid, LTF Shift etc.
+  </small>
+
+  <label>
+    <input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
+    💡 Psychologisches Level
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ 00/50-Level, Vorwochenhoch/-tief, runde Zahlen (z. B. 1900, 1950)
+  </small>
+
+  <label>
+    <input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
+    🕒 Richtiges Zeitfenster
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ London Killzone (08:00–11:00) oder New York Killzone (14:30–17:00)
+  </small>
+
+  <label>
+    <input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
+    📏 Min. 1:2.5 RR
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ Laut Struktur: erreichbares Ziel mindestens 2,5x SL-Distanz
+  </small>
+
+  <label>
+    <input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
+    📉 Strukturbruch / Shift
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ BOS / CHoCH auf M15 oder M5 → tieferes Hoch oder tieferes Tief
+  </small>
+
+  <label>
+    <input type="checkbox" id="ruleEntrySignal" onchange="updateSetupScoreDisplay()" />
+    🎯 Einstiegsmuster sichtbar
+  </label>
+  <small style="margin-left: 20px; color:#aaa;">
+    ▶ z. B. Inside Bar, Breaker Block, Morning Star, Pinbar, Quasimodo
+  </small>
+</div>
+
+
+  <div id="setupScoreDisplay" style="margin-top: 12px; font-size: 14px; font-weight: bold;">
+    📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
   </div>
-</div>
 
-<label style="margin-top: 10px;">✅ Setup-Check (Swing/Daytrading):</label>
-
-<!-- Bias Timeframes (werden separat gespeichert, zählen nicht in Regelzähler) -->
-<label style="margin-top: 10px;">🧭 Multi-Timeframe Bias geprüft auf:</label>
-<div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px; color: #ccc;">
-  <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
-  <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
-  <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
-  <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
-  <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
-  <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
-</div>
-
-<!-- Regel-Checkboxen -->
-<div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 5px; font-size: 14px; color: #ddd; margin-top:10px;">
-<label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
-  🧱 Preis reagiert an Area of Interest (z. B. Daily/4H AOI oder OB)</label>
-
-<label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
-  🎯 Entry-Confirmation vorhanden (z. B. LTF-Shift, Wick-Rejection)</label>
-
-<label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
-  💡 Nähe zu psychologischem Level (00/50 oder Key Level)</label>
-
-<label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
-  🕒 Richtiges Zeitfenster (London / NY Killzone aktiv)</label>
-
-<label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
-  📏 Mindestens 1:2.5 RR möglich laut Struktur</label>
-
-<label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
-  📉 Strukturveränderung (z. B. neues Hoch/Tief, Trendbruch, Umkehr)</label>
-
-
-<label><input type="checkbox" id="ruleEntrySignal" onchange="updateSetupScoreDisplay()" />
-  🎯 Einstiegsmuster sichtbar (z. B. Engulfing, Pinbar, Morning Star, Inside Bar, Breakout)</label>
-
-
-
-</div>
-
-<!-- Live Setup-Bewertung -->
-<div id="setupScoreDisplay" style="margin-top:10px; font-size:14px; color:#ccc;">
-  📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
 </div>
 
 
 
     <label>📝 Kommentar:</label>
-    <textarea id="journalNotes" rows="3" class="input" style="border-radius: 6px;"></textarea>
+    <textarea id="journalNotes" rows="3" class="input" style="border-radius: 6px; width: 100%;"></textarea>
 
     <label>📸 Screenshot (optional):</label>
-    <input type="file" id="journalScreenshot" accept="image/*" class="input" />
+    <input type="file" id="journalScreenshot" accept="image/*" class="input" style="width: 100%;" />
 
-   <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
-  background-color: #0077cc;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-">💾 Eintrag speichern</button>
-
-
+    <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
+      background-color: #0077cc;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    ">💾 Eintrag speichern</button>
   </div>
 </div>
+
 
 
 
@@ -954,6 +1014,52 @@ function saveJournalEntry() {
 }
 
 
+function populateLotOptions() {
+  const lotSelect = document.getElementById("journalLots");
+  lotSelect.innerHTML = ""; // leeren
+
+  const add = (val) => {
+    const opt = document.createElement("option");
+    opt.value = val.toFixed(2);
+    opt.textContent = val.toFixed(2);
+    lotSelect.appendChild(opt);
+  };
+
+  // Mikrolots (0.01 – 0.09)
+  for (let i = 1; i <= 9; i++) add(i / 100);
+
+  // Mini bis Standardlots (0.10 – 1.00)
+  for (let i = 10; i <= 100; i += 5) add(i / 100);
+
+  // Größere Schritte (1.00 – 10.00)
+  for (let i = 2; i <= 10; i++) add(i);
+
+  // Noch größere Schritte (15 – 100)
+  for (let i = 15; i <= 100; i += 5) add(i);
+}
+
+function populateLotSuggestions() {
+  const datalist = document.getElementById("lotOptions");
+  datalist.innerHTML = "";
+
+  const add = (val) => {
+    const opt = document.createElement("option");
+    opt.value = val.toFixed(2);
+    datalist.appendChild(opt);
+  };
+
+  // 0.01 – 0.10 (Scalping)
+  for (let i = 1; i <= 10; i++) add(i / 100);
+
+  // 0.10 – 1.00 in 0.10er Schritten
+  for (let i = 2; i <= 10; i++) add(i / 10);
+
+  // 1.00 – 10.00 in 1er Schritten
+  for (let i = 1; i <= 10; i++) add(i);
+
+  // 15 – 100 in 5er Schritten
+  for (let i = 15; i <= 100; i += 5) add(i);
+}
 
 
 
@@ -1016,18 +1122,23 @@ function closeLightbox() {
 }
 
 function updateBiasOptions() {
-  const mode = document.getElementById("tradingMode").value;
-  const checkboxes = document.querySelectorAll('#biasTimeframes input');
+  const mode = document.getElementById("tradingMode")?.value || "day";
+  const allowed = mode === "day" ? ["1H", "4H", "D1"] : ["4H", "D1", "W1"];
 
-  checkboxes.forEach(cb => {
+  document.querySelectorAll('#biasTimeframes input').forEach(cb => {
     const tf = cb.value;
-    if (mode === "swing") {
-      cb.parentElement.style.display = ["D1", "4H", "W1"].includes(tf) ? "inline-block" : "none";
+    const label = cb.closest("label");
+    if (allowed.includes(tf)) {
+      label.style.display = "inline-flex";
     } else {
-      cb.parentElement.style.display = ["D1", "4H", "1H"].includes(tf) ? "inline-block" : "none";
+      cb.checked = false; // abwählen falls nicht erlaubt
+      label.style.display = "none";
     }
   });
+
+  updateSetupScoreDisplay(); // gleich aktualisieren
 }
+
 
 function getLiveSetupScoreFromForm() {
   const tfList = Array.from(document.querySelectorAll('#biasTimeframes input:checked')).map(cb => cb.value);
@@ -1035,31 +1146,36 @@ function getLiveSetupScoreFromForm() {
 
   let score = 0;
 
-  // ✅ Bias-TFs (max 3 x 10 %)
+  // 📌 Bias-Timeframes (max 3 TFs à 10 %)
   score += Math.min(tfList.length, 3) * 10;
 
-  // AOI
+  // 📌 AOI (Area of Interest)
   if (document.getElementById("ruleAOI")?.checked) score += 10;
 
-  // AOI-Zeitframe korrekt
-  const aoicheck =
+  // 📌 AOI-Timeframe korrekt (je nach Modus)
+  const hasValidAOITF =
     (mode === "swing" && tfList.includes("4H") && tfList.includes("D1")) ||
     (mode === "day" && tfList.includes("1H"));
-  if (aoicheck) score += 10;
+  if (hasValidAOITF) score += 10;
 
-  if (document.getElementById("ruleEntry")?.checked) score += 10;
-  if (document.getElementById("rulePsych")?.checked) score += 5;
-  if (document.getElementById("ruleSession")?.checked) score += 5;
-  if (document.getElementById("ruleRR")?.checked) score += 5;
-  if (document.getElementById("ruleLTFShift")?.checked) score += 10;
-if (document.getElementById("ruleEntrySignal")?.checked) score += 10;
+  // 📌 Weitere Regelpunkte
+  if (document.getElementById("ruleEntry")?.checked) score += 10;       // Entry Confirmation
+  if (document.getElementById("rulePsych")?.checked) score += 5;        // Psych Level
+  if (document.getElementById("ruleSession")?.checked) score += 5;      // Session
+  if (document.getElementById("ruleRR")?.checked) score += 5;           // Risk:Reward
+  if (document.getElementById("ruleLTFShift")?.checked) score += 10;    // LTF Shift
+  if (document.getElementById("ruleEntrySignal")?.checked) score += 10; // Signal
 
+  // 📌 Endscore (A+ bei Day schon ab 85 %)
+  const cappedScore = Math.min(score, 95); // Maximal 95 %
+  const validBias = tfList.length >= 2;    // mindestens 2 Bias-TFs erforderlich
 
   return {
-    score: Math.min(score, 95),
-    validBias: tfList.length >= 2
+    score: cappedScore,
+    validBias
   };
 }
+
 
 
 
@@ -1070,21 +1186,71 @@ function updateSetupScoreDisplay() {
   const hasBias = result.validBias;
 
   let verdict = "❌ Nicht gültig (mind. 2 Bias-TFs)";
-  let color = "#ff4444";
+  let textColor = "#ff4444";
 
-  if (hasBias && score >= 40) {
-    verdict = "✅ Valides Setup";
-    color = "#00ff88";
+  if (hasBias && score >= 95) {
+    verdict = "✅ Perfekt";
+    textColor = "#33ff77";
+  } else if (hasBias && score >= 80) {
+    verdict = "🟢 Sehr stark";
+    textColor = "#55ff88";
+  } else if (hasBias && score >= 60) {
+    verdict = "🟨 Solide";
+    textColor = "#ffff66";
+  } else if (hasBias && score >= 40) {
+    verdict = "🟧 Mittelmäßig";
+    textColor = "#ffcc66";
   } else if (hasBias && score >= 20) {
-    verdict = "⚠️ Wackliges Setup";
-    color = "#ffaa00";
+    verdict = "🟥 Schwach";
+    textColor = "#ff8888";
   } else if (hasBias) {
-    verdict = "❌ Regelbruch";
+    verdict = "🔴 Katastrophal";
+    textColor = "#ff4444";
   }
 
-  document.getElementById("setupScoreDisplay").innerHTML = `
-    📊 Setup-Score: <strong style="color:${color}">${score}%</strong> – ${verdict}
-  `;
+  // 🔁 Farbverlauf für Box
+  const wrapper = document.getElementById("setupBoxWrapper");
+  if (score >= 95) {
+    wrapper.style.background = "linear-gradient(135deg, #0d3c0d, #1f6b1f)";
+    wrapper.style.borderColor = "#33aa33";
+    wrapper.style.boxShadow = "0 0 8px rgba(50, 255, 100, 0.3)";
+  } else if (score >= 80) {
+    wrapper.style.background = "linear-gradient(135deg, #2f5e2f, #4cc94c)";
+    wrapper.style.borderColor = "#55dd55";
+    wrapper.style.boxShadow = "0 0 8px rgba(100, 255, 100, 0.25)";
+  } else if (score >= 60) {
+    wrapper.style.background = "linear-gradient(135deg, #706f1a, #a8d94c)";
+    wrapper.style.borderColor = "#cccc55";
+    wrapper.style.boxShadow = "0 0 8px rgba(220, 255, 100, 0.2)";
+  } else if (score >= 40) {
+    wrapper.style.background = "linear-gradient(135deg, #8f631a, #d9b24c)";
+    wrapper.style.borderColor = "#ddaa55";
+    wrapper.style.boxShadow = "0 0 8px rgba(255, 220, 100, 0.2)";
+  } else if (score >= 20) {
+    wrapper.style.background = "linear-gradient(135deg, #8f2f2f, #d94c4c)";
+    wrapper.style.borderColor = "#cc5555";
+    wrapper.style.boxShadow = "0 0 8px rgba(255, 100, 100, 0.2)";
+  } else {
+    wrapper.style.background = "linear-gradient(135deg, #3d1e1e, #6b2f2f)";
+    wrapper.style.borderColor = "#aa3333";
+    wrapper.style.boxShadow = "0 0 8px rgba(255, 50, 50, 0.25)";
+  }
+
+  let letterGrade = "F"; // Default
+
+if (score >= 95) letterGrade = "A+";
+else if (score >= 80) letterGrade = "A";
+else if (score >= 60) letterGrade = "B";
+else if (score >= 40) letterGrade = "C";
+else if (score >= 20) letterGrade = "D";
+
+// Ergebnis anzeigen mit Schatten
+document.getElementById("setupScoreDisplay").innerHTML = `
+  📊 Setup-Score: <strong style="color:${textColor}; text-shadow: 0 0 2px black, 1px 1px 1px black;">
+    ${score}% (${letterGrade})
+  </strong> – <span style="text-shadow: 0 0 2px black, 1px 1px 1px black;">${verdict}</span>
+`;
+
 }
 
 
@@ -1233,36 +1399,65 @@ function buildJournalCalendar(monthOffset = 0) {
     calendar.appendChild(document.createElement("div"));
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const pnl = dailyStats[dateStr] || 0;
+for (let day = 1; day <= daysInMonth; day++) {
+  const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const pnl = dailyStats[dateStr] || 0;
 
-    const cell = document.createElement("div");
-    cell.textContent = day;
-    cell.style.padding = "10px";
-    cell.style.borderRadius = "6px";
-    cell.style.textAlign = "center";
-    cell.style.cursor = "pointer";
-    cell.style.transition = "outline 0.2s ease";
-    cell.style.background = pnl > 0 ? "#228B22" : (pnl < 0 ? "#B22222" : "#777");
-    cell.style.color = "white";
+  const cell = document.createElement("div");
+  cell.textContent = day;
+  cell.style.padding = "10px";
+  cell.style.borderRadius = "6px";
+  cell.style.textAlign = "center";
+  cell.style.cursor = "pointer";
+  cell.style.transition = "outline 0.2s ease";
 
-    cell.onclick = () => {
-      showEntriesForDate(dateStr);
-      if (activeCalendarCell) activeCalendarCell.style.outline = "";
-      cell.style.outline = "2px solid #3399ff";
-      activeCalendarCell = cell;
-      if (manualDateInput) manualDateInput.value = dateStr;
+  const tradesOnDay = entries.filter(e => e.date.startsWith(dateStr));
 
-      const journalBox = document.getElementById("calc-journal");
-      if (journalBox) {
-        journalBox.style.display = "block";
-        window.scrollTo({ top: journalBox.offsetTop - 40, behavior: "smooth" });
-      }
-    };
+  const withPnL = tradesOnDay.filter(e =>
+    e.pnl !== undefined && e.pnl !== null && e.pnl !== "" && !isNaN(parseFloat(e.pnl))
+  );
+  const openTrades = tradesOnDay.length - withPnL.length;
 
-    calendar.appendChild(cell);
+  const pnls = withPnL.map(e => parseFloat(e.pnl));
+  const hasGain = pnls.some(v => v > 0);
+  const hasLoss = pnls.some(v => v < 0);
+
+  // 🎨 Farbentscheidung:
+  if (openTrades > 0 && hasGain && hasLoss) {
+    cell.style.background = "linear-gradient(135deg, #FFA500 33%, #228B22 33%, #228B22 66%, #B22222 66%)"; // Orange + Grün + Rot
+  } else if (openTrades > 0 && hasGain) {
+    cell.style.background = "linear-gradient(135deg, #FFA500 50%, #228B22 50%)"; // Orange + Grün
+  } else if (openTrades > 0 && hasLoss) {
+    cell.style.background = "linear-gradient(135deg, #FFA500 50%, #B22222 50%)"; // Orange + Rot
+  } else if (openTrades > 0) {
+    cell.style.background = "#FFA500"; // Nur offen
+  } else if (hasGain && hasLoss) {
+    cell.style.background = "linear-gradient(135deg, #228B22 50%, #B22222 50%)"; // Grün + Rot
+  } else {
+    const sum = pnls.reduce((a, b) => a + b, 0);
+    cell.style.background = sum > 0 ? "#228B22" : (sum < 0 ? "#B22222" : "#777"); // Grün / Rot / Neutral
   }
+
+  cell.style.color = "white";
+
+  cell.onclick = () => {
+    showEntriesForDate(dateStr);
+    if (activeCalendarCell) activeCalendarCell.style.outline = "";
+    cell.style.outline = "2px solid #3399ff";
+    activeCalendarCell = cell;
+    if (manualDateInput) manualDateInput.value = dateStr;
+
+    const journalBox = document.getElementById("calc-journal");
+    if (journalBox) {
+      journalBox.style.display = "block";
+      window.scrollTo({ top: journalBox.offsetTop - 40, behavior: "smooth" });
+    }
+  };
+
+  calendar.appendChild(cell);
+}
+
+
 
   document.getElementById("calendarContainer").innerHTML = "";
   document.getElementById("calendarContainer").appendChild(calendar);
@@ -1534,6 +1729,8 @@ window.addEventListener("DOMContentLoaded", () => {
   buildJournalCalendar();
   setupStarRating("starsBefore", "emotionBefore");
   setupStarRating("starsAfter", "emotionAfter");
+populateLotOptions();
+populateLotSuggestions();
 
   // Optional nur, wenn Bias beim Laden gesetzt ist:
   if (document.querySelector('#biasTimeframes input:checked')) {
