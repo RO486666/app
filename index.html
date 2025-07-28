@@ -1027,6 +1027,13 @@ function saveJournalEntry() {
     };
     readerBefore.readAsDataURL(fileBefore);
   } else {
+    // Falls Bearbeiten und Screenshot vorher schon da:
+    if (editId) {
+      const oldEntry = allEntries.find(e => e.id == editId);
+      if (oldEntry?.screenshotBefore) {
+        entry.screenshotBefore = oldEntry.screenshotBefore;
+      }
+    }
     trySave();
   }
 
@@ -1037,9 +1044,16 @@ function saveJournalEntry() {
     };
     readerAfter.readAsDataURL(fileAfter);
   } else {
+    if (editId) {
+      const oldEntry = allEntries.find(e => e.id == editId);
+      if (oldEntry?.screenshotAfter) {
+        entry.screenshotAfter = oldEntry.screenshotAfter;
+      }
+    }
     trySave();
   }
 }
+
 
 
 
@@ -1626,18 +1640,32 @@ function editEntry(entryId) {
   const entry = all.find(e => e.id === entryId);
   if (!entry) return alert("❌ Eintrag nicht gefunden.");
 
-  // 🧠 Werte ins Formular laden
-  document.getElementById("journalManualDate").value = entry.date.split("T")[0];
-  document.getElementById("journalSymbol").value = entry.pair;
-  document.getElementById("journalDirection").value = entry.direction;
-  document.getElementById("journalEntry").value = entry.entry;
-  document.getElementById("journalExit").value = entry.exit;
-  document.getElementById("journalLots").value = entry.lots;
-  document.getElementById("journalPnL").value = entry.pnl;
-  document.getElementById("emotionBefore").value = entry.emotionBefore;
-  document.getElementById("emotionAfter").value = entry.emotionAfter;
-  document.getElementById("journalNotes").value = entry.notes || "";
+// 🧠 Werte ins Formular laden
+document.getElementById("journalManualDate").value = entry.date.split("T")[0];
+document.getElementById("journalSymbol").value = entry.pair;
+document.getElementById("journalDirection").value = entry.direction;
+document.getElementById("journalEntry").value = entry.entry;
+document.getElementById("journalExit").value = entry.exit;
+document.getElementById("journalLots").value = entry.lots;
+document.getElementById("journalPnL").value = entry.pnl;
+document.getElementById("emotionBefore").value = entry.emotionBefore;
+document.getElementById("emotionAfter").value = entry.emotionAfter;
 
+// ⭐ Update Sternanzeige richtig anzeigen
+updateStarVisuals("starsBefore", parseInt(entry.emotionBefore));
+updateStarVisuals("starsAfter", parseInt(entry.emotionAfter));
+
+// 📋 Regeln (Checkliste) setzen
+document.getElementById("ruleAOI").checked = !!entry.ruleAOI;
+document.getElementById("ruleEntry").checked = !!entry.ruleEntry;
+document.getElementById("rulePsych").checked = !!entry.rulePsych;
+document.getElementById("ruleSession").checked = !!entry.ruleSession;
+document.getElementById("ruleRR").checked = !!entry.ruleRR;
+document.getElementById("ruleLTFShift").checked = !!entry.ruleLTFShift;
+document.getElementById("ruleEntrySignal").checked = !!entry.ruleEntrySignal;
+document.getElementById("journalNotesBefore").value = entry.notesBefore || "";
+document.getElementById("journalNotesAfter").value = entry.notesAfter || "";
+updateSetupScoreDisplay();
   // Regeln
   ["AOI", "Entry", "Psych", "Session", "RR", "LTFShift", "EntrySignal"].forEach(id => {
     const el = document.getElementById("rule" + id);
