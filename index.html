@@ -1938,7 +1938,9 @@ const sessionColors = {
   "London Killzone": "#ccff00",
   "New York Killzone": "#ff8800",
   Deadzone: "#333",
+  Crypto: "#9900ff"  // 🔥 Jetzt mit Farbe!
 };
+
 
 const sessions = [
   {
@@ -2100,38 +2102,6 @@ function requestNotificationPermission() {
 
 
 
-function showAlert(msg) {
-  const el = document.createElement("div");
-  el.className = "alert-message";
-  el.textContent = msg;
-  alertBox.innerHTML = "";
-  alertBox.appendChild(el);
-  setTimeout(() => (alertBox.innerHTML = ""), 5000);
-  alertSound.play();
-  showNotification("Trade App Alarm", msg);  // 🔊 Alarm-Benachrichtigung
-
-  // 🔔 Session Push wie WhatsApp
-  const customMessages = {
-    "Tokyo": "🌏 Tokyo geöffnet – JPY-Paare beginnen sich zu bewegen.",
-    "London Killzone": "⚔️ London Killzone aktiv – Liquiditätssuche beginnt!",
-    "London": "💷 London Session gestartet – europäische Volatilität beginnt.",
-    "New York Killzone": "🔥 NY Killzone läuft – auf Breakouts achten!",
-    "New York": "🇺🇸 New York Session gestartet – starker US-Einfluss jetzt aktiv.",
-    "Sydney": "🌙 Sydney Session läuft – ruhiger Start in den Markt.",
-    "Deadzone": "😴 Deadzone – geringe Volatilität, keine aktiven Teilnehmer."
-  };
-
-  const minutes = getMinutesNow();
-  const activeSessions = getCurrentSessions(minutes);
-  if (activeSessions.length > 0) {
-    const s = activeSessions[0];
-    const pushMessage = customMessages[s.name] || s.info;
-    sendPushNotification(`📣 ${s.name}-Session startet`, pushMessage);
-  }
-}
-
-
-
 function showSessionProgress(activeSessions, currentMinutes) {
   let output = "";
 
@@ -2239,7 +2209,10 @@ function updateRealTimeBar() {
 
   // ⏬ Werktag-Session-Logik
   const activeSessions = getCurrentSessions(minutes);
-  const names = activeSessions.map(s => s.name);
+  const names = activeSessions
+  .map(s => s.name)
+  .filter(n => n !== "Crypto"); // 🔥 Crypto wird vom Balken ausgeschlossen
+
   const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
   sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
 
