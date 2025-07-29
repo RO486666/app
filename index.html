@@ -1560,16 +1560,26 @@ for (let day = 1; day <= daysInMonth; day++) {
   const monthlyEntries = entries
     .filter(e => e.date.startsWith(currentMonthKey))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
-	let validSetups = 0;
+let validSetups = 0;
 let shakySetups = 0;
 let failedSetups = 0;
 
 monthlyEntries.forEach(e => {
-  const score = getSetupScore(e);
-  if (score >= 40) validSetups++;
-  else if (score >= 20) shakySetups++;
-  else failedSetups++;
+  const result = getSetupScore(e);
+  const score = result?.score ?? 0;
+  const valid = result?.valid ?? false;
+
+  if (!valid) {
+    failedSetups++;
+  } else if (score >= 40) {
+    validSetups++;
+  } else if (score >= 20) {
+    shakySetups++;
+  } else {
+    failedSetups++;
+  }
 });
+
 
 
   // 📈 Equity-Kurve
