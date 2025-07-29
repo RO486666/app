@@ -912,13 +912,9 @@
 <label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
 <textarea id="journalNotesAfter" rows="2" class="input" style="border-radius: 6px;"></textarea>
 
-<!-- 📸 Screenshot vor dem Trade -->
-<label for="journalScreenshotBefore" style="margin-top: 10px;">📸 Screenshot <strong>vor dem Trade</strong> (optional):</label>
-<input type="file" id="journalScreenshotBefore" accept="image/*" class="input" />
-
-<!-- 📸 Screenshot nach dem Trade -->
-<label for="journalScreenshotAfter" style="margin-top: 10px;">📸 Screenshot <strong>nach dem Trade</strong> (optional):</label>
-<input type="file" id="journalScreenshotAfter" accept="image/*" class="input" />
+<!-- 📸 Screenshot-Upload (mehrere möglich) -->
+<label for="screenshotInput" style="margin-top: 10px;">📸 Screenshots hochladen (optional):</label>
+<input type="file" id="screenshotInput" accept="image/*" multiple class="input" />
 
     
 	<button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
@@ -951,7 +947,7 @@
 </div>
 
 
-
+<input type="file" id="screenshotInput" accept="image/*" multiple>
 
 <div class="popup" id="resultPopup">
   <h3>Ergebnis</h3>
@@ -3010,25 +3006,55 @@ function enableNotifications() {
   });
 }
 </script>
-
 <script>
+function saveJournalEntryWithImages(imageIds) {
+  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+
+  const newEntry = {
+    id: Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    comment: document.getElementById("journalComment").value || "",
+    result: document.getElementById("resultSelect").value || "neutral",
+    imageIds // ⬅️ Bild-Referenzen nur hier gespeichert!
+  };
+
+  entries.push(newEntry);
+  localStorage.setItem("journalData", JSON.stringify(entries));
+  alert("✅ Journal gespeichert mit Bildern!");
+}
+
+document.getElementById("screenshotInput").addEventListener("change", function (event) {
+  const files = Array.from(event.target.files);
+  const imageIds = [];
+  let loaded = 0;
+
+  if (files.length === 0) {
+    saveJournalEntryWithImages([]); // Keine Bilder
+    return;
+  }
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const base64 = e.target.result;
+      const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+      saveImageToIndexedDB(base64, imageId);
+      imageIds.push(imageId);
+      loaded++;
+
+      if (loaded === files.length) {
+        // ⏳ Wenn alle Bilder verarbeitet wurden
+        saveJournalEntryWithImages(imageIds);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+
 
 <body>
 
-<button onclick="enableNotifications()">🔓 Benachrichtigungen aktivieren</button>
-<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
-
-<button onclick="showSessionStartNotification('TEST Session', '🔔 Das ist eine Test-Benachrichtigung!')">
-📲 Test Session Notification
-</button>
-<button onclick="diagnoseNotifications()">🔍 Benachrichtigung prüfen</button>
-<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
-
-</button>
-<button onclick="sendPushNotification('📲 Push-Test', '✅ Funktioniert jetzt direkt auf dem Handy!')">
-Test Push direkt
-</button>
-</button>
 <script src="imageStorage.js"></script>
 
 </body>
