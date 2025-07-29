@@ -745,22 +745,24 @@
     <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" style="width: 100%;" />
     <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
 
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <div style="flex: 1; min-width: 130px;">
-        <label>🎯 Einstieg:</label>
-        <input type="number" id="journalEntry" class="input" style="width: 100%;" />
-      </div>
-      <div style="flex: 1; min-width: 130px;">
-        <label>🏁 Ausstieg:</label>
-        <input type="number" id="journalExit" class="input" style="width: 100%;" />
-      </div>
-    </div>
-
-    <label>📈 Richtung:</label>
-    <select id="journalDirection" class="input" style="width: 100%;">
-      <option value="Long">Long</option>
-      <option value="Short">Short</option>
+<!-- Einstieg + Ausstieg + Richtung -->
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+  <div style="flex: 1; min-width: 130px;">
+    <label>🎯 Einstieg:</label>
+    <input type="number" id="journalEntry" class="input" style="width: 100%;" onchange="autoSuggestExit()" />
+  </div>
+  <div style="flex: 1; min-width: 130px;">
+    <label>🏁 Ausstieg:</label>
+    <input type="number" id="journalExit" class="input" style="width: 100%;" onchange="userChangedExit = true;" />
+  </div>
+  <div style="flex: 1; min-width: 130px;">
+    <label>Richtung:</label>
+    <select id="journalDirection" class="input" onchange="autoSuggestExit()">
+      <option value="long">📈 Long</option>
+      <option value="short">📉 Short</option>
     </select>
+  </div>
+</div>
 
   <div style="display: flex; flex-direction: column; gap: 10px;">
 <div>
@@ -801,13 +803,18 @@
 </div>
 
 
-    <label>😐 Fokus vor dem Trade:</label>
-    <div id="starsBefore" class="star-rating" style="margin-bottom: 5px;"></div>
-    <input type="hidden" id="emotionBefore" value="5" />
+  <div class="emotion-block">
+  <label>😐 Fokus <strong>vor</strong> dem Trade:</label>
+  <div id="starsBefore" class="star-rating"></div>
+  <input type="hidden" id="emotionBefore" value="5" />
+</div>
 
-    <label>😤 Nach dem Trade:</label>
-    <div id="starsAfter" class="star-rating" style="margin-bottom: 5px;"></div>
-    <input type="hidden" id="emotionAfter" value="5" />
+<div class="emotion-block">
+  <label>😤 Emotion <strong>nach</strong> dem Trade:</label>
+  <div id="starsAfter" class="star-rating"></div>
+  <input type="hidden" id="emotionAfter" value="5" />
+</div>
+
 
     <label>🧠 Setup:</label>
     <select id="journalSetup" class="input" style="width: 100%;">
@@ -819,6 +826,7 @@
       <option value="Orderblock Reentry">Orderblock Reentry</option>
     </select>
 
+<!-- 🧱 Setup-Box Start -->
 <div id="setupBoxWrapper"
   style="margin-top: 10px; border-radius: 12px; padding: 16px;
          background: linear-gradient(135deg, #3d1e1e, #6b2f2f);
@@ -827,10 +835,12 @@
          box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);
          transition: all 0.3s ease;">
 
-  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px;">✅ Setup-Check</label>
+  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
+    ✅ Setup-Check
+  </label>
 
-  <label style="margin-top: 5px;">🧭 Multi-Timeframe Bias:</label>
-  <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px;">
+  <label style="margin-top: 5px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">🧭 Multi-Timeframe Bias:</label>
+  <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
     <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
     <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
     <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
@@ -839,98 +849,90 @@
     <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
   </div>
 
-<div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; margin-top:10px; color: #eee;">
-  
-  <label>
-    <input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
-    🧱 AOI (z. B. 4H/D1 OB)
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ Preis reagiert klar sichtbar an Key-Zone (Orderblock, FVG, POI)
-  </small>
+  <div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; margin-top:10px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+    <label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
+      🧱 AOI / POI reagiert sichtbar
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Preis reagiert klar in AOI&POI (z. B. W, D1)
+    </small>
 
-  <label>
-    <input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
-    🎯 Entry-Bestätigung (z. B. Wick-Rejection)
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ Entry nach Rejection, Equal High/Low Raid, LTF Shift etc.
-  </small>
+    <label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
+      🎯 Entry-Trigger bestätigt
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Rejection, Equal High/Low Raid, Shift
+    </small>
 
-  <label>
-    <input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
-    💡 Psychologisches Level
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ 00/50-Level, Vorwochenhoch/-tief, runde Zahlen (z. B. 1900, 1950)
-  </small>
+    <label><input type="checkbox" id="ruleEntryPattern" onchange="updateSetupScoreDisplay()" />
+      🧠 Einstiegsmuster sichtbar
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ z. B. Inside Bar, Morning Star, Pinbar, Engulfing, Quasimodo
+    </small>
 
-  <label>
-    <input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
-    🕒 Richtiges Zeitfenster
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ London Killzone (08:00–11:00) oder New York Killzone (14:30–17:00)
-  </small>
+    <label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
+      💡 Psychologisches Level
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ 00/50-Level, Vorwochen-Hoch/Tief, runde Zahlen (z. B. 1900, 1950)
+    </small>
 
-  <label>
-    <input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
-    📏 Min. 1:2.5 RR
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ Laut Struktur: erreichbares Ziel mindestens 2,5x SL-Distanz
-  </small>
+    <label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
+      🕒 Richtiges Zeitfenster
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Killzones: London (08:00–11:00), New York (14:30–17:00), Asia (02:00–04:00)
+    </small>
 
-  <label>
-    <input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
-    📉 Strukturbruch / Shift
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ BOS / CHoCH auf M15 oder M5 → tieferes Hoch oder tieferes Tief
-  </small>
+    <label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
+      📏 Minimum 1:2.5 RR
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Laut Struktur realistisch erreichbares Ziel: ≥ 2,5x SL-Distanz
+    </small>
 
-  <label>
-    <input type="checkbox" id="ruleEntrySignal" onchange="updateSetupScoreDisplay()" />
-    🎯 Einstiegsmuster sichtbar
-  </label>
-  <small style="margin-left: 20px; color:#aaa;">
-    ▶ z. B. Inside Bar, Breaker Block, Morning Star, Pinbar, Quasimodo
-  </small>
+    <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
+      🔁 LTF Strukturwechsel (Shift)
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ MSS auf 15M - 2H → z. B. HL → HH → LL
+    </small>
+
+    <div id="setupScoreDisplay" style="margin-top: 12px; font-size: 14px; font-weight: bold; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
+      📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+    </div>
+  </div> <!-- ✅ Ende der Regel-Checkliste-Box -->
+
+</div> <!-- ✅ Ende setupBoxWrapper -->
+
+<!-- 🔻 Jetzt alles außerhalb der Box -->
+<div style="margin-top: 20px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+
+  <label>📝 Kommentar <strong>vor dem Trade</strong>:</label>
+  <textarea id="journalNotesBefore" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+
+  <label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
+  <textarea id="journalNotesAfter" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+
+  <label for="screenshotInput">📸 Screenshots hochladen (optional):</label>
+  <input type="file" id="screenshotInput" accept="image/*" multiple class="input" style="margin-bottom: 15px;" />
+
+  <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
+    background-color: #0077cc;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+  ">💾 Eintrag speichern</button>
 </div>
 
 
-  <div id="setupScoreDisplay" style="margin-top: 12px; font-size: 14px; font-weight: bold;">
-    📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
-  </div>
-
-</div>
-
-
-<label>📝 Kommentar <strong>vor dem Trade</strong>:</label>
-<textarea id="journalNotesBefore" rows="2" class="input" style="border-radius: 6px;"></textarea>
-
-<label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
-<textarea id="journalNotesAfter" rows="2" class="input" style="border-radius: 6px;"></textarea>
-
-<!-- 📸 Screenshot-Upload (mehrere möglich) -->
-<label for="screenshotInput" style="margin-top: 10px;">📸 Screenshots hochladen (optional):</label>
-<input type="file" id="screenshotInput" accept="image/*" multiple class="input" />
-
-    
-	<button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
-      background-color: #0077cc;
-      color: white;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    ">💾 Eintrag speichern</button>
-  </div>
-</div>
 
 
 <div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
@@ -959,7 +961,29 @@
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let userChangedExit = false;
 
+function autoSuggestExit() {
+  const entryEl = document.getElementById("journalEntry");
+  const exitEl = document.getElementById("journalExit");
+  const direction = document.getElementById("journalDirection").value;
+
+  const entry = parseFloat(entryEl.value);
+  if (isNaN(entry) || userChangedExit) return;
+
+  const offset = 10; // kannst du dynamisch machen später, z. B. SL × RR
+
+  let exit = direction === "long" ? entry + offset : entry - offset;
+  exitEl.value = exit.toFixed(2);
+}
+
+// Reset manuelle Änderung bei Fokus auf Einstieg
+document.getElementById("journalEntry").addEventListener("focus", () => {
+  userChangedExit = false;
+});
+
+</script>
 <script>
 let currentMonthOffset = 0;
 function onRuleChanged() {
@@ -1328,7 +1352,35 @@ function updateStarVisuals(containerId, value) {
   stars.forEach(s => {
     s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
   });
+
+  // Textanzeige je nach Bewertung
+  const labelMap = {
+    1: "😵 Totale Unsicherheit / komplett unklar",
+    2: "😣 Sehr unsicher – kein Vertrauen in Setup",
+    3: "😕 Zweifelnd – nicht wirklich ready",
+    4: "😐 Neutral – etwas unklar, leichte Unruhe",
+    5: "🙂 Leicht fokussiert – Setup okay",
+    6: "😌 Zunehmend sicher – aber noch vorsichtig",
+    7: "😎 Gute Kontrolle – vertraue dem Plan",
+    8: "🔥 Scharfer Fokus – Setup passt perfekt",
+    9: "💪 Volles Vertrauen – komplett im Flow",
+    10: "🧠 100 % Fokus – State of Zen / Maschinenmodus"
+  };
+
+  // Bestehendes Text-Element finden oder neu anlegen
+  let description = container.querySelector(".star-description");
+  if (!description) {
+    description = document.createElement("div");
+    description.className = "star-description";
+    description.style.marginTop = "4px";
+    description.style.color = "#ccc";
+    description.style.fontSize = "13px";
+    container.appendChild(description);
+  }
+
+  description.textContent = labelMap[value] || "";
 }
+
 
 const knownSymbols = [
   // 🔹 Forex
