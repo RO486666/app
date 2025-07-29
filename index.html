@@ -1000,8 +1000,7 @@ pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
     ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
     notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
     notesAfter: document.getElementById("journalNotesAfter")?.value.trim(),
-    screenshotBefore: null,
-    screenshotAfter: null
+   imageIds: []
   };
 
   const readerBefore = new FileReader();
