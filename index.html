@@ -965,17 +965,14 @@ function onRuleChanged() {
   updateSetupScoreDisplay(); // 🔁 Kein Delay mehr
 }
 function saveJournalEntry() {
-  const fileBefore = document.getElementById("journalScreenshotBefore")?.files[0];
-  const fileAfter = document.getElementById("journalScreenshotAfter")?.files[0];
-
+const files = document.getElementById("screenshotInput")?.files || [];
+const imageIds = [];
   const manualDate = document.getElementById("journalManualDate")?.value;
   const tradingMode = document.getElementById("tradingMode")?.value || "day";
   const editId = document.getElementById("saveJournalEntryButton").dataset.editId;
   const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
-
   const selectedBiasFrames = Array.from(document.querySelectorAll('#biasTimeframes input:checked'))
     .map(cb => cb.value);
-
   const entry = {
     id: editId ? parseInt(editId) : Date.now(),
     date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
@@ -1003,60 +1000,41 @@ pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
    imageIds: []
   };
 
-  const readerBefore = new FileReader();
-  const readerAfter = new FileReader();
-  let done = 0;
-
-  const trySave = () => {
-    done++;
-    if (done === 2) {
-      if (editId) {
-        const index = allEntries.findIndex(e => e.id == editId);
-        if (index !== -1) allEntries[index] = entry;
-        delete document.getElementById("saveJournalEntryButton").dataset.editId;
-      } else {
-        allEntries.push(entry);
+if (files.length === 0) {
+  finishSave();
+} else {
+  let loaded = 0;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const base64 = e.target.result;
+      const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+      saveImageToIndexedDB(base64, imageId);
+      imageIds.push(imageId);
+      loaded++;
+      if (loaded === files.length) {
+        entry.imageIds = imageIds;
+        finishSave();
       }
-
-      localStorage.setItem("journalData", JSON.stringify(allEntries));
-      alert("✅ Journal-Eintrag gespeichert!");
-      buildJournalCalendar(currentMonthOffset);
-      document.getElementById("calc-journal").style.display = "none";
-    }
-  };
-
-  if (fileBefore) {
-    readerBefore.onload = () => {
-      entry.screenshotBefore = readerBefore.result;
-      trySave();
     };
-    readerBefore.readAsDataURL(fileBefore);
+    reader.readAsDataURL(file);
+  });
+}
+function finishSave() {
+  if (editId) {
+    const index = allEntries.findIndex(e => e.id == editId);
+    if (index !== -1) allEntries[index] = entry;
+    delete document.getElementById("saveJournalEntryButton").dataset.editId;
   } else {
-    // Falls Bearbeiten und Screenshot vorher schon da:
-    if (editId) {
-      const oldEntry = allEntries.find(e => e.id == editId);
-      if (oldEntry?.screenshotBefore) {
-        entry.screenshotBefore = oldEntry.screenshotBefore;
-      }
-    }
-    trySave();
+    allEntries.push(entry);
   }
 
-  if (fileAfter) {
-    readerAfter.onload = () => {
-      entry.screenshotAfter = readerAfter.result;
-      trySave();
-    };
-    readerAfter.readAsDataURL(fileAfter);
-  } else {
-    if (editId) {
-      const oldEntry = allEntries.find(e => e.id == editId);
-      if (oldEntry?.screenshotAfter) {
-        entry.screenshotAfter = oldEntry.screenshotAfter;
-      }
-    }
-    trySave();
-  }
+  localStorage.setItem("journalData", JSON.stringify(allEntries));
+  alert("✅ Journal-Eintrag gespeichert!");
+  buildJournalCalendar(currentMonthOffset);
+  document.getElementById("calc-journal").style.display = "none";
+}
+
 }
 
 
