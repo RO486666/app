@@ -933,7 +933,9 @@
 </div>
 
 
-
+<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
+  <img id="lightboxImage" src="" alt="Bild" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
+</div>
 
 <div style="margin-top:20px; text-align:center;">
   <button onclick="resetCurrentMonth()" style="margin:5px; background:#cc6600; color:white; padding:8px 15px; border:none; border-radius:5px;">🗓️ Monat zurücksetzen</button>
@@ -965,14 +967,14 @@ function onRuleChanged() {
   updateSetupScoreDisplay(); // 🔁 Kein Delay mehr
 }
 function saveJournalEntry() {
-const files = document.getElementById("screenshotInput")?.files || [];
-const imageIds = [];
+  const files = document.getElementById("screenshotInput")?.files || [];
   const manualDate = document.getElementById("journalManualDate")?.value;
   const tradingMode = document.getElementById("tradingMode")?.value || "day";
   const editId = document.getElementById("saveJournalEntryButton").dataset.editId;
   const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
   const selectedBiasFrames = Array.from(document.querySelectorAll('#biasTimeframes input:checked'))
     .map(cb => cb.value);
+
   const entry = {
     id: editId ? parseInt(editId) : Date.now(),
     date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
@@ -981,9 +983,7 @@ const imageIds = [];
     entry: parseFloat(document.getElementById("journalEntry").value),
     exit: parseFloat(document.getElementById("journalExit").value),
     lots: parseFloat(document.getElementById("journalLots").value),
-pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
-
-
+    pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
     emotionBefore: parseInt(document.getElementById("emotionBefore").value),
     emotionAfter: parseInt(document.getElementById("emotionAfter").value),
     tradingMode,
@@ -997,30 +997,40 @@ pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
     ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
     notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
     notesAfter: document.getElementById("journalNotesAfter")?.value.trim(),
-   imageIds: []
+    imageIds: []
   };
 
-if (files.length === 0) {
-  finishSave();
-} else {
-  let loaded = 0;
-  Array.from(files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const base64 = e.target.result;
-      const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
-      saveImageToIndexedDB(base64, imageId);
-      imageIds.push(imageId);
-      loaded++;
-      if (loaded === files.length) {
-        entry.imageIds = imageIds;
-        finishSave();
-      }
-    };
-    reader.readAsDataURL(file);
-  });
+  if (files.length === 0) {
+    finishSave(entry);
+  } else {
+    const imageIds = [];
+    let loaded = 0;
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base64 = e.target.result;
+        const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        saveImageToIndexedDB(base64, imageId);
+        imageIds.push(imageId);
+        loaded++;
+        if (loaded === files.length) {
+          entry.imageIds = imageIds;
+
+          // 🔁 Verzögerung für IndexedDB-Speicherung
+          setTimeout(() => {
+            finishSave(entry);
+          }, 50);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 }
-function finishSave() {
+
+function finishSave(entry) {
+  const editId = document.getElementById("saveJournalEntryButton").dataset.editId;
+  const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
+
   if (editId) {
     const index = allEntries.findIndex(e => e.id == editId);
     if (index !== -1) allEntries[index] = entry;
@@ -1030,12 +1040,18 @@ function finishSave() {
   }
 
   localStorage.setItem("journalData", JSON.stringify(allEntries));
-  alert("✅ Journal-Eintrag gespeichert!");
+
+  // 🛠️ Falls currentMonthOffset fehlt: absichern
+  if (typeof currentMonthOffset === "undefined") {
+    window.currentMonthOffset = 0;
+  }
+
   buildJournalCalendar(currentMonthOffset);
   document.getElementById("calc-journal").style.display = "none";
+  alert("✅ Journal-Eintrag gespeichert!");
 }
 
-}
+
 
 
 
@@ -1707,23 +1723,38 @@ function showEntriesForDate(dateStr) {
       : "linear-gradient(135deg, #4a1e1e, #8b2f2f)";
 
     let pnlDisplay = "⏳ Offen";
-    let pnlSummaryColor = "#aa5500"; // Orange
+    let pnlSummaryColor = "#aa5500";
     if (typeof entry.pnl === "number" && !isNaN(entry.pnl)) {
       pnlDisplay = `${entry.pnl} €`;
       pnlSummaryColor = entry.pnl > 0 ? "#1e5721" : entry.pnl < 0 ? "#8b2f2f" : "#666666";
     }
 
-    const imgBefore = entry.screenshotBefore ? `
-      <div style="text-align: center;">
-        <div style="font-size: 12px; color: #ccc; margin-bottom: 4px;">📸 Vor dem Trade</div>
-        <img src="${entry.screenshotBefore}" class="journal-screenshot" alt="Vor dem Trade" onclick="openLightbox('${entry.screenshotBefore}')" />
-      </div>` : "";
+    // 🔽 Bilder laden via imageIds[]
+let imageHTML = "";
+if (entry.imageIds && entry.imageIds.length > 0) {
+  const imgGroupId = "imggroup_" + entry.id;
+  imageHTML = `<div id="${imgGroupId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>`;
 
-    const imgAfter = entry.screenshotAfter ? `
-      <div style="text-align: center;">
-        <div style="font-size: 12px; color: #ccc; margin-bottom: 4px;">📸 Nach dem Trade</div>
-        <img src="${entry.screenshotAfter}" class="journal-screenshot" alt="Nach dem Trade" onclick="openLightbox('${entry.screenshotAfter}')" />
-      </div>` : "";
+  setTimeout(() => {
+    const groupEl = document.getElementById(imgGroupId);
+    if (groupEl) {
+      entry.imageIds.forEach(id => {
+        const imgWrapper = document.createElement("div");
+        imgWrapper.textContent = "⏳";
+        imgWrapper.id = "img_" + id;
+        groupEl.appendChild(imgWrapper);
+
+        loadImageFromIndexedDB(id, base64 => {
+          imgWrapper.innerHTML = `
+            <img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />
+          `;
+        });
+      });
+    }
+  }, 0);
+}
+
+
 
     list.innerHTML += `
       <details class="trade-box" style="margin-top: 10px; border-radius: 8px; overflow: hidden; background: ${colorBox};">
@@ -1743,27 +1774,47 @@ function showEntriesForDate(dateStr) {
           <strong>📝 Kommentar nach dem Trade:</strong><br>
           ${entry.notesAfter || "–"}<br><br>
 
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; margin-top: 10px;">
-            ${imgBefore}
-            ${imgAfter}
-          </div>
+          ${imageHTML}
 
           <div style="display:flex; gap:10px; margin-top: 10px;">
-  <button onclick="editEntry(${entry.id})"
-          style="background:#0077cc; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
-    ✏️ Bearbeiten
-  </button>
-  <button onclick="deleteEntry(${entry.id})"
-          style="background:#cc3333; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
-    🗑️ Löschen
-  </button>
-</div>
+            <button onclick="editEntry(${entry.id})"
+              style="background:#0077cc; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+              ✏️ Bearbeiten
+            </button>
+            <button onclick="deleteEntry(${entry.id})"
+              style="background:#cc3333; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+              🗑️ Löschen
+            </button>
+          </div>
         </div>
       </details>
     `;
   });
 }
 
+function loadImageFromIndexedDB(id, callback) {
+  const request = indexedDB.open("TradeAppDB", 1);
+  request.onsuccess = function(event) {
+    const db = event.target.result;
+    const tx = db.transaction("images", "readonly");
+    const store = tx.objectStore("images");
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      if (getReq.result) callback(getReq.result.image);
+    };
+  };
+}
+
+function showLightbox(src) {
+  const overlay = document.getElementById("lightboxOverlay");
+  const image = document.getElementById("lightboxImage");
+  image.src = src;
+  overlay.style.display = "flex";
+}
+
+function closeLightbox() {
+  document.getElementById("lightboxOverlay").style.display = "none";
+}
 
 
 function deleteEntry(entryId) {
@@ -3027,10 +3078,38 @@ document.getElementById("screenshotInput").addEventListener("change", function (
     reader.readAsDataURL(file);
   });
 });
+
+function showLightbox(src) {
+  const overlay = document.getElementById("lightboxOverlay");
+  const image = document.getElementById("lightboxImage");
+  image.src = src;
+  overlay.style.display = "flex";
+}
+
+function closeLightbox() {
+  document.getElementById("lightboxOverlay").style.display = "none";
+}
+function saveImageToIndexedDB(base64, id) {
+  const request = indexedDB.open("TradeAppDB", 1);
+  request.onupgradeneeded = function(event) {
+    const db = event.target.result;
+    if (!db.objectStoreNames.contains("images")) {
+      db.createObjectStore("images", { keyPath: "id" });
+    }
+  };
+  request.onsuccess = function(event) {
+    const db = event.target.result;
+    const tx = db.transaction("images", "readwrite");
+    const store = tx.objectStore("images");
+    store.put({ id, image: base64 });
+  };
+}
+
 </script>
 
 
 <body>
+
 
 <script src="imageStorage.js"></script>
 
