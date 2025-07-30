@@ -962,29 +962,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-let userChangedExit = false;
-
-function autoSuggestExit() {
-  const entryEl = document.getElementById("journalEntry");
-  const exitEl = document.getElementById("journalExit");
-  const direction = document.getElementById("journalDirection").value;
-
-  const entry = parseFloat(entryEl.value);
-  if (isNaN(entry) || userChangedExit) return;
-
-  const offset = 10; // kannst du dynamisch machen später, z. B. SL × RR
-
-  let exit = direction === "long" ? entry + offset : entry - offset;
-  exitEl.value = exit.toFixed(2);
-}
-
-// Reset manuelle Änderung bei Fokus auf Einstieg
-document.getElementById("journalEntry").addEventListener("focus", () => {
-  userChangedExit = false;
-});
-
-</script>
-<script>
+document.getElementById("journalEntry").addEventListener("input", autoCalculateExit);
+document.getElementById("journalDirection").addEventListener("change", autoCalculateExit);
 
 function autoCalculateExit() {
   const entryInput = document.getElementById("journalEntry");
@@ -994,8 +973,8 @@ function autoCalculateExit() {
   let entry = parseFloat(entryInput.value.replace(",", "."));
   if (isNaN(entry)) return;
 
-  const decimals = entry.toString().split(".")[1]?.length || 0;
-  const step = Math.pow(10, -decimals);
+  const decimals = (entry.toString().split(".")[1] || "").length;
+  const step = Math.pow(10, -decimals || 1); // fallback auf 0.1
 
   const exit = direction === "short"
     ? entry - step
@@ -1003,6 +982,10 @@ function autoCalculateExit() {
 
   exitInput.value = exit.toFixed(decimals);
 }
+
+</script>
+<script>
+
 
 let currentMonthOffset = 0;
 function onRuleChanged() {
