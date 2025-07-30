@@ -985,6 +985,25 @@ document.getElementById("journalEntry").addEventListener("focus", () => {
 
 </script>
 <script>
+
+function autoCalculateExit() {
+  const entryInput = document.getElementById("journalEntry");
+  const exitInput = document.getElementById("journalExit");
+  const direction = document.getElementById("journalDirection")?.value?.toLowerCase() || "long";
+
+  let entry = parseFloat(entryInput.value.replace(",", "."));
+  if (isNaN(entry)) return;
+
+  const decimals = entry.toString().split(".")[1]?.length || 0;
+  const step = Math.pow(10, -decimals);
+
+  const exit = direction === "short"
+    ? entry - step
+    : entry + step;
+
+  exitInput.value = exit.toFixed(decimals);
+}
+
 let currentMonthOffset = 0;
 function onRuleChanged() {
   updateRuleCount();
@@ -1003,7 +1022,8 @@ function saveJournalEntry() {
     id: editId ? parseInt(editId) : Date.now(),
     date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
     pair: document.getElementById("journalSymbol").value.trim(),
-    direction: document.getElementById("journalDirection").value,
+    direction: document.getElementById("journalDirection").value.toLowerCase(),
+
     entry: parseFloat(document.getElementById("journalEntry").value),
     exit: parseFloat(document.getElementById("journalExit").value),
     lots: parseFloat(document.getElementById("journalLots").value),
@@ -1701,33 +1721,22 @@ function editEntry(entryId) {
   const entry = all.find(e => e.id === entryId);
   if (!entry) return alert("❌ Eintrag nicht gefunden.");
 
-// 🧠 Werte ins Formular laden
-document.getElementById("journalManualDate").value = entry.date.split("T")[0];
-document.getElementById("journalSymbol").value = entry.pair;
-document.getElementById("journalDirection").value = entry.direction;
-document.getElementById("journalEntry").value = entry.entry;
-document.getElementById("journalExit").value = entry.exit;
-document.getElementById("journalLots").value = entry.lots;
-document.getElementById("journalPnL").value = entry.pnl;
-document.getElementById("emotionBefore").value = entry.emotionBefore;
-document.getElementById("emotionAfter").value = entry.emotionAfter;
+  // 🧠 Werte ins Formular laden
+  document.getElementById("journalManualDate").value = entry.date.split("T")[0];
+  document.getElementById("journalSymbol").value = entry.pair;
+  document.getElementById("journalDirection").value = entry.direction?.toLowerCase();
+  document.getElementById("journalEntry").value = entry.entry;
+  document.getElementById("journalExit").value = entry.exit;
+  document.getElementById("journalLots").value = entry.lots;
+  document.getElementById("journalPnL").value = entry.pnl;
+  document.getElementById("emotionBefore").value = entry.emotionBefore;
+  document.getElementById("emotionAfter").value = entry.emotionAfter;
 
-// ⭐ Update Sternanzeige richtig anzeigen
-updateStarVisuals("starsBefore", parseInt(entry.emotionBefore));
-updateStarVisuals("starsAfter", parseInt(entry.emotionAfter));
+  // ⭐ Update Sternanzeige richtig anzeigen
+  updateStarVisuals("starsBefore", parseInt(entry.emotionBefore));
+  updateStarVisuals("starsAfter", parseInt(entry.emotionAfter));
 
-// 📋 Regeln (Checkliste) setzen
-document.getElementById("ruleAOI").checked = !!entry.ruleAOI;
-document.getElementById("ruleEntry").checked = !!entry.ruleEntry;
-document.getElementById("rulePsych").checked = !!entry.rulePsych;
-document.getElementById("ruleSession").checked = !!entry.ruleSession;
-document.getElementById("ruleRR").checked = !!entry.ruleRR;
-document.getElementById("ruleLTFShift").checked = !!entry.ruleLTFShift;
-document.getElementById("ruleEntrySignal").checked = !!entry.ruleEntrySignal;
-document.getElementById("journalNotesBefore").value = entry.notesBefore || "";
-document.getElementById("journalNotesAfter").value = entry.notesAfter || "";
-updateSetupScoreDisplay();
-  // Regeln
+  // 📋 Regeln (Checkliste) setzen
   ["AOI", "Entry", "Psych", "Session", "RR", "LTFShift", "EntrySignal"].forEach(id => {
     const el = document.getElementById("rule" + id);
     if (el) el.checked = !!entry["rule" + id];
@@ -1742,16 +1751,28 @@ updateSetupScoreDisplay();
   document.getElementById("tradingMode").value = entry.tradingMode || "day";
   updateBiasOptions();
 
-  // Score live anzeigen
+  // Setup-Score berechnen
   updateSetupScoreDisplay();
 
   // 🧠 Signal zum Überschreiben statt neu anlegen
   document.getElementById("saveJournalEntryButton").dataset.editId = entryId;
 
-  // Formular anzeigen
-  document.getElementById("calc-journal").style.display = "block";
-  window.scrollTo({ top: document.getElementById("calc-journal").offsetTop - 40, behavior: "smooth" });
+  // 🖊️ Formular anzeigen & hervorheben
+  const formEl = document.getElementById("calc-journal");
+  formEl.style.display = "block";
+
+  // 🔽 Smooth scroll zum Formular mit Abstand (für Sticky Header etc.)
+  const topOffset = formEl.getBoundingClientRect().top + window.scrollY - 60;
+  window.scrollTo({ top: topOffset, behavior: "smooth" });
+
+  // ✨ Visuelles Highlight für Feedback
+  formEl.style.transition = "box-shadow 0.3s ease";
+  formEl.style.boxShadow = "0 0 12px 4px #0077cc";
+  setTimeout(() => {
+    formEl.style.boxShadow = "none";
+  }, 1000);
 }
+
 
 function showEntriesForDate(dateStr) {
   const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
