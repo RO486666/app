@@ -1001,12 +1001,28 @@ function saveJournalEntry() {
   const selectedBiasFrames = Array.from(document.querySelectorAll('#biasTimeframes input:checked'))
     .map(cb => cb.value);
 
-  const entry = {
-    id: editId ? parseInt(editId) : Date.now(),
-    date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
+  // ✏️ Wenn Bearbeitung → alten Eintrag holen und überschreiben
+  let entry;
+  if (editId) {
+    const existing = allEntries.find(e => e.id == editId);
+    entry = {
+      ...existing,
+      id: parseInt(editId),
+      date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
+      images: existing.images || { before: [], after: [] }  // ⬅️ beibehalten
+    };
+  } else {
+    entry = {
+      id: Date.now(),
+      date: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString(),
+      images: { before: [], after: [] }  // ⬅️ neu
+    };
+  }
+
+  // 🧠 Immer updaten
+  Object.assign(entry, {
     pair: document.getElementById("journalSymbol").value.trim(),
     direction: document.getElementById("journalDirection").value.toLowerCase(),
-
     entry: parseFloat(document.getElementById("journalEntry").value),
     exit: parseFloat(document.getElementById("journalExit").value),
     lots: parseFloat(document.getElementById("journalLots").value),
@@ -1023,14 +1039,14 @@ function saveJournalEntry() {
     ruleLTFShift: document.getElementById("ruleLTFShift")?.checked || false,
     ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
     notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
-    notesAfter: document.getElementById("journalNotesAfter")?.value.trim(),
-    imageIds: []
-  };
+    notesAfter: document.getElementById("journalNotesAfter")?.value.trim()
+  });
 
+  // 📸 Bildzuweisung
   if (files.length === 0) {
-    finishSave(entry);
+    finishSave(entry, editId, allEntries);
   } else {
-    const imageIds = [];
+    const targetArray = editId ? entry.images.after : entry.images.before;
     let loaded = 0;
     Array.from(files).forEach(file => {
       const reader = new FileReader();
@@ -1038,15 +1054,10 @@ function saveJournalEntry() {
         const base64 = e.target.result;
         const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
         saveImageToIndexedDB(base64, imageId);
-        imageIds.push(imageId);
+        targetArray.push(imageId);
         loaded++;
         if (loaded === files.length) {
-          entry.imageIds = imageIds;
-
-          // 🔁 Verzögerung für IndexedDB-Speicherung
-          setTimeout(() => {
-            finishSave(entry);
-          }, 50);
+          finishSave(entry, editId, allEntries);
         }
       };
       reader.readAsDataURL(file);
@@ -1054,10 +1065,9 @@ function saveJournalEntry() {
   }
 }
 
-function finishSave(entry) {
-  const editId = document.getElementById("saveJournalEntryButton").dataset.editId;
-  const allEntries = JSON.parse(localStorage.getItem("journalData") || "[]");
 
+
+function finishSave(entry, editId, allEntries) {
   if (editId) {
     const index = allEntries.findIndex(e => e.id == editId);
     if (index !== -1) allEntries[index] = entry;
@@ -1067,16 +1077,11 @@ function finishSave(entry) {
   }
 
   localStorage.setItem("journalData", JSON.stringify(allEntries));
-
-  // 🛠️ Falls currentMonthOffset fehlt: absichern
-  if (typeof currentMonthOffset === "undefined") {
-    window.currentMonthOffset = 0;
-  }
-
-  buildJournalCalendar(currentMonthOffset);
+  buildJournalCalendar(currentMonthOffset || 0);
   document.getElementById("calc-journal").style.display = "none";
   alert("✅ Journal-Eintrag gespeichert!");
 }
+
 
 
 
@@ -1795,30 +1800,84 @@ function showEntriesForDate(dateStr) {
       pnlSummaryColor = entry.pnl > 0 ? "#1e5721" : entry.pnl < 0 ? "#8b2f2f" : "#666666";
     }
 
-    // 🔽 Bilder laden via imageIds[]
+// 🔽 Bilder laden (getrennt nach Vorher/Nachher)
 let imageHTML = "";
-if (entry.imageIds && entry.imageIds.length > 0) {
-  const imgGroupId = "imggroup_" + entry.id;
-  imageHTML = `<div id="${imgGroupId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>`;
 
+// Neue Struktur mit "before"/"after"
+if (entry.images?.before?.length > 0 || entry.images?.after?.length > 0) {
+  if (entry.images.before?.length > 0) {
+    const beforeId = "img_before_" + entry.id;
+    imageHTML += `
+      <div style="margin-top: 10px;">
+        <strong>📸 Vor dem Trade:</strong>
+        <div id="${beforeId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
+      </div>
+    `;
+    setTimeout(() => {
+      const el = document.getElementById(beforeId);
+      if (el) {
+        entry.images.before.forEach(id => {
+          const box = document.createElement("div");
+          box.textContent = "⏳";
+          el.appendChild(box);
+          loadImageFromIndexedDB(id, base64 => {
+            box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
+          });
+        });
+      }
+    }, 0);
+  }
+
+  if (entry.images.after?.length > 0) {
+    const afterId = "img_after_" + entry.id;
+    imageHTML += `
+      <div style="margin-top: 10px;">
+        <strong>📸 Nach dem Trade:</strong>
+        <div id="${afterId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
+      </div>
+    `;
+    setTimeout(() => {
+      const el = document.getElementById(afterId);
+      if (el) {
+        entry.images.after.forEach(id => {
+          const box = document.createElement("div");
+          box.textContent = "⏳";
+          el.appendChild(box);
+          loadImageFromIndexedDB(id, base64 => {
+            box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
+          });
+        });
+      }
+    }, 0);
+  }
+}
+
+// 🔙 Fallback für alte Struktur (wenn entry.imageIds noch genutzt wird)
+if (!entry.images && entry.imageIds?.length > 0) {
+  const fallbackId = "img_fallback_" + entry.id;
+  imageHTML += `
+    <div style="margin-top: 10px;">
+      <strong>📸 Bilder:</strong>
+      <div id="${fallbackId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
+    </div>
+  `;
   setTimeout(() => {
-    const groupEl = document.getElementById(imgGroupId);
-    if (groupEl) {
+    const el = document.getElementById(fallbackId);
+    if (el) {
       entry.imageIds.forEach(id => {
-        const imgWrapper = document.createElement("div");
-        imgWrapper.textContent = "⏳";
-        imgWrapper.id = "img_" + id;
-        groupEl.appendChild(imgWrapper);
-
+        const box = document.createElement("div");
+        box.textContent = "⏳";
+        el.appendChild(box);
         loadImageFromIndexedDB(id, base64 => {
-          imgWrapper.innerHTML = `
-            <img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />
-          `;
+          box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
         });
       });
     }
   }, 0);
 }
+
+
+
 
 
 
@@ -3102,48 +3161,45 @@ function enableNotifications() {
 </script>
 <script>
 function saveJournalEntryWithImages(imageIds) {
-  const entries = JSON.parse(localStorage.getItem("journalData") || "[]");
+  const entries = JSON.parse(localStorage.getItem("journalData") || []);
 
   const newEntry = {
     id: Date.now(),
     date: new Date().toISOString().slice(0, 10),
-    comment: document.getElementById("journalComment").value || "",
-    result: document.getElementById("resultSelect").value || "neutral",
-    imageIds // ⬅️ Bild-Referenzen nur hier gespeichert!
+    comment: document.getElementById("journalComment")?.value || "",
+    result: document.getElementById("resultSelect")?.value || "neutral",
+    images: {
+      before: imageIds,
+      after: [] // vorerst leer
+    }
   };
 
   entries.push(newEntry);
   localStorage.setItem("journalData", JSON.stringify(entries));
   alert("✅ Journal gespeichert mit Bildern!");
+  buildJournalCalendar(); // ⬅️ Kalender aktualisieren
 }
 
+
 document.getElementById("screenshotInput").addEventListener("change", function (event) {
-  const files = Array.from(event.target.files);
-  const imageIds = [];
-  let loaded = 0;
+  const previewBox = document.getElementById("imagePreviewBox");
+  if (!previewBox) return;
 
-  if (files.length === 0) {
-    saveJournalEntryWithImages([]); // Keine Bilder
-    return;
-  }
-
-  files.forEach(file => {
+  previewBox.innerHTML = ""; // leeren
+  Array.from(event.target.files).forEach(file => {
     const reader = new FileReader();
     reader.onload = function (e) {
-      const base64 = e.target.result;
-      const imageId = "img_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
-      saveImageToIndexedDB(base64, imageId);
-      imageIds.push(imageId);
-      loaded++;
-
-      if (loaded === files.length) {
-        // ⏳ Wenn alle Bilder verarbeitet wurden
-        saveJournalEntryWithImages(imageIds);
-      }
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.maxWidth = "100px";
+      img.style.margin = "5px";
+      img.style.borderRadius = "6px";
+      previewBox.appendChild(img);
     };
     reader.readAsDataURL(file);
   });
 });
+
 
 function showLightbox(src) {
   const overlay = document.getElementById("lightboxOverlay");
