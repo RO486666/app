@@ -7,6 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trade App Layout</title>
   <style>
+  
+  html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 👈 verhindert Scrollleisten durch zu breite Elemente */
+}
     body {
       background: #111;
       color: white;
@@ -195,22 +201,31 @@
   user-select: none;
   cursor: pointer;
 }
-    .progress-container {
-      position: relative;
-      background: #111;
-      height: 24px;
-      width: 100%;
-      border-top: 1px solid #333;
-      border-bottom: 1px solid #333;
-      overflow: hidden;
-      border-radius: 6px;
-      margin-top: 5px;
-    }
+
+.progress-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 24px;
+  background: #111;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+  z-index: 9;
+  margin: 0 auto;
+  padding: 0;
+  border-radius: 0;
+}
+
+
+
+
     .progress-bar {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
+	  
       width: 0%; /* wird per JS gesetzt */
       background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
       transition: width 1s linear;
@@ -3457,6 +3472,7 @@ function enableNotifications() {
   });
 }
 </script>
+
 <script>
 function saveJournalEntryWithImages(imageIds) {
   const entries = JSON.parse(localStorage.getItem("journalData") || []);
@@ -3529,6 +3545,9 @@ function saveImageToIndexedDB(base64, id) {
 
 
 <body>
+<button onclick="sendPushNotificationTest()" class="tool-button">
+  📲 Push-Notification testen
+</button>
 
 
 <script src="imageStorage.js"></script>
