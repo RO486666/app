@@ -329,36 +329,24 @@
   transition: transform 0.2s ease;
 }
 
-.trade-box {
-  background: #222;
+.tax-button {
+  background: #cc3333;
+  color: white;
+  padding: 12px;
+  border: none;
   border-radius: 8px;
-  margin-top: 8px;
-  padding: 0;
-  overflow: hidden;
-}
-
-.trade-box summary {
-  padding: 10px;
-  cursor: pointer;
+  width: 100%;
   font-weight: bold;
-  background: #333;
-  color: #fff;
-  list-style: none;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 12
+
+.tax-button:hover {
+  background: #ff4444;
+  box-shadow: 0 0 20px #ff4444;
 }
 
-.trade-box summary::-webkit-details-marker {
-  display: none;
-}
-
-.trade-details {
-  padding: 10px;
-  background: #1a1a1a;
-  color: #eee;
-}
-
-
-
-	
   </style>
 </head>
 <body>
@@ -406,12 +394,83 @@
 <div class="session-details-box" id="sessionDetailsBox"></div>
 <div class="alert-below-header" id="alertBox"></div>
 
+<!-- Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px;">
   <button class="btn" id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
   <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
   <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
+  <button class="btn" id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')" style="
+    background: #cc3333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 5px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 12px #cc3333;
+    transition: all 0.2s ease-in-out;
+  ">
+    📄 Steuer / Netto-Planer
+  </button>
 </div>
+
+
+
+<div id="calc-taxpro" class="calc-box" style="margin-top: 15px; display: none;">
+  <div class="stats-box">
+    <!-- 🔁 Umschaltbare Ansicht -->
+    <div id="steuerMode">
+      <label for="gewinnBetrag">📈 Gesamtgewinn (€):</label>
+      <input type="number" id="gewinnBetrag" placeholder="z. B. 17200" />
+
+      <label for="einkommenSteuer">💸 Einkommensteuer-Satz (%):</label>
+      <input type="number" id="einkommenSteuer" placeholder="z. B. 25" value="25" step="0.1" />
+
+      <label><input type="checkbox" id="kirchensteuer" /> ✝️ Kirchensteuer (9 %)</label><br>
+      <label><input type="checkbox" id="soliZuschlag" /> 💣 Solidaritätszuschlag (5.5 %)</label><br>
+      <label><input type="checkbox" id="reserveZehn" /> 💥 +10 % Reserve</label><br>
+
+      <button onclick="berechneSteuern()" class="tax-button">📊 Steuer berechnen</button>
+      <div id="steuerAusgabe"></div>
+    </div>
+
+    <div id="nettoMode" style="display:none">
+      <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
+      <input type="number" id="nettoBrutto" placeholder="z. B. 10000" />
+
+      <label for="nettoSteuer">💸 Steuerlast (€):</label>
+      <input type="number" id="nettoSteuer" placeholder="z. B. 3500" />
+
+      <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
+      <input type="number" id="nettoEntnommen" placeholder="z. B. 8000" />
+
+      <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
+      <div id="nettoAusgabe"></div>
+    </div>
+
+    <!-- 🧠 Umschalter -->
+    <button onclick="switchPlanMode()" id="planToggleBtn" style="
+      margin-top: 15px;
+      background: #444;
+      color: white;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    ">
+    🔁 Zu Netto-Planer wechseln
+    </button>
+  </div>
 </div>
+
+
+
+
+
 
 
 
@@ -961,6 +1020,147 @@
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let planMode = "steuer";
+
+function switchPlanMode() {
+  const steuerDiv = document.getElementById("steuerMode");
+  const nettoDiv = document.getElementById("nettoMode");
+  const toggleBtn = document.getElementById("planToggleBtn");
+
+  if (planMode === "steuer") {
+    planMode = "netto";
+    steuerDiv.style.display = "none";
+    nettoDiv.style.display = "block";
+    toggleBtn.textContent = "🔁 Zurück zum Steuerplaner";
+  } else {
+    planMode = "steuer";
+    steuerDiv.style.display = "block";
+    nettoDiv.style.display = "none";
+    toggleBtn.textContent = "🔁 Zu Netto-Planer wechseln";
+  }
+}
+
+function berechneSteuern() {
+  const betrag = parseFloat(document.getElementById("gewinnBetrag").value);
+  const estSatz = parseFloat(document.getElementById("einkommenSteuer").value);
+  const mitKirche = document.getElementById("kirchensteuer").checked;
+  const mitSoli = document.getElementById("soliZuschlag").checked;
+  const mitReserve = document.getElementById("reserveZehn").checked;
+  const ausgabe = document.getElementById("steuerAusgabe");
+
+  if (isNaN(betrag) || isNaN(estSatz) || betrag <= 0 || estSatz <= 0) {
+    ausgabe.innerHTML = "❌ Bitte Gewinn & Steuersatz korrekt eingeben!";
+    ausgabe.style.color = "#f44";
+    return;
+  }
+
+  const est = betrag * (estSatz / 100);
+  const kirche = mitKirche ? est * 0.09 : 0;
+  const soli = mitSoli ? est * 0.055 : 0;
+  const reserve = mitReserve ? betrag * 0.10 : 0;
+
+  const steuerlast = est + kirche + soli;
+  const netto = betrag - steuerlast;
+  const vorauszahlung = steuerlast / 4;
+
+  let output = "";
+  output += `📊 <strong>Summe Gewinne:</strong> ${betrag.toFixed(2)} €<br>`;
+  output += `💸 <strong>Einkommensteuer:</strong> ${est.toFixed(2)} €<br>`;
+  if (mitKirche) output += `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>`;
+  if (mitSoli) output += `💣 Soli: ${soli.toFixed(2)} €<br>`;
+  if (mitReserve) output += `💥 Reserve: ${reserve.toFixed(2)} €<br>`;
+  output += `<br>📦 <strong>Gesamtsteuerlast:</strong> ${steuerlast.toFixed(2)} €<br>`;
+  output += `💰 <strong>Netto-Gewinn:</strong> ${netto.toFixed(2)} €<br><br>`;
+  output += `🔮 <strong>Vorauszahlung nächstes Jahr (vierteljährlich):</strong> ${vorauszahlung.toFixed(2)} €`;
+
+  ausgabe.innerHTML = output;
+  ausgabe.style.color = "#0f0";
+
+  // 💾 Nur Steuerplan speichern
+  localStorage.setItem("lastTaxPlan", JSON.stringify({
+    betrag, est, kirche, soli, reserve, steuerlast, netto, vorauszahlung,
+    timestamp: new Date().toISOString()
+  }));
+
+  // 🔁 Nur live Netto-Werte setzen (nicht speichern)
+  document.getElementById("nettoBrutto").value = betrag.toFixed(2);
+  document.getElementById("nettoSteuer").value = steuerlast.toFixed(2);
+  document.getElementById("nettoEntnommen").value = "";
+  document.getElementById("nettoAusgabe").innerHTML = "";
+}
+
+
+
+function berechneNettoPlan() {
+  const brutto = parseFloat(document.getElementById("nettoBrutto").value);
+  const steuer = parseFloat(document.getElementById("nettoSteuer").value);
+  const entnommen = parseFloat(document.getElementById("nettoEntnommen").value);
+  const ausgabe = document.getElementById("nettoAusgabe");
+
+  if ([brutto, steuer, entnommen].some(v => isNaN(v))) {
+    ausgabe.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    ausgabe.style.color = "#f44";
+    return;
+  }
+
+  const netto = brutto - steuer;
+  const differenz = entnommen - netto;
+
+  let output = `📦 Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>`;
+  output += `🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>`;
+
+  if (differenz > 0) {
+    output += `⚠️ Du hast <strong>${differenz.toFixed(2)} €</strong> zu viel entnommen.<br>`;
+    output += `💡 Empfehlung: Beim nächsten Gewinn mindestens <strong>${differenz.toFixed(2)} €</strong> zurücklegen.`;
+    ausgabe.style.color = "#ffaa00";
+  } else {
+    output += `✅ Entnahme im Rahmen. Kein Ausgleich nötig.`;
+    ausgabe.style.color = "#0f0";
+  }
+
+  ausgabe.innerHTML = output;
+
+  // 🔁 Rücklagen-Merkung speichern
+  localStorage.setItem("nettoPlanMemory", JSON.stringify({
+    brutto, steuer, entnommen, differenz,
+    timestamp: new Date().toISOString()
+  }));
+}
+
+
+function switchCalcTab(tab) {
+  document.querySelectorAll(".calc-box").forEach(box => box.style.display = "none");
+  const target = document.getElementById("calc-" + tab);
+  if (target) target.style.display = "block";
+
+  document.querySelectorAll(".tab-buttons .btn").forEach(btn => btn.classList.remove("active"));
+  const btn = document.getElementById("btn-calc-" + tab);
+  if (btn) btn.classList.add("active");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  // Steuerplan NICHT automatisch in Netto übernehmen
+  document.getElementById("nettoBrutto").value = "";
+  document.getElementById("nettoSteuer").value = "";
+  document.getElementById("nettoEntnommen").value = "";
+  document.getElementById("nettoAusgabe").innerHTML = "";
+});
+
+
+
+
+
+
+</script>
+
+
+</script>
+
+
+
+
 <script>
 document.getElementById("journalEntry").addEventListener("input", autoCalculateExit);
 document.getElementById("journalDirection").addEventListener("change", autoCalculateExit);
