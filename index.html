@@ -347,7 +347,99 @@
   box-shadow: 0 0 20px #ff4444;
 }
 
+
+
   </style>
+<style>
+  #tickerContent {
+    display: inline-block;
+    white-space: nowrap;
+    position: relative;
+    left: 100%; /* Start rechts außerhalb */
+  }
+  .ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    background: #111;
+    color: #00ff99;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    position: relative;
+  }
+</style>
+
+<div class="ticker">
+  <div id="tickerContent"></div>
+</div>
+
+<script>
+  const ticker = document.getElementById("tickerContent");
+  const focusPairsByDay = {
+    0: [ "BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD", "LTC/USD", "ADA/USD", "BCH/USD", "XAU/USD", "XAG/USD", "XPT/USD", "XPD/USD", "COPPER/USD", "ALUMINIUM/USD", "US30", "NAS100", "SPX500", "GER40", "UK100" ],
+    1: [ "EUR/USD", "GBP/USD", "AUD/USD", "NZD/USD", "USD/CHF", "USD/CAD", "EUR/JPY", "GBP/JPY", "CHF/JPY", "AUD/JPY", "CAD/JPY", "EUR/GBP", "XAU/USD", "XAG/USD", "BTC/USD", "ETH/USD" ],
+    2: [ "USD/JPY", "EUR/JPY", "GBP/JPY", "CHF/JPY", "AUD/JPY", "NZD/JPY", "CAD/JPY", "BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD" ],
+    3: [ "US30", "NAS100", "SPX500", "GER40", "UK100", "EUR/GBP", "EUR/AUD", "EUR/CAD", "GBP/AUD", "GBP/CAD", "AUD/CAD" ],
+    4: [ "GBP/USD", "GBP/JPY", "GBP/AUD", "GBP/CAD", "XAU/USD", "XAG/USD", "WTI/USD", "BRENT/USD", "NATGAS/USD" ],
+    5: [ "XAU/USD", "XAG/USD", "BTC/USD", "ETH/USD", "US30", "NAS100", "SPX500" ],
+    6: [ "ETH/USD", "SOL/USD", "XRP/USD", "BTC/USD", "LTC/USD", "ADA/USD" ]
+  };
+
+  // Zeiten in ms
+  const enterDuration = 5000; // 5 Sekunden reinfahren
+  const stayDuration = 40000; // 40 Sekunden Pause
+  const exitDuration = 5000;  // 5 Sekunden rausfahren
+
+  function animateTicker() {
+    const now = new Date();
+    const day = now.getDay();
+    const pairs = focusPairsByDay[day] || [];
+    ticker.textContent = pairs.join("  |  ") + "  |  ";
+
+    // 1. Starte rechts außerhalb (left: 100%)
+    ticker.style.transition = "none";
+    ticker.style.left = "100%";
+
+    // 2. Nach kurzem Timeout reinfahren (left: 0%) mit Transition
+    setTimeout(() => {
+      ticker.style.transition = `left ${enterDuration}ms linear`;
+      ticker.style.left = "0%";
+    }, 50);
+
+    // 3. Nach reinfahren die Transition ausschalten für Pause (damit bleibt es an 0%)
+    setTimeout(() => {
+      ticker.style.transition = "none";
+      ticker.style.left = "0%";
+    }, enterDuration + 60); // kleine Verzögerung nach Ende reinfahren
+
+    // 4. Nach Pause rausfahren
+    setTimeout(() => {
+      // Jetzt wieder Transition an, um rauszufahren
+      // WICHTIG: Transition nur aktivieren, wenn left anders als -100% ist (sonst springt er evtl)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ticker.style.transition = `left ${exitDuration}ms linear`;
+          ticker.style.left = "-100%";
+        });
+      });
+    }, enterDuration + stayDuration + 60);
+
+    // 5. Loop restart
+    setTimeout(() => {
+      animateTicker();
+    }, enterDuration + stayDuration + exitDuration + 150);
+  }
+
+  document.addEventListener("DOMContentLoaded", animateTicker);
+</script>
+
+
+
+
+</script>
+
 </head>
 <body>
 
@@ -358,13 +450,17 @@
 
 
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
+
 <div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
+
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
+
 <div id="daySummary" class="ticker" style="background:#333; color:#ffcc00; font-size:16px; cursor:pointer;">
   🗓️ Lade Tagesinfo...
 </div>
+
 <div id="dayDetails" style="
   display: none;
   background: #1c1c1c;
@@ -393,6 +489,7 @@
 
 <div class="session-details-box" id="sessionDetailsBox"></div>
 <div class="alert-below-header" id="alertBox"></div>
+
 
 <!-- Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px;">
@@ -2614,9 +2711,9 @@ const sessions = [
     info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
     weekDaysInfo: [
       { day: "Sonntag", text: "🛠️ Vorbereitung auf neue Woche" },
-      { day: "Montag", text: "🌏 Asien-Session startet" },
-      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien" },
-      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung" }
+      { day: "Montag", text: "🌏 Asien-Session startet – AUD/USD, NZD/USD im Fokus" },
+      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien – AUD/CAD, AUD/JPY interessant" },
+      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung – AUD/NZD Moves möglich" }
     ],
   },
   {
@@ -2625,9 +2722,9 @@ const sessions = [
     end: 600,
     info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
     weekDaysInfo: [
-      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz" },
-      { day: "Donnerstag", text: "📈 Japan BIP-Daten" },
-      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach" }
+      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz – EUR/JPY, GBP/JPY sehr aktiv" },
+      { day: "Donnerstag", text: "📈 Japan BIP-Daten – USD/JPY, CAD/JPY im Blick behalten" },
+      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach – Yen-Paare volatil: USD/JPY, GBP/JPY" }
     ],
   },
   {
@@ -2636,10 +2733,10 @@ const sessions = [
     end: 1020,
     info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
     weekDaysInfo: [
-      { day: "Montag", text: "📉 EU Handelsdaten" },
-      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB" },
-      { day: "Donnerstag", text: "📊 Inflationsdaten UK" },
-      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK" }
+      { day: "Montag", text: "📉 EU Handelsdaten – EUR/USD, EUR/JPY, DAX" },
+      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB – EUR/USD, EUR/GBP, EUR/CHF" },
+      { day: "Donnerstag", text: "📊 Inflationsdaten UK – GBP/USD, GBP/JPY, FTSE100" },
+      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK – GBP/USD, EUR/GBP" }
     ],
   },
   {
@@ -2648,54 +2745,55 @@ const sessions = [
     end: 1380,
     info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
     weekDaysInfo: [
-      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen" },
-      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten" },
-      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
+      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen – USD/JPY, EUR/USD, Gold (XAU/USD)" },
+      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten – XAU/USD, NAS100, USD/CHF" },
+      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung – EUR/USD, USD/CAD" }
     ],
   },
-{
-  name: "London Killzone",
-  start: 420,
-  end: 660,
-  info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
-  weekDaysInfo: [
-    { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
-    { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
-  ],
-},
-{
-  name: "New York Killzone",
-  start: 810,
-  end: 1020,
-  info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
-  weekDaysInfo: [
-    { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
-    { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
-  ],
-},
-{
-  name: "Deadzone",
-  start: 1380,
-  end: 0,
-  info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
-  weekDaysInfo: [
-    { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
-  ],
-},
-{
-  name: "Crypto",
-  start: 0,
-  end: 1440,
-  info: "Krypto läuft 24/7 – Spitzenvolumen oft bei Überschneidung mit NY & Asien.",
-  weekDaysInfo: [
-    { day: "Montag", text: "🚀 Reaktion auf Wochenstart – Gap-Moves checken" },
-    { day: "Mittwoch", text: "📉 Midweek-Reversal bei BTC häufig" },
-    { day: "Freitag", text: "💸 Ausbruch vor Wochenende, dann Flat Market" },
-    { day: "Samstag", text: "🧘 Wenig Volumen – Fokus auf Konsolidierungen" },
-    { day: "Sonntag", text: "⏳ Pre-Move für Montag oft sichtbar" }
-  ],
-}
+  {
+    name: "London Killzone",
+    start: 420,
+    end: 660,
+    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
+    weekDaysInfo: [
+      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung – GBP/USD, EUR/JPY" },
+      { day: "Mittwoch", text: "🔥 Breakouts oft möglich – GBP/JPY, DAX, EUR/USD" }
+    ],
+  },
+  {
+    name: "New York Killzone",
+    start: 810,
+    end: 1020,
+    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
+    weekDaysInfo: [
+      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten – XAU/USD, NAS100" },
+      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten – USD/JPY, Gold, SPX500" }
+    ],
+  },
+  {
+    name: "Deadzone",
+    start: 1380,
+    end: 0,
+    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
+    weekDaysInfo: [
+      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung – Scalping-Pause empfohlen" }
+    ],
+  },
+  {
+    name: "Crypto",
+    start: 0,
+    end: 1440,
+    info: "Krypto läuft 24/7 – Spitzenvolumen oft bei Überschneidung mit NY & Asien.",
+    weekDaysInfo: [
+      { day: "Montag", text: "🚀 Reaktion auf Wochenstart – Gap-Moves checken – BTC/USD, ETH/USD" },
+      { day: "Mittwoch", text: "📉 Midweek-Reversal bei BTC häufig – BTC/USD, SOL/USDT" },
+      { day: "Freitag", text: "💸 Ausbruch vor Wochenende, dann Flat Market – ETH/USD, XRP/USD" },
+      { day: "Samstag", text: "🧘 Wenig Volumen – Fokus auf Konsolidierungen – BTC, ETH" },
+      { day: "Sonntag", text: "⏳ Pre-Move für Montag oft sichtbar – BTC/USD, LINK/USDT" }
+    ],
+  }
 ];
+
 
 
 
