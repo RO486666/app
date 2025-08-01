@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trade App Layout</title>
   <style>
+  <script src="https://unpkg.com/tesseract.js@v4.0.2/dist/tesseract.min.js"></script>
 html, body {
   margin: 0;
   padding: 0;
@@ -894,9 +895,15 @@ img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box
   <button onclick="saveResult()">Speichern</button>
 </div>
 <div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
+<!-- 📸 Screenshot Upload -->
+<div class="stats-box" style="margin-top: 20px;">
+  <label style="font-weight: bold;">📸 Screenshot für automatisches Auslesen:</label>
+  <input type="file" id="screenshotUpload" accept="image/*" />
+</div>
 
 <body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/screen.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/dawn.js"></script>
 <script src="scripts/tax.js"></script>
