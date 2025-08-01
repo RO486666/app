@@ -188,7 +188,6 @@ function requestNotificationPermission() {
 
 
 
-
 function showSessionProgress(activeSessions, currentMinutes) {
   let output = "";
 
@@ -200,9 +199,6 @@ function showSessionProgress(activeSessions, currentMinutes) {
     if (start > end) end += 1440;
     let nowMins = currentMinutes;
     if (nowMins < start) nowMins += 1440;
-    const duration = end - start;
-    const progressMins = nowMins - start;
-    const percent = (progressMins / duration) * 100;
     const timeLeft = end - nowMins;
 
     output += `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> in <strong>${current.name}</strong><br>`;
@@ -223,12 +219,24 @@ function showSessionProgress(activeSessions, currentMinutes) {
 
   output += `🔜 Nächste: <strong>${next.name}</strong> in <strong>${formatHM(minsToNext)}</strong>`;
 
-  // Ausgabe einfügen
-  sessionProgressEl.innerHTML = output;
+  // ✅ Sicher nur aktualisieren, wenn Element existiert
+  const box = document.getElementById("sessionProgressDisplay");
+  if (box) {
+    box.innerHTML = `
+      <div class="session-progress-box">
+        ${output}
+      </div>
+    `;
+  }
 }
 
 
+
+
+
+
 function updateRealTimeBar() {
+	
   const now = new Date();
   const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
   const hours = String(now.getHours()).padStart(2, "0");
@@ -305,7 +313,10 @@ function updateRealTimeBar() {
 
   const colors = names.map(n => sessionColors[n] || "#666");
   updateGradientBar(colors);
+  if (document.getElementById("sessionProgressDisplay")) {
   showSessionProgress(activeSessions, minutes);
+}
+
 
   progressContainer.style.boxShadow = colors.length > 0
     ? `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`
@@ -401,6 +412,24 @@ function updateRealTimeBar() {
   } else {
     lastAlertSession = null;
   }
+  // 📝 Info anzeigen
+sessionInfoEl.textContent = infoText;
+
+// 🎨 Farbe aus aktiver Session übernehmen
+if (sessionColors[name]) {
+  const infoColor = sessionColors[name];
+  sessionInfoEl.style.background = hexToRgba(infoColor, 0.07);
+  sessionInfoEl.style.color = infoColor;
+  sessionInfoEl.style.textShadow = `0 0 2px ${infoColor}, 0 0 6px ${hexToRgba(infoColor, 0.3)}`;
+  sessionInfoEl.style.boxShadow = `inset 0 0 6px ${hexToRgba(infoColor, 0.15)}`;
+} else {
+  // Standard-Fallback
+  sessionInfoEl.style.background = "transparent";
+  sessionInfoEl.style.color = "#ccc";
+  sessionInfoEl.style.textShadow = "none";
+  sessionInfoEl.style.boxShadow = "none";
+}
+
 }
 
 
