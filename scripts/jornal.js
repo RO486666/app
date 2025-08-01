@@ -500,6 +500,7 @@ function buildJournalCalendar(monthOffset = 0) {
   const calendar = document.createElement("div");
   calendar.style.display = "grid";
   calendar.style.gridTemplateColumns = "repeat(7, 1fr)";
+
   calendar.style.gap = "5px";
 
   ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].forEach(day => {
