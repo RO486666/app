@@ -503,24 +503,65 @@ img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box
 
 <!-- Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px;">
-  <button class="btn" id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
-  <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
-  <button class="btn" id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')" style="
-    background: #cc3333;
-    color: white;
+  <!-- 📐 Position Size -->
+  <button id="btn-calc-pos" onclick="switchCalcTab('pos')" style="
+    background: #ffffff;
+    color: #111;
+    box-shadow: 0 0 8px rgba(255,255,255,0.4);
     padding: 10px 15px;
-    border-radius: 5px;
     margin: 5px;
+    border-radius: 8px;
     border: none;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0 12px #cc3333;
-    transition: all 0.2s ease-in-out;
-  ">
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+    📐 Position Size
+  </button>
+
+  <!-- 🌒 Dawn Rechner -->
+  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')" style="
+    background: #0077cc;
+    color: white;
+    box-shadow: 0 0 8px rgba(0,119,204,0.6);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+    🌒 Dawn Rechner
+  </button>
+
+  <!-- 📄 Steuer / Netto -->
+  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')" style="
+    background: #cc3333;
+    color: white;
+    box-shadow: 0 0 8px rgba(204,51,51,0.6);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
     📄 Steuer / Netto-Planer
   </button>
 </div>
+
+
+
+
+
 
 
 
@@ -577,6 +618,37 @@ img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box
 
 
 
+<div id="calc-dawn" class="calc-box" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+    <label for="dawnStart">🌅 Startzeit (z. B. 06:00):</label>
+    <input type="time" id="dawnStart">
+
+    <label for="dawnEnd">🌄 Endzeit (z. B. 08:00):</label>
+    <input type="time" id="dawnEnd">
+
+    <label for="dawnZone">📍 Zone:</label>
+    <select id="dawnZone">
+      <option value="XAU/USD">XAU/USD (Gold)</option>
+      <option value="EUR/USD">EUR/USD</option>
+      <option value="GBP/USD">GBP/USD</option>
+      <option value="US30">US30 (Dow)</option>
+    </select>
+
+    <button onclick="berechneDawnRange()" style="
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-weight: bold;
+      margin-top: 12px;
+      width: 100%;
+      cursor: pointer;
+    ">🌒 Range berechnen</button>
+
+    <p id="dawnResult" style="margin-top: 10px; font-weight: bold; font-size: 16px;"></p>
+  </div>
+</div>
 
 
 
@@ -1205,6 +1277,27 @@ function animate() {
 }
 
 animate();
+
+function berechneDawnRange() {
+  const start = document.getElementById("dawnStart").value;
+  const end = document.getElementById("dawnEnd").value;
+  const zone = document.getElementById("dawnZone").value;
+  const output = document.getElementById("dawnResult");
+
+  if (!start || !end) {
+    output.innerHTML = "❌ Bitte Start- und Endzeit eingeben.";
+    output.style.color = "#f44";
+    return;
+  }
+
+  // Formatierte Anzeige
+  output.innerHTML = `✅ <strong>${zone}</strong> Dawn Range:<br>🕒 <strong>${start}</strong> – <strong>${end}</strong>`;
+  output.style.color = "#0f0";
+
+  // Optional: Sound, Chart-Zoom oder Marker setzen
+  // playSound("dawn.mp3"); oder drawRangeOnChart(start, end);
+}
+
 </script>
 
 
