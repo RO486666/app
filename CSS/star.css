@@ -1,0 +1,13 @@
+.star-rating {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  display: inline-flex;
+}
+.star-rating span {
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+}
+.star-rating span.selected {
+  color: gold;
+}
