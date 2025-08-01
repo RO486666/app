@@ -1,20 +1,45 @@
-/* styles.css */
-.ticker {
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-  background: #111;
-  color: #00ff99;
-  font-size: 14px;
-  padding: 6px 10px;
+/* 🧱 Massive Ticker-Box mit festem Look */
+.ticker-box {
+  width: 100vw;
+  margin: 0;
+  padding: 16px 0;
+  background: linear-gradient(
+    90deg,
+    #141414 0%,
+    #1a1a1a 30%,
+    #1a1a1a 70%,
+    #141414 100%
+  );
   border-top: 1px solid #333;
   border-bottom: 1px solid #333;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: clamp(14px, 4vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  user-select: none;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.15);
   position: relative;
+  overflow: hidden;
+
+  /* 🧼 Verblassen links und rechts */
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
+/* 🎯 Text im Ticker */
 #tickerContent {
   display: inline-block;
   white-space: nowrap;
   position: relative;
-  left: 100%;
+}
+
+/* 🎞️ Scroll-Effekt mit Pause */
+@keyframes tickerCenterPause {
+  0%   { transform: translateX(100%); opacity: 0; }
+  20%  { transform: translateX(0%); opacity: 1; }
+  60%  { transform: translateX(0%); opacity: 1; }
+  80%  { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(-100%); opacity: 0; }
 }
