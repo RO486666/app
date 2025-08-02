@@ -1,350 +1,382 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="CSS/ticker.css" />
+<link rel="stylesheet" href="CSS/star.css" />
+<link rel="stylesheet" href="CSS/session.css" />
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#00aa44" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trade App Layout</title>
   <style>
-    body {
-      background: #111;
-      color: white;
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .header {
-      background: #1c1c1c;
-      padding: 10px;
-      text-align: center;
-      font-size: 18px;
-    }
-    .session-bar {
-      height: 10px;
-      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-      margin-top: 5px;
-    }
-	
-    .main {
-      padding: 20px;
-      padding-bottom: 120px; /* Platz für Positionsleiste */
-      text-align: center;
-    }
-    .big-btn {
-      padding: 20px 30px;
-      font-size: 22px;
-      font-weight: bold;
-      border-radius: 15px;
-      border: none;
-      background-color: #00aa44;
-      color: white;
-      margin: 20px auto;
-      width: 80%;
-      max-width: 300px;
-    }
-    .tab-buttons {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .tab-buttons button {
-      background: #333;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin: 5px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .tab-buttons .active {
-      background: #0077cc;
-    }
-    .stats-box {
-      background: #222;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      text-align: left;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #resetBtn {
-      background: #cc3333;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 400px;
-      font-weight: bold;
-      margin: 20px auto 30px auto;
-      cursor: pointer;
-      display: block;
-      user-select: none;
-      position: relative; /* kein fixed */
-      z-index: auto;
-    }
-    .position-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #1c1c1c;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      box-sizing: border-box;
-      z-index: 10000; /* über anderen Elementen */
-	  touch-action: pan-y; /* Erlaubt vertikales Scrollen, verhindert horizontale Interferenzen */
-    }
-    .trade-box {
-      flex: 0 0 auto;
-      box-sizing: border-box;
-      width: 85%;
-      max-width: 280px;
-      background: #333;
-      padding: 10px;
-      border-radius: 10px;
-      min-width: 180px;
-      color: white;
-      user-select: none;
-      z-index: 10001; /* über reset Button */
-	   touch-action: none; /* Damit alle Touch-Events an JS gehen */
-      position: relative;
-    }
-    .trade-box.Long {
-      background-color: #228B22; /* grün */
-    }
-    .trade-box.Short {
-      background-color: #B22222; /* rot */
-    }
-    .result-value {
-      margin-top: 5px;
-      font-weight: bold;
-    }
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-      z-index: 1000;
-      width: 90%;
-      max-width: 300px;
-      color: white;
-    }
-    label {
-      cursor: pointer;
-      user-select: none;
-      margin-right: 15px;
-      display: inline-block;
-    }
-    #pairMultiSelect {
-      max-height: 150px;
-      overflow-y: auto;
-      background: #222;
-      padding: 5px;
-      border-radius: 6px;
-      color: white;
-      margin-bottom: 10px;
-      text-align: left;
-    }
-    select, input {
-      padding: 8px;
-      margin-top: 10px;
-      width: 100%;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-    .popup button {
-      margin-top: 10px;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .ticker {
-      width: 100%;
-      background: #222;
-      color: #00ff99;
-      padding: 10px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      font-family: Arial, sans-serif;
-      user-select: none;
-    }
-    .session-info {
-      margin-top: 5px;
-      font-size: 14px;
-      color: #aaf0aa;
-      text-align: center;
-      font-style: italic;
-      user-select: none;
-    }
-	
-.session-details-box {
-  display: none;
-  background: #1a1a1a;
-  padding: 15px;
-  margin: 10px 20px;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #eee;
-  text-align: left;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-}
-
-
-  .session-details-box {
-    font-size: 13px;
-    margin: 10px;
-    padding: 12px;
-    line-height: 1.4;
-  }
-
-  .session-header, #sessionText {
-    font-size: 16px;
-    padding: 12px;
-  }
-  
-  #sessionText {
-  user-select: none;
-  cursor: pointer;
-}
-    .progress-container {
-      position: relative;
-      background: #111;
-      height: 24px;
-      width: 100%;
-      border-top: 1px solid #333;
-      border-bottom: 1px solid #333;
-      overflow: hidden;
-      border-radius: 6px;
-      margin-top: 5px;
-    }
-    .progress-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%; /* wird per JS gesetzt */
-      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-      transition: width 1s linear;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      z-index: 2;
-    }
-	
-	.session-details-box ul {
-  padding-left: 20px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  list-style-type: disc;
-}
-
-.session-details-box li {
-  margin-bottom: 4px;
-}
-
-.tool-button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-.tool-button:hover {
-  background-color: #444;
-}
-.tool-box {
-  background: #222;
-  padding: 20px;
-  border-radius: 10px;
-  color: white;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(255,255,255,0.1);
-}
-
-.tool-box input,
-.tool-box button {
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  max-width: 100vw;
+}
+* {
+  box-sizing: border-box;
 }
 
-.tool-box button {
-  background: #007bff;
+body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box {
+  max-width: 100%;
+  width: 100%;
+}
+body {
+  --session-bg-color: #111;
+  --session-glow: radial-gradient(ellipse at bottom, rgba(100, 0, 150, 0.2) 0%, transparent 70%);
+
+  background-color: var(--session-bg-color);
   color: white;
-  font-weight: bold;
-  cursor: pointer;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+
+  background-image:
+    var(--session-glow),
+    linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:
+    100% 100%, 
+    40px 40px, 
+    40px 40px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  animation: bgScroll 40s linear infinite;
 }
 
-	
-  </style>
+
+
+
+@keyframes bgScroll {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 400px 400px, 40px 40px, 40px 40px; }
+}
+#bgCandles {
+  opacity: 0.035;        /* super dezent */
+  filter: blur(0.6px);   /* weiche Kanten */
+  pointer-events: none;  /* klickt nicht durch */
+}
+
+.stats-box {
+  background: linear-gradient(145deg, #1e1e1e, #262626); /* sanftes Dunkelgrau mit Lichtschimmer */
+  padding: 18px 22px;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.04),
+    0 4px 10px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  margin-top: 25px;
+  text-align: left;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: box-shadow 0.3s ease;
+  overflow-x: hidden;
+}
+
+.stats-box:hover {
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.06),
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+
+.crypto-animate {
+  font-weight: bold;
+  font-size: 18px;
+  color: #ffffff;
+  text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff, 0 0 16px #ff00cc;
+  animation: cryptoGlowPulse 2.4s ease-in-out infinite alternate;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(90deg, #00ffff, #ff00cc, #9900ff);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.crypto-animate .coin {
+  display: inline-block;
+  animation: spinCoin 1.5s linear infinite;
+  font-size: 22px;
+  color: #ff00cc;
+  text-shadow: 0 0 5px #ff00cc, 0 0 12px #ff00cc;
+}
+
+@keyframes spinCoin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+@keyframes cryptoGlowPulse {
+  0% {
+    text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff, 0 0 12px #ff00cc;
+    background-position: 0% 50%;
+  }
+  100% {
+    text-shadow: 0 0 10px #ff00cc, 0 0 20px #ff00cc, 0 0 40px #00ffff;
+    background-position: 100% 50%;
+  }
+}
+@keyframes bgScroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 40px;
+  }
+}
+
+
+</style>
+<link rel="stylesheet" href="mobile.css" media="screen and (max-width: 480px)">
+
+<div class="ticker-box">
+  <div id="tickerContent" class="ticker-content">
+    📢 Lade Marktdaten...
+  </div>
+</div>
+<canvas id="bgCandles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/position.js"></script>
+<script src="scripts/dawn.js"></script>
+<script src="scripts/tax.js"></script>
+<script src="scripts/bg-candles.js"></script>
+<script src="scripts/ticker.js"></script> <!-- 👈 wichtig -->
+<script src="imageStorage.js"></script>
+
+
+
 </head>
 <body>
-
-
-
+<div id="sessionBackgroundOverlay"></div>
+<!-- ⏱️ Session-Zeit oben prominent -->
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
-<div class="session-info" id="sessionInfo">Tipps und Infos zur Session erscheinen hier...</div>
+
+<!-- 🗓️ Tageszusammenfassung -->
+<div id="daySummary" class="ticker day-summary">
+  🗓️ Lade Tagesinfo...
+</div>
+<!-- 📦 Session-Details-Box -->
+<div class="session-details-box" id="sessionDetailsBox"></div>
+<!-- 📄 Detail-Text zur Tageszusammenfassung -->
+<div id="dayDetails" class="day-details" style="display: none;"></div>
+
+
+<!-- 📊 Session-Fortschritt mit Countdown & Nächste -->
+<div id="sessionProgressDisplay"
+     style="text-align: center;
+            font-size: clamp(15px, 4vw, 18px);
+            font-weight: 600;
+            margin: 16px 0 12px 0;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #181818, #1f1f1f);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+              0 0 8px rgba(255, 255, 255, 0.04),
+              inset 0 0 8px rgba(255, 255, 255, 0.02);
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 0.4px;
+            backdrop-filter: blur(1px);
+            user-select: none;
+            transition: all 0.3s ease;">
+</div>
+
+<!-- 💬 Session-Kommentar (z. B. flacht ab) -->
+<div id="sessionInfo"
+     style="margin-top: 12px;
+            padding: 12px 18px;
+            color: #ffffff;
+            font-size: clamp(13px, 3.5vw, 16px);
+            font-style: italic;
+            text-align: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 255, 153, 0.12), rgba(0, 255, 153, 0.22));
+            text-shadow: 0 0 2px rgba(0, 255, 153, 0.6), 0 0 6px rgba(0, 255, 153, 0.3);
+            box-shadow: inset 0 0 10px rgba(0, 255, 153, 0.3), 0 0 6px rgba(0, 255, 153, 0.2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
+            backdrop-filter: blur(2px);
+            transition: all 0.3s ease;">
+  Tipps und Infos zur Session erscheinen hier...
+</div>
+
+
+
+
+
+
+<!-- 🟢 Fortschrittsbalken (zentriert & optisch zugehörig) -->
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
-<div id="daySummary" class="ticker" style="background:#333; color:#ffcc00; font-size:16px; cursor:pointer;">
-  🗓️ Lade Tagesinfo...
-</div>
-<div id="dayDetails" style="
-  display: none;
-  background: #1c1c1c;
-  color: white;
-  margin: 10px 15px;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.6;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  text-align: left;
-  user-select: none;
-">
-</div>
 
-<div id="sessionProgressDisplay"
-     style="text-align:center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 8px;
-            color: #00ff99;
-            background: #111;
-            padding: 6px;
-            border-radius: 8px;">
-</div>
 
-<div class="session-details-box" id="sessionDetailsBox"></div>
+
+<!-- 🚨 Alerts direkt darunter, aber eher selten sichtbar -->
 <div class="alert-below-header" id="alertBox"></div>
 
+
+<!-- Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px;">
-  <button class="btn" id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button class="btn" id="btn-calc-risk" onclick="switchCalcTab('risk')">📊 Risiko %</button>
-  <button class="btn" id="btn-calc-lot" onclick="switchCalcTab('lot')">🧮 Lot-Rechner</button>
-  <button class="btn" id="btn-calc-breakeven" onclick="switchCalcTab('breakeven')">🧠 Break-even</button>
-  <button class="btn" id="btn-calc-equity" onclick="switchCalcTab('equity')">📈 Equity-Sim</button>
+  <!-- 📐 Position Size -->
+  <button id="btn-calc-pos" onclick="switchCalcTab('pos')" style="
+    background: #ffffff;
+    color: #111;
+    box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+    📐 Position Size
+  </button>
+
+  <!-- 🌒 Dawn Rechner -->
+  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')" style="
+    background: #0077cc;
+    color: white;
+    box-shadow: 0 0 8px rgba(0,119,204,0.6);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+    🌒 Dawn Rechner
+  </button>
+
+  <!-- 📄 Steuer / Netto -->
+  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')" style="
+    background: #cc3333;
+    color: white;
+    box-shadow: 0 0 8px rgba(204,51,51,0.6);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s ease;
+    transform: scale(1);
+  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+    📄 Steuer / Netto-Planer
+  </button>
 </div>
+
+
+
+
+
+
+
+<div id="calc-taxpro" class="calc-box" style="margin-top: 15px; display: none;">
+  <div class="stats-box">
+    <!-- 🔁 Umschaltbare Ansicht -->
+    <div id="steuerMode">
+      <label for="gewinnBetrag">📈 Gesamtgewinn (€):</label>
+      <input type="number" id="gewinnBetrag" placeholder="z. B. 17200" />
+
+      <label for="einkommenSteuer">💸 Einkommensteuer-Satz (%):</label>
+      <input type="number" id="einkommenSteuer" placeholder="z. B. 25" value="25" step="0.1" />
+
+      <label><input type="checkbox" id="kirchensteuer" /> ✝️ Kirchensteuer (9 %)</label><br>
+      <label><input type="checkbox" id="soliZuschlag" /> 💣 Solidaritätszuschlag (5.5 %)</label><br>
+      <label><input type="checkbox" id="reserveZehn" /> 💥 +10 % Reserve</label><br>
+
+      <button onclick="berechneSteuern()" class="tax-button">📊 Steuer berechnen</button>
+      <div id="steuerAusgabe"></div>
+    </div>
+
+    <div id="nettoMode" style="display:none">
+      <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
+      <input type="number" id="nettoBrutto" placeholder="z. B. 10000" />
+
+      <label for="nettoSteuer">💸 Steuerlast (€):</label>
+      <input type="number" id="nettoSteuer" placeholder="z. B. 3500" />
+
+      <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
+      <input type="number" id="nettoEntnommen" placeholder="z. B. 8000" />
+
+      <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
+      <div id="nettoAusgabe"></div>
+    </div>
+
+    <!-- 🧠 Umschalter -->
+    <button onclick="switchPlanMode()" id="planToggleBtn" style="
+      margin-top: 15px;
+      background: #444;
+      color: white;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    ">
+    🔁 Zu Netto-Planer wechseln
+    </button>
+  </div>
+</div>
+
+
+
+
+<div id="calc-dawn" class="calc-box" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+    <label for="dawnCapital">📦 Startkapital (€):</label>
+    <input type="number" id="dawnCapital" placeholder="z. B. 1000">
+
+    <label for="dawnLoss">📉 Verlust pro Dawn (%) :</label>
+    <input type="number" id="dawnLoss" placeholder="z. B. 3" step="0.1">
+
+    <button onclick="simulateDawnDeath()" style="
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-weight: bold;
+      margin-top: 12px;
+      width: 100%;
+      cursor: pointer;
+    ">☠️ Dawn-Simulation starten</button>
+
+    <p id="dawnDeathResult" style="margin-top: 10px; font-weight: bold; font-size: 16px;"></p>
+  </div>
+</div>
+
+
 
 
 
@@ -448,30 +480,6 @@
   </div>
 </div>
 
-<div id="calc-risk" class="calc-box" style="display:none; margin-top: 15px;">
- <div class="stats-box">
-  <label for="riskAccountSize">📦 Kontogröße (€):</label>
-  <input type="number" id="riskAccountSize" placeholder="z. B. 1000" />
-
-  <label for="riskLotSize">🧮 Lotgröße:</label>
-  <input type="number" id="riskLotSize" placeholder="z. B. 0.1" step="0.01" />
-
-  <label for="riskStopLoss">🛑 Stop-Loss (Pips):</label>
-  <input type="number" id="riskStopLoss" placeholder="z. B. 25" />
-
-  <label for="riskPipValue">💡 Pip-Wert pro Lot (€):</label>
-  <input type="number" id="riskPipValue" placeholder="z. B. 10" value="10" />
-
-  <label for="useTradingView">⚙️ TradingView-Modus:</label>
-  <input type="checkbox" id="useTradingView" onchange="togglePipMode()" />
-
-  <div id="tvNote" style="font-size: 12px; color: #aaa; margin-top: 5px; display:none;">
-    📉 Pip-Wert wird intern mit <strong>6.30 €</strong> angenommen (wie bei TradingView)
-  </div>
-
-  <button onclick="calculateRiskPercent()">📊 Risiko berechnen</button>
-  <p id="riskResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-</div>
 
   <div style="text-align:right; margin-bottom: 5px;">
     <span onclick="toggleRiskInfo()" 
@@ -666,52 +674,244 @@
   </div>
 </div>
 
-<div id="calc-equity" class="calc-box" style="display:none;">
-  <div class="tool-box">
-    <h3 style="margin-top:0;">📈 Equity-Simulator</h3>
-
-    <div class="form-group">
-      <label>Startkapital (€):</label>
-      <input type="number" id="eq_start" value="1000">
-    </div>
-
-    <div class="form-group">
-      <label>Risiko % pro Trade:</label>
-      <input type="number" id="eq_risk" value="1" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>Trefferquote (%):</label>
-      <input type="number" id="eq_winrate" value="55" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>CRV-Min:</label>
-      <input type="number" id="eq_crv_min" value="1.5" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>CRV-Max:</label>
-      <input type="number" id="eq_crv_max" value="3.0" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label>Anzahl Trades:</label>
-      <input type="number" id="eq_trades" value="100">
-    </div>
-
-    <button onclick="simulateEquity()">▶️ Simulieren</button>
-
-    <canvas id="equityChart" style="margin-top:15px; height:200px;"></canvas>
-    <div id="equityStats" style="margin-top:10px; font-size: 14px;"></div>
+  <!-- 📆 Kalender -->
+<div id="journalCalendarBox" class="stats-box" style="margin-top: 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <button onclick="changeMonth(-1)">⬅️</button>
+    <h3 id="calendarTitle">🗓️ Journal-Kalender</h3>
+    <button onclick="changeMonth(1)">➡️</button>
   </div>
+
+  <canvas id="calendarEquityChart" height="150" style="margin:10px auto 5px auto; display:block;"></canvas>
+
+  <div id="calendarEquityStats" style="color: #ccc; margin-top: 5px;"></div>
+  <div id="calendarContainer" style="margin-top: 10px;"></div>
+  <div id="calendarStats" style="margin-top: 5px; color: #ccc;"></div>
+  <div id="journalEntryList" style="margin-top: 0;"></div>
+</div>
+<!-- ✅ Immer sichtbare Buttons -->
+<div style="margin:20px 0; text-align:center;">
+  <button onclick="resetCurrentMonth()" style="margin:5px; background:#cc6600; color:white; padding:8px 15px; border:none; border-radius:5px;">🗓️ Monat zurücksetzen</button>
+  <button onclick="resetSelectedDay()" style="margin:5px; background:#0066cc; color:white; padding:8px 15px; border:none; border-radius:5px;">📅 Tag zurücksetzen</button>
+  <button onclick="resetAllJournal()" style="margin:5px; background:#990000; color:white; padding:8px 15px; border:none; border-radius:5px;">🗑️ Alles löschen</button>
+</div>
+<!-- 📘 Journal-Eingabe -->
+<div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
+  <div class="stats-box" style="display: flex; flex-direction: column; gap: 14px; max-width: 500px; margin: auto; padding: 20px; border-radius: 12px; background: #1a1a1a; color: #eee;">
+
+    <label>🧭 Strategie-Modus:</label>
+    <select id="tradingMode" onchange="updateBiasOptions()" class="input" style="width: 100%;">
+
+      <option value="day">Daytrading</option>
+      <option value="swing">Swing-Trading</option>
+    </select>
+
+    <label>📆 Datum:</label>
+    <input type="date" id="journalManualDate" class="input" style="width: 100%;" />
+
+    <label>💱 Symbol:</label>
+    <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" style="width: 100%;" />
+    <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
+
+<!-- Einstieg + Ausstieg + Richtung -->
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+  <div style="flex: 1; min-width: 130px;">
+    <label>🎯 Einstieg:</label>
+    <input type="number" id="journalEntry" class="input" style="width: 100%;" onchange="autoSuggestExit()" />
+  </div>
+  <div style="flex: 1; min-width: 130px;">
+    <label>🏁 Ausstieg:</label>
+    <input type="number" id="journalExit" class="input" style="width: 100%;" onchange="userChangedExit = true;" />
+  </div>
+  <div style="flex: 1; min-width: 130px;">
+    <label>Richtung:</label>
+    <select id="journalDirection" class="input" onchange="autoSuggestExit()">
+      <option value="long">📈 Long</option>
+      <option value="short">📉 Short</option>
+    </select>
+  </div>
+</div>
+
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+<div>
+  <label>📦 Lotgröße:</label>
+  <select id="journalLots" class="input" style="width: 100%; background-color: white; color: black;">
+    <option value="">– Bitte wählen –</option>
+    <option value="0.01">0.01</option>
+    <option value="0.02">0.02</option>
+    <option value="0.03">0.03</option>
+    <option value="0.05">0.05</option>
+    <option value="0.10">0.10</option>
+    <option value="0.25">0.25</option>
+    <option value="0.50">0.50</option>
+    <option value="1.00">1.00</option>
+    <option value="2.00">2.00</option>
+    <option value="3.00">3.00</option>
+    <option value="5.00">5.00</option>
+    <option value="10.00">10.00</option>
+    <option value="25.00">25.00</option>
+    <option value="50.00">50.00</option>
+    <option value="100.00">100.00</option>
+  </select>
+</div>
+
+
+  <div>
+    <label>📊 PnL (€):</label>
+<input type="text"
+       id="journalPnL"
+       class="input"
+       placeholder="z. B. -50.00"
+       inputmode="numeric"
+       pattern="^-?[0-9]+([.,][0-9]{1,2})?$"
+       style="width: 100%; background-color: white; color: black;" />
+
+
+  </div>
+</div>
+
+
+  <div class="emotion-block">
+  <label>😐 Fokus <strong>vor</strong> dem Trade:</label>
+  <div id="starsBefore" class="star-rating"></div>
+  <input type="hidden" id="emotionBefore" value="5" />
+</div>
+
+<div class="emotion-block">
+  <label>😤 Emotion <strong>nach</strong> dem Trade:</label>
+  <div id="starsAfter" class="star-rating"></div>
+  <input type="hidden" id="emotionAfter" value="5" />
+</div>
+
+
+    <label>🧠 Setup:</label>
+<select id="journalSetup" class="input" style="width: 100%;">
+  <option value="">– Setup wählen –</option>
+  <option value="Rejectiont">Rejection</option>
+  <option value="Breakout + Rejection">Breakout + Rejection</option>
+  <option value="Liquidity Grab">Liquidity Grab</option>
+  <option value="Shift">Shift HTF/LTF</option>
+  <option value="HH HL LH LL">HH HL LH LL</option>
+</select>
+
+<!-- 🧱 Setup-Box Start -->
+<div id="setupBoxWrapper"
+  style="margin-top: 10px; border-radius: 12px; padding: 16px;
+         background: linear-gradient(135deg, #3d1e1e, #6b2f2f);
+         border: 2px solid #aa3333;
+         color: #eee;
+         box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);
+         transition: all 0.3s ease;">
+
+  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
+    ✅ Setup-Check
+  </label>
+
+  <label style="margin-top: 5px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">🧭 Multi-Timeframe Bias:</label>
+  <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+    <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
+    <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
+    <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
+    <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
+    <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
+    <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
+  </div>
+
+  <div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; margin-top:10px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+    <label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
+      🧱 AOI / POI reagiert sichtbar
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Preis reagiert klar in AOI&POI (z. B. W, D1)
+    </small>
+
+    <label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
+      🎯 Entry-Trigger bestätigt
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Rejection, Equal High/Low Raid, Shift
+    </small>
+
+    <label><input type="checkbox" id="ruleEntryPattern" onchange="updateSetupScoreDisplay()" />
+      🧠 Einstiegsmuster sichtbar
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ z. B. Inside Bar, Morning Star, Pinbar, Engulfing, Quasimodo
+    </small>
+
+    <label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
+      💡 Psychologisches Level
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ 00/50-Level, Vorwochen-Hoch/Tief, runde Zahlen (z. B. 1900, 1950)
+    </small>
+
+    <label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
+      🕒 Richtiges Zeitfenster
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Killzones: London (08:00–11:00), New York (14:30–17:00), Asia (02:00–04:00)
+    </small>
+
+    <label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
+      📏 Minimum 1:2.5 RR
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ Laut Struktur realistisch erreichbares Ziel: ≥ 2,5x SL-Distanz
+    </small>
+
+    <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
+      🔁 LTF Strukturwechsel (Shift)
+    </label>
+    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
+      ▶ MSS auf 15M - 2H → z. B. HL → HH → LL
+    </small>
+
+    <div id="setupScoreDisplay" style="margin-top: 12px; font-size: 14px; font-weight: bold; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
+      📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+    </div>
+  </div> <!-- ✅ Ende der Regel-Checkliste-Box -->
+
+</div> <!-- ✅ Ende setupBoxWrapper -->
+
+<!-- 🔻 Jetzt alles außerhalb der Box -->
+<div style="margin-top: 20px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+
+  <label>📝 Kommentar <strong>vor dem Trade</strong>:</label>
+  <textarea id="journalNotesBefore" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+
+  <label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
+  <textarea id="journalNotesAfter" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+
+  <label for="screenshotInput">📸 Screenshots hochladen (optional):</label>
+  <input type="file" id="screenshotInput" accept="image/*" multiple class="input" style="margin-bottom: 15px;" />
+
+  <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
+    background-color: #0077cc;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+  ">💾 Eintrag speichern</button>
 </div>
 
 
 
 
+<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
+  <img id="lightboxImage" src="" alt="Bild" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
+</div>
 
-
+<!-- 🔍 Lightbox für vergrößerte Bilder -->
+<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
+  <img id="lightboxImage" src="" alt="Full Screenshot" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
+</div>
 
 
 
@@ -720,1123 +920,28 @@
   <input type="text" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50" value="00,00" />
   <button onclick="saveResult()">Speichern</button>
 </div>
-<div id="syncStatus" style="text-align:center; color:#00ff99; font-weight:bold; margin-top:10px;"></div>
 
 
-<div class="position-bar" id="positionBar"></div>
-
-<script>
-
-</script>
-
-
-
-  
-<script>
-function calculatePositionSize() {
-  const accountSize = parseFloat(document.getElementById("accountSize").value);
-  const riskPercent = parseFloat(document.getElementById("riskPercent").value);
-  const stopLossPips = parseFloat(document.getElementById("stopLossPips").value);
-  const leverage = parseFloat(document.getElementById("leverage").value);
-  const symbol = document.getElementById("symbolSelector").value;
-  const manualLots = parseFloat(document.getElementById("manualLots")?.value);
-  const resultEl = document.getElementById("positionSizeResult");
-
-  const pipValues = {
-    "XAU/USD": 100, "XAG/USD": 50,
-    "BTC/USD": 30000, "ETH/USD": 1800,
-    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
-    "AUD/USD": 10, "EUR/USD": 10, "GBP/USD": 10, "NZD/USD": 10,
-    "USD/CHF": 9.26, "USD/CAD": 7.94,
-    "USD/JPY": 9.17, "EUR/JPY": 9.17, "GBP/JPY": 9.17,
-    "CHF/JPY": 9.17, "AUD/JPY": 9.17, "NZD/JPY": 9.17, "CAD/JPY": 9.17,
-    "EUR/GBP": 10, "EUR/AUD": 10, "EUR/CAD": 10,
-    "GBP/AUD": 10, "GBP/CAD": 10, "AUD/CAD": 7.94
-  };
-
-  const basisWerte = {
-    "XAU/USD": 200000, "XAG/USD": 125000, "BTC/USD": 30000, "ETH/USD": 1800,
-    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
-    "EUR/USD": 100000, "GBP/USD": 100000, "AUD/USD": 100000, "NZD/USD": 100000,
-    "USD/CAD": 100000, "USD/CHF": 100000, "USD/JPY": 100000, "EUR/JPY": 100000,
-    "GBP/JPY": 100000, "CHF/JPY": 100000, "AUD/JPY": 100000, "NZD/JPY": 100000,
-    "CAD/JPY": 100000, "EUR/GBP": 100000, "EUR/AUD": 100000, "EUR/CAD": 100000,
-    "GBP/AUD": 100000, "GBP/CAD": 100000, "AUD/CAD": 100000
-  };
-
-  const pipValueStandard = pipValues[symbol];
-  const basis = basisWerte[symbol] || 100000;
-
-  if (
-    isNaN(accountSize) || isNaN(riskPercent) || isNaN(stopLossPips) ||
-    isNaN(leverage) || accountSize <= 0 || riskPercent <= 0 ||
-    stopLossPips <= 0 || leverage <= 0 || !pipValueStandard
-  ) {
-    resultEl.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
-    resultEl.style.color = "#f44";
-    return;
-  }
-
-  const riskAmount = accountSize * (riskPercent / 100);
-  let baseLot = riskAmount / (stopLossPips * (pipValueStandard));
-  const maxLots = (accountSize * leverage) / basis;
-  let output = "";
-
-  if (0.01 > maxLots) {
-    resultEl.innerHTML = `❌ Mit diesem Hebel kannst du dir keine <strong>0.01 Lots</strong> leisten.<br>
-      📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(4)} Lots</strong><br><br>
-      Bitte Hebel oder Kapital erhöhen.`;
-    resultEl.style.color = "#f44";
-    return;
-  }
-const originalLot = baseLot;
-  if (baseLot < 0.01) {
-    output += `⚠️ Empfohlene Größe: <strong>${baseLot.toFixed(4)}</strong> Lots (unter 0.01)<br>`;
-    output += `🔒 Mindestgröße: 0.01 Lots – Risiko kleiner als erwartet.<br><br>`;
-    baseLot = 0.01;
-  }
-
-  // 📉 Risiko korrekt berechnen mit pipValue angepasst an Lotgröße
-  const pipValueActual = pipValueStandard * baseLot;
-  const risikoEuroEmpfohlen = stopLossPips * pipValueActual;
-  const risikoProzentEmpfohlen = (risikoEuroEmpfohlen / accountSize) * 100;
-  
-  function getRiskComment(riskPercent) {
-  if (riskPercent < 1) return "✅ Sehr konservativ";
-  if (riskPercent < 2) return "🟢 Konservativ";
-  if (riskPercent < 5) return "🟡 Neutral";
-  if (riskPercent < 10) return "🟠 Erhöhtes Risiko";
-  if (riskPercent < 20) return "🔴 Sehr hohes Risiko";
-  return "🔥 Extrem riskant – nur für Profis!";
-}
-
-output += `<br>${getRiskComment(risikoProzentEmpfohlen)}<br><br>`;
-
-
- let risikoTitel = "📉 Dein Risiko:";
-if (risikoProzentEmpfohlen >= 10) risikoTitel = "⚠️ Dein Risiko (nicht empfohlen):";
-else if (risikoProzentEmpfohlen >= 5) risikoTitel = "🟠 Dein Risiko (grenzwertig):";
-else if (risikoProzentEmpfohlen >= 2) risikoTitel = "🟡 Dein Risiko (moderat):";
-else risikoTitel = "✅ Dein Risiko (empfohlen):";
-
-output += `<strong>${risikoTitel}</strong><br>`;
-  output += `💸 <strong>${risikoEuroEmpfohlen.toFixed(2)} €</strong> (${risikoProzentEmpfohlen.toFixed(2)} % von ${accountSize} €)<br><br>`;
-
-  const steps = [1, 2, 3, 4, 5];
-  output += `✅ Empfohlen: <strong>${(baseLot * steps[0]).toFixed(2)}</strong> Lots<br>`;
-  output += `🟡 Riskant: ${(baseLot * steps[1]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[1]).toFixed(1)}%)<br>`;
-  output += `🟡 Riskant: ${(baseLot * steps[2]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[2]).toFixed(1)}%)<br>`;
-  output += `🔥 Hoch: ${(baseLot * steps[3]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[3]).toFixed(1)}%)<br>`;
-  output += `🧮 Sehr hoch: ${(baseLot * steps[4]).toFixed(2)} Lots (Risiko ${(risikoProzentEmpfohlen * steps[4]).toFixed(1)}%)<br>`;
-  output += `⚠️ Mehr als ${(baseLot * steps[4]).toFixed(2)} Lots = über deinem Risiko-Limit<br><hr>`;
-  output += `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br>`;
-
-if (!isNaN(manualLots) && manualLots > 0) {
-  const pipValueManuell = pipValueStandard * manualLots;
-  const risikoEuroManuell = stopLossPips * pipValueManuell;
-  const risikoProzentManuell = (risikoEuroManuell / accountSize) * 100;
-
-  output += `<hr><strong>📉 Risiko bei manueller Lotgröße (${manualLots}):</strong><br>`;
-  output += `💸 <strong>${risikoEuroManuell.toFixed(2)} €</strong> (${risikoProzentManuell.toFixed(2)} % von ${accountSize} €)<br>`;
-}
-
-
-  resultEl.innerHTML = output;
-  resultEl.style.color = "#0f0";
-}
-
-
-
-
-
-
-
-
-
-
-
-
-function toggleInfoBox() {
-  const box = document.getElementById("posInfoBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-function calculateLotFromFixed() {
-  const riskEuro = parseFloat(document.getElementById("lotFixedRisk").value);
-  const sl = parseFloat(document.getElementById("lotSL").value);
-  const pipVal = parseFloat(document.getElementById("lotPipValue").value);
-  const out = document.getElementById("lotResult");
-
-  if (isNaN(riskEuro) || isNaN(sl) || isNaN(pipVal) ||
-      riskEuro <= 0 || sl <= 0 || pipVal <= 0) {
-    out.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
-    out.style.color = "#f44";
-    return;
-  }
-
-  const lotSize = riskEuro / (sl * pipVal);
-
-  out.innerHTML = `✅ Empfohlene Lotgröße: <strong>${lotSize.toFixed(2)}</strong> Lots`;
-  out.style.color = "#0f0";
-}
-
-function toggleLotInfo() {
-  const box = document.getElementById("lotInfoBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-
-function togglePipMode() {
-  const pipField = document.getElementById("riskPipValue");
-  const tvNote = document.getElementById("tvNote");
-  const checkbox = document.getElementById("useTradingView");
-
-  if (checkbox.checked) {
-    pipField.disabled = true;
-    pipField.style.background = "#333";
-    tvNote.style.display = "block";
-  } else {
-    pipField.disabled = false;
-    pipField.style.background = "";
-    tvNote.style.display = "none";
-  }
-}
-function calculateRiskPercent() {
-  const account = parseFloat(document.getElementById("riskAccountSize").value);
-  const lot = parseFloat(document.getElementById("riskLotSize").value);
-  const sl = parseFloat(document.getElementById("riskStopLoss").value);
-  const useTV = document.getElementById("useTradingView").checked;
-  const output = document.getElementById("riskResult");
-
-  let pipVal = useTV ? 6.3 : parseFloat(document.getElementById("riskPipValue").value);
-
-  if (
-    isNaN(account) || isNaN(lot) || isNaN(sl) ||
-    account <= 0 || lot <= 0 || sl <= 0 || isNaN(pipVal) || pipVal <= 0
-  ) {
-    output.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
-    output.style.color = "#f44";
-    return;
-  }
-
-  const riskEuro = lot * sl * pipVal;
-  const riskPercent = (riskEuro / account) * 100;
-
-  output.innerHTML = `⚠️ Du riskierst <strong>${riskEuro.toFixed(2)} €</strong>  
-                      (${riskPercent.toFixed(2)} % deines Kontos)`;
-  output.style.color = riskPercent <= 2 ? "#0f0" : (riskPercent <= 5 ? "#ffaa00" : "#f44");
-}
-
-
-function toggleRiskInfo() {
-  const box = document.getElementById("riskInfoBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-function calculateBreakeven() {
-  const entry = parseFloat(document.getElementById("entryPrice").value);
-  const spread = parseFloat(document.getElementById("spreadPips").value);
-  const fees = parseFloat(document.getElementById("fees").value);
-  const lot = parseFloat(document.getElementById("beLotSize").value);
-  const pipVal = parseFloat(document.getElementById("bePipValue").value);
-  const output = document.getElementById("breakevenResult");
-
-  if (isNaN(entry) || isNaN(spread) || isNaN(fees) || isNaN(lot) || isNaN(pipVal) ||
-      entry <= 0 || spread < 0 || fees < 0 || lot <= 0 || pipVal <= 0) {
-    output.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
-    output.style.color = "#f44";
-    return;
-  }
-
-  const spreadValue = spread;
-  const feeInPips = fees / (lot * pipVal);
-  const totalPips = spreadValue + feeInPips;
-  const pipSize = 0.0001; // Für Forex (z. B. EUR/USD), ggf. anpassbar
-  const breakEvenPrice = entry + (totalPips * pipSize);
-
-  output.innerHTML = `📍 Break-even liegt bei <strong>${breakEvenPrice.toFixed(5)}</strong>`;
-  output.style.color = "#0ff";
-}
-
-function toggleBreakevenInfo() {
-  const box = document.getElementById("breakevenInfoBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-
-
-function toggleLeverageMode() {
-  const mode = document.getElementById("leverageMode").value;
-  document.getElementById("capitalMode").style.display = mode === "capital" ? "block" : "none";
-  document.getElementById("lotCheckMode").style.display = mode === "lotcheck" ? "block" : "none";
-  document.getElementById("leverageResult").innerHTML = "";
-}
-
-function calculateLeverage() {
-  const mode = document.getElementById("leverageMode").value;
-  const resultEl = document.getElementById("leverageResult");
-
-  if (mode === "capital") {
-    const capital = parseFloat(document.getElementById("leverageInput1").value);
-    const lots = parseFloat(document.getElementById("leverageInput2").value);
-    const leverage = parseFloat(document.getElementById("leverageInput3").value);
-
-    if (isNaN(capital) || isNaN(lots) || isNaN(leverage) || capital <= 0 || lots <= 0 || leverage <= 0) {
-      resultEl.innerHTML = "❌ Bitte alles korrekt eingeben!";
-      resultEl.style.color = "#f44";
-      return;
-    }
-
-    const benötigtesKapital = (lots * 100000) / leverage;
-    resultEl.innerHTML = `📦 Du brauchst <strong>${benötigtesKapital.toFixed(2)} €</strong> Kapital für ${lots} Lot bei ${leverage}x Hebel`;
-    resultEl.style.color = "#0f0";
-
-  } else if (mode === "lotcheck") {
-    const capital = parseFloat(document.getElementById("lotCapital").value);
-    const leverage = parseFloat(document.getElementById("lotLeverage").value);
-    const pair = document.getElementById("lotPair")?.value || "default";
-
-    if (isNaN(capital) || isNaN(leverage) || capital <= 0 || leverage <= 0) {
-      resultEl.innerHTML = "❌ Bitte Kapital und Hebel korrekt eingeben!";
-      resultEl.style.color = "#f44";
-      return;
-    }
-
-let basis;
-switch (pair) {
-  // Metalle
- case "XAU/USD": basis = 200000; break;
-case "XAG/USD": basis = 125000; break;
-
-  // Krypto
-  case "BTC/USD": basis = 30000; break;
-  case "ETH/USD": basis = 1800; break;
-
-  // Indizes
-  case "US30":    basis = 10; break;
-  case "NAS100":  basis = 20; break;
-  case "SPX500":  basis = 10; break;
-  case "GER40":   basis = 25; break;
-  case "UK100":   basis = 10; break;
-
-  // Forex mit typischer 100k Kontraktgröße
-  case "EUR/USD":
-  case "GBP/USD":
-  case "AUD/USD":
-  case "NZD/USD":
-  case "USD/CAD":
-  case "USD/CHF":
-    basis = 100000; break;
-
-  // Forex mit leicht abweichendem Pip-Wert / Standard je nach Broker
-  case "USD/JPY":
-  case "EUR/JPY":
-  case "GBP/JPY":
-  case "CHF/JPY":
-  case "AUD/JPY":
-  case "CAD/JPY":
-    basis = 100000; break; // Optional auf 1.000.000 JPY setzen, je nach Broker
-
-  // Cross-Paare (ohne USD direkt)
-  case "EUR/GBP":
-  case "EUR/AUD":
-  case "EUR/CAD":
-  case "GBP/AUD":
-  case "GBP/CAD":
-    basis = 100000; break;
-
-  default:
-    basis = 100000; break; // Fallback für unbekannte Paare
-}
-   
-
-    const maxLots = (capital * leverage) / basis;
-    let output = `💰 <strong>Max. Lotgröße (${pair}):</strong> ${maxLots.toFixed(2)} Lot<br><br>📊 <strong>Stückelung:</strong><br>`;
-
-    const lotSizes = [1.00, 0.80, 0.50, 0.40, 0.20, 0.10, 0.01];
-    lotSizes.forEach(size => {
-      const times = Math.floor(maxLots / size);
-      output += `▸ ${size.toFixed(2)} Lot = ${times > 0 ? times + "x" : "❌ nicht möglich"}<br>`;
-    });
-
-    resultEl.innerHTML = output;
-    resultEl.style.color = "#0f0";
-  }
-}
-
-
-
-
-
-
-function switchCalcTab(tab) {
-  // Alle Rechner ausblenden
-  document.querySelectorAll(".calc-box").forEach(box => {
-    box.style.display = "none";
-  });
-
-  // Den gewünschten Rechner einblenden
-  const target = document.getElementById("calc-" + tab);
-  if (target) target.style.display = "block";
-
-  // Alle Buttons zurücksetzen
-  document.querySelectorAll(".tab-buttons .btn").forEach(btn => btn.classList.remove("active"));
-
-  // Den aktiven Button markieren
-  const btn = document.getElementById("btn-calc-" + tab);
-  if (btn) btn.classList.add("active");
-}
-
-// 🆕 Equity-Simulator integrieren
-function simulateEquity() {
-  const start = parseFloat(document.getElementById("eq_start").value);
-  const riskPercent = parseFloat(document.getElementById("eq_risk").value);
-  const winrate = parseFloat(document.getElementById("eq_winrate").value);
-  const crvMin = parseFloat(document.getElementById("eq_crv_min").value);
-  const crvMax = parseFloat(document.getElementById("eq_crv_max").value);
-  const trades = parseInt(document.getElementById("eq_trades").value);
-
-  let equity = start;
-  const data = [equity];
-  let maxDrawdown = 0;
-  let peak = start;
-  let winStreak = 0, maxWinStreak = 0;
-  let lossStreak = 0, maxLossStreak = 0;
-
-  for (let i = 1; i <= trades; i++) {
-    const isWin = Math.random() * 100 < winrate;
-    const crv = crvMin + Math.random() * (crvMax - crvMin);
-    const risk = equity * (riskPercent / 100);
-    let profit = isWin ? risk * crv : -risk;
-
-    equity += profit;
-    data.push(equity);
-
-    if (equity > peak) peak = equity;
-    const dd = ((peak - equity) / peak) * 100;
-    if (dd > maxDrawdown) maxDrawdown = dd;
-
-    if (isWin) {
-      winStreak++;
-      lossStreak = 0;
-    } else {
-      lossStreak++;
-      winStreak = 0;
-    }
-    if (winStreak > maxWinStreak) maxWinStreak = winStreak;
-    if (lossStreak > maxLossStreak) maxLossStreak = lossStreak;
-  }
-
-  const ctx = document.getElementById("equityChart").getContext("2d");
-  if (window.equityChartInstance) window.equityChartInstance.destroy();
-  window.equityChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: data.length }, (_, i) => i),
-      datasets: [{
-        label: 'Equity-Kurve',
-        data: data,
-        borderWidth: 2,
-        borderColor: 'lime',
-        backgroundColor: 'rgba(0,255,0,0.1)',
-        fill: true,
-        tension: 0.25,
-        pointRadius: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { title: { display: true, text: 'Trade #' } },
-        y: { title: { display: true, text: 'Kontostand €' } }
-      },
-      plugins: { legend: { display: false } }
-    }
-  });
-
-  document.getElementById("equityStats").innerHTML = `
-    📈 Endkapital: <strong>${equity.toFixed(2)} €</strong><br>
-    📉 Max Drawdown: <strong>${maxDrawdown.toFixed(2)} %</strong><br>
-    ⟳ Beste Serie: <strong>${maxWinStreak}</strong><br>
-    ❌ Schlechteste Serie: <strong>${maxLossStreak}</strong>`;
-}
-
-
-window.addEventListener("DOMContentLoaded", () => {
-  initPipPairSelect();
-});
+<body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/session.js"></script>
+<script src="scripts/screen.js"></script>
+<script src="scripts/background-session.js"></script>
+<script src="scripts/position.js"></script>
+<script src="scripts/dawn.js"></script>
+<script src="scripts/tax.js"></script>
+<script src="imageStorage.js"></script>
+<script src="scripts/bg-candles.js"></script>
+<script src="scripts/ticker.js"></script>
+<script src="scripts/jornal.js"></script>
+<script src="scripts/pwa.js"></script>
+<script src="scripts/AI.js"></script>
+
+</body>
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const sessionText = document.getElementById("sessionText");
-const sessionProgressEl = document.getElementById("sessionProgressDisplay");
-const sessionInfoEl = document.getElementById("sessionInfo");
-const sessionDetailsBox = document.getElementById("sessionDetailsBox");
-const alertBox = document.getElementById("alertBox");
-const progressBar = document.getElementById("progressBar");
-const progressContainer = document.querySelector(".progress-container");
 
-sessionText.addEventListener("click", () => {
-  sessionDetailsBox.style.display = sessionDetailsBox.style.display === "block" ? "none" : "block";
-});
-
-function formatHM(mins) {
-  const h = Math.floor(mins / 60) % 24;
-  const m = mins % 60;
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-}
-
-const sessionColors = {
-  Sydney: "#3388ff",
-  Tokyo: "#00aaff",
-  London: "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  Deadzone: "#333",
-};
-
-const sessions = [
-  {
-    name: "Sydney",
-    start: 1380,
-    end: 480,
-    info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
-    weekDaysInfo: [
-      { day: "Sonntag", text: "🛠️ Vorbereitung auf neue Woche" },
-      { day: "Montag", text: "🌏 Asien-Session startet" },
-      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien" },
-      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung" }
-    ],
-  },
-  {
-    name: "Tokyo",
-    start: 60,
-    end: 600,
-    info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz" },
-      { day: "Donnerstag", text: "📈 Japan BIP-Daten" },
-      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach" }
-    ],
-  },
-  {
-    name: "London",
-    start: 540,
-    end: 1020,
-    info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
-    weekDaysInfo: [
-      { day: "Montag", text: "📉 EU Handelsdaten" },
-      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB" },
-      { day: "Donnerstag", text: "📊 Inflationsdaten UK" },
-      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK" }
-    ],
-  },
-  {
-    name: "New York",
-    start: 870,
-    end: 1380,
-    info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
-    weekDaysInfo: [
-      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen" },
-      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten" },
-      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung" }
-    ],
-  },
-  {
-    name: "London Killzone",
-    start: 420,
-    end: 660,
-    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
-    weekDaysInfo: [
-      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung" },
-      { day: "Mittwoch", text: "🔥 Breakouts oft möglich" }
-    ],
-  },
-  {
-    name: "New York Killzone",
-    start: 810,
-    end: 1020,
-    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten" },
-      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten" }
-    ],
-  },
-  {
-    name: "Deadzone",
-    start: 1380,
-    end: 0,
-    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
-    weekDaysInfo: [
-      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung" }
-    ],
-  }
-];
-
-
-let lastAlertSession = null;
-
-function getMinutesNow() {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
-}
-
-function getCurrentSessions(minNow) {
-  return sessions.filter((s) => {
-    const start = s.start;
-    const end = s.end;
-    if (start > end) {
-      return minNow >= start || minNow < end;
-    } else {
-      return minNow >= start && minNow < end;
-    }
-  });
-}
-
-function updateGradientBar(colors) {
-  if (colors.length === 0) {
-    progressBar.style.background = "#444";
-    progressBar.style.backgroundImage = "";
-    return;
-  }
-  const svg = `
-    <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
-      <defs>
-        <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
-          ${colors.map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`).join("")}
-        </linearGradient>
-      </defs>
-      <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
-    </svg>`;
-  const base64 = btoa(svg);
-  progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
-}
-
-function hexToRgba(hex, alpha) {
-  hex = hex.replace("#", "");
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-function getMinutesToNextSession(minNow) {
-  const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
-  if (futureStarts.length === 0) return sessions[0].start + 1440 - minNow;
-  return Math.min(...futureStarts) - minNow;
-}
-
-const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-
-function requestNotificationPermission() {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      console.log("🔐 Notification permission:", permission);
-    });
-  }
-}
-
-
-
-
-
-
-function showAlert(msg) {
-  const el = document.createElement("div");
-  el.className = "alert-message";
-  el.textContent = msg;
-  alertBox.innerHTML = "";
-  alertBox.appendChild(el);
-  setTimeout(() => (alertBox.innerHTML = ""), 5000);
-  alertSound.play();
-  showNotification("Trade App Alarm", msg);  // 🔊 Alarm-Benachrichtigung
-
-  // 🔔 Session Push wie WhatsApp
-  const customMessages = {
-    "Tokyo": "🌏 Tokyo geöffnet – JPY-Paare beginnen sich zu bewegen.",
-    "London Killzone": "⚔️ London Killzone aktiv – Liquiditätssuche beginnt!",
-    "London": "💷 London Session gestartet – europäische Volatilität beginnt.",
-    "New York Killzone": "🔥 NY Killzone läuft – auf Breakouts achten!",
-    "New York": "🇺🇸 New York Session gestartet – starker US-Einfluss jetzt aktiv.",
-    "Sydney": "🌙 Sydney Session läuft – ruhiger Start in den Markt.",
-    "Deadzone": "😴 Deadzone – geringe Volatilität, keine aktiven Teilnehmer."
-  };
-
-  const minutes = getMinutesNow();
-  const activeSessions = getCurrentSessions(minutes);
-  if (activeSessions.length > 0) {
-    const s = activeSessions[0];
-    const pushMessage = customMessages[s.name] || s.info;
-    sendPushNotification(`📣 ${s.name}-Session startet`, pushMessage);
-  }
-}
-
-
-
-function showSessionProgress(activeSessions, currentMinutes) {
-  let output = "";
-
-  // 🔸 Aktuelle Session anzeigen
-  if (activeSessions.length > 0) {
-    const current = activeSessions[0];
-    let start = current.start;
-    let end = current.end;
-    if (start > end) end += 1440;
-    let nowMins = currentMinutes;
-    if (nowMins < start) nowMins += 1440;
-    const duration = end - start;
-    const progressMins = nowMins - start;
-    const percent = (progressMins / duration) * 100;
-    const timeLeft = end - nowMins;
-
-    output += `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> in <strong>${current.name}</strong><br>`;
-  } else {
-    output += `⏱️ Aktuell <strong>keine Session aktiv</strong><br>`;
-  }
-
-  // 🔜 Nächste Session anzeigen
-  const futureSessions = sessions
-    .map(s => ({
-      ...s,
-      startMins: s.start > currentMinutes ? s.start : s.start + 1440
-    }))
-    .sort((a, b) => a.startMins - b.startMins);
-
-  const next = futureSessions[0];
-  const minsToNext = next.startMins - currentMinutes;
-
-  output += `🔜 Nächste: <strong>${next.name}</strong> in <strong>${formatHM(minsToNext)}</strong>`;
-
-  // Ausgabe einfügen
-  sessionProgressEl.innerHTML = output;
-}
-
-
-function updateRealTimeBar() {
-  const now = new Date();
-  const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
-  const hours = String(now.getHours()).padStart(2, "0");
-  const mins = String(now.getMinutes()).padStart(2, "0");
-
-  // 👉 Wochenende
-  if (weekday === 0 || weekday === 6) {
-    sessionText.textContent = `🕒 Aktuelle Uhrzeit: ${hours}:${mins} – Wochenende`;
-    progressBar.style.width = "0%";
-    progressBar.style.background = "#333";
-    progressBar.style.backgroundImage = "";
-    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-    sessionInfoEl.textContent = "📴 Wochenende – Markt ist geschlossen.";
-    sessionProgressEl.innerHTML = "⛔ Kein Handel – Wochenende";
-    sessionDetailsBox.innerHTML = "Keine Session-Daten am Wochenende.";
-    return;
-  }
-
-// ⏬ Ab hier normaler Werktags-Ablauf
-const minutes = now.getHours() * 60 + now.getMinutes();
-const percent = (minutes / 1439) * 100;
-
-const activeSessions = getCurrentSessions(minutes);
-const names = activeSessions.map(s => s.name);
-const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
-sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
-
-progressBar.style.width = `${percent}%`;
-
-const colors = names.map(n => sessionColors[n] || "#666");
-
-
-  const name = activeSessions.length > 0 ? activeSessions[0].name : "";
-  let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
-  
-   updateGradientBar(colors);
-   showSessionProgress(activeSessions, minutes); // ✅ HIER rein
-
-  if (colors.length > 0) {
-    progressContainer.style.boxShadow = `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`;
-  } else {
-    progressContainer.style.boxShadow = "0 0 12px 6px rgba(0,0,0,0)";
-  }
-
-  if (name === "Tokyo") {
-    infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
-                minutes < 360 ? "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY." :
-                "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
-  } else if (name === "London Killzone") {
-    infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
-  } else if (name === "London") {
-    infoText = minutes < 720 ? "💷 London Session – Markt in Bewegung, europäische Daten entscheidend." :
-                minutes < 840 ? "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries." :
-                "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
-  } else if (name === "New York Killzone") {
-    infoText = "🔥 New York Killzone – starke Reaktionen auf US-News & Breakouts möglich.";
-  } else if (name === "New York") {
-    infoText = minutes < 1080 ? "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich." :
-                minutes < 1200 ? "📉 New York flacht ab – Markt beruhigt sich langsam." :
-                "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
-  } else if (minutes >= 720 && minutes < 840) {
-    infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
-  } else if (minutes >= 1380 || minutes < 60) {
-    infoText = "🌙 Nacht-Deadzone – Markt ist extrem ruhig, keine relevanten Bewegungen.";
-  }
-
-  sessionInfoEl.textContent = infoText;
-
- if (activeSessions.length > 0) {
-  let fullInfo = "";
-
-  activeSessions.forEach(s => {
-    let weekDaysHtml = "";
-    if (s.weekDaysInfo) {
-      weekDaysHtml = "<ul style='margin-left:18px; margin-top:4px;'>";
-      s.weekDaysInfo.forEach(({ day, text }) => {
-        weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
-      });
-      weekDaysHtml += "</ul>";
-    }
-
-    const label = s.name.includes("Killzone") ? "🔥" :
-                  s.name.includes("New York") ? "🇺🇸" :
-                  s.name.includes("London") ? "💷" :
-                  s.name.includes("Tokyo") ? "🌏" :
-                  s.name.includes("Sydney") ? "🌙" : "🟡";
-
-    fullInfo += `
-      <strong>${label} ${s.name}</strong><br>
-      📅 Start: ${formatHM(s.start)} Uhr<br>
-      🕓 Ende: ${formatHM(s.end)} Uhr<br>
-      ℹ️ ${s.info}
-      ${weekDaysHtml}
-      <hr style="border: none; border-top: 1px solid #444; margin: 10px 0;">
-    `;
-  });
-
-  sessionDetailsBox.innerHTML = fullInfo;
-} else {
-  sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
-}
-
-
-  const minutesToNext = getMinutesToNextSession(minutes);
-  if (minutesToNext <= 5 && minutesToNext > 0) {
-    const currentActive = sessionText.textContent;
-    if (lastAlertSession !== currentActive) {
-      showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-      lastAlertSession = currentActive;
-
-      if (activeSessions.length > 0) {
-        const s = activeSessions[0];
-        showSessionStartNotification(s.name, s.info);
-      }
-    }
-  } else {
-    lastAlertSession = null;
-  }
-}
-
-
-function updateDaySummary() {
-  const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const infos = {
-    "Montag": "🚀 Start in die Woche – neue Impulse, frische Trends möglich.",
-    "Dienstag": "📈 Stabilisierung oder Fortsetzung der Wochenrichtung.",
-    "Mittwoch": "⚠️ Midweek-Reversal möglich – Bewegung oder Trendbruch.",
-    "Donnerstag": "📊 Viele Wirtschaftsdaten – Markt in Bewegung.",
-    "Freitag": "📅 Ruhiger Ausklang – Wochengewinn sichern, keine Paniktrades.",
-    "Samstag": "📴 Wochenende – Markt geschlossen.",
-    "Sonntag": "🛠️ Vorbereitung & Analyse für die neue Woche."
-  };
-
-  const now = new Date();
-  const dayIndex = now.getDay();
-  const dayName = days[dayIndex];
-  const info = infos[dayName] || "📆 Trading-Tag";
-
-  const el = document.getElementById("daySummary");
-  el.textContent = `🗓️ ${dayName} – ${info}`;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const daySummaryEl = document.getElementById("daySummary");
-  const dayDetailsEl = document.getElementById("dayDetails");
-
-const dayDetailsMap = {
-  "Montag": `
-🔵 <strong>Montag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Wochenstart – noch keine klare Richtung. Fokus auf erste Liquiditätsreaktionen.<br>
-Setup-Möglichkeiten für Swing & Intraday, aber nur bei sauberem Kontext.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Vorsichtiger Einstieg nach London-Open (09:00–10:00 Uhr)<br>
-Strukturaufbau auf H1/H4 beobachten, noch keine aggressiven Breakouts.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Volumen steigt langsam an – viele Trader warten auf Dienstag.<br>
-Oft "Range-Montage" – Setups können antäuschen.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇪🇺 EU-Handelsdaten, Sentiment-Indikatoren</li>
-  <li>🇩🇪 Ifo oder ZEW möglich</li>
-  <li>💬 Kaum US-Daten – NY-Session eher träge</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Bleib geduldig – heute wird nichts entschieden.<br>
-Setup nur handeln, wenn es in übergeordnete Struktur passt.<br><br>
-
-<strong>🧾 To-do am Montag:</strong><br>
-<ul>
-  <li>📅 Wochenziele notieren</li>
-  <li>🔍 Watchlist-Paare analysieren</li>
-  <li>📈 H1/H4 Bias notieren</li>
-  <li>⏱️ Fokus auf NY-Liquidität testen</li>
-</ul>
-`,
-
-  "Dienstag": `
-🟢 <strong>Dienstag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Intraday-Trading meist am klarsten – oft Trendfortsetzung oder Breakout-Nachbestätigung.<br>
-Scalping & Daytrading laufen meist technisch sauber.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Nutze klare Struktur nach Montag → z. B. Break of Structure + Retest.<br>
-Optimaler Tag für Liquiditätszonen, FVG oder Breaker-Block-Einstiege.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Viel stabiler als Montag – London & NY liefern klare Bewegungen.<br>
-Volumen ist konstant, gute Range-Ausbrüche am Vormittag.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇪🇺 EZB oder UK Reden möglich</li>
-  <li>🇺🇸 Erste US-Marktbewegungen</li>
-  <li>📢 Manchmal Reden von Notenbankern</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Heute ist ein Arbeitstag – Fokus, keine Hektik.<br>
-Nutze den Flow, aber bleib strukturiert.<br><br>
-
-<strong>🧾 To-do am Dienstag:</strong><br>
-<ul>
-  <li>⚙️ Trade-Log abgleichen mit Montagsplan</li>
-  <li>✅ Mögliche Swing-Kandidaten markieren</li>
-  <li>📓 Setup-Kategorie zuweisen</li>
-</ul>
-`,
-
-  "Mittwoch": `
-🟡 <strong>Mittwoch</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Midweek = Wendepunkt. Viele Reversal, viele Fehlausbrüche.<br>
-Nur sichere Entries – Swing-Setups vorher validieren.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Marktstruktur analysieren: ist der Wochenbias noch gültig?<br>
-Antizyklische Reaktionen in Killzones möglich (NY besonders wachsam).<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Erhöhte Volatilität – häufige Umschwünge, Intraday-Highs/Lows werden geholt.<br>
-Scalping gut möglich, aber mit Risikoabsicherung.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🏦 FOMC/Fed Minutes → starke Bewegungen!</li>
-  <li>🇪🇺 EU/UK Inflationsdaten</li>
-  <li>📉 Crude Oil Inventories (US)</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Wachsam bleiben – heute gewinnt nur, wer flexibel ist.<br>
-Bias nicht festfahren – reagiere auf den Markt.<br><br>
-
-<strong>🧾 To-do am Mittwoch:</strong><br>
-<ul>
-  <li>📈 Wochen-Midpoint markieren</li>
-  <li>💡 Offene Trades beobachten – Exit prüfen</li>
-  <li>📊 Volumenstatistik (bisher) notieren</li>
-</ul>
-`,
-
-  "Donnerstag": `
-🟠 <strong>Donnerstag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Momentum-Tag – viele Impulse durch News.<br>
-Guter Tag für FVG/Breaker & aggressive Entries nach Stophunt.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-NY-Killzone dominieren oft – Fokus auf USD, Gold, NAS100.<br>
-Liquidität um 14:30 Uhr fast immer aktiv – warten auf Reaktion!<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-London ist meist klar, NY liefert starke Trend-Moves.<br>
-Donnerstag prägt oft das Wochenergebnis entscheidend.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇺🇸 US GDP, PCE, CPI oder Jobless Claims</li>
-  <li>💬 Fed Sprecher / Powell oft hier</li>
-  <li>🇩🇪 Deutsche BIP-Daten</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Heute darf man mutiger sein – aber sauber bleiben.<br>
-Nicht gegen das Momentum handeln – sondern mit Timing!<br><br>
-
-<strong>🧾 To-do am Donnerstag:</strong><br>
-<ul>
-  <li>🧠 Gewinne absichern für Freitag</li>
-  <li>📓 Trade-Revue der Woche vorbereiten</li>
-  <li>⚠️ „Do Not Overtrade“-Hinweis setzen</li>
-</ul>
-`,
-
-  "Freitag": `
-🔴 <strong>Freitag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Kein Swing-Trading empfohlen – größere Bewegungen meist vorbei.<br>
-Nutze saubere Strukturen in engen Zeitfenstern (Scalping-Setups).<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Scalping während London & NY Overlap (08:00–13:00 Uhr)<br>
-Nur Momentum bei klarer Liquiditätsjagd handeln – keine Breakouts blind.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Ab 13:00–14:00 Uhr wird es merklich ruhiger.<br>
-Trader & Banken schließen Positionen zum Wochenabschluss.<br>
-Bewegungen werden erratisch, Spreads steigen leicht.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>👷 US-Arbeitsmarktdaten (oft 14:30 Uhr)</li>
-  <li>📈 NFP oder „Unemployment Rate“ jeden 1. Freitag im Monat</li>
-  <li>💬 Häufig Fed-Sprecher oder Wochenrückblicke</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Kein FOMO, kein Revenge-Trading.<br>
-Was diese Woche nicht lief – wird nächste Woche nicht durch Freitag repariert.<br>
-Gönn dir früh Feierabend, sei stolz auf Disziplin.<br><br>
-
-<strong>🧾 To-do am Freitag:</strong><br>
-<ul>
-  <li>📊 Wochenstatistik eintragen (Gewinne/Verluste, Trefferquote)</li>
-  <li>📸 Equity-Kurve screenshoten</li>
-  <li>📓 Setup-Bewertung im Journal (Was lief gut, was nicht)</li>
-  <li>✅ Clean Close: alle Positionen geschlossen?</li>
-</ul>
-`,
-
-  "Samstag": `
-📴 <strong>Samstag</strong><br><br>
-Kein Handel – Wochenende.<br>
-📓 Rückblick auf Trades der Woche<br>
-🧘 Erholung & Abstand zum Markt<br>
-📊 Vorbereitung für Sonntagsplanung
-`,
-
-  "Sonntag": `
-📴 <strong>Sonntag</strong><br><br>
-Noch kein Handel – aber Vorbereitung ist 🔑.<br><br>
-<ul>
-  <li>📅 Kalender prüfen (Wirtschaftsdaten & Events)</li>
-  <li>📊 Setup-Screener & Wochenstruktur analysieren</li>
-  <li>🧠 Mentales Ziel setzen: 1 Regel für die Woche</li>
-</ul>
-`
-};
-
-  if (daySummaryEl && dayDetailsEl) {
-    daySummaryEl.addEventListener("click", () => {
-      const now = new Date();
-      const dayName = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"][now.getDay()];
-      const content = dayDetailsMap[dayName] || "📆 Keine Details für diesen Tag.";
-
-      const visible = dayDetailsEl.style.display === "block";
-      dayDetailsEl.style.display = visible ? "none" : "block";
-      if (!visible) dayDetailsEl.innerHTML = content;
-    });
-  }
-
-  updateDaySummary();
-});
-
-
-
-
-window.addEventListener("load", () => {
-  requestNotificationPermission();
-  updateRealTimeBar();
-  updateDaySummary(); // 📅 Wochentag-Anzeige aktualisieren
-
-  setInterval(updateRealTimeBar, 60000);
-});
-</script>
-
-
-
-<script>
-// ✅ Service Worker Registrierung
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("sw.js")
-      .then(reg => console.log("✅ Service Worker registriert:", reg))
-      .catch(err => console.error("❌ SW Registrierung fehlgeschlagen:", err));
-  });
-}
-
-// ✅ App-Install Trigger mit Button
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  console.log("🟡 beforeinstallprompt ausgelöst");
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallButton();
-});
-
-function showInstallButton() {
-  if (localStorage.getItem("installPromptHandled") === "true") return;
-  if (document.getElementById("installBtn")) return;
-
-  const installBtn = document.createElement("button");
-  installBtn.id = "installBtn";
-  installBtn.textContent = "📲 App installieren";
-  installBtn.className = "big-btn";
-  installBtn.style.position = "fixed";
-  installBtn.style.bottom = "80px";
-  installBtn.style.left = "50%";
-  installBtn.style.transform = "translateX(-50%)";
-  installBtn.style.zIndex = "9999";
-  document.body.appendChild(installBtn);
-
-  installBtn.addEventListener("click", () => {
-    installBtn.remove();
-    localStorage.setItem("installPromptHandled", "true"); // ✅ Nur einmal fragen
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        console.log("📥 Installationswahl:", choiceResult.outcome);
-        deferredPrompt = null;
-      });
-    }
-  });
-}
-
-// 🕒 Fallback-Check nach 3 Sekunden, ob der Button angezeigt werden kann
-setTimeout(() => {
-  if (deferredPrompt) {
-    showInstallButton();
-  } else {
-    console.log("❌ Kein Install-Event verfügbar");
-  }
-}, 3000);
-</script>
 
 <script>
 function sendPushNotification(title, message) {
@@ -1911,23 +1016,8 @@ function enableNotifications() {
 }
 </script>
 
-<script>
 
-<body>
 
-<button onclick="enableNotifications()">🔓 Benachrichtigungen aktivieren</button>
-<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
 
-<button onclick="showSessionStartNotification('TEST Session', '🔔 Das ist eine Test-Benachrichtigung!')">
-📲 Test Session Notification
-</button>
-<button onclick="diagnoseNotifications()">🔍 Benachrichtigung prüfen</button>
-<div id="notificationStatus" style="color:#0f0; font-weight:bold; margin-top:10px; display:none;"></div>
 
-</button>
-<button onclick="sendPushNotification('📲 Push-Test', '✅ Funktioniert jetzt direkt auf dem Handy!')">
-Test Push direkt
-</button>
-</button>
-</body>
 </html>
