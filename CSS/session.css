@@ -226,36 +226,34 @@
 }
 
 .progress-container {
-  position: relative;
   width: 100%;
-  max-width: 100%;
-  height: 24px;
+  height: 24px; /* 🔧 Größer gemacht */
   background: #111;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
+  border-radius: 6px;
+  margin-top: 5px;
   overflow: hidden;
-  z-index: 9;
-  margin: 0 auto;
-  padding: 0;
-  border-radius: 0;
+  box-shadow: 0 0 14px 4px rgba(153, 0, 255, 0.4); /* Leuchteffekt */
+}
+
+#progressBar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff);
+  background-size: 200% 100%;
+  animation: cryptoBarShift 8s linear infinite;
+  transition: width 0.3s ease-in-out;
 }
 
 
+@keyframes cryptoBarShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
 
-
-    .progress-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-	  
-      width: 0%; /* wird per JS gesetzt */
-      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-      transition: width 1s linear;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      z-index: 2;
-    }
 	
 	.session-details-box ul {
   padding-left: 20px;
@@ -263,6 +261,15 @@
   margin-bottom: 8px;
   list-style-type: disc;
 }
+@keyframes cryptoBarShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.progress-bar {
+  background-size: 200% 200%;
+}
+
 
 .session-details-box li {
   margin-bottom: 4px;
