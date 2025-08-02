@@ -246,6 +246,11 @@ function updateRealTimeBar() {
 
   // Fortschrittsbalken immer aktualisieren
   progressBar.style.width = `${percent}%`;
+progressBar.style.background = "linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff)";
+progressBar.style.animation = "cryptoBarShift 8s linear infinite";
+progressContainer.style.boxShadow = "0 0 14px 4px rgba(153, 0, 255, 0.4)";
+
+  
 
   // ✅ Definiere echten Krypto-Wochenende-Zeitraum
   const isCryptoWeekend =
@@ -262,6 +267,11 @@ function updateRealTimeBar() {
       </span>
     `;
     sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
+sessionInfoEl.style.background = "linear-gradient(135deg, rgba(255,0,204,0.15), rgba(0,255,255,0.15))";
+sessionInfoEl.style.textShadow = "0 0 4px #ff00cc, 0 0 8px #00ffff";
+sessionInfoEl.style.boxShadow = "inset 0 0 10px rgba(153, 0, 255, 0.25), 0 0 6px rgba(0, 255, 255, 0.15)";
+sessionInfoEl.style.color = "#ffffff";
+
 
     let weekendInfo = "";
 
