@@ -25,16 +25,30 @@
       text-align: center;
       margin-top: 20px;
     }
-    .tab-buttons button {
-      background: #333;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin: 5px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
+@keyframes glowPulse {
+  0%   { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
+  50%  { box-shadow: 0 0 14px 6px var(--glow-color, #fff); }
+  100% { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
+}
+
+.tab-buttons button {
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  border: none;
+  outline: 2px solid transparent;
+}
+
+.tab-buttons button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
     .tab-buttons .active {
       background: #0077cc;
     }
@@ -186,26 +200,73 @@
 
 
 
-    .session-info {
-      margin-top: 5px;
-      font-size: 14px;
-      color: #aaf0aa;
-      text-align: center;
-      font-style: italic;
-      user-select: none;
-    }
-	
+
 .session-details-box {
   display: none;
-  background: #1a1a1a;
-  padding: 15px;
-  margin: 10px 20px;
-  border-radius: 10px;
-  font-size: 14px;
+  background: rgba(10, 10, 10, 0.85);
+  padding: 20px;
+  margin: 15px 20px;
+  border-radius: 14px;
+  font-size: 15px;
   color: #eee;
   text-align: left;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  line-height: 1.7;
+  border-left: 4px solid #00ffcc;
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.2),
+    0 4px 20px rgba(0, 0, 0, 0.6),
+    inset 0 0 12px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-in-out;
 }
+
+.session-details-box strong {
+  color: #0ff;
+  text-shadow: 0 0 5px #0ff;
+  font-size: 17px;
+}
+
+.session-details-box ul {
+  margin-left: 16px;
+  padding-left: 8px;
+}
+
+.session-details-box li {
+  margin-bottom: 6px;
+}
+
+
+/* Dynamische Farben pro Session */
+.session-sydney {
+  box-shadow: 0 0 10px #3388ff66;
+  border-color: #3388ff55;
+}
+
+.session-tokyo {
+  box-shadow: 0 0 10px #00aaff66;
+  border-color: #00aaff55;
+}
+
+.session-london {
+  box-shadow: 0 0 10px #ffd70066;
+  border-color: #ffd70055;
+}
+
+.session-ny {
+  box-shadow: 0 0 10px #ff450066;
+  border-color: #ff450055;
+}
+
+.session-killzone {
+  box-shadow: 0 0 10px #ccff0066;
+  border-color: #ccff0055;
+}
+
+.session-crypto {
+  box-shadow: 0 0 10px #9900ff66;
+  border-color: #9900ff55;
+}
+
 
 
   .session-details-box {
