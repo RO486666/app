@@ -31,6 +31,11 @@ img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box
   max-width: 100%;
   width: 100%;
 }
+#bgCandles {
+  opacity: 0.035;        /* super dezent */
+  filter: blur(0.6px);   /* weiche Kanten */
+  pointer-events: none;  /* klickt nicht durch */
+}
 body {
   --session-bg-color: #111;
   --session-glow: radial-gradient(ellipse at bottom, rgba(100, 0, 150, 0.2) 0%, transparent 70%);
@@ -64,35 +69,43 @@ body {
   0% { background-position: 0 0, 0 0, 0 0; }
   100% { background-position: 400px 400px, 40px 40px, 40px 40px; }
 }
-#bgCandles {
-  opacity: 0.035;        /* super dezent */
-  filter: blur(0.6px);   /* weiche Kanten */
-  pointer-events: none;  /* klickt nicht durch */
-}
+
+/* 🔥 Session-Spezifische Glow-Farben */
+.session-glow-sydney    { --glow-color: #3388ff; background: linear-gradient(145deg, #1e1e1e, #223044); }
+.session-glow-tokyo     { --glow-color: #00aaff; background: linear-gradient(145deg, #1e1e1e, #1c2e36); }
+.session-glow-london    { --glow-color: #ffd700; background: linear-gradient(145deg, #1e1e1e, #3c3c1a); }
+.session-glow-ny        { --glow-color: #ff4500; background: linear-gradient(145deg, #1e1e1e, #3a1e1e); }
+.session-glow-lk        { --glow-color: #ccff00; background: linear-gradient(145deg, #1e1e1e, #3c4a1c); }
+.session-glow-nyk       { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
+.session-glow-deadzone  { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
+.session-glow-crypto    { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
 
 .stats-box {
-  background: linear-gradient(145deg, #1e1e1e, #262626); /* sanftes Dunkelgrau mit Lichtschimmer */
   padding: 18px 22px;
   border-radius: 16px;
+  background: linear-gradient(135deg, #1c1c1c, #262626);
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.04),
     0 4px 10px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 0 14px var(--glow-color, rgba(255, 255, 255, 0.08));
   margin-top: 25px;
   text-align: left;
   max-width: 440px;
   margin-left: auto;
   margin-right: auto;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.4s ease, transform 0.3s ease;
   overflow-x: hidden;
+  animation: statsGlowPulse 3.5s ease-in-out infinite;
 }
 
-.stats-box:hover {
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.06),
-    0 6px 16px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.07);
+@keyframes statsGlowPulse {
+  0%   { box-shadow: 0 0 6px var(--glow-color, rgba(255,255,255,0.05)); }
+  50%  { box-shadow: 0 0 18px var(--glow-color, rgba(255,255,255,0.25)); }
+  100% { box-shadow: 0 0 6px var(--glow-color, rgba(255,255,255,0.05)); }
 }
+
+
+
 
 
 .crypto-animate {
@@ -423,198 +436,6 @@ body {
 </div>
 
 
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="toggleRiskInfo()" 
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-
-  <div id="riskInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Der Risiko-%-Rechner zeigt dir, wie viel Geld du bei einem Trade riskierst und wie viel Prozent deines Kontos das ausmacht. Er basiert auf:
-
-    <ul style="margin-top:10px; margin-bottom:10px;">
-      <li><strong>📦 Kontogröße:</strong> Dein Kontoguthaben in Euro</li>
-      <li><strong>🧮 Lotgröße:</strong> Wie groß dein Trade ist (z. B. 0.1 = Mini-Lot)</li>
-      <li><strong>🛑 Stop-Loss (Pips):</strong> Wie weit der SL vom Einstieg entfernt ist</li>
-      <li><strong>💡 Pip-Wert:</strong> Wie viel 1 Pip pro Lot kostet (z. B. 10 €)</li>
-    </ul>
-
-    <strong>📐 Formel:</strong><br>
-    <code style="color:#0ff;">Risiko (€) = Lotgröße × SL × Pip-Wert<br>
-    Risiko-% = Risiko / Kontogröße × 100</code><br><br>
-
-    <strong>🔍 Beispiel:</strong><br>
-    Konto: 1000 €<br>
-    Lot: 0.2<br>
-    SL: 30 Pips<br>
-    Pip-Wert: 10 €<br>
-    → Risiko = 0.2 × 30 × 10 = 60 €<br>
-    → Risiko-% = 60 / 1000 = <strong>6 %</strong><br><br>
-
-    <em style="color:#aaa;">Achte darauf, dass dein Risiko unter 2 % bleibt, um langfristig zu überleben.</em>
-  </div>
-</div>
-
-
-
-<div id="calc-lot" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="lotFixedRisk">💰 Risiko in Euro:</label>
-    <input type="number" id="lotFixedRisk" placeholder="z. B. 50" />
-
-    <label for="lotSL">🛑 Stop-Loss (in Pips):</label>
-    <input type="number" id="lotSL" placeholder="z. B. 20" />
-
-    <label for="lotPipValue">💡 Pip-Wert pro Lot (€):</label>
-    <input type="number" id="lotPipValue" placeholder="z. B. 10" value="10" />
-
-    <button onclick="calculateLotFromFixed()">🧮 Lotgröße berechnen</button>
-
-    <p id="lotResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-  </div>
-
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="toggleLotInfo()" 
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-
-  <div id="lotInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Du gibst an, wie viel Euro du maximal verlieren willst – der Rechner sagt dir, welche Lotgröße das erlaubt.<br><br>
-
-    <strong>Beispiel:</strong><br>
-    Risiko: 100 €<br>
-    SL: 25 Pips<br>
-    Pip-Wert: 10 €/Lot<br>
-    → <code style="color:#0ff;">Lots = 100 / (25 × 10) = 0.40</code>
-  </div>
-</div>
-
-<div id="calc-breakeven" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="entryPrice">🎯 Einstiegspreis:</label>
-    <input type="number" id="entryPrice" placeholder="z. B. 1.12345" step="0.00001" />
-
-    <label for="spreadPips">📏 Spread (Pips):</label>
-    <input type="number" id="spreadPips" placeholder="z. B. 1.5" step="0.1" />
-
-    <label for="fees">💸 Gebühren (€):</label>
-    <input type="number" id="fees" placeholder="z. B. 2.00" step="0.01" />
-
-    <label for="beLotSize">🧮 Lotgröße:</label>
-    <input type="number" id="beLotSize" placeholder="z. B. 0.1" step="0.01" />
-
-    <label for="bePipValue">💡 Pip-Wert pro Lot (€):</label>
-    <input type="number" id="bePipValue" placeholder="z. B. 10" value="10" />
-
-    <button onclick="calculateBreakeven()">🧠 Break-even berechnen</button>
-
-    <p id="breakevenResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-  </div>
-
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="toggleBreakevenInfo()" 
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-
-  <div id="breakevenInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Der Break-even-Rechner zeigt dir den Preis, bei dem dein Trade exakt auf Null läuft – also weder Gewinn noch Verlust.<br><br>
-
-    Dabei berücksichtigt werden:
-    <ul style="margin-top:10px; margin-bottom:10px;">
-      <li><strong>🎯 Einstiegspreis:</strong> Der Preis, zu dem du den Trade geöffnet hast.</li>
-      <li><strong>📏 Spread:</strong> Unterschied zwischen Bid und Ask in Pips.</li>
-      <li><strong>💸 Gebühren:</strong> z. B. Kommissionen des Brokers.</li>
-      <li><strong>🧮 Lotgröße:</strong> Deine aktuelle Positionsgröße.</li>
-      <li><strong>💡 Pip-Wert:</strong> Wert eines Pips pro Lot (z. B. 10 € bei Forex).</li>
-    </ul>
-
-    <strong>📐 Formel:</strong><br>
-    <code style="color:#0ff;">Break-even = Einstiegspreis ± (Spread + Gebühren ÷ (Lotgröße × Pip-Wert))</code><br><br>
-
-    <em style="color:#aaa;">Ob du + oder – rechnest, hängt davon ab, ob du Long oder Short bist. Dieser Rechner geht vom LONG-Trade aus.</em>
-  </div>
-</div>
-
-<div id="calc-leverage" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="leverageMode">Berechnungsmodus:</label>
-    <select id="leverageMode" onchange="toggleLeverageMode()">
-      <option value="capital">🔁 Hebel ➜ Kapital berechnen</option>
-      <option value="lotcheck">📊 Hebel + Kapital ➜ Lotcheck</option>
-    </select>
-
-    <!-- MODUS 1: Hebel ➜ Kapital -->
-    <div id="capitalMode">
-      <label for="leverageInput1">📦 Kapital (in €):</label>
-      <input type="number" id="leverageInput1" placeholder="z. B. 500" />
-
-      <label for="leverageInput2">💼 Lotgröße:</label>
-      <input type="number" id="leverageInput2" placeholder="z. B. 1.0" step="0.01" />
-
-      <label for="leverageInput3">📈 Hebel:</label>
-      <input type="number" id="leverageInput3" placeholder="z. B. 10" step="1" />
-    </div>
-
-    <!-- MODUS 2: Hebel + Kapital ➜ Lotcheck -->
-    <div id="lotCheckMode" style="display:none">
-  <label for="lotCapital">📦 Kapital (in €):</label>
-  <input type="number" id="lotCapital" placeholder="z. B. 250" />
-
-  <label for="lotLeverage">💡 Hebel (z. B. 500):</label>
-  <input type="number" id="lotLeverage" placeholder="z. B. 500" />
-
-  <label for="lotPair">📊 Währungspaar:</label>
-<select id="lotPair">
-  <optgroup label="🔁 Forex">
-    <option value="EUR/USD">EUR/USD</option>
-    <option value="GBP/USD">GBP/USD</option>
-    <option value="AUD/USD">AUD/USD</option>
-    <option value="NZD/USD">NZD/USD</option>
-    <option value="USD/CAD">USD/CAD</option>
-    <option value="USD/CHF">USD/CHF</option>
-    <option value="USD/JPY">USD/JPY</option>
-    <option value="EUR/JPY">EUR/JPY</option>
-    <option value="GBP/JPY">GBP/JPY</option>
-    <option value="CHF/JPY">CHF/JPY</option>
-    <option value="AUD/JPY">AUD/JPY</option>
-    <option value="CAD/JPY">CAD/JPY</option>
-    <option value="EUR/GBP">EUR/GBP</option>
-    <option value="EUR/AUD">EUR/AUD</option>
-    <option value="EUR/CAD">EUR/CAD</option>
-    <option value="GBP/AUD">GBP/AUD</option>
-    <option value="GBP/CAD">GBP/CAD</option>
-  </optgroup>
-
-  <optgroup label="🥇 Rohstoffe">
-    <option value="XAU/USD">XAU/USD (Gold)</option>
-    <option value="XAG/USD">XAG/USD (Silber)</option>
-  </optgroup>
-
-  <optgroup label="💹 Indizes">
-    <option value="US30">US30 (Dow Jones)</option>
-    <option value="NAS100">NAS100 (Nasdaq)</option>
-    <option value="SPX500">SPX500 (S&P 500)</option>
-    <option value="GER40">GER40 (DAX)</option>
-    <option value="UK100">UK100 (FTSE)</option>
-  </optgroup>
-
-  <optgroup label="₿ Krypto">
-    <option value="BTC/USD">BTC/USD</option>
-    <option value="ETH/USD">ETH/USD</option>
-  </optgroup>
-</select>
-
-</div>
-
-    <button onclick="calculateLeverage()">🔧 Berechnen</button>
-    <p id="leverageResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-  </div>
-</div>
 
   <!-- 📆 Kalender -->
 <div id="journalCalendarBox" class="stats-box" style="margin-top: 20px;">
@@ -639,7 +460,8 @@ body {
 </div>
 <!-- 📘 Journal-Eingabe -->
 <div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
-  <div class="stats-box" style="display: flex; flex-direction: column; gap: 14px; max-width: 500px; margin: auto; padding: 20px; border-radius: 12px; background: #1a1a1a; color: #eee;">
+  <div class="stats-box journal-box">
+
 
     <label>🧭 Strategie-Modus:</label>
     <select id="tradingMode" onchange="updateBiasOptions()" class="input" style="width: 100%;">
