@@ -169,12 +169,7 @@ function buildSessionDetails() {
 if (activeSessions.length > 0) {
   applyStatsBoxGlow(activeSessions[0].name);
 }
-if (sessionName.includes("Killzone")) {
-  box.style.setProperty('--glow-color', `linear-gradient(90deg, ${sessionColors[sessionName]}, #ffffff)`);
-}
-else {
-  applyStatsBoxGlow("Deadzone"); // oder gar keine
-}
+
   sessionDetailsBox.innerHTML = fullInfo;
   
 }
