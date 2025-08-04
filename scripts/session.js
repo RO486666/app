@@ -7,8 +7,129 @@ const progressBar = document.getElementById("progressBar");
 const progressContainer = document.querySelector(".progress-container");
 
 sessionText.addEventListener("click", () => {
-  sessionDetailsBox.style.display = sessionDetailsBox.style.display === "block" ? "none" : "block";
+  const visible = sessionDetailsBox.style.display === "block";
+  sessionDetailsBox.style.display = visible ? "none" : "block";
+
+  if (!visible) {
+    const minutes = getMinutesNow();
+    const activeSessions = getCurrentSessions(minutes);
+
+    let fullInfo = "";
+
+    // 🔹 Headline
+    fullInfo += `
+      <div style="
+        font-size: 18px;
+        font-weight: bold;
+        padding: 10px 15px;
+        background: linear-gradient(to right, #222, #111);
+        border-bottom: 1px solid #333;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+      ">
+        🔹 Aktive Sessions
+      </div>
+    `;
+
+    if (activeSessions.length > 0) {
+      activeSessions.forEach((s) => {
+        let start = s.start;
+        let end = s.end;
+        if (start > end) end += 1440;
+        let nowMins = minutes;
+        if (nowMins < start) nowMins += 1440;
+        const timeLeft = end - nowMins;
+
+        const label = s.name.includes("Killzone") ? "🔥" :
+                      s.name.includes("New York") ? "🇺🇸" :
+                      s.name.includes("London") ? "💷" :
+                      s.name.includes("Tokyo") ? "🌏" :
+                      s.name.includes("Sydney") ? "🌙" :
+                      s.name.includes("Crypto") ? "🪙" : "🟡";
+
+        const color = sessionColors[s.name] || "#0cf";
+        const glow = `0 0 5px ${color}, 0 0 12px ${hexToRgba(color, 0.5)}`;
+
+       let weekDaysHtml = "";
+if (s.weekDaysInfo) {
+  weekDaysHtml = "<div style='margin-top:8px;'>";
+  s.weekDaysInfo.forEach(({ day, text }) => {
+    weekDaysHtml += `
+      <div style="margin-bottom:4px;">
+        <strong style="color:${color}; text-shadow:${glow};">${day}:</strong>
+        <span style="color:#ccc;"> ${text}</span>
+      </div>
+    `;
+  });
+  weekDaysHtml += "</div>";
+}
+
+
+       fullInfo += `
+  <div style="
+    border-left: 4px solid ${color};
+    padding: 12px 16px;
+    margin: 12px 15px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px ${hexToRgba(color, 0.3)};
+    font-size: 14px;
+    line-height: 1.6;
+  ">
+    <div style="font-size: 16px; font-weight: bold; color: ${color}; text-shadow: ${glow};">
+      ${label} ${s.name}
+    </div>
+    ⏱️ Noch <strong style="color:${color}; text-shadow:${glow};">${formatHM(timeLeft)}</strong><br>
+    📅 Start: <strong style="color:${color}; text-shadow:${glow};">${formatHM(s.start)} Uhr</strong><br>
+    🕓 Ende: <strong style="color:${color}; text-shadow:${glow};">${formatHM(s.end)} Uhr</strong><br>
+    ℹ️ <span style="color:${color}; text-shadow:${glow};">${s.info}</span>
+    ${weekDaysHtml}
+  </div>
+`;
+
+      });
+    } else {
+      fullInfo += `<div style="padding:10px 15px;">⏱️ Aktuell <strong>keine Session aktiv</strong></div>`;
+    }
+
+    // 🔜 Nächste Session
+    const futureSessions = sessions
+      .map(s => ({
+        ...s,
+        startMins: s.start > minutes ? s.start : s.start + 1440
+      }))
+      .sort((a, b) => a.startMins - b.startMins);
+
+    const next = futureSessions[0];
+    const minsToNext = next.startMins - minutes;
+    const nextColor = sessionColors[next.name] || "#999";
+    const nextGlow = `0 0 5px ${nextColor}, 0 0 10px ${hexToRgba(nextColor, 0.4)}`;
+
+    fullInfo += `
+      <div style="
+        font-size: 15px;
+        margin: 18px 15px 10px 15px;
+        color: ${nextColor};
+        text-shadow: ${nextGlow};
+      ">
+        🔜 <strong>Nächste:</strong> ${next.name} in <strong>${formatHM(minsToNext)}</strong>
+      </div>
+    `;
+
+    const name = activeSessions.length > 0 ? activeSessions[0].name : "";
+if (name) {
+  updateBodyBackground(name);
+  manualSessionOverride = name; // optional, wenn du später resetten willst
+}
+
+sessionDetailsBox.innerHTML = fullInfo;
+
+  }
 });
+
+
+
+
 
 function formatHM(mins) {
   const h = Math.floor(mins / 60) % 24;
@@ -186,55 +307,6 @@ function requestNotificationPermission() {
 
 
 
-
-
-function showSessionProgress(activeSessions, currentMinutes) {
-  let output = "";
-
-  // 🔸 Aktuelle Session anzeigen
-  if (activeSessions.length > 0) {
-    const current = activeSessions[0];
-    let start = current.start;
-    let end = current.end;
-    if (start > end) end += 1440;
-    let nowMins = currentMinutes;
-    if (nowMins < start) nowMins += 1440;
-    const timeLeft = end - nowMins;
-
-    output += `⏱️ Noch <strong>${formatHM(timeLeft)}</strong> in <strong>${current.name}</strong><br>`;
-  } else {
-    output += `⏱️ Aktuell <strong>keine Session aktiv</strong><br>`;
-  }
-
-  // 🔜 Nächste Session anzeigen
-  const futureSessions = sessions
-    .map(s => ({
-      ...s,
-      startMins: s.start > currentMinutes ? s.start : s.start + 1440
-    }))
-    .sort((a, b) => a.startMins - b.startMins);
-
-  const next = futureSessions[0];
-  const minsToNext = next.startMins - currentMinutes;
-
-  output += `🔜 Nächste: <strong>${next.name}</strong> in <strong>${formatHM(minsToNext)}</strong>`;
-
-  // ✅ Sicher nur aktualisieren, wenn Element existiert
-  const box = document.getElementById("sessionProgressDisplay");
-  if (box) {
-    box.innerHTML = `
-      <div class="session-progress-box">
-        ${output}
-      </div>
-    `;
-  }
-}
-
-
-
-
-
-
 function updateRealTimeBar() {
 	
   const now = new Date();
@@ -317,7 +389,7 @@ sessionInfoEl.style.color = "#ffffff";
   const names = activeSessions
   .map(s => s.name)
   .filter(n => n !== "Crypto"); // 🔥 Crypto wird vom Balken ausgeschlossen
-
+updateTabButtonColors(names);
   const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
   sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
 
@@ -334,13 +406,19 @@ sessionInfoEl.style.color = "#ffffff";
 
   const name = activeSessions.length > 0 ? activeSessions[0].name : "";
   let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
+  
 
-  if (name === "Tokyo") {
+if (name === "Sydney") {
+  infoText = minutes >= 1380 ? "🌙 Sydney startet – ruhiger Handelsbeginn, Fokus auf AUD/NZD." :
+              minutes < 180 ? "🦘 Sydney aktiv – geringe Volatilität, Setups oft technisch." :
+              "🌅 Späte Sydney-Phase – Übergang zu Tokyo beginnt.";
+} else if (name === "Tokyo") {
     infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
                 minutes < 360 ? "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY." :
                 "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
   } else if (name === "London Killzone") {
     infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
+	
   } else if (name === "London") {
     infoText = minutes < 720 ? "💷 London Session – Markt in Bewegung, europäische Daten entscheidend." :
                 minutes < 840 ? "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries." :
@@ -364,10 +442,13 @@ sessionInfoEl.style.color = "#ffffff";
     }
   } else if (minutes >= 720 && minutes < 840) {
     infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
-  } else if (minutes >= 1380 || minutes < 60) {
+ } else if (minutes >= 1380 || minutes < 60) {
+  if (activeSessions.length === 0) {
     infoText = "🌙 Nacht-Deadzone – Markt ist extrem ruhig, keine relevanten Bewegungen.";
   }
+}
 
+updateBodyBackground(name);
   sessionInfoEl.textContent = infoText;
 
   // 📋 Aktive Session-Details + Wochentagstexte
@@ -422,8 +503,11 @@ sessionInfoEl.style.color = "#ffffff";
   } else {
     lastAlertSession = null;
   }
-  // 📝 Info anzeigen
-sessionInfoEl.textContent = infoText;
+// ✅ Nur setzen, wenn noch nichts drinsteht (Backup)
+if (!sessionInfoEl.innerHTML.trim()) {
+  sessionInfoEl.textContent = infoText;
+}
+
 
 // 🎨 Farbe aus aktiver Session übernehmen
 if (sessionColors[name]) {
@@ -485,6 +569,24 @@ function updateDaySummary() {
 
   const el = document.getElementById("daySummary");
   el.textContent = `🗓️ ${dayName} – ${info}`;
+}
+function getSessionColor(sessionName) {
+  const sessionColors = {
+    "London": "#FFD700",
+    "New York": "#FF4500",
+    "Tokyo": "#00c8ff",
+    "Sydney": "#0070ff",
+    "Crypto": "#9900ff"
+  };
+  return sessionColors[sessionName] || "#0cf";
+}
+
+function hexToRgba(hex, opacity) {
+  const bigint = parseInt(hex.replace("#", ""), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -662,19 +764,97 @@ Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
 
 
   if (daySummaryEl && dayDetailsEl) {
-    daySummaryEl.addEventListener("click", () => {
-      const now = new Date();
-      const dayName = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"][now.getDay()];
-      const content = dayDetailsMap[dayName] || "📆 Keine Details für diesen Tag.";
+  daySummaryEl.addEventListener("click", () => {
+  const now = new Date();
+  const dayName = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"][now.getDay()];
+  const rawContent = dayDetailsMap[dayName] || "📆 Keine Details für diesen Tag.";
 
-      const visible = dayDetailsEl.style.display === "block";
-      dayDetailsEl.style.display = visible ? "none" : "block";
-      if (!visible) dayDetailsEl.innerHTML = content;
-    });
+  // Session-Name zu Tag zuordnen
+  const sessionMap = {
+    "Montag": "London",
+    "Dienstag": "London",
+    "Mittwoch": "Tokyo",
+    "Donnerstag": "New York",
+    "Freitag": "New York",
+    "Samstag": "Crypto",
+    "Sonntag": "Crypto"
+  };
+
+  const color = getSessionColor(sessionMap[dayName]);
+  const glow = `0 0 5px ${color}, 0 0 12px ${hexToRgba(color, 0.5)}`;
+
+  const wrappedContent = `
+    <div style="
+      padding: 16px;
+      margin: 15px;
+      border-left: 4px solid ${color};
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      box-shadow: inset 0 0 8px ${hexToRgba(color, 0.3)};
+      color: #ccc;
+      line-height: 1.6;
+      font-size: 14px;
+    ">
+      <div style="font-size: 17px; font-weight: bold; color: ${color}; text-shadow: ${glow}; margin-bottom: 8px;">
+        📅 ${dayName}
+      </div>
+      <div style="color:#ccc;">
+        ${rawContent.replaceAll("<strong>", `<strong style="color:${color}; text-shadow:${glow};">`)}
+      </div>
+    </div>
+  `;
+
+  const visible = dayDetailsEl.style.display === "block";
+  dayDetailsEl.style.display = visible ? "none" : "block";
+  if (!visible) dayDetailsEl.innerHTML = wrappedContent;
+});
+
   }
 
   updateDaySummary();
 });
+
+function updateBodyBackground(sessionName) {
+  const glowMap = {
+    "Sydney": "radial-gradient(ellipse at bottom, rgba(0, 128, 255, 0.15) 0%, transparent 70%)",
+    "Tokyo": "radial-gradient(ellipse at bottom, rgba(0, 200, 255, 0.15) 0%, transparent 70%)",
+    "London": "radial-gradient(ellipse at bottom, rgba(255, 215, 0, 0.1) 0%, transparent 70%)",
+    "New York": "radial-gradient(ellipse at bottom, rgba(255, 69, 0, 0.1) 0%, transparent 70%)",
+    "London Killzone": "radial-gradient(ellipse at bottom, rgba(204, 255, 0, 0.15) 0%, transparent 70%)",
+    "New York Killzone": "radial-gradient(ellipse at bottom, rgba(255, 136, 0, 0.15) 0%, transparent 70%)",
+    "Crypto": "radial-gradient(ellipse at bottom, rgba(153, 0, 255, 0.2) 0%, transparent 70%)"
+  };
+
+  const baseColor = {
+    "Sydney": "#0a0e1a",
+    "Tokyo": "#0a1018",
+    "London": "#1b1a0e",
+    "New York": "#1a0e0e",
+    "London Killzone": "#12160a",
+    "New York Killzone": "#1a1408",
+    "Crypto": "#1b0e1e"
+  };
+
+  const sessionColorClassMap = {
+    "Sydney": "session-sydney",
+    "Tokyo": "session-tokyo",
+    "London": "session-london",
+    "New York": "session-ny",
+    "London Killzone": "session-killzone",
+    "New York Killzone": "session-killzone",
+    "Crypto": "session-crypto"
+  };
+
+  // ✅ Korrektur: Parameter `sessionName` statt `name`
+  sessionDetailsBox.className = "session-details-box";
+  if (sessionColorClassMap[sessionName]) {
+    sessionDetailsBox.classList.add(sessionColorClassMap[sessionName]);
+  }
+
+  document.body.style.setProperty("--session-glow", glowMap[sessionName] || "radial-gradient(ellipse at bottom, rgba(255,255,255,0.1) 0%, transparent 70%)");
+  document.body.style.setProperty("--session-bg-color", baseColor[sessionName] || "#111");
+}
+
 
 
 
@@ -682,6 +862,7 @@ Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
 window.addEventListener("load", () => {
   requestNotificationPermission();
   updateRealTimeBar();
+
   updateDaySummary(); // 📅 Wochentag-Anzeige aktualisieren
 
   setInterval(updateRealTimeBar, 60000);
