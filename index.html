@@ -179,27 +179,6 @@ body {
 <div id="dayDetails" class="day-details" style="display: none;"></div>
 
 
-<!-- 📊 Session-Fortschritt mit Countdown & Nächste -->
-<div id="sessionProgressDisplay"
-     style="text-align: center;
-            font-size: clamp(15px, 4vw, 18px);
-            font-weight: 600;
-            margin: 16px 0 12px 0;
-            color: #ffffff;
-            padding: 14px 20px;
-            border-radius: 12px;
-            background: linear-gradient(90deg, #181818, #1f1f1f);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow:
-              0 0 8px rgba(255, 255, 255, 0.04),
-              inset 0 0 8px rgba(255, 255, 255, 0.02);
-            text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            letter-spacing: 0.4px;
-            backdrop-filter: blur(1px);
-            user-select: none;
-            transition: all 0.3s ease;">
-</div>
 
 <!-- 💬 Session-Kommentar (z. B. flacht ab) -->
 <div id="sessionInfo"
@@ -235,63 +214,26 @@ body {
 <!-- 🚨 Alerts direkt darunter, aber eher selten sichtbar -->
 <div class="alert-below-header" id="alertBox"></div>
 
+<div class="tab-buttons" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
 
-<!-- Tab-Buttons -->
-<div class="tab-buttons" style="margin-top: 20px;">
-  <!-- 📐 Position Size -->
-  <button id="btn-calc-pos" onclick="switchCalcTab('pos')" style="
-    background: #ffffff;
-    color: #111;
-    box-shadow: 0 0 8px rgba(255,255,255,0.4);
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.15s ease;
-    transform: scale(1);
-  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+  <!-- 📐 Position Size – London -->
+  <button id="btn-calc-pos" onclick="switchCalcTab('pos')">
     📐 Position Size
   </button>
 
-  <!-- 🌒 Dawn Rechner -->
-  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')" style="
-    background: #0077cc;
-    color: white;
-    box-shadow: 0 0 8px rgba(0,119,204,0.6);
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.15s ease;
-    transform: scale(1);
-  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+  <!-- 🌒 Dawn Rechner – Tokyo -->
+  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')">
     🌒 Dawn Rechner
   </button>
 
-  <!-- 📄 Steuer / Netto -->
-  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')" style="
-    background: #cc3333;
-    color: white;
-    box-shadow: 0 0 8px rgba(204,51,51,0.6);
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.15s ease;
-    transform: scale(1);
-  " onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">
+  <!-- 📄 Steuer / Netto – New York -->
+  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">
     📄 Steuer / Netto-Planer
   </button>
+
 </div>
+
+
 
 
 
@@ -925,6 +867,7 @@ body {
 <body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="scripts/session.js"></script>
+<script src="scripts/buttons.js"></script>
 <script src="scripts/screen.js"></script>
 <script src="scripts/background-session.js"></script>
 <script src="scripts/position.js"></script>
@@ -936,6 +879,7 @@ body {
 <script src="scripts/jornal.js"></script>
 <script src="scripts/pwa.js"></script>
 <script src="scripts/AI.js"></script>
+<script type="module" src="pocketbase-init.js"></script>
 
 </body>
 
