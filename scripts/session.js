@@ -923,39 +923,7 @@ function updateBodyBackground(sessionName) {
   document.body.style.setProperty("--session-bg-color", baseColor[sessionName] || "#111");
 }
 
-function updateTabButtonColors(activeSessionNames) {
-  const sessionColors = {
-    "Sydney": "#3388ff",
-    "Tokyo": "#00aaff",
-    "London": "#ffd700",
-    "New York": "#ff4500",
-    "London Killzone": "#ccff00",
-    "New York Killzone": "#ff8800",
-    "Deadzone": "#333333",
-    "Crypto": "#9900ff"
-  };
 
-  const btns = [
-    document.getElementById("btn-calc-pos"),
-    document.getElementById("btn-calc-dawn"),
-    document.getElementById("btn-calc-taxpro")
-  ];
-
-  const colorQueue = activeSessionNames
-    .filter(name => sessionColors[name]) // nur bekannte Sessions
-    .map(name => sessionColors[name]);
-
-  if (colorQueue.length === 0) return;
-
-  // 👉 Farbverlauf auf Buttons anwenden (FIFO)
-  btns.forEach((btn, i) => {
-    const color = colorQueue[i % colorQueue.length]; // zyklisch
-    if (!btn) return;
-    btn.style.background = color;
-    btn.style.boxShadow = `0 0 10px ${color}`;
-    btn.style.color = (color === "#ffd700" || color === "#ccff00") ? "#111" : "#fff";
-  });
-}
 
 
 
