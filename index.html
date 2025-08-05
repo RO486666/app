@@ -171,53 +171,137 @@ body {
 }
 
 
+/* 🧱 Wrapper für Partikel + Glow */
+.rules-fire-wrapper {
+  position: relative;
+  z-index: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
 /* 📜 Regelbox Styling */
 #rulesBox {
   background: linear-gradient(135deg, #1a0f0f, #2a1111);
   border: 1px solid #cc3333;
-  box-shadow:
-    0 0 10px rgba(255, 50, 50, 0.3),
-    0 0 20px rgba(255, 30, 30, 0.2),
-    inset 0 0 10px rgba(255, 0, 0, 0.1);
   color: #ff5555;
-  text-shadow:
-    1px 1px 0 #000,
-    -1px -1px 0 #000;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
   border-radius: 14px;
   padding: 20px;
   transition: all 0.3s ease;
   line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  position: relative;
+  z-index: 1;
+  animation: redPulse 2.4s ease-in-out infinite alternate,
+             fieryGlow 3s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 10px rgba(255, 50, 50, 0.3),
+    0 0 20px rgba(255, 30, 30, 0.2),
+    inset 0 0 10px rgba(255, 0, 0, 0.1);
 }
 
-/* 🔁 Puls-Effekt nur wenn sichtbar */
-#rulesBox:not([style*="display: none"]) {
-  animation: redPulse 2.4s ease-in-out infinite alternate;
-}
-
-
-/* 🔴 Keyframes für roten Textpuls */
+/* 🔴 Pulsierender Text */
 @keyframes redPulse {
   0% {
-    text-shadow:
-      1px 1px 0 #000,
-      -1px -1px 0 #000,
-      0 0 2px rgba(255, 0, 0, 0.15);
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 2px rgba(255, 0, 0, 0.15);
   }
   100% {
-    text-shadow:
-      1px 1px 0 #000,
-      -1px -1px 0 #000,
-      0 0 5px rgba(255, 60, 60, 0.25);
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 5px rgba(255, 60, 60, 0.25);
+  }
+}
+
+/* 🔥 Feuriger Glanz außen */
+@keyframes fieryGlow {
+  0% {
+    box-shadow:
+      0 0 10px rgba(255, 60, 0, 0.3),
+      0 0 18px rgba(255, 80, 0, 0.2),
+      inset 0 0 10px rgba(255, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow:
+      0 0 16px rgba(255, 100, 0, 0.6),
+      0 0 32px rgba(255, 150, 0, 0.3),
+      inset 0 0 14px rgba(255, 50, 0, 0.25);
+  }
+}
+
+/* ✨ Glühpartikel-Overlay */
+.fire-particles {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  z-index: 3;
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: fireSparkOut 1.5s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+/* 💥 Explosionseffekt – Funken nach außen */
+@keyframes fireSparkOut {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-200%, -200%) scale(0.4);
+    opacity: 0;
   }
 }
 
 
-/* 📋 Listen schön einrücken */
-#ruleDetails ul,
-#ruleDetails ol {
+/* 📋 Listen eingerückt */
+#rulesBox ul,
+#rulesBox ol {
   margin-left: 20px;
   padding-left: 0;
+  list-style-position: inside;
 }
+
+#rulesBox li {
+  padding-left: 8px;
+  margin-bottom: 4px;
+}
+
+/* 🟥 Abschnittstitel schöner */
+#rulesBox strong {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ff7777;
+  text-shadow: 1px 1px 1px #000, 0 0 4px rgba(255, 80, 80, 0.4);
+}
+
+/* ➖ Trenner */
+#rulesBox hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 20px 0;
+}
+
+/* ⬅️➡️ Navigation */
+#rulesBox button {
+  background: linear-gradient(135deg, #550000, #770000);
+  color: white;
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
+  transition: all 0.25s ease;
+}
+
+#rulesBox button:hover {
+  background: #992222;
+  box-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
+}
+
+
 
 
 
@@ -529,7 +613,7 @@ body {
 <div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
   📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
 </div>
-
+<div class="rules-fire-wrapper">
 <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
   <strong>Rules Of Rules</strong><br><br>
 
@@ -583,40 +667,51 @@ body {
 
   <!-- Seite 2 -->
   <div id="rulePage2" style="display:none;">
-    <strong>🎯 Setup-Validierung (Short / Long)</strong><br><br>
+  <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
 
-    <strong>📅 Timeframe-Auswertung (je 10 %):</strong>
-    <ul style="margin-left: 20px;">
-      <li>Weekly Bullish/Bearish</li>
-      <li>Daily Bullish/Bearish</li>
-      <li>4H Bullish/Bearish</li>
-    </ul>
+  <strong>1. Markt-Bias Bewertung:</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• Weekly Bullish/Bearish: 1 – 3</li>
+    <li>• Daily Bullish/Bearish: 1 – 3</li>
+    <li>• 4H Bullish/Bearish: 1 – 3</li>
+  </ul>
 
-    <strong>🧠 Bewertungsskala:</strong><br>
-    1 = Oben (On the Top) • 2 = Auf dem Weg zur AOI • 3 = In der AOI<br><br>
+  <strong>1.1 Bedeutung der Bewertungsstufen:</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• 1 = Oben (On the Top)</li>
+    <li>• 2 = Auf dem Weg zur AOI</li>
+    <li>• 3 = In der AOI</li>
+  </ul><hr>
 
-    <strong>📍 Struktur-Verhalten:</strong>
-    <ul style="margin-left: 20px;">
-      <li>Weekly retestet vorherigen Strukturpunkt</li>
-      <li>Daily Rejection an AOI oder psychologischem Level (00 / 50)</li>
-      <li>Warten auf HL / LH + Strukturshift auf 15M / 30M / 1H</li>
-      <li>Entry-Signal durch Candlestick-Formation auf 1H / 2H / 4H</li>
-      <li>„Set and Forget“ nach Entry – kein Nachjustieren</li>
-    </ul><br>
+  <strong>2. Struktur-Retest (HTF):</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• Weekly retestet vorherigen Strukturpunkt</li>
+  </ul><hr>
 
-    <strong>✅ Regel-Checkliste (10 Punkte je Kriterium):</strong>
-    <ol style="margin-left:20px;">
-      <li>Weekly Bullish/Bearish → 10 %</li>
-      <li>Daily Bullish/Bearish → 10 %</li>
-      <li>4H Bullish/Bearish → 10 %</li>
-      <li>Retest der vorherigen Weekly-Struktur</li>
-      <li>Retest der Daily AOI</li>
-      <li>Daily Bullish Engulfing</li>
-      <li>Rejection an psychologischem Level (00/50)</li>
-      <li>4H HL an AOI sichtbar</li>
-      <li>Lower Timeframe Structure Shift (15M/30M)</li>
-      <li>⚠️ Kein Buy ohne Engulfing auf mindestens einem TF (1H–4H)</li>
-    </ol>
+  <strong>3. Daily Rejection (Bestätigung):</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• 1: Rejection an AOI</li>
+    <li>• 2: Rejection an rundem psychologischen Level (00 / 50)</li>
+  </ul><hr>
+
+  <strong>4. Strukturaufbau (LTF):</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• Warten auf Higher Low / Lower High (HL / LH)</li>
+    <li>• Struktur-Shift auf: 15M / 30M / 1H</li>
+  </ul><hr>
+
+  <strong>5. Entry Signal Bestätigung:</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• Bestätigung durch bullische/bärische Candle-Formationen auf: 1H / 2H / 4H</li>
+  </ul><hr>
+
+  <strong>6. Set and Forget:</strong><br>
+  <ul style="margin-left: 20px;">
+    <li>• Nach Entry nicht mehr eingreifen.</li>
+    <li>• Vertrauen in das Setup. Kein Nachjustieren.</li>
+  </ul>
+
+<div class="fire-sparks"></div>
 
 
   </div>
@@ -626,6 +721,7 @@ body {
     <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
     <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
   </div>
+ <div class="fire-particles"></div>
 </div>
 
 
