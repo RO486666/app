@@ -164,13 +164,24 @@
 
 
 #sessionText {
+<<<<<<< HEAD
   background: linear-gradient(90deg, #202020 0%, #2a2a2a 50%, #202020 100%);
   color: var(--session-text-color, #fff);
+=======
+  background: linear-gradient(
+    90deg,
+    #202020 0%,
+    #2a2a2a 50%,
+    #202020 100%
+  );
+  color: #ffffff;
+>>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
   font-size: clamp(16px, 5vw, 20px);
   font-weight: 700;
   text-align: center;
   padding: 18px 24px;
   border-radius: 14px;
+<<<<<<< HEAD
   border: 1px solid var(--session-border, rgba(255, 255, 255, 0.12));
   box-shadow:
     0 0 10px var(--session-box-shadow1, rgba(255, 255, 255, 0.06)),
@@ -179,6 +190,16 @@
   text-shadow:
     0 0 2px var(--session-text-shadow1, rgba(255, 255, 255, 0.2)),
     0 0 6px var(--session-text-shadow2, rgba(255, 255, 255, 0.15));
+=======
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.06),
+    inset 0 0 8px rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(255, 255, 255, 0.05); /* Weißer Schein */
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.2),
+    0 0 6px rgba(255, 255, 255, 0.15);
+>>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
   margin: 16px 0;
   user-select: none;
   cursor: default;
@@ -187,8 +208,11 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 #sessionText:hover {
   transform: scale(1.02);
   box-shadow:
