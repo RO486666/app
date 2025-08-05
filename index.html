@@ -247,6 +247,7 @@ body {
 <!-- ⏱️ Session-Zeit oben prominent -->
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 
+
 <!-- 🗓️ Tageszusammenfassung -->
 <div id="daySummary" class="ticker day-summary">
   🗓️ Lade Tagesinfo...
@@ -532,31 +533,99 @@ body {
 <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
   <strong>Rules Of Rules</strong><br><br>
 
-  <strong>📅 Timeframe:</strong><br>
-  W / D / 4H → Bullish/Bearish / AOI / POI erkennen<br><br>
+  <!-- Seite 1 -->
+  <div id="rulePage1">
+    <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
 
-  <strong>📐 Entry-Struktur:</strong><br>
-  • 4H Entry Shift (HL / LL / HH / LH)<br>
-  • 4H / 2H / 1H: mindestens 1x Bullish Engulfing (Buy/Sell)<br>
-  • 30M / 15M LTF Shift für 4H Bestätigung<br>
-  • 30M / 15M Shift + SL-Position validieren<br><br>
+    <strong>AOI-Zone wählen:</strong><br>
+    Buy/Sell nur bei Weekly oder Daily AOI<br>
+    → Alle Timeframes darunter (4H, 2H, 1H, 30M, 15M) dienen nur zur Entry-Bestätigung – nicht zur AOI-Bestimmung.<br><br>
 
-  <strong>🟢 Buy:</strong> nur an Support + HL<br>
-  <strong>🔴 Sell:</strong> nur an Resistance + LH<br><br>
+    <strong>Kein Entry ohne Rejection von:</strong>
+    <ul style="margin-left: 20px;">
+      <li>Strukturpunkt</li>
+      <li>EMA</li>
+      <li>AOI</li>
+      <li>Runder psychologischer Level</li>
+      <li>Weekly Rejection Candle (auf Weekly oder Daily sichtbar)</li>
+    </ul><br>
 
-  <strong>🎯 Regel-Check (10–30 % Bewertung):</strong>
-  <ol style="margin-left:20px;">
-    <li>Weekly Bullish/Bearish → 10 %</li>
-    <li>Daily Bullish/Bearish → 10 %</li>
-    <li>4H Bullish/Bearish → 10 %</li>
-    <li>Retest der vorherigen Weekly-Struktur</li>
-    <li>Retest der Daily AOI</li>
-    <li>Daily Bullish Engulfing</li>
-    <li>Rejection an psychologischem Level (z. B. 00/50)</li>
-    <li>4H HL an AOI sichtbar</li>
-    <li>Lower Timeframe Structure Shift (15M/30M)</li>
-    <li>⚠️ Kein Buy ohne Engulfing auf mindestens einem TF (1H–4H)</li>
-  </ol>
+    <strong>Buy/Sell Entry-Bedingung:</strong>
+    <ul style="margin-left: 20px;">
+      <li>4H Higher Low (HL) für Buy</li>
+      <li>4H Lower High (LH) für Sell</li>
+      <li>Oder potenzieller HL/LH mit Engulfing an AOI (Support/Resistance)</li>
+    </ul><br>
+
+    <strong>Entry-Prozess nach HL/LH:</strong><br>
+    Moderation der 15M–1H Struktur-Shift, um Entry mit dem höheren Timeframe abzustimmen.<br>
+    Der sauberste Shift dominiert (welcher TF am klarsten ist)<br><br>
+
+    <strong>Nach Shift auf 15M, 30M, 1H:</strong>
+    <ul style="margin-left: 20px;">
+      <li>Suche nach Engulfing Candle auf:</li>
+      <li>1H</li>
+      <li>2H</li>
+      <li>4H (je nach Klarheit/Confirmation)</li>
+      <li>Je höher der Timeframe → desto stärker die Bestätigung</li>
+    </ul><br>
+
+    <strong>⚠️ Stop-Loss-Regel:</strong><br>
+    SL muss immer an dem Punkt liegen, wo die Idee komplett falsch ist.<br>
+    Niemals "mal probieren" – SL = klare Grenze der Gültigkeit.<br><br>
+
+    <strong>🎯 Take-Profit-Regel:</strong>
+    <ul style="margin-left: 20px;">
+      <li>Wenn Buy/Sell an Weekly AOI mit Ziel Weekly HH/LL:<br> → TP1 = Strukturpunkt (nur Kerzenkörper zählen)</li>
+      <li>Wenn Buy/Sell an Daily AOI mit Ziel Daily HH/LL:<br> → TP1 = Strukturpunkt (nur Kerzenkörper zählen)</li>
+    </ul>
+  </div>
+
+  <!-- Seite 2 -->
+  <div id="rulePage2" style="display:none;">
+    <strong>🎯 Setup-Validierung (Short / Long)</strong><br><br>
+
+    <strong>📅 Timeframe-Auswertung (je 10 %):</strong>
+    <ul style="margin-left: 20px;">
+      <li>Weekly Bullish/Bearish</li>
+      <li>Daily Bullish/Bearish</li>
+      <li>4H Bullish/Bearish</li>
+    </ul>
+
+    <strong>🧠 Bewertungsskala:</strong><br>
+    1 = Oben (On the Top) • 2 = Auf dem Weg zur AOI • 3 = In der AOI<br><br>
+
+    <strong>📍 Struktur-Verhalten:</strong>
+    <ul style="margin-left: 20px;">
+      <li>Weekly retestet vorherigen Strukturpunkt</li>
+      <li>Daily Rejection an AOI oder psychologischem Level (00 / 50)</li>
+      <li>Warten auf HL / LH + Strukturshift auf 15M / 30M / 1H</li>
+      <li>Entry-Signal durch Candlestick-Formation auf 1H / 2H / 4H</li>
+      <li>„Set and Forget“ nach Entry – kein Nachjustieren</li>
+    </ul><br>
+
+    <strong>✅ Regel-Checkliste (10 Punkte je Kriterium):</strong>
+    <ol style="margin-left:20px;">
+      <li>Weekly Bullish/Bearish → 10 %</li>
+      <li>Daily Bullish/Bearish → 10 %</li>
+      <li>4H Bullish/Bearish → 10 %</li>
+      <li>Retest der vorherigen Weekly-Struktur</li>
+      <li>Retest der Daily AOI</li>
+      <li>Daily Bullish Engulfing</li>
+      <li>Rejection an psychologischem Level (00/50)</li>
+      <li>4H HL an AOI sichtbar</li>
+      <li>Lower Timeframe Structure Shift (15M/30M)</li>
+      <li>⚠️ Kein Buy ohne Engulfing auf mindestens einem TF (1H–4H)</li>
+    </ol>
+
+
+  </div>
+
+  <!-- Navigation -->
+  <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
+    <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
+  </div>
 </div>
 
 
