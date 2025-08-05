@@ -17,7 +17,6 @@ sessionText.addEventListener("click", () => {
 });
 
 
-<<<<<<< HEAD
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
   const color = sessionColors[activeSessionName] || "#ffffff";
@@ -32,9 +31,6 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-text-shadow1", `${color}66`);
   el.style.setProperty("--session-text-shadow2", `${color}33`);
 }
-=======
-
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 
 
 
@@ -45,7 +41,6 @@ function formatHM(mins) {
 }
 
 const sessionColors = {
-<<<<<<< HEAD
   "Sydney": "#3388ff",
   "Tokyo": "#00aaff",
   "London": "#ffd700",
@@ -54,16 +49,6 @@ const sessionColors = {
   "New York Killzone": "#ff8800",
   "Deadzone": "#333333",
   "Crypto": "#9900ff"
-=======
-  Sydney: "#3388ff",
-  Tokyo: "#00aaff",
-  London: "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  Deadzone: "#333",
-  Crypto: "#9900ff"  // 🔥 Jetzt mit Farbe!
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 };
 
 
@@ -444,16 +429,11 @@ if (sessionColors[name]) {
   sessionInfoEl.style.textShadow = "none";
   sessionInfoEl.style.boxShadow = "none";
 }
-<<<<<<< HEAD
 updateSessionTextStyle(name);
-=======
-
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 }
 
 
 
-<<<<<<< HEAD
 // === Details Map ganz oben ===
 const dayDetailsMap = {
   "Montag": `
@@ -624,60 +604,6 @@ Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
 • Setups validieren & Einstiegslevel berechnen
 `
 };
-=======
-function updateDaySummary() {
-  const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const infos = {
-    "Montag": `
-🚀 Start in die Woche – neue Impulse, frische Trends möglich.
-🪙 Krypto oft ruhig nach Sonntag – Fokus auf BTC-Reaktion.
-    `,
-    "Dienstag": `
-📈 Trend-Fortsetzung oder technische Korrekturen im Forex.
-🪙 BTC & Altcoins reagieren oft auf Marktstimmung.
-    `,
-    "Mittwoch": `
-⚠️ Midweek-Reversal möglich – Vorsicht bei Trendwechseln.
-🪙 BTC häufig impulsiv – Fakeouts nicht selten.
-    `,
-    "Donnerstag": `
-📊 News-Donnerstag – viele Wirtschaftsreleases.
-🪙 Volatile Altcoins – gute Chancen für Breakouts.
-    `,
-    "Freitag": `
-📅 Wochenabschluss – Gewinne sichern, keine Paniktrades.
-🪙 Abends oft BTC-Volatilität vor dem Krypto-Wochenende.
-    `,
-    "Samstag": `
-📴 Forex geschlossen – Markt schläft.
-🪙 Nur Krypto aktiv – ideale Zeit für Range-Trading & Analyse.
-    `,
-    "Sonntag": `
-🛠️ Vorbereitung auf neue Woche – Forex inaktiv.
-🪙 BTC Pre-Move oft ab 18–20 Uhr – Setup planen!
-    `
-  };
-
-
-  const now = new Date();
-  const dayIndex = now.getDay();
-  const dayName = days[dayIndex];
-  const info = infos[dayName] || "📆 Trading-Tag";
-
-  const el = document.getElementById("daySummary");
-  el.textContent = `🗓️ ${dayName} – ${info}`;
-}
-function getSessionColor(sessionName) {
-  const sessionColors = {
-    "London": "#FFD700",
-    "New York": "#FF4500",
-    "Tokyo": "#00c8ff",
-    "Sydney": "#0070ff",
-    "Crypto": "#9900ff"
-  };
-  return sessionColors[sessionName] || "#0cf";
-}
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 
 function hexToRgba(hex, opacity) {
   const bigint = parseInt(hex.replace("#", ""), 16);
@@ -687,7 +613,6 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
-<<<<<<< HEAD
 function updateDaySummary() {
   const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const infos = {
@@ -778,8 +703,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-=======
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 document.addEventListener("DOMContentLoaded", () => {
   const daySummaryEl = document.getElementById("daySummary");
   const dayDetailsEl = document.getElementById("dayDetails");
@@ -954,57 +877,7 @@ Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
 };
 
 
-<<<<<<< HEAD
 
-=======
-  if (daySummaryEl && dayDetailsEl) {
-  daySummaryEl.addEventListener("click", () => {
-  const now = new Date();
-  const dayName = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"][now.getDay()];
-  const rawContent = dayDetailsMap[dayName] || "📆 Keine Details für diesen Tag.";
-
-  // Session-Name zu Tag zuordnen
-  const sessionMap = {
-    "Montag": "London",
-    "Dienstag": "London",
-    "Mittwoch": "Tokyo",
-    "Donnerstag": "New York",
-    "Freitag": "New York",
-    "Samstag": "Crypto",
-    "Sonntag": "Crypto"
-  };
-
-  const color = getSessionColor(sessionMap[dayName]);
-  const glow = `0 0 5px ${color}, 0 0 12px ${hexToRgba(color, 0.5)}`;
-
-  const wrappedContent = `
-    <div style="
-      padding: 16px;
-      margin: 15px;
-      border-left: 4px solid ${color};
-      border-radius: 10px;
-      background: rgba(255,255,255,0.02);
-      box-shadow: inset 0 0 8px ${hexToRgba(color, 0.3)};
-      color: #ccc;
-      line-height: 1.6;
-      font-size: 14px;
-    ">
-      <div style="font-size: 17px; font-weight: bold; color: ${color}; text-shadow: ${glow}; margin-bottom: 8px;">
-        📅 ${dayName}
-      </div>
-      <div style="color:#ccc;">
-        ${rawContent.replaceAll("<strong>", `<strong style="color:${color}; text-shadow:${glow};">`)}
-      </div>
-    </div>
-  `;
-
-  const visible = dayDetailsEl.style.display === "block";
-  dayDetailsEl.style.display = visible ? "none" : "block";
-  if (!visible) dayDetailsEl.innerHTML = wrappedContent;
-});
-
-  }
->>>>>>> cef887fd88667c3672bb4577c0d5d21040379a6f
 
   updateDaySummary();
 });
