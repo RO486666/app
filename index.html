@@ -315,26 +315,14 @@ body {
 </div>
 <canvas id="bgCandles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;"></canvas>
 
-<body>
-
-<script src="scripts/session-popup.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="scripts/session.js"></script>
-<script src="scripts/buttons.js"></script>
-<script src="scripts/screen.js"></script>
-<script src="scripts/background-session.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/dawn.js"></script>
 <script src="scripts/tax.js"></script>
-<script src="imageStorage.js"></script>
 <script src="scripts/bg-candles.js"></script>
-<script src="scripts/ticker.js"></script>
-<script src="scripts/jornal.js"></script>
-<script src="scripts/pwa.js"></script>
-<script src="scripts/rules.js"></script>
-<script type="module" src="pocketbase-init.js"></script>
+<script src="scripts/ticker.js"></script> <!-- 👈 wichtig -->
+<script src="imageStorage.js"></script>
 
-</body>
 
 
 </head>
@@ -352,19 +340,6 @@ body {
   box-shadow: 0 0 12px #00ff99;
   z-index: 9999;
 ">🔔 Session-Test</button>
-<button onclick="diagnoseNotifications()" style="
-  position: fixed;
-  bottom: 60px;
-  right: 20px;
-  background: #ffaa00;
-  color: black;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0 0 12px #ffcc00;
-  z-index: 9999;
-">🧪 Diagnose</button>
 
 <div id="sessionBackgroundOverlay"></div>
 <!-- ⏱️ Session-Zeit oben prominent -->
@@ -987,6 +962,26 @@ body {
   <button onclick="saveResult()">Speichern</button>
 </div>
 
+
+<body>
+<script src="scripts/session-popup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/session.js"></script>
+<script src="scripts/buttons.js"></script>
+<script src="scripts/screen.js"></script>
+<script src="scripts/background-session.js"></script>
+<script src="scripts/position.js"></script>
+<script src="scripts/dawn.js"></script>
+<script src="scripts/tax.js"></script>
+<script src="imageStorage.js"></script>
+<script src="scripts/bg-candles.js"></script>
+<script src="scripts/ticker.js"></script>
+<script src="scripts/jornal.js"></script>
+<script src="scripts/pwa.js"></script>
+<script src="scripts/rules.js"></script>
+<script type="module" src="pocketbase-init.js"></script>
+
+</body>
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
