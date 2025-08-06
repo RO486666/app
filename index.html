@@ -327,6 +327,20 @@ body {
 
 </head>
 <body>
+<button onclick="showSessionStartNotification('New York', '🔥 NY Session beginnt! Fokus auf Gold & USD!')" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #00aa44;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 0 12px #00ff99;
+  z-index: 9999;
+">🔔 Session-Test</button>
+
 <div id="sessionBackgroundOverlay"></div>
 <!-- ⏱️ Session-Zeit oben prominent -->
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
@@ -950,6 +964,7 @@ body {
 
 
 <body>
+<script src="scripts/session-popup.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="scripts/session.js"></script>
 <script src="scripts/buttons.js"></script>
@@ -972,78 +987,6 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-<script>
-function sendPushNotification(title, message) {
-  if ("Notification" in window && Notification.permission === "granted" && "serviceWorker" in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827409.png",
-        vibrate: [200, 100, 200],
-        tag: "session-alert",
-        renotify: true
-      });
-    }).catch(err => {
-      console.error("❌ Notification via Service Worker fehlgeschlagen:", err);
-    });
-  } else {
-    console.warn("❌ Keine Notification möglich – Erlaubnis oder SW fehlen.");
-  }
-}
-
-// ✅ Einheitlicher Notification-Aufruf für Sessionstarts
-function showSessionStartNotification(sessionName, message) {
-  const title = `📣 ${sessionName}-Session gestartet!`;
-  sendPushNotification(title, message);
-}
-
-// ✅ Diagnosetool zum Testen
-function diagnoseNotifications() {
-  const output = document.getElementById("notificationStatus");
-  output.style.display = "block";
-
-  let msg = "🔍 <strong>Benachrichtigungs-Check:</strong><br>";
-
-  if (!("Notification" in window)) {
-    msg += "❌ Notifications werden vom Browser nicht unterstützt.<br>";
-  } else {
-    msg += `📱 Notification.permission: <strong>${Notification.permission}</strong><br>`;
-    if (Notification.permission === "granted") {
-      try {
-        sendPushNotification("✅ Test-Notification", "🎯 Die Notification funktioniert!");
-        msg += "✅ Test-Notification wurde ausgelöst.<br>";
-      } catch (err) {
-        msg += "❌ Fehler beim Notification-Aufruf: " + err.message + "<br>";
-      }
-    } else if (Notification.permission === "denied") {
-      msg += "🚫 Du hast Benachrichtigungen blockiert.<br>";
-    } else if (Notification.permission === "default") {
-      Notification.requestPermission().then((perm) => {
-        msg += `📩 Neue Erlaubnis: ${perm}<br>`;
-      });
-    }
-  }
-
-  output.innerHTML = msg;
-}
-
-// ✅ Aktivierungs-Button
-function enableNotifications() {
-  Notification.requestPermission().then(permission => {
-    const statusBox = document.getElementById("notificationStatus");
-    statusBox.style.display = "block";
-
-    if (permission === "granted") {
-      sendPushNotification("✅ Erlaubt", "Du bekommst ab jetzt Benachrichtigungen!");
-      statusBox.innerHTML = "✅ Benachrichtigungen erlaubt!";
-    } else if (permission === "denied") {
-      statusBox.innerHTML = "❌ Benachrichtigungen blockiert. Aktiviere sie im Schloss-Symbol der Adresszeile.";
-    } else {
-      statusBox.innerHTML = "ℹ️ Keine Entscheidung getroffen.";
-    }
-  });
-}
-</script>
 
 
 
