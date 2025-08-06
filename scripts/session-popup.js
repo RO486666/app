@@ -11,13 +11,17 @@ function requestNotificationPermission() {
 function sendPushNotification(title, message) {
   if ("Notification" in window && Notification.permission === "granted" && "serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
-        body: message,
-        icon: "/app/icon-192.png",
-        vibrate: [200, 100, 200],
-        tag: "session-alert",
-        renotify: true
-      });
+ registration.active.postMessage({
+  title: title,
+  options: {
+    body: message,
+    icon: "/app/icon-192.png",
+    vibrate: [200, 100, 200],
+    tag: "session-alert",
+    renotify: true
+  }
+});
+
     }).catch(err => {
       console.error("❌ Notification via SW fehlgeschlagen:", err);
     });
