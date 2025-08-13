@@ -122,41 +122,48 @@ function switchCalcTab(tab) {
 }
 function calculateMaxPositions() {
   const accountSize = parseFloat(document.getElementById("maxposAccountSize").value);
-  const riskPercent = parseFloat(document.getElementById("maxposRiskPercent").value);
   const stopLossPips = parseFloat(document.getElementById("maxposStopLoss").value);
   const leverage = parseFloat(document.getElementById("maxposLeverage").value);
   const lotFrom = parseFloat(document.getElementById("lotFrom").value);
   const lotTo = parseFloat(document.getElementById("lotTo").value);
 
-  if (!accountSize || !riskPercent || !stopLossPips || !leverage || !lotFrom || !lotTo) {
-    document.getElementById("maxposResults").innerHTML = "❌ Bitte alle Felder ausfüllen!";
+  if (!accountSize || !stopLossPips || !leverage || !lotFrom) {
+    document.getElementById("maxposResults").innerHTML = "❌ Bitte alle Pflichtfelder ausfüllen!";
     return;
   }
 
-  // Standardwerte für Forex
-  const pipValueStandard = 10; // $10 pro Pip pro 1 Lot
-  const basis = 100000; // Standard Kontraktgröße
+  // Standardwerte (Forex)
+  const pipValueStandard = 10; // 1 Lot = 10€ pro Pip
+  const basis = 100000;        // Standard-Kontraktgröße
 
-  // Maximale Lots nach Margin-Bedingung
+  // Margin-Berechnung für max Lots
   const maxLots = (accountSize * leverage) / basis;
 
   let html = `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br><br>`;
 
-  [lotFrom, lotTo].forEach(lot => {
-    const maxPos = Math.floor(maxLots / lot);
-    const risikoEuro = stopLossPips * (pipValueStandard * lot);
-    const risikoProzent = (risikoEuro / accountSize) * 100;
-    const risikoText = getRiskComment(risikoProzent);
+  // Berechnung für Lotgröße 1 (Pflicht)
+  html += calcLotRow(lotFrom, maxLots, pipValueStandard, stopLossPips, accountSize);
 
-    html += `Lotgröße ${lot.toFixed(2)} → max. ${maxPos} Positionen 
-             <input type="number" min="0" max="${maxPos}" 
-                    onchange="updateTotalRisk(${risikoEuro}, ${accountSize})" 
-                    style="width:60px; margin-left:10px;"> 
-             <br>📉 Risiko pro Position: ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %) – ${risikoText}<br><br>`;
-  });
+  // Berechnung für Lotgröße 2 (optional)
+  if (!isNaN(lotTo) && lotTo > 0) {
+    html += calcLotRow(lotTo, maxLots, pipValueStandard, stopLossPips, accountSize);
+  }
 
   html += `<div id="totalRiskDisplay" style="margin-top:10px;"></div>`;
   document.getElementById("maxposResults").innerHTML = html;
+}
+
+function calcLotRow(lot, maxLots, pipValueStandard, stopLossPips, accountSize) {
+  const maxPos = Math.floor(maxLots / lot);
+  const risikoEuro = stopLossPips * (pipValueStandard * lot);
+  const risikoProzent = (risikoEuro / accountSize) * 100;
+  const risikoText = getRiskComment(risikoProzent);
+
+  return `Lotgröße ${lot.toFixed(2)} → max. ${maxPos} Positionen 
+          <input type="number" min="0" max="${maxPos}" 
+                 onchange="updateTotalRisk(${risikoEuro}, ${accountSize})" 
+                 style="width:60px; margin-left:10px;"> 
+          <br>📉 Risiko pro Position: ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %) – ${risikoText}<br><br>`;
 }
 
 function updateTotalRisk(riskPerPos, accountSize) {
@@ -178,6 +185,8 @@ function getRiskComment(percent) {
   if (percent < 10) return "🟠 Erhöht";
   return "🔴 Hoch";
 }
+
+
 
 
 function switchPosMode() {
