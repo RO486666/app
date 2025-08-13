@@ -19,10 +19,31 @@ sessionText.addEventListener("click", () => {
 
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
-  const color = sessionColors[activeSessionName] || "#ffffff";
-
   if (!el) return;
 
+  // 🔹 Wenn Crypto → spezieller Gradient statt einzelner Farbe
+  if (activeSessionName === "Crypto") {
+    el.style.setProperty("--session-text-color", "#ffffff");
+    el.style.setProperty("--session-border", `#00ffcc66`);
+    el.style.setProperty("--session-box-shadow1", `#00ffcc40`);
+    el.style.setProperty("--session-box-shadow2", `#ff00cc33`);
+    el.style.setProperty("--session-box-shadow3", `#9900ff30`);
+    el.style.setProperty("--session-text-shadow1", `#00ffcc66`);
+    el.style.setProperty("--session-text-shadow2", `#ff00cc33`);
+
+    // 🌈 Verlauf-Text (animiert)
+    el.style.background = "linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff)";
+    el.style.backgroundSize = "200% 100%";
+    el.style.animation = "cryptoBarShift 8s linear infinite";
+    el.style.webkitBackgroundClip = "text";
+    el.style.webkitTextFillColor = "transparent";
+
+    el.classList.add("crypto-weekend");
+    return; // ✅ Rest überspringen
+  }
+
+  // 🔹 Normale Sessions
+  const color = sessionColors[activeSessionName] || "#ffffff";
   el.style.setProperty("--session-text-color", color);
   el.style.setProperty("--session-border", `${color}66`);
   el.style.setProperty("--session-box-shadow1", `${color}40`);
@@ -30,7 +51,12 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-box-shadow3", `${color}30`);
   el.style.setProperty("--session-text-shadow1", `${color}66`);
   el.style.setProperty("--session-text-shadow2", `${color}33`);
+  el.classList.remove("crypto-weekend");
 }
+
+
+
+
 
 
 
@@ -208,6 +234,16 @@ function requestNotificationPermission() {
   }
 }
 
+function setCryptoBarMode(on) {
+  if (on) {
+    progressBar.classList.add("crypto-bar");
+    progressContainer.classList.add("crypto-glow");
+  } else {
+    progressBar.classList.remove("crypto-bar");
+    progressContainer.classList.remove("crypto-glow");
+  }
+}
+
 
 
 function updateRealTimeBar() {
@@ -218,73 +254,113 @@ function updateRealTimeBar() {
   const mins = String(now.getMinutes()).padStart(2, "0");
   const minutes = now.getHours() * 60 + now.getMinutes();
   const percent = (minutes / 1439) * 100;
-
+const bar = document.getElementById("progressBar");
+const barStyles = window.getComputedStyle(bar);
   // Fortschrittsbalken immer aktualisieren
   progressBar.style.width = `${percent}%`;
-progressBar.style.background = "linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff)";
-progressBar.style.animation = "cryptoBarShift 8s linear infinite";
-progressContainer.style.boxShadow = "0 0 14px 4px rgba(153, 0, 255, 0.4)";
 
+
+  // 🌈 Allen relevanten Boxen den Crypto-Look geben
+  document.querySelectorAll(
+    '.day-summary, .day-details, #sessionText, .session-details-box'
+  ).forEach(el => el.classList.add('crypto-weekend'));
   
 
-  // ✅ Definiere echten Krypto-Wochenende-Zeitraum
-  const isCryptoWeekend =
-    (weekday === 6) || // Samstag
-    (weekday === 0) || // Sonntag
-    (weekday === 5 && minutes >= 1380); // Freitag ab 23:00
+ // ✅ Definiere echten Krypto-Wochenende-Zeitraum
+const isCryptoWeekend =
+  (weekday === 6) || // Samstag
+  (weekday === 0) || // Sonntag
+  (weekday === 5 && minutes >= 1380); // Freitag ab 23:00
 
-  if (isCryptoWeekend) {
-    sessionText.textContent = `🕒 ${hours}:${mins} | Krypto-Wochenende aktiv`;
-    sessionInfoEl.innerHTML = `
-      📴 Forex & Indizes geschlossen –
-      <span class="crypto-animate">
-        <span class="coin">🪙</span> Krypto 24/7!
-      </span>
-    `;
-    sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
-sessionInfoEl.style.background = "linear-gradient(135deg, rgba(255,0,204,0.15), rgba(0,255,255,0.15))";
-sessionInfoEl.style.textShadow = "0 0 4px #ff00cc, 0 0 8px #00ffff";
-sessionInfoEl.style.boxShadow = "inset 0 0 10px rgba(153, 0, 255, 0.25), 0 0 6px rgba(0, 255, 255, 0.15)";
-sessionInfoEl.style.color = "#ffffff";
+if (isCryptoWeekend) {
+  // 🔥 Balken & Glow aktivieren
+  setCryptoBarMode(true);
 
-
-    let weekendInfo = "";
-
-    if (weekday === 5 && minutes >= 1380) {
-      weekendInfo = `
-        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-        📅 <strong>Freitagabend:</strong><br>
-        • 🕖 Letzte Volatilität vor dem Wochenschluss (18–22 Uhr)<br>
-        • 🔁 Take-Profits & Wochenschluss-Spikes<br>
-        • 📉 BTC oft rückläufig durch Positionsschließungen<br>
-        • ⚠️ Fakeouts & Liquiditätsgrabs vor der Ruhephase<br><br>
-        🚀 Bereite deine Watchlist fürs Wochenende vor!
-      `;
-    } else if (weekday === 6) {
-      weekendInfo = `
-        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-        📅 <strong>Samstag:</strong><br>
-        • 😴 Niedriges Volumen – kaum Institutionelle aktiv<br>
-        • 🔄 Meist Seitwärtsphasen → ideal für Range-Trading<br>
-        • ❄️ Impulsarme Märkte, gute Zeit für technische Analyse<br>
-        • 📐 Setups vorbereiten & Trading-Journal pflegen<br><br>
-        🧘 Fokus auf Klarheit statt Action – perfekter Analyse-Tag.
-      `;
-    } else if (weekday === 0) {
-      weekendInfo = `
-        <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
-        📅 <strong>Sonntag:</strong><br>
-        • ⏳ Pre-Move-Phase startet oft ab 18–20 Uhr<br>
-        • 🧠 Smart Money beginnt Positionierung für Montag<br>
-        • 🪤 False Breakouts oder „Liquidity Sweeps“ typisch<br>
-        • 🔥 Volumen steigt spürbar, besonders vor News-Wochen<br><br>
-        🚀 Nutze den Sonntagabend für Setup-Feintuning & Ausblick!
-      `;
-    }
-
-    sessionDetailsBox.innerHTML = weekendInfo;
-    return; // 👉 Verhindert normale Session-Anzeige
+  // 🖼 Hintergrund auf Crypto-Style setzen
+  if (typeof applySessionBackground === "function") {
+    applySessionBackground("Crypto", true);
   }
+
+  // 🌈 Tagesboxen im Crypto-Style
+  document.querySelectorAll('.day-summary, .day-details')
+    .forEach(el => el.classList.add('crypto-weekend'));
+
+  // 📝 Session-Texte
+  sessionText.textContent = `🕒 ${hours}:${mins} | Krypto-Wochenende aktiv`;
+  sessionInfoEl.innerHTML = `
+    📴 Forex & Indizes geschlossen –
+    <span class="crypto-animate">
+      <span class="coin">🪙</span> Krypto 24/7!
+    </span>
+  `;
+  sessionProgressEl.innerHTML = "🟢 Aktive Crypto-Session – Trade BTC, ETH & Co. jederzeit!";
+
+  // 🎨 Eleganter animierter Gradient + Glow
+  sessionInfoEl.classList.add("crypto-weekend");
+  sessionInfoEl.style.color = "#fff";
+  sessionInfoEl.style.border = "1px solid rgba(0, 255, 204, 0.3)";
+  sessionInfoEl.style.borderRadius = "10px";
+  sessionInfoEl.style.textShadow = "0 0 4px rgba(0, 255, 204, 0.4), 0 0 8px rgba(255, 0, 204, 0.35), 0 0 14px rgba(153, 0, 255, 0.25)";
+  sessionInfoEl.style.boxShadow = "0 0 8px rgba(0, 255, 204, 0.25), 0 0 18px rgba(255, 0, 204, 0.2), inset 0 0 8px rgba(0, 255, 204, 0.1)";
+
+  // 📋 Weekend-Infos
+  let weekendInfo = "";
+  if (weekday === 5 && minutes >= 1380) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Freitagabend:</strong><br>
+      • 🕖 Letzte Volatilität vor dem Wochenschluss (18–22 Uhr)<br>
+      • 🔁 Take-Profits & Wochenschluss-Spikes<br>
+      • 📉 BTC oft rückläufig durch Positionsschließungen<br>
+      • ⚠️ Fakeouts & Liquiditätsgrabs vor der Ruhephase<br><br>
+      🚀 Bereite deine Watchlist fürs Wochenende vor!
+    `;
+  } else if (weekday === 6) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Samstag:</strong><br>
+      • 😴 Niedriges Volumen – kaum Institutionelle aktiv<br>
+      • 🔄 Meist Seitwärtsphasen → ideal für Range-Trading<br>
+      • ❄️ Impulsarme Märkte, gute Zeit für technische Analyse<br>
+      • 📐 Setups vorbereiten & Trading-Journal pflegen<br><br>
+      🧘 Fokus auf Klarheit statt Action – perfekter Analyse-Tag.
+    `;
+  } else if (weekday === 0) {
+    weekendInfo = `
+      <strong>🪙 Krypto ist aktiv (24/7)</strong><br>
+      📅 <strong>Sonntag:</strong><br>
+      • ⏳ Pre-Move-Phase startet oft ab 18–20 Uhr<br>
+      • 🧠 Smart Money beginnt Positionierung für Montag<br>
+      • 🪤 False Breakouts oder „Liquidity Sweeps“ typisch<br>
+      • 🔥 Volumen steigt spürbar, besonders vor News-Wochen<br><br>
+      🚀 Nutze den Sonntagabend für Setup-Feintuning & Ausblick!
+    `;
+  }
+
+  sessionDetailsBox.innerHTML = weekendInfo;
+
+  return; // 👉 Normale Session-Anzeige überspringen
+
+
+} else {
+  setCryptoBarMode(false);
+  document.querySelectorAll(
+    '#sessionText, .day-summary, .day-details'
+  ).forEach(el => el.classList.remove('crypto-weekend'));
+}
+
+
+
+// 🟦 Werktag: alles normalisieren & wieder Session-Farben verwenden
+setCryptoBarMode(false);
+
+// (falls du Background je Session setzt)
+if (typeof applySessionBackground === "function") {
+  applySessionBackground(undefined, false); // zurück auf Standard
+}
+
+// … hier läuft dann deine normale Session-Logik weiter …
+
 
 
   // ⏬ Werktag-Session-Logik
@@ -655,47 +731,54 @@ function updateDaySummary() {
 
   const el = document.getElementById("daySummary");
   if (el) {
-    el.textContent = `🗓️ ${dayName} – ${info}`;
+  el.textContent = `🗓️ ${dayName} – ${info}`;
+
+  // 🌌 Eleganter Stil für Crypto-Weekend
+  if (dayName === "Samstag" || dayName === "Sonntag" || (dayName === "Freitag" && minutesNow >= 1380)) {
+    el.classList.add("crypto-weekend");
+  } else {
+    el.classList.remove("crypto-weekend");
     el.style.background = sessionColor + "22";
     el.style.color = sessionColor;
     el.style.border = `1px solid ${sessionColor}88`;
     el.style.boxShadow = `0 0 8px ${sessionColor}`;
     el.style.textShadow = `0 0 3px ${sessionColor}`;
-    el.style.cursor = "pointer";
-
-    el.onclick = () => {
-      const dayDetailsEl = document.getElementById("dayDetails");
-      if (!dayDetailsEl) return;
-
-      const raw = dayDetailsMap[dayName] || "📆 Keine Details verfügbar.";
-      const glow = `0 0 5px ${sessionColor}, 0 0 12px ${hexToRgba(sessionColor, 0.5)}`;
-
-      const wrapped = `
-        <div style="
-          padding: 16px;
-          margin: 15px;
-          border-left: 4px solid ${sessionColor};
-          border-radius: 10px;
-          background: rgba(255,255,255,0.02);
-          box-shadow: inset 0 0 8px ${hexToRgba(sessionColor, 0.3)};
-          color: #ccc;
-          line-height: 1.6;
-          font-size: 14px;
-        ">
-          <div style="font-size: 17px; font-weight: bold; color: ${sessionColor}; text-shadow: ${glow}; margin-bottom: 8px;">
-            📅 ${dayName}
-          </div>
-          <div style="color:#ccc;">
-            ${raw.replaceAll("<strong>", `<strong style=\"color:${sessionColor}; text-shadow:${glow};\">`)}
-          </div>
-        </div>
-      `;
-
-      const isVisible = dayDetailsEl.style.display === "block";
-      dayDetailsEl.style.display = isVisible ? "none" : "block";
-      if (!isVisible) dayDetailsEl.innerHTML = wrapped;
-    };
   }
+
+  el.style.cursor = "pointer";
+  el.onclick = () => {
+    const dayDetailsEl = document.getElementById("dayDetails");
+    if (!dayDetailsEl) return;
+
+    const raw = dayDetailsMap[dayName] || "📆 Keine Details verfügbar.";
+    const glow = `0 0 5px ${sessionColor}, 0 0 12px ${hexToRgba(sessionColor, 0.5)}`;
+
+    const wrapped = `
+      <div style="
+        padding: 16px;
+        margin: 15px;
+        border-left: 4px solid ${sessionColor};
+        border-radius: 10px;
+        background: rgba(255,255,255,0.02);
+        box-shadow: inset 0 0 8px ${hexToRgba(sessionColor, 0.3)};
+        color: #ccc;
+        line-height: 1.6;
+        font-size: 14px;
+      ">
+        <div style="font-size: 17px; font-weight: bold; color: ${sessionColor}; text-shadow: ${glow}; margin-bottom: 8px;">
+          📅 ${dayName}
+        </div>
+        <div style="color:#ccc;">
+          ${raw.replaceAll("<strong>", `<strong style=\"color:${sessionColor}; text-shadow:${glow};\">`)}
+        </div>
+      </div>
+    `;
+
+    const isVisible = dayDetailsEl.style.display === "block";
+    dayDetailsEl.style.display = isVisible ? "none" : "block";
+    if (!isVisible) dayDetailsEl.innerHTML = wrapped;
+  };
+}
 }
 
 document.addEventListener("DOMContentLoaded", () => {
