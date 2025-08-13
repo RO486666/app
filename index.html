@@ -569,24 +569,21 @@
     <label for="maxposAccountSize">📦 Kontogröße (€):</label>
     <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
 
-    <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
-    <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1">
-
     <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
     <input type="number" id="maxposStopLoss" placeholder="z. B. 20">
 
     <label for="maxposLeverage">⚙️ Hebel:</label>
     <input type="number" id="maxposLeverage" value="500" min="1">
 
-    <label>📏 Lotgröße von:</label>
+    <label>📏 Lotgröße 1 (Pflicht):</label>
     <input type="number" id="lotFrom" step="0.01" placeholder="z. B. 0.01">
 
-    <label>📏 Lotgröße bis:</label>
+    <label>📏 Lotgröße 2 (optional):</label>
     <input type="number" id="lotTo" step="0.01" placeholder="z. B. 0.10">
 
     <button onclick="calculateMaxPositions()">📊 Berechnen</button>
     <div id="maxposResults" style="margin-top: 15px; font-weight: bold;"></div>
-    
+
     <button onclick="switchPosMode()" style="margin-top: 15px; background: #444; color: white; padding: 10px;
                font-size: 14px; border: none; border-radius: 6px; width: 100%;
                cursor: pointer; font-weight: bold;">
@@ -594,6 +591,8 @@
     </button>
   </div>
 </div>
+
+
 
 
   <!-- ℹ️ Info-Box -->
