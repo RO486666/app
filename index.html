@@ -553,18 +553,16 @@
 
     <button onclick="calculatePositionSize()">📐 Berechnen</button>
       <p id="positionSizeResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-   </div>
-   
-<!-- 🔄 Umschalter -->
-<button onclick="switchPosMode()" id="posToggleBtn"
-        style="margin-top: 15px; background: #444; color: white; padding: 10px;
+   <button onclick="switchPosMode()" style="margin-top: 15px; background: #444; color: white; padding: 10px;
                font-size: 14px; border: none; border-radius: 6px; width: 100%;
                cursor: pointer; font-weight: bold;">
-  🔁 Zu Max-Positions-Rechner wechseln
-</button>
+      🔁 Zu Max-Positions-Rechner wechseln
+    </button>
+  </div>
+</div>
 
 <!-- 📊 Max Positions Rechner -->
-<div id="calc-maxpos" style="display:none; margin-top: 15px;">
+<div id="calc-maxpos" class="calc-box" style="margin-top: 15px; display:none;">
   <div class="stats-box">
     <label for="maxposAccountSize">📦 Kontogröße (€):</label>
     <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
