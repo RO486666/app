@@ -3,7 +3,8 @@ const sessionColors = {
   "Sydney": "#00bcd4",
   "Tokyo": "#9c27b0",
   "London": "#2196f3",
-  "New York": "#f44336"
+  "New York": "#f44336",
+  "Crypto": "#9900ff" // 💜 Crypto-Farbe
 };
 
 // 🔧 Hilfsfunktion
