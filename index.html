@@ -1,42 +1,71 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<link rel="stylesheet" href="CSS/ticker.css" />
-<link rel="stylesheet" href="CSS/star.css" />
-<link rel="stylesheet" href="CSS/session.css" />
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#00aa44" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trade App Layout</title>
+
+  <!-- 🔗 External stylesheets (lassen wir wie im Original) -->
+  <link rel="stylesheet" href="CSS/ticker.css" />
+  <link rel="stylesheet" href="CSS/star.css" />
+  <link rel="stylesheet" href="CSS/session.css" />
+
+  <!-- PWA / Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00aa44" />
+
   <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
-}
-* {
-  box-sizing: border-box;
-}
+    /* ==========================================
+       🎯 GLOBAL BASICS + VARIABLES
+       - Ziel: Ordnung, saubere Defaults, keine Duplikate
+       ========================================== */
+    :root {
+      /* Basisfarben / Defaults */
+      --color-bg: #111;
+      --color-fg: #fff;
 
-body {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+      /* Session-Glow (Fallback) */
+      --session-bg-color: var(--color-bg);
+      --session-glow: radial-gradient(
+        ellipse at bottom,
+        rgba(100, 0, 150, 0.2) 0%,
+        transparent 70%
+      );
 
-img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box {
-  max-width: 100%;
-  width: 100%;
-}
-#bgCandles {
-  opacity: 0.035;        /* super dezent */
-  filter: blur(0.6px);   /* weiche Kanten */
-  pointer-events: none;  /* klickt nicht durch */
-}
-body {
+      /* Box-Glow Fallback */
+      --glow-color: rgba(255, 255, 255, 0.08);
+
+      /* Grid-Lines (dezentes Raster im Hintergrund) */
+      --grid-line-color: rgba(255, 255, 255, 0.03);
+
+      /* Crypto-Gradient Farben */
+      --crypto-c1: #00ffff;
+      --crypto-c2: #ff00cc;
+      --crypto-c3: #9900ff;
+
+      /* Timing / Durations */
+      --bg-scroll-duration: 40s;
+      --stats-glow-duration: 3.5s;
+      --crypto-gradient-duration: 6s;
+      --crypto-pulse-duration: 2.8s;
+      --coin-rotate-duration: 1.5s;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    *, *::before, *::after { box-sizing: inherit; }
+
+    /* ==========================================
+       🧱 PAGE BACKGROUND & TYPO
+       ========================================== */
+ body {
   --session-bg-color: #111;
   --session-glow: radial-gradient(ellipse at bottom, rgba(100, 0, 150, 0.2) 0%, transparent 70%);
 
@@ -62,23 +91,29 @@ body {
   animation: bgScroll 40s linear infinite;
 }
 
+    /* dezente, animierte Rasterbewegung */
+    @keyframes bgScroll {
+      0%   { background-position: 0 0, 0 0, 0 0; }
+      100% { background-position: 400px 400px, 40px 40px, 40px 40px; }
+    }
 
+    /* Canvas für leichten Candle-Hintergrund */
+    #bgCandles {
+      opacity: 0.035;         /* super dezent */
+      filter: blur(0.6px);    /* weiche Kanten */
+      pointer-events: none;   /* klickt nicht durch */
+      max-width: 100%;
+      width: 100%;
+      display: block;
+    }
 
-
-@keyframes bgScroll {
-  0% { background-position: 0 0, 0 0, 0 0; }
-  100% { background-position: 400px 400px, 40px 40px, 40px 40px; }
-}
-
-/* 🔥 Session-Spezifische Glow-Farben */
-.session-glow-sydney    { --glow-color: #3388ff; background: linear-gradient(145deg, #1e1e1e, #223044); }
-.session-glow-tokyo     { --glow-color: #00aaff; background: linear-gradient(145deg, #1e1e1e, #1c2e36); }
-.session-glow-london    { --glow-color: #ffd700; background: linear-gradient(145deg, #1e1e1e, #3c3c1a); }
-.session-glow-ny        { --glow-color: #ff4500; background: linear-gradient(145deg, #1e1e1e, #3a1e1e); }
-.session-glow-lk        { --glow-color: #ccff00; background: linear-gradient(145deg, #1e1e1e, #3c4a1c); }
-.session-glow-nyk       { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
-.session-glow-deadzone  { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
-.session-glow-crypto    { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
+    /* ==========================================
+       🌍 LAYOUT HELPERS – BOXEN
+       ========================================== */
+    img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box {
+      max-width: 100%;
+      width: 100%;
+    }
 
 .stats-box {
   padding: 18px 22px;
@@ -98,223 +133,230 @@ body {
   animation: statsGlowPulse 3.5s ease-in-out infinite;
 }
 
-@keyframes statsGlowPulse {
-  0%   { box-shadow: 0 0 6px var(--glow-color, rgba(255,255,255,0.05)); }
-  50%  { box-shadow: 0 0 18px var(--glow-color, rgba(255,255,255,0.25)); }
-  100% { box-shadow: 0 0 6px var(--glow-color, rgba(255,255,255,0.05)); }
-}
+    @keyframes statsGlowPulse {
+      0%   { box-shadow: 0 0 6px var(--glow-color); }
+      50%  { box-shadow: 0 0 18px var(--glow-color); }
+      100% { box-shadow: 0 0 6px var(--glow-color); }
+    }
 
+    /* ==========================================
+       🔥 SESSION-SPEZIFISCHE THEMES
+       - setzen jeweils --glow-color + Hintergrund-Gradient
+       ========================================== */
+    .session-glow-sydney    { --glow-color: #3388ff; background: linear-gradient(145deg, #1e1e1e, #223044); }
+    .session-glow-tokyo     { --glow-color: #00aaff; background: linear-gradient(145deg, #1e1e1e, #1c2e36); }
+    .session-glow-london    { --glow-color: #ffd700; background: linear-gradient(145deg, #1e1e1e, #3c3c1a); }
+    .session-glow-ny        { --glow-color: #ff4500; background: linear-gradient(145deg, #1e1e1e, #3a1e1e); }
+    .session-glow-lk        { --glow-color: #ccff00; background: linear-gradient(145deg, #1e1e1e, #3c4a1c); }
+    .session-glow-nyk       { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
+    .session-glow-deadzone  { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
+    .session-glow-crypto    { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
 
+    /* ==========================================
+       🌈 CRYPTO LABEL – animierter Text + Coin
+       ========================================== */
+    .crypto-animate {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      font-size: 18px;
+      background: linear-gradient(90deg, var(--crypto-c1), var(--crypto-c2), var(--crypto-c3), var(--crypto-c1));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        0 0 6px rgba(0,255,255,0.8),
+        0 0 12px rgba(255,0,204,0.6),
+        0 0 20px rgba(153,0,255,0.4);
+      animation: cryptoGradientShift var(--crypto-gradient-duration) ease infinite,
+                 cryptoGlowPulse var(--crypto-pulse-duration) ease-in-out infinite;
+    }
 
+    .crypto-animate .coin {
+      display: inline-block;
+      font-size: 22px;
+      background: linear-gradient(90deg, #ff00cc, #ff8800, #ffff00);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 8px rgba(255,0,204,0.8);
+      animation: spinCoin var(--coin-rotate-duration) linear infinite;
+    }
 
+    @keyframes spinCoin {
+      0%   { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
 
-.crypto-animate {
-  font-weight: bold;
-  font-size: 18px;
-  color: #ffffff;
-  text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff, 0 0 16px #ff00cc;
-  animation: cryptoGlowPulse 2.4s ease-in-out infinite alternate;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(90deg, #00ffff, #ff00cc, #9900ff);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+    @keyframes cryptoGradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-.crypto-animate .coin {
-  display: inline-block;
-  animation: spinCoin 1.5s linear infinite;
-  font-size: 22px;
-  color: #ff00cc;
-  text-shadow: 0 0 5px #ff00cc, 0 0 12px #ff00cc;
-}
+    @keyframes cryptoGlowPulse {
+      0% {
+        text-shadow:
+          0 0 6px rgba(0,255,255,0.8),
+          0 0 12px rgba(255,0,204,0.6),
+          0 0 20px rgba(153,0,255,0.4);
+      }
+      100% {
+        text-shadow:
+          0 0 10px rgba(255,0,204,0.9),
+          0 0 18px rgba(0,255,255,0.7),
+          0 0 30px rgba(153,0,255,0.5);
+      }
+    }
 
-@keyframes spinCoin {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(360deg); }
-}
+    /* ==========================================
+       📋 REGEL-TOGGLE & FIRE-LOOK BOX
+       ========================================== */
+    #ruleBox {
+      background: linear-gradient(135deg, #1a1a1a, #292929);
+      box-shadow: 0 0 8px rgba(0, 255, 153, 0.25);
+      border: 1px solid rgba(0, 255, 153, 0.3);
+      border-radius: 10px;
+      padding: 12px 18px;
+      color: #00ff99;
+      font-weight: bold;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    #ruleBox:hover { box-shadow: 0 0 12px rgba(0, 255, 153, 0.4); }
 
-@keyframes cryptoGlowPulse {
-  0% {
-    text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff, 0 0 12px #ff00cc;
-    background-position: 0% 50%;
-  }
-  100% {
-    text-shadow: 0 0 10px #ff00cc, 0 0 20px #ff00cc, 0 0 40px #00ffff;
-    background-position: 100% 50%;
-  }
-}
-@keyframes bgScroll {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 40px 40px;
-  }
-}
-/* 🔘 Toggle-Button für Regelanzeige */
-#ruleBox {
-  background: linear-gradient(135deg, #1a1a1a, #292929);
-  box-shadow: 0 0 8px rgba(0, 255, 153, 0.25);
-  border: 1px solid rgba(0, 255, 153, 0.3);
-  transition: all 0.3s ease;
-  border-radius: 10px;
-  padding: 12px 18px;
-  color: #00ff99;
-  font-weight: bold;
-}
+    .rules-fire-wrapper {
+      position: relative;
+      z-index: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
 
-#ruleBox:hover {
-  box-shadow: 0 0 12px rgba(0, 255, 153, 0.4);
-}
+    #rulesBox {
+      background: linear-gradient(135deg, #1a0f0f, #2a1111);
+      border: 1px solid #cc3333;
+      color: #ff5555;
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+      border-radius: 14px;
+      padding: 20px;
+      line-height: 1.6;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      position: relative;
+      z-index: 1;
+      animation: redPulse 2.4s ease-in-out infinite alternate,
+                 fieryGlow 3s ease-in-out infinite alternate;
+      box-shadow:
+        0 0 10px rgba(255, 50, 50, 0.3),
+        0 0 20px rgba(255, 30, 30, 0.2),
+        inset 0 0 10px rgba(255, 0, 0, 0.1);
+    }
 
+    @keyframes redPulse {
+      0%   { text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 2px rgba(255, 0, 0, 0.15); }
+      100% { text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 5px rgba(255, 60, 60, 0.25); }
+    }
 
-/* 🧱 Wrapper für Partikel + Glow */
-.rules-fire-wrapper {
-  position: relative;
-  z-index: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  margin-top: 20px;
-}
+    @keyframes fieryGlow {
+      0% {
+        box-shadow:
+          0 0 10px rgba(255, 60, 0, 0.3),
+          0 0 18px rgba(255, 80, 0, 0.2),
+          inset 0 0 10px rgba(255, 0, 0, 0.1);
+      }
+      100% {
+        box-shadow:
+          0 0 16px rgba(255, 100, 0, 0.6),
+          0 0 32px rgba(255, 150, 0, 0.3),
+          inset 0 0 14px rgba(255, 50, 0, 0.25);
+      }
+    }
 
-/* 📜 Regelbox Styling */
-#rulesBox {
-  background: linear-gradient(135deg, #1a0f0f, #2a1111);
-  border: 1px solid #cc3333;
-  color: #ff5555;
-  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
-  border-radius: 14px;
-  padding: 20px;
-  transition: all 0.3s ease;
-  line-height: 1.6;
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  position: relative;
-  z-index: 1;
-  animation: redPulse 2.4s ease-in-out infinite alternate,
-             fieryGlow 3s ease-in-out infinite alternate;
-  box-shadow:
-    0 0 10px rgba(255, 50, 50, 0.3),
-    0 0 20px rgba(255, 30, 30, 0.2),
-    inset 0 0 10px rgba(255, 0, 0, 0.1);
-}
+    /* kleine, animierte Funken (optional) */
+    .fire-particles {
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      z-index: 3;
+      background: radial-gradient(circle, rgba(255, 140, 0, 0.8) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: fireSparkOut 1.5s linear infinite;
+      transform: translate(-50%, -50%);
+    }
 
-/* 🔴 Pulsierender Text */
-@keyframes redPulse {
-  0% {
-    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 2px rgba(255, 0, 0, 0.15);
-  }
-  100% {
-    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 5px rgba(255, 60, 60, 0.25);
-  }
-}
+    @keyframes fireSparkOut {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-200%, -200%) scale(0.4);
+        opacity: 0;
+      }
+    }
 
-/* 🔥 Feuriger Glanz außen */
-@keyframes fieryGlow {
-  0% {
-    box-shadow:
-      0 0 10px rgba(255, 60, 0, 0.3),
-      0 0 18px rgba(255, 80, 0, 0.2),
-      inset 0 0 10px rgba(255, 0, 0, 0.1);
-  }
-  100% {
-    box-shadow:
-      0 0 16px rgba(255, 100, 0, 0.6),
-      0 0 32px rgba(255, 150, 0, 0.3),
-      inset 0 0 14px rgba(255, 50, 0, 0.25);
-  }
-}
+    /* Listen & Typo im Rules-Box-Kontext */
+    #rulesBox ul, #rulesBox ol {
+      margin-left: 20px;
+      padding-left: 0;
+      list-style-position: inside;
+    }
+    #rulesBox li { padding-left: 8px; margin-bottom: 4px; }
+    #rulesBox strong {
+      display: inline-block;
+      margin-top: 10px;
+      color: #ff7777;
+      text-shadow: 1px 1px 1px #000, 0 0 4px rgba(255, 80, 80, 0.4);
+    }
+    #rulesBox hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 20px 0;
+    }
+    #rulesBox button {
+      background: linear-gradient(135deg, #550000, #770000);
+      color: white;
+      border: 1px solid #000;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+    #rulesBox button:hover {
+      background: #992222;
+      box-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
+    }
 
-/* ✨ Glühpartikel-Overlay */
-.fire-particles {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  z-index: 3;
-  background: radial-gradient(circle, rgba(255, 140, 0, 0.8) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: fireSparkOut 1.5s linear infinite;
-  transform: translate(-50%, -50%);
-}
-
-/* 💥 Explosionseffekt – Funken nach außen */
-@keyframes fireSparkOut {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-200%, -200%) scale(0.4);
-    opacity: 0;
-  }
-}
-
-
-/* 📋 Listen eingerückt */
-#rulesBox ul,
-#rulesBox ol {
-  margin-left: 20px;
-  padding-left: 0;
-  list-style-position: inside;
-}
-
-#rulesBox li {
-  padding-left: 8px;
-  margin-bottom: 4px;
-}
-
-/* 🟥 Abschnittstitel schöner */
-#rulesBox strong {
-  display: inline-block;
-  margin-top: 10px;
-  color: #ff7777;
-  text-shadow: 1px 1px 1px #000, 0 0 4px rgba(255, 80, 80, 0.4);
-}
-
-/* ➖ Trenner */
-#rulesBox hr {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin: 20px 0;
-}
-
-/* ⬅️➡️ Navigation */
-#rulesBox button {
-  background: linear-gradient(135deg, #550000, #770000);
-  color: white;
-  border: 1px solid #000;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
-  transition: all 0.25s ease;
-}
-
-#rulesBox button:hover {
-  background: #992222;
-  box-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
-}
-
-
-
-
-
-</style>
+    /* ==========================================
+       ♿ Optional: Bewegt sich weniger, wenn Nutzer es wünscht
+       ========================================== */
+    @media (prefers-reduced-motion: reduce) {
+      body { animation: none; }
+      .stats-box, .crypto-animate, .crypto-animate .coin { animation: none; }
+    }
+  </style>
+<!-- 📱 Mobile Stylesheet -->
 <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 480px)">
 
+<!-- 📢 Ticker -->
 <div class="ticker-box">
   <div id="tickerContent" class="ticker-content">
     📢 Lade Marktdaten...
   </div>
 </div>
-<canvas id="bgCandles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;"></canvas>
 
+<!-- 📊 Hintergrund-Candles -->
+<canvas id="bgCandles"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
+</canvas>
+
+<!-- 📚 Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/dawn.js"></script>
@@ -323,286 +365,253 @@ body {
 <script src="scripts/ticker.js"></script> <!-- 👈 wichtig -->
 <script src="imageStorage.js"></script>
 
-
-
 </head>
 <body>
-<button onclick="showSessionStartNotification('New York', '🔥 NY Session beginnt! Fokus auf Gold & USD!')" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #00aa44;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0 0 12px #00ff99;
-  z-index: 9999;
-">🔔 Session-Test</button>
 
+<!-- 🔔 Session-Test Button -->
+<button onclick="showSessionStartNotification('New York', '🔥 NY Session beginnt! Fokus auf Gold & USD!')"
+        style="position: fixed; bottom: 20px; right: 20px; background: #00aa44; color: white;
+               border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold;
+               box-shadow: 0 0 12px #00ff99; z-index: 9999;">
+  🔔 Session-Test
+</button>
+
+<!-- 🎨 Session-Hintergrund -->
 <div id="sessionBackgroundOverlay"></div>
-<!-- ⏱️ Session-Zeit oben prominent -->
+
+<!-- 🕒 Session-Zeit -->
 <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 
-
 <!-- 🗓️ Tageszusammenfassung -->
-<div id="daySummary" class="ticker day-summary">
-  🗓️ Lade Tagesinfo...
-</div>
-<!-- 📦 Session-Details-Box -->
+<div id="daySummary" class="ticker day-summary">🗓️ Lade Tagesinfo...</div>
+
+<!-- 📦 Session-Details -->
 <div class="session-details-box" id="sessionDetailsBox"></div>
+
 <!-- 📄 Detail-Text zur Tageszusammenfassung -->
 <div id="dayDetails" class="day-details" style="display: none;"></div>
 
-
-
-<!-- 💬 Session-Kommentar (z. B. flacht ab) -->
+<!-- 💬 Session-Kommentar -->
 <div id="sessionInfo"
-     style="margin-top: 12px;
-            padding: 12px 18px;
-            color: #ffffff;
-            font-size: clamp(13px, 3.5vw, 16px);
-            font-style: italic;
-            text-align: center;
+     style="margin-top: 12px; padding: 12px 18px; color: #fff;
+            font-size: clamp(13px, 3.5vw, 16px); font-style: italic; text-align: center;
             border-radius: 12px;
             background: linear-gradient(135deg, rgba(0, 255, 153, 0.12), rgba(0, 255, 153, 0.22));
             text-shadow: 0 0 2px rgba(0, 255, 153, 0.6), 0 0 6px rgba(0, 255, 153, 0.3);
             box-shadow: inset 0 0 10px rgba(0, 255, 153, 0.3), 0 0 6px rgba(0, 255, 153, 0.2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: 600;
-            backdrop-filter: blur(2px);
-            transition: all 0.3s ease;">
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 600;
+            backdrop-filter: blur(2px); transition: all 0.3s ease;">
   Tipps und Infos zur Session erscheinen hier...
 </div>
 
-
-
-
-
-
-<!-- 🟢 Fortschrittsbalken (zentriert & optisch zugehörig) -->
+<!-- 🟢 Fortschrittsbalken -->
 <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
 </div>
 
-
-
-<!-- 🚨 Alerts direkt darunter, aber eher selten sichtbar -->
+<!-- 🚨 Alerts -->
 <div class="alert-below-header" id="alertBox"></div>
 
+<!-- 🔘 Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
-
-  <!-- 📐 Position Size – London -->
-  <button id="btn-calc-pos" onclick="switchCalcTab('pos')">
-    📐 Position Size
-  </button>
-
-  <!-- 🌒 Dawn Rechner – Tokyo -->
-  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')">
-    🌒 Dawn Rechner
-  </button>
-
-  <!-- 📄 Steuer / Netto – New York -->
-  
-  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">
-    📄 Steuer / Netto-Planer
-  </button>
-
+  <button id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
+  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')">🌒 Dawn Rechner</button>
+  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">📄 Steuer / Netto-Planer</button>
 </div>
 
-
-
-
-
-
-
-
-
+<!-- 📄 Steuer-/Netto-Planer -->
 <div id="calc-taxpro" class="calc-box" style="margin-top: 15px; display: none;">
   <div class="stats-box">
-    <!-- 🔁 Umschaltbare Ansicht -->
+
+    <!-- 💰 Steuer-Berechnung -->
     <div id="steuerMode">
       <label for="gewinnBetrag">📈 Gesamtgewinn (€):</label>
-      <input type="number" id="gewinnBetrag" placeholder="z. B. 17200" />
+      <input type="number" id="gewinnBetrag" placeholder="z. B. 17200">
 
       <label for="einkommenSteuer">💸 Einkommensteuer-Satz (%):</label>
-      <input type="number" id="einkommenSteuer" placeholder="z. B. 25" value="25" step="0.1" />
+      <input type="number" id="einkommenSteuer" placeholder="z. B. 25" value="25" step="0.1">
 
-      <label><input type="checkbox" id="kirchensteuer" /> ✝️ Kirchensteuer (9 %)</label><br>
-      <label><input type="checkbox" id="soliZuschlag" /> 💣 Solidaritätszuschlag (5.5 %)</label><br>
-      <label><input type="checkbox" id="reserveZehn" /> 💥 +10 % Reserve</label><br>
+      <label><input type="checkbox" id="kirchensteuer"> ✝️ Kirchensteuer (9 %)</label><br>
+      <label><input type="checkbox" id="soliZuschlag"> 💣 Solidaritätszuschlag (5.5 %)</label><br>
+      <label><input type="checkbox" id="reserveZehn"> 💥 +10 % Reserve</label><br>
 
       <button onclick="berechneSteuern()" class="tax-button">📊 Steuer berechnen</button>
       <div id="steuerAusgabe"></div>
     </div>
 
+    <!-- 🏦 Netto-Planer -->
     <div id="nettoMode" style="display:none">
       <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
-      <input type="number" id="nettoBrutto" placeholder="z. B. 10000" />
+      <input type="number" id="nettoBrutto" placeholder="z. B. 10000">
 
       <label for="nettoSteuer">💸 Steuerlast (€):</label>
-      <input type="number" id="nettoSteuer" placeholder="z. B. 3500" />
+      <input type="number" id="nettoSteuer" placeholder="z. B. 3500">
 
       <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
-      <input type="number" id="nettoEntnommen" placeholder="z. B. 8000" />
+      <input type="number" id="nettoEntnommen" placeholder="z. B. 8000">
 
       <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
       <div id="nettoAusgabe"></div>
     </div>
 
-    <!-- 🧠 Umschalter -->
-    <button onclick="switchPlanMode()" id="planToggleBtn" style="
-      margin-top: 15px;
-      background: #444;
-      color: white;
-      padding: 10px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      width: 100%;
-      cursor: pointer;
-      font-weight: bold;
-    ">
-    🔁 Zu Netto-Planer wechseln
+    <!-- 🔄 Umschalter -->
+    <button onclick="switchPlanMode()" id="planToggleBtn"
+            style="margin-top: 15px; background: #444; color: white; padding: 10px;
+                   font-size: 14px; border: none; border-radius: 6px; width: 100%;
+                   cursor: pointer; font-weight: bold;">
+      🔁 Zu Netto-Planer wechseln
     </button>
+
   </div>
 </div>
 
-
-
-
+<!-- ☠️ Dawn Rechner -->
 <div id="calc-dawn" class="calc-box" style="display:none; margin-top: 15px;">
   <div class="stats-box">
     <label for="dawnCapital">📦 Startkapital (€):</label>
-    <input type="number" id="dawnCapital" placeholder="z. B. 1000">
+    <input type="number" id="dawnCapital" placeholder="z. B. 1000">
 
     <label for="dawnLoss">📉 Verlust pro Dawn (%) :</label>
-    <input type="number" id="dawnLoss" placeholder="z. B. 3" step="0.1">
+    <input type="number" id="dawnLoss" placeholder="z. B. 3" step="0.1">
 
-    <button onclick="simulateDawnDeath()" style="
-      background: #0077cc;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 10px;
-      font-weight: bold;
-      margin-top: 12px;
-      width: 100%;
-      cursor: pointer;
-    ">☠️ Dawn-Simulation starten</button>
+    <button onclick="simulateDawnDeath()"
+            style="background: #0077cc; color: white; border: none; border-radius: 6px;
+                   padding: 10px; font-weight: bold; margin-top: 12px; width: 100%;
+                   cursor: pointer;">
+      ☠️ Dawn-Simulation starten
+    </button>
 
     <p id="dawnDeathResult" style="margin-top: 10px; font-weight: bold; font-size: 16px;"></p>
   </div>
 </div>
 
-
-
-
-
+<!-- 📐 Positionsgrößen-Rechner -->
 <div id="calc-pos" class="calc-box" style="margin-top: 15px; display:none;">
-
   <div class="stats-box">
     <label for="accountSize">📦 Kontogröße (€):</label>
-    <input type="number" id="accountSize" placeholder="z. B. 1000" />
+    <input type="number" id="accountSize" placeholder="z. B. 1000">
 
     <label for="riskPercent">⚠️ Risiko in %:</label>
-    <input type="number" id="riskPercent" placeholder="z. B. 1" step="0.1" />
+    <input type="number" id="riskPercent" placeholder="z. B. 1" step="0.1">
 
     <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
-    <input type="number" id="stopLossPips" placeholder="z. B. 20" />
+    <input type="number" id="stopLossPips" placeholder="z. B. 20">
 
-<label for="symbolSelector">💱 Trading-Paar:</label>
-<select id="symbolSelector">
-  <optgroup label="🌍 Forex Standard">
-    <option value="AUD/USD">AUD/USD</option>
-    <option value="EUR/USD">EUR/USD</option>
-    <option value="GBP/USD">GBP/USD</option>
-    <option value="NZD/USD">NZD/USD</option>
-    <option value="USD/CHF">USD/CHF</option>
-    <option value="USD/CAD">USD/CAD</option>
-  </optgroup>
+    <!-- 💱 Trading-Paar Auswahl -->
+    <label for="symbolSelector">💱 Trading-Paar:</label>
+    <select id="symbolSelector">
+      <!-- 🌍 Forex -->
+      <optgroup label="🌍 Forex Standard">
+        <option value="AUD/USD">AUD/USD</option>
+        <option value="EUR/USD">EUR/USD</option>
+        <option value="GBP/USD">GBP/USD</option>
+        <option value="NZD/USD">NZD/USD</option>
+        <option value="USD/CHF">USD/CHF</option>
+        <option value="USD/CAD">USD/CAD</option>
+      </optgroup>
+      <!-- 💴 Yen-Paare -->
+      <optgroup label="💴 Forex Yen-Paare">
+        <option value="USD/JPY">USD/JPY</option>
+        <option value="EUR/JPY">EUR/JPY</option>
+        <option value="GBP/JPY">GBP/JPY</option>
+        <option value="CHF/JPY">CHF/JPY</option>
+        <option value="AUD/JPY">AUD/JPY</option>
+        <option value="NZD/JPY">NZD/JPY</option>
+        <option value="CAD/JPY">CAD/JPY</option>
+      </optgroup>
+      <!-- 🔁 Cross-Paare -->
+      <optgroup label="🔁 Cross-Paare">
+        <option value="EUR/GBP">EUR/GBP</option>
+        <option value="EUR/AUD">EUR/AUD</option>
+        <option value="EUR/CAD">EUR/CAD</option>
+        <option value="GBP/AUD">GBP/AUD</option>
+        <option value="GBP/CAD">GBP/CAD</option>
+        <option value="AUD/CAD">AUD/CAD</option>
+      </optgroup>
+      <!-- 🥇 Metalle -->
+      <optgroup label="🥇 Metalle">
+        <option value="XAU/USD">XAU/USD</option>
+        <option value="XAG/USD">XAG/USD</option>
+      </optgroup>
+      <!-- 🪙 Krypto -->
+      <optgroup label="🪙 Krypto">
+        <option value="BTC/USD">BTC/USD</option>
+        <option value="ETH/USD">ETH/USD</option>
+      </optgroup>
+      <!-- 📊 Indizes -->
+      <optgroup label="📊 Indizes">
+        <option value="US30">US30</option>
+        <option value="NAS100">NAS100</option>
+        <option value="SPX500">SPX500</option>
+        <option value="GER40">GER40</option>
+        <option value="UK100">UK100</option>
+      </optgroup>
+    </select>
 
-  <optgroup label="💴 Forex Yen-Paare">
-    <option value="USD/JPY">USD/JPY</option>
-    <option value="EUR/JPY">EUR/JPY</option>
-    <option value="GBP/JPY">GBP/JPY</option>
-    <option value="CHF/JPY">CHF/JPY</option>
-    <option value="AUD/JPY">AUD/JPY</option>
-    <option value="NZD/JPY">NZD/JPY</option>
-    <option value="CAD/JPY">CAD/JPY</option>
-  </optgroup>
-
-  <optgroup label="🔁 Cross-Paare">
-    <option value="EUR/GBP">EUR/GBP</option>
-    <option value="EUR/AUD">EUR/AUD</option>
-    <option value="EUR/CAD">EUR/CAD</option>
-    <option value="GBP/AUD">GBP/AUD</option>
-    <option value="GBP/CAD">GBP/CAD</option>
-    <option value="AUD/CAD">AUD/CAD</option>
-  </optgroup>
-
-  <optgroup label="🥇 Metalle">
-    <option value="XAU/USD">XAU/USD</option>
-    <option value="XAG/USD">XAG/USD</option>
-  </optgroup>
-
-  <optgroup label="🪙 Krypto">
-    <option value="BTC/USD">BTC/USD</option>
-    <option value="ETH/USD">ETH/USD</option>
-  </optgroup>
-
-  <optgroup label="📊 Indizes">
-    <option value="US30">US30</option>
-    <option value="NAS100">NAS100</option>
-    <option value="SPX500">SPX500</option>
-    <option value="GER40">GER40</option>
-    <option value="UK100">UK100</option>
-  </optgroup>
-  
-</select>
-
-<label for="leverage">⚙️ Hebel:</label>
-<input type="number" id="leverage" value="500" min="1" placeholder="z. B. 500" />
-
-
-
+    <label for="leverage">⚙️ Hebel:</label>
+    <input type="number" id="leverage" value="500" min="1" placeholder="z. B. 500">
 
     <button onclick="calculatePositionSize()">📐 Berechnen</button>
-    <p id="positionSizeResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
-  </div>
+      <p id="positionSizeResult" style="font-weight: bold; font-size: 18px; margin-top: 10px;"></p>
+   </div>
+   
+<!-- 🔄 Umschalter -->
+<button onclick="switchPosMode()" id="posToggleBtn"
+        style="margin-top: 15px; background: #444; color: white; padding: 10px;
+               font-size: 14px; border: none; border-radius: 6px; width: 100%;
+               cursor: pointer; font-weight: bold;">
+  🔁 Zu Max-Positions-Rechner wechseln
+</button>
 
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="toggleInfoBox()" 
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px; font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-  <div id="posInfoBox" style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px; color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Der Positionsgrößen-Rechner hilft dir zu ermitteln, wie viele Lots du in einem Trade einsetzen darfst, ohne mehr als einen bestimmten Prozentsatz deines Kontos zu riskieren. Die Berechnung basiert auf vier Angaben:
-    <ul style="margin-top:10px; margin-bottom:10px;">
-      <li><strong>📦 Kontogröße:</strong> Dein aktuelles Guthaben in Euro.</li>
-      <li><strong>⚠️ Risiko in %:</strong> Wie viel Prozent deines Kontos du maximal pro Trade verlieren willst (z. B. 1%).</li>
-      <li><strong>🛑 Stop-Loss (Pips):</strong> Die Distanz zwischen Einstieg und Stop-Loss in Pips.</li>
-      <li><strong>💡 Pip-Wert pro Lot:</strong> Wie viel ein Pip pro Standard-Lot wert ist (z. B. 10 € bei EUR/USD).</li>
-    </ul>
-    <strong>📐 Formel:</strong><br>
-    <code style="color:#0ff;">Positionsgröße = (Kontogröße × Risiko%) / (Stop-Loss × Pip-Wert)</code><br><br>
-    <strong>🔍 Beispiel:</strong><br>
-    Kontogröße: 1000 €<br>
-    Risiko: 2%<br>
-    Stop-Loss: 20 Pips<br>
-    Pip-Wert: 10 €/Lot<br><br>
-    <strong>→</strong> Du riskierst 20 € (1000 × 0,02).<br>
-    <strong>→</strong> Bei 20 Pips wären das 1 €/Pip erlaubt (20 € / 20 Pips).<br>
-    <strong>→</strong> Der Pip-Wert ist 10 €/Lot ⇒ <strong>Erlaubte Lotgröße: 0.10</strong><br><br>
-    <em style="color:#aaa;">Hinweis: Bei Indizes oder Gold kann der Pip-Wert unterschiedlich sein!</em>
+<!-- 📊 Max Positions Rechner -->
+<div id="calc-maxpos" style="display:none; margin-top: 15px;">
+  <div class="stats-box">
+    <label for="maxposAccountSize">📦 Kontogröße (€):</label>
+    <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
+
+    <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
+    <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1">
+
+    <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
+    <input type="number" id="maxposStopLoss" placeholder="z. B. 20">
+
+    <label for="maxposLeverage">⚙️ Hebel:</label>
+    <input type="number" id="maxposLeverage" value="500" min="1">
+
+    <label>📏 Lotgröße von:</label>
+    <input type="number" id="lotFrom" step="0.01" placeholder="z. B. 0.01">
+
+    <label>📏 Lotgröße bis:</label>
+    <input type="number" id="lotTo" step="0.01" placeholder="z. B. 0.10">
+
+    <button onclick="calculateMaxPositions()">📊 Berechnen</button>
+    <div id="maxposResults" style="margin-top: 15px; font-weight: bold;"></div>
+    
+    <button onclick="switchPosMode()" style="margin-top: 15px; background: #444; color: white; padding: 10px;
+               font-size: 14px; border: none; border-radius: 6px; width: 100%;
+               cursor: pointer; font-weight: bold;">
+      🔁 Zurück zum Positionsgrößen-Rechner
+    </button>
   </div>
 </div>
 
 
+  <!-- ℹ️ Info-Box -->
+  <div style="text-align:right; margin-bottom: 5px;">
+    <span onclick="toggleInfoBox()"
+          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px;
+                 font-weight:bold; color:#0ff;"
+          title="Erklärung anzeigen">i</span>
+  </div>
+  <div id="posInfoBox"
+       style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px;
+              color:#ccc; font-size:14px; text-align:left;">
+    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
+    Der Positionsgrößen-Rechner hilft dir zu ermitteln, wie viele Lots du in einem Trade einsetzen darfst, ohne mehr als einen bestimmten Prozentsatz deines Kontos zu riskieren...
+  </div>
+</div>
 
-  <!-- 📆 Kalender -->
+<!-- 📆 Kalender -->
 <div id="journalCalendarBox" class="stats-box" style="margin-top: 20px;">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <button onclick="changeMonth(-1)">⬅️</button>
@@ -617,353 +626,279 @@ body {
   <div id="calendarStats" style="margin-top: 5px; color: #ccc;"></div>
   <div id="journalEntryList" style="margin-top: 0;"></div>
 </div>
-<!-- ✅ Immer sichtbare Buttons -->
+
+<!-- 🗑️ Reset-Buttons -->
 <div style="margin:20px 0; text-align:center;">
-  <button onclick="resetCurrentMonth()" style="margin:5px; background:#cc6600; color:white; padding:8px 15px; border:none; border-radius:5px;">🗓️ Monat zurücksetzen</button>
-  <button onclick="resetSelectedDay()" style="margin:5px; background:#0066cc; color:white; padding:8px 15px; border:none; border-radius:5px;">📅 Tag zurücksetzen</button>
-  <button onclick="resetAllJournal()" style="margin:5px; background:#990000; color:white; padding:8px 15px; border:none; border-radius:5px;">🗑️ Alles löschen</button>
+  <button onclick="resetCurrentMonth()" style="margin:5px; background:#cc6600; color:white;
+                                                padding:8px 15px; border:none; border-radius:5px;">
+    🗓️ Monat zurücksetzen
+  </button>
+  <button onclick="resetSelectedDay()" style="margin:5px; background:#0066cc; color:white;
+                                               padding:8px 15px; border:none; border-radius:5px;">
+    📅 Tag zurücksetzen
+  </button>
+  <button onclick="resetAllJournal()" style="margin:5px; background:#990000; color:white;
+                                              padding:8px 15px; border:none; border-radius:5px;">
+    🗑️ Alles löschen
+  </button>
 </div>
+
+
 <!-- 📋 Toggle-Box für deine Trading-Regeln -->
 <div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
   📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
 </div>
+
+<!-- 🔥 Regeln mit Fire-Animation -->
 <div class="rules-fire-wrapper">
-<div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
-  <strong>Rules Of Rules</strong><br><br>
+  <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
+    <strong>Rules Of Rules</strong><br><br>
 
-  <!-- Seite 1 -->
-  <div id="rulePage1">
-    <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
+    <!-- Seite 1 -->
+    <div id="rulePage1">
+      <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
 
-    <strong>AOI-Zone wählen:</strong><br>
-    Buy/Sell nur bei Weekly oder Daily AOI<br>
-    → Alle Timeframes darunter (4H, 2H, 1H, 30M, 15M) dienen nur zur Entry-Bestätigung – nicht zur AOI-Bestimmung.<br><br>
+      <strong>AOI-Zone wählen:</strong><br>
+      Buy/Sell nur bei Weekly oder Daily AOI<br>
+      → Alle Timeframes darunter dienen nur zur Entry-Bestätigung.<br><br>
 
-    <strong>Kein Entry ohne Rejection von:</strong>
-    <ul style="margin-left: 20px;">
-      <li>Strukturpunkt</li>
-      <li>EMA</li>
-      <li>AOI</li>
-      <li>Runder psychologischer Level</li>
-      <li>Weekly Rejection Candle (auf Weekly oder Daily sichtbar)</li>
-    </ul><br>
+      <strong>Kein Entry ohne Rejection von:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Strukturpunkt</li>
+        <li>EMA</li>
+        <li>AOI</li>
+        <li>Runder psychologischer Level</li>
+        <li>Weekly Rejection Candle (Weekly/Daily sichtbar)</li>
+      </ul><br>
 
-    <strong>Buy/Sell Entry-Bedingung:</strong>
-    <ul style="margin-left: 20px;">
-      <li>4H Higher Low (HL) für Buy</li>
-      <li>4H Lower High (LH) für Sell</li>
-      <li>Oder potenzieller HL/LH mit Engulfing an AOI (Support/Resistance)</li>
-    </ul><br>
+      <strong>Buy/Sell Entry-Bedingung:</strong>
+      <ul style="margin-left: 20px;">
+        <li>4H Higher Low (HL) für Buy</li>
+        <li>4H Lower High (LH) für Sell</li>
+        <li>Oder potenzieller HL/LH mit Engulfing an AOI</li>
+      </ul><br>
 
-    <strong>Entry-Prozess nach HL/LH:</strong><br>
-    Moderation der 15M–1H Struktur-Shift, um Entry mit dem höheren Timeframe abzustimmen.<br>
-    Der sauberste Shift dominiert (welcher TF am klarsten ist)<br><br>
+      <strong>Entry-Prozess nach HL/LH:</strong><br>
+      Struktur-Shift 15M–1H abgleichen mit höherem TF.<br><br>
 
-    <strong>Nach Shift auf 15M, 30M, 1H:</strong>
-    <ul style="margin-left: 20px;">
-      <li>Suche nach Engulfing Candle auf:</li>
-      <li>1H</li>
-      <li>2H</li>
-      <li>4H (je nach Klarheit/Confirmation)</li>
-      <li>Je höher der Timeframe → desto stärker die Bestätigung</li>
-    </ul><br>
+      <strong>Nach Shift auf 15M, 30M, 1H:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Suche nach Engulfing Candle auf 1H / 2H / 4H</li>
+        <li>Je höher der TF → desto stärkere Bestätigung</li>
+      </ul><br>
 
-    <strong>⚠️ Stop-Loss-Regel:</strong><br>
-    SL muss immer an dem Punkt liegen, wo die Idee komplett falsch ist.<br>
-    Niemals "mal probieren" – SL = klare Grenze der Gültigkeit.<br><br>
+      <strong>⚠️ Stop-Loss-Regel:</strong><br>
+      SL immer an dem Punkt setzen, wo die Idee ungültig wird.<br><br>
 
-    <strong>🎯 Take-Profit-Regel:</strong>
-    <ul style="margin-left: 20px;">
-      <li>Wenn Buy/Sell an Weekly AOI mit Ziel Weekly HH/LL:<br> → TP1 = Strukturpunkt (nur Kerzenkörper zählen)</li>
-      <li>Wenn Buy/Sell an Daily AOI mit Ziel Daily HH/LL:<br> → TP1 = Strukturpunkt (nur Kerzenkörper zählen)</li>
-    </ul>
+      <strong>🎯 Take-Profit-Regel:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Bei Weekly AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
+        <li>Bei Daily AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
+      </ul>
+    </div>
+
+    <!-- Seite 2 -->
+    <div id="rulePage2" style="display:none;">
+      <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
+
+      <strong>1. Markt-Bias Bewertung:</strong><br>
+      <ul style="margin-left: 20px;">
+        <li>Weekly Bullish/Bearish: 1 – 3</li>
+        <li>Daily Bullish/Bearish: 1 – 3</li>
+        <li>4H Bullish/Bearish: 1 – 3</li>
+      </ul>
+
+      <strong>1.1 Bewertungsstufen:</strong>
+      <ul style="margin-left: 20px;">
+        <li>1 = Oben</li>
+        <li>2 = Auf dem Weg zur AOI</li>
+        <li>3 = In der AOI</li>
+      </ul><hr>
+
+      <strong>2. Struktur-Retest (HTF):</strong>
+      <ul style="margin-left: 20px;">
+        <li>Weekly retestet vorherigen Strukturpunkt</li>
+      </ul><hr>
+
+      <strong>3. Daily Rejection:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Rejection an AOI</li>
+        <li>Rejection an rundem psychologischen Level (00 / 50)</li>
+      </ul><hr>
+
+      <strong>4. Strukturaufbau (LTF):</strong>
+      <ul style="margin-left: 20px;">
+        <li>Warten auf HL / LH</li>
+        <li>Struktur-Shift auf 15M / 30M / 1H</li>
+      </ul><hr>
+
+      <strong>5. Entry-Signal:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Bestätigung durch bullische/bärische Formation</li>
+      </ul><hr>
+
+      <strong>6. Set and Forget:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Nach Entry nicht eingreifen</li>
+        <li>Setup vertrauen, kein Nachjustieren</li>
+      </ul>
+
+      <div class="fire-sparks"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+      <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
+      <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
+    </div>
+
+    <div class="fire-particles"></div>
   </div>
-
-  <!-- Seite 2 -->
-  <div id="rulePage2" style="display:none;">
-  <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
-
-  <strong>1. Markt-Bias Bewertung:</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• Weekly Bullish/Bearish: 1 – 3</li>
-    <li>• Daily Bullish/Bearish: 1 – 3</li>
-    <li>• 4H Bullish/Bearish: 1 – 3</li>
-  </ul>
-
-  <strong>1.1 Bedeutung der Bewertungsstufen:</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• 1 = Oben (On the Top)</li>
-    <li>• 2 = Auf dem Weg zur AOI</li>
-    <li>• 3 = In der AOI</li>
-  </ul><hr>
-
-  <strong>2. Struktur-Retest (HTF):</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• Weekly retestet vorherigen Strukturpunkt</li>
-  </ul><hr>
-
-  <strong>3. Daily Rejection (Bestätigung):</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• 1: Rejection an AOI</li>
-    <li>• 2: Rejection an rundem psychologischen Level (00 / 50)</li>
-  </ul><hr>
-
-  <strong>4. Strukturaufbau (LTF):</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• Warten auf Higher Low / Lower High (HL / LH)</li>
-    <li>• Struktur-Shift auf: 15M / 30M / 1H</li>
-  </ul><hr>
-
-  <strong>5. Entry Signal Bestätigung:</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• Bestätigung durch bullische/bärische Candle-Formationen auf: 1H / 2H / 4H</li>
-  </ul><hr>
-
-  <strong>6. Set and Forget:</strong><br>
-  <ul style="margin-left: 20px;">
-    <li>• Nach Entry nicht mehr eingreifen.</li>
-    <li>• Vertrauen in das Setup. Kein Nachjustieren.</li>
-  </ul>
-
-<div class="fire-sparks"></div>
-
-
-  </div>
-
-  <!-- Navigation -->
-  <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-    <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
-    <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
-  </div>
- <div class="fire-particles"></div>
 </div>
-
 
 <!-- 📘 Journal-Eingabe -->
 <div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
   <div class="stats-box journal-box">
 
-
+    <!-- Strategiemodus -->
     <label>🧭 Strategie-Modus:</label>
     <select id="tradingMode" onchange="updateBiasOptions()" class="input" style="width: 100%;">
-
       <option value="day">Daytrading</option>
       <option value="swing">Swing-Trading</option>
     </select>
 
+    <!-- Datum -->
     <label>📆 Datum:</label>
     <input type="date" id="journalManualDate" class="input" style="width: 100%;" />
 
+    <!-- Symbol -->
     <label>💱 Symbol:</label>
-    <input type="text" id="journalSymbol" class="input" placeholder="z. B. EUR/USD" oninput="suggestSymbol()" autocomplete="off" style="width: 100%;" />
+    <input type="text" id="journalSymbol" placeholder="z. B. EUR/USD" class="input" oninput="suggestSymbol()" autocomplete="off" style="width: 100%;" />
     <div id="symbolSuggestions" style="background:#222; color:white; padding:5px; display:none; border-radius:6px;"></div>
 
-<!-- Einstieg + Ausstieg + Richtung -->
-<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-  <div style="flex: 1; min-width: 130px;">
-    <label>🎯 Einstieg:</label>
-    <input type="number" id="journalEntry" class="input" style="width: 100%;" onchange="autoSuggestExit()" />
-  </div>
-  <div style="flex: 1; min-width: 130px;">
-    <label>Richtung:</label>
-    <select id="journalDirection" class="input" onchange="autoSuggestExit()">
-      <option value="long">📈 Long</option>
-      <option value="short">📉 Short</option>
-    </select>
-  </div>
-</div>
-
-
-  <div style="display: flex; flex-direction: column; gap: 10px;">
-<div>
-  <label>📦 Lotgröße:</label>
-  <select id="journalLots" class="input" style="width: 100%; background-color: white; color: black;">
-    <option value="">– Bitte wählen –</option>
-    <option value="0.01">0.01</option>
-    <option value="0.02">0.02</option>
-    <option value="0.03">0.03</option>
-    <option value="0.05">0.05</option>
-    <option value="0.10">0.10</option>
-    <option value="0.25">0.25</option>
-    <option value="0.50">0.50</option>
-    <option value="1.00">1.00</option>
-    <option value="2.00">2.00</option>
-    <option value="3.00">3.00</option>
-    <option value="5.00">5.00</option>
-    <option value="10.00">10.00</option>
-    <option value="25.00">25.00</option>
-    <option value="50.00">50.00</option>
-    <option value="100.00">100.00</option>
-  </select>
-</div>
-
-
-  <div>
-    <label>📊 PnL (€):</label>
-<input type="text"
-       id="journalPnL"
-       class="input"
-       placeholder="z. B. -50.00"
-       inputmode="numeric"
-       pattern="^-?[0-9]+([.,][0-9]{1,2})?$"
-       style="width: 100%; background-color: white; color: black;" />
-
-
-  </div>
-</div>
-
-
-  <div class="emotion-block">
-  <label>😐 Fokus <strong>vor</strong> dem Trade:</label>
-  <div id="starsBefore" class="star-rating"></div>
-  <input type="hidden" id="emotionBefore" value="5" />
-</div>
-
-<div class="emotion-block">
-  <label>😤 Emotion <strong>nach</strong> dem Trade:</label>
-  <div id="starsAfter" class="star-rating"></div>
-  <input type="hidden" id="emotionAfter" value="5" />
-</div>
-
-
-    <label>🧠 Setup:</label>
-<select id="journalSetup" class="input" style="width: 100%;">
-  <option value="">– Setup wählen –</option>
-  <option value="Rejectiont">Rejection</option>
-  <option value="Breakout + Rejection">Breakout + Rejection</option>
-  <option value="Liquidity Grab">Liquidity Grab</option>
-  <option value="Shift">Shift HTF/LTF</option>
-  <option value="HH HL LH LL">HH HL LH LL</option>
-</select>
-
-<!-- 🧱 Setup-Box Start -->
-<div id="setupBoxWrapper"
-  style="margin-top: 10px; border-radius: 12px; padding: 16px;
-         background: linear-gradient(135deg, #3d1e1e, #6b2f2f);
-         border: 2px solid #aa3333;
-         color: #eee;
-         box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);
-         transition: all 0.3s ease;">
-
-  <label style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 10px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
-    ✅ Setup-Check
-  </label>
-
-  <label style="margin-top: 5px; color: #f0f0f0; text-shadow: 1px 1px 2px black;">🧭 Multi-Timeframe Bias:</label>
-  <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
-    <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
-    <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
-    <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
-    <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
-    <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
-    <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
-  </div>
-
-  <div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; margin-top:10px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
-    <label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" />
-      🧱 AOI / POI reagiert sichtbar
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ Preis reagiert klar in AOI&POI (z. B. W, D1)
-    </small>
-
-    <label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" />
-      🎯 Entry-Trigger bestätigt
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ Rejection, Equal High/Low Raid, Shift
-    </small>
-
-    <label><input type="checkbox" id="ruleEntryPattern" onchange="updateSetupScoreDisplay()" />
-      🧠 Einstiegsmuster sichtbar
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ z. B. Inside Bar, Morning Star, Pinbar, Engulfing, Quasimodo
-    </small>
-
-    <label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" />
-      💡 Psychologisches Level
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ 00/50-Level, Vorwochen-Hoch/Tief, runde Zahlen (z. B. 1900, 1950)
-    </small>
-
-    <label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" />
-      🕒 Richtiges Zeitfenster
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ Killzones: London (08:00–11:00), New York (14:30–17:00), Asia (02:00–04:00)
-    </small>
-
-    <label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" />
-      📏 Minimum 1:2.5 RR
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ Laut Struktur realistisch erreichbares Ziel: ≥ 2,5x SL-Distanz
-    </small>
-
-    <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" />
-      🔁 LTF Strukturwechsel (Shift)
-    </label>
-    <small style="margin-left: 20px; color:#dddddd; text-shadow: 1px 1px 1px black;">
-      ▶ MSS auf 15M - 2H → z. B. HL → HH → LL
-    </small>
-
-    <div id="setupScoreDisplay" style="margin-top: 12px; font-size: 14px; font-weight: bold; color: #f0f0f0; text-shadow: 1px 1px 2px black;">
-      📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+    <!-- Einstieg + Richtung -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 130px;">
+        <label>🎯 Einstieg:</label>
+        <input type="number" id="journalEntry" class="input" onchange="autoSuggestExit()" />
+      </div>
+      <div style="flex: 1; min-width: 130px;">
+        <label>Richtung:</label>
+        <select id="journalDirection" class="input" onchange="autoSuggestExit()">
+          <option value="long">📈 Long</option>
+          <option value="short">📉 Short</option>
+        </select>
+      </div>
     </div>
-  </div> <!-- ✅ Ende der Regel-Checkliste-Box -->
 
-</div> <!-- ✅ Ende setupBoxWrapper -->
+    <!-- Lotgröße -->
+    <label>📦 Lotgröße:</label>
+    <select id="journalLots" class="input" style="width: 100%; background-color: white; color: black;">
+      <option value="">– Bitte wählen –</option>
+      <option value="0.01">0.01</option>
+      <option value="0.02">0.02</option>
+      <option value="0.03">0.03</option>
+      <option value="0.05">0.05</option>
+      <option value="0.10">0.10</option>
+      <option value="0.25">0.25</option>
+      <option value="0.50">0.50</option>
+      <option value="1.00">1.00</option>
+      <option value="2.00">2.00</option>
+      <option value="3.00">3.00</option>
+      <option value="5.00">5.00</option>
+      <option value="10.00">10.00</option>
+      <option value="25.00">25.00</option>
+      <option value="50.00">50.00</option>
+      <option value="100.00">100.00</option>
+    </select>
 
-<!-- 🔻 Jetzt alles außerhalb der Box -->
-<div style="margin-top: 20px; font-size: 14px; color: #eeeeee; text-shadow: 1px 1px 2px black;">
+    <!-- PnL -->
+    <label>📊 PnL (€):</label>
+    <input type="text" id="journalPnL" class="input" placeholder="z. B. -50.00" style="width: 100%; background-color: white; color: black;" />
 
-  <label>📝 Kommentar <strong>vor dem Trade</strong>:</label>
-  <textarea id="journalNotesBefore" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+    <!-- Emotion -->
+    <div class="emotion-block">
+      <label>😐 Fokus <strong>vor</strong> dem Trade:</label>
+      <div id="starsBefore" class="star-rating"></div>
+      <input type="hidden" id="emotionBefore" value="5" />
+    </div>
 
-  <label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
-  <textarea id="journalNotesAfter" rows="2" class="input" style="border-radius: 6px; width: 100%; margin-bottom: 10px;"></textarea>
+    <div class="emotion-block">
+      <label>😤 Emotion <strong>nach</strong> dem Trade:</label>
+      <div id="starsAfter" class="star-rating"></div>
+      <input type="hidden" id="emotionAfter" value="5" />
+    </div>
 
-  <label for="screenshotInput">📸 Screenshots hochladen (optional):</label>
-  <input type="file" id="screenshotInput" accept="image/*" multiple class="input" style="margin-bottom: 15px;" />
+    <!-- Setup Auswahl -->
+    <label>🧠 Setup:</label>
+    <select id="journalSetup" class="input">
+      <option value="">– Setup wählen –</option>
+      <option value="Rejectiont">Rejection</option>
+      <option value="Breakout + Rejection">Breakout + Rejection</option>
+      <option value="Liquidity Grab">Liquidity Grab</option>
+      <option value="Shift">Shift HTF/LTF</option>
+      <option value="HH HL LH LL">HH HL LH LL</option>
+    </select>
 
-  <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="
-    background-color: #0077cc;
-    color: white;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-  ">💾 Eintrag speichern</button>
+    <!-- ✅ Setup-Check Box -->
+    <div id="setupBoxWrapper" style="margin-top: 10px; border-radius: 12px; padding: 16px; background: linear-gradient(135deg, #3d1e1e, #6b2f2f); border: 2px solid #aa3333; color: #eee; box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);">
+      <label style="font-weight: bold; font-size: 16px;">✅ Setup-Check</label>
+
+      <!-- Bias Auswahl -->
+      <label>🧭 Multi-Timeframe Bias:</label>
+      <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
+        <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
+        <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
+        <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
+        <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
+        <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
+      </div>
+
+      <!-- Checkliste -->
+      <div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; margin-top:10px;">
+        <label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" /> 🧱 AOI / POI reagiert sichtbar</label>
+        <label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" /> 🎯 Entry-Trigger bestätigt</label>
+        <label><input type="checkbox" id="ruleEntryPattern" onchange="updateSetupScoreDisplay()" /> 🧠 Einstiegsmuster sichtbar</label>
+        <label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" /> 💡 Psychologisches Level</label>
+        <label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" /> 🕒 Richtiges Zeitfenster</label>
+        <label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" /> 📏 Minimum 1:2.5 RR</label>
+        <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" /> 🔁 LTF Strukturwechsel</label>
+
+        <!-- Setup-Score Anzeige -->
+        <div id="setupScoreDisplay" style="margin-top: 12px; font-weight: bold;">
+          📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+        </div>
+      </div>
+    </div>
+
+    <!-- Kommentare -->
+    <div style="margin-top: 20px;">
+      <label>📝 Kommentar <strong>vor dem Trade</strong>:</label>
+      <textarea id="journalNotesBefore" rows="2" class="input"></textarea>
+
+      <label>📝 Kommentar <strong>nach dem Trade</strong>:</label>
+      <textarea id="journalNotesAfter" rows="2" class="input"></textarea>
+
+      <!-- Screenshot Upload -->
+      <label for="screenshotInput">📸 Screenshots hochladen (optional):</label>
+      <input type="file" id="screenshotInput" accept="image/*" multiple class="input" />
+
+      <!-- Speichern -->
+      <button id="saveJournalEntryButton" onclick="saveJournalEntry()" style="background-color: #0077cc; color: white; padding: 14px; border-radius: 8px; margin-top: 10px; font-weight: bold; width: 100%;">
+        💾 Eintrag speichern
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox für Screenshots -->
+<div id="lightboxOverlay" style="display:none;" onclick="closeLightbox()">
+  <img id="lightboxImage" src="" alt="Full Screenshot" />
 </div>
 
 
-
-
-<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
-  <img id="lightboxImage" src="" alt="Bild" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
-</div>
-
-<!-- 🔍 Lightbox für vergrößerte Bilder -->
-<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;" onclick="closeLightbox()">
-  <img id="lightboxImage" src="" alt="Full Screenshot" style="max-width:90vw; max-height:90vh; border-radius:10px; box-shadow: 0 0 20px #000;" />
-</div>
-
-
-
-<div class="popup" id="resultPopup">
-  <h3>Ergebnis</h3>
-  <input type="text" inputmode="decimal" id="pnlInput" placeholder="z. B. 120.50" value="00,00" />
-  <button onclick="saveResult()">Speichern</button>
-</div>
-
-
-<body>
+<!-- 📜 Skript-Einbindungen -->
 <script src="scripts/session-popup.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="scripts/session.js"></script>
@@ -980,6 +915,7 @@ body {
 <script src="scripts/pwa.js"></script>
 <script src="scripts/rules.js"></script>
 <script type="module" src="pocketbase-init.js"></script>
+
 
 </body>
 
