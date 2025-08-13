@@ -190,7 +190,7 @@ function getRiskComment(percent) {
 
 
 function switchPosMode() {
-  const posBox = document.querySelector("#calc-pos .stats-box");
+  const posBox = document.getElementById("calc-pos");
   const maxPosBox = document.getElementById("calc-maxpos");
 
   if (posBox.style.display !== "none") {
