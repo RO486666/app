@@ -1,62 +1,34 @@
- .session-bar {
-      height: 10px;
-      background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-      margin-top: 5px;
-    }
-	
-    .main {
-      padding: 20px;
-      padding-bottom: 120px; /* Platz für Positionsleiste */
-      text-align: center;
-    }
-    .big-btn {
-      padding: 20px 30px;
-      font-size: 22px;
-      font-weight: bold;
-      border-radius: 15px;
-      border: none;
-      background-color: #00aa44;
-      color: white;
-      margin: 20px auto;
-      width: 80%;
-      max-width: 300px;
-    }
-    .tab-buttons {
-      text-align: center;
-      margin-top: 20px;
-    }
-.tab-buttons button {
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 10px;
+/* =========================================================
+   📊 Session-Bar (Gradient-Leiste oben)
+   ========================================================= */
+.session-bar {
+  height: 10px;
+  background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
+  margin-top: 5px;
+}
+
+/* =========================================================
+   📦 Main-Container & Buttons
+   ========================================================= */
+.main {
+  padding: 20px;
+  padding-bottom: 120px; /* Platz für Positionsleiste */
+  text-align: center;
+}
+
+.big-btn {
+  padding: 20px 30px;
+  font-size: 22px;
   font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  transform: scale(1);
+  border-radius: 15px;
   border: none;
-
-  animation: pulseGlow 2.5s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--glow-color, #fff);
+  background-color: #00aa44;
+  color: white;
+  margin: 20px auto;
+  width: 80%;
+  max-width: 300px;
 }
 
-@keyframes pulseGlow {
-  0%   { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
-  50%  { box-shadow: 0 0 12px 6px var(--glow-color, #fff); }
-  100% { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
-}
-
-
-.tab-buttons button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-    .tab-buttons .active {
-      background: #0077cc;
-    }
-	
-   
     .position-bar {
       position: fixed;
       bottom: 0;
@@ -118,9 +90,51 @@
       cursor: pointer;
     }
  
- 
 
-.ticker {
+/* =========================================================
+   🔘 Tab-Buttons (3 Buttons mit Glow)
+   ========================================================= */
+.tab-buttons {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.tab-buttons button {
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  border: none;
+  animation: pulseGlow 2.5s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--glow-color, #fff);
+}
+
+.tab-buttons button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.tab-buttons .active {
+  background: #0077cc;
+}
+
+/* 🔄 Pulsierender Glow-Effekt für Tab-Buttons */
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
+  50%  { box-shadow: 0 0 12px 6px var(--glow-color, #fff); }
+  100% { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
+}
+
+
+/* =========================================================
+   📅 Ticker
+   ========================================================= */
+   
+   .ticker {
   width: 100%;
   background: linear-gradient(135deg, #161616, #1f1f1f); /* sanfter Dunkelverlauf */
   color: #99ffcc;
@@ -162,12 +176,16 @@
 }
 
 
-
+/* =========================================================
+   🕒 Session-Text Anzeige (aktuelle Session oben)
+   ========================================================= */
 #sessionText {
   background: linear-gradient(90deg, #202020 0%, #2a2a2a 50%, #202020 100%);
   color: var(--session-text-color, #fff);
   font-size: clamp(16px, 5vw, 20px);
   font-weight: 700;
+  position: relative;
+  z-index: 5;
   text-align: center;
   padding: 18px 24px;
   border-radius: 14px;
@@ -181,13 +199,11 @@
     0 0 6px var(--session-text-shadow2, rgba(255, 255, 255, 0.15));
   margin: 16px 0;
   user-select: none;
-  cursor: default;
+  cursor: pointer;
   transition: all 0.25s ease-in-out;
   letter-spacing: 0.6px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-
 
 #sessionText:hover {
   transform: scale(1.02);
@@ -197,10 +213,9 @@
     0 0 30px rgba(255, 255, 255, 0.05);
 }
 
-
-
-
-
+/* =========================================================
+   📋 Session-Details Box
+   ========================================================= */
 .session-details-box {
   display: none;
   background: rgba(10, 10, 10, 0.85);
@@ -227,73 +242,34 @@
 }
 
 .session-details-box ul {
-  margin-left: 16px;
-  padding-left: 8px;
+  padding-left: 20px;
+  margin: 8px 0;
+  list-style-type: disc;
 }
 
 .session-details-box li {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
-
 
 /* Dynamische Farben pro Session */
-.session-sydney {
-  box-shadow: 0 0 10px #3388ff66;
-  border-color: #3388ff55;
-}
+.session-sydney { box-shadow: 0 0 10px #3388ff66; border-color: #3388ff55; }
+.session-tokyo  { box-shadow: 0 0 10px #00aaff66; border-color: #00aaff55; }
+.session-london { box-shadow: 0 0 10px #ffd70066; border-color: #ffd70055; }
+.session-ny     { box-shadow: 0 0 10px #ff450066; border-color: #ff450055; }
+.session-killzone { box-shadow: 0 0 10px #ccff0066; border-color: #ccff0055; }
+.session-crypto { box-shadow: 0 0 10px #9900ff66; border-color: #9900ff55; }
 
-.session-tokyo {
-  box-shadow: 0 0 10px #00aaff66;
-  border-color: #00aaff55;
-}
-
-.session-london {
-  box-shadow: 0 0 10px #ffd70066;
-  border-color: #ffd70055;
-}
-
-.session-ny {
-  box-shadow: 0 0 10px #ff450066;
-  border-color: #ff450055;
-}
-
-.session-killzone {
-  box-shadow: 0 0 10px #ccff0066;
-  border-color: #ccff0055;
-}
-
-.session-crypto {
-  box-shadow: 0 0 10px #9900ff66;
-  border-color: #9900ff55;
-}
-
-
-
-  .session-details-box {
-    font-size: 13px;
-    margin: 10px;
-    padding: 12px;
-    line-height: 1.4;
-  }
-
-  .session-header, #sessionText {
-    font-size: 16px;
-    padding: 12px;
-  }
-  
-  #sessionText {
-  user-select: none;
-  cursor: pointer;
-}
-
+/* =========================================================
+   📈 Fortschrittsbalken (Progress Bar)
+   ========================================================= */
 .progress-container {
   width: 100%;
-  height: 24px; /* 🔧 Größer gemacht */
+  height: 24px; /* Größer gemacht */
   background: #111;
   border-radius: 6px;
   margin-top: 5px;
   overflow: hidden;
-  box-shadow: 0 0 14px 4px rgba(153, 0, 255, 0.4); /* Leuchteffekt */
+  box-shadow: 0 0 14px 4px rgba(153, 0, 255, 0.4);
 }
 
 #progressBar {
@@ -305,36 +281,14 @@
   transition: width 0.3s ease-in-out;
 }
 
-
 @keyframes cryptoBarShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-	
-	.session-details-box ul {
-  padding-left: 20px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  list-style-type: disc;
-}
-@keyframes cryptoBarShift {
-  0% { background-position: 0% 50%; }
+  0%   { background-position: 0% 50%; }
   100% { background-position: 100% 50%; }
 }
 
-.progress-bar {
-  background-size: 200% 200%;
-}
-
-
-.session-details-box li {
-  margin-bottom: 4px;
-}
+/* =========================================================
+   📅 Tageszusammenfassung & Details
+   ========================================================= */
 .day-summary {
   background: linear-gradient(135deg, #1b1b1b, #252525);
   color: #ffdd66;
@@ -344,7 +298,6 @@
   white-space: normal;
   word-break: break-word;
   max-width: 100%;
-  box-sizing: border-box;
   text-align: center;
   border: 1px solid rgba(255, 221, 102, 0.1);
   border-radius: 12px;
@@ -377,3 +330,171 @@
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.08),
               inset 0 0 6px rgba(255, 255, 255, 0.05);
 }
+/* =========================================================
+   📅 Crypto Session 
+   ========================================================= */
+   
+   
+@keyframes cryptoBarShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes cryptoGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 12px rgba(0,255,255,0.5),
+      0 0 22px rgba(255,0,204,0.4),
+      0 0 36px rgba(153,0,255,0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(0,255,255,0.8),
+      0 0 40px rgba(255,0,204,0.6),
+      0 0 60px rgba(153,0,255,0.5);
+  }
+}
+
+/* Fortschrittsbalken – Crypto Weekend */
+.progress-container.crypto-glow {
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#progressBar.crypto-bar {
+  background: linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff, #00ffcc);
+  background-size: 300% 100%;
+  animation: cryptoBarShift 8s ease infinite, cryptoGlowPulse 3s ease-in-out infinite;
+  height: 100%;
+}
+
+/* Day-Summary Box – Crypto Weekend */
+.day-summary.crypto-weekend {
+  background: linear-gradient(135deg, rgba(27,27,27,0.95), rgba(37,37,37,0.95));
+  color: #fff;
+  border: 1px solid rgba(0, 255, 204, 0.5);
+  box-shadow:
+    0 0 10px rgba(0,255,255,0.4),
+    0 0 20px rgba(255,0,204,0.3),
+    inset 0 0 6px rgba(153,0,255,0.2);
+  text-shadow: 0 0 4px rgba(0,255,255,0.4);
+  transition: all 0.3s ease;
+}
+
+/* Day-Details – Crypto Weekend */
+.day-details.crypto-weekend {
+  background: linear-gradient(135deg, #1a1a1a, #222);
+  color: #f0f0f0;
+  border: 1px solid rgba(0, 255, 204, 0.4);
+  box-shadow:
+    0 0 8px rgba(0,255,255,0.3),
+    inset 0 0 5px rgba(255,0,204,0.15);
+}
+
+/* Session-Text – animierter Farbverlauf */
+#sessionText.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc, #ff00cc, #9900ff, #00ffcc);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: cryptoBarShift 8s ease infinite;
+}
+
+/* Session-Details Box */
+.session-details-box.crypto-weekend {
+  border-left: 4px solid #00ffcc;
+  box-shadow: inset 0 0 4px rgba(0,255,255,0.3);
+}
+
+/* 🌌 Eleganter Crypto-Weekend Look – Day Summary */
+.day-summary.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc22, #ff00cc22, #9900ff22, #00ffcc22);
+  background-size: 300% 300%;
+  animation: cryptoBarShift 8s ease infinite, cryptoGlowPulse 5s ease-in-out infinite;
+  color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  box-shadow:
+    0 0 6px rgba(0, 255, 204, 0.2),
+    0 0 12px rgba(255, 0, 204, 0.15),
+    inset 0 0 6px rgba(0, 255, 204, 0.05);
+  text-shadow:
+    0 0 4px rgba(0, 255, 204, 0.4),
+    0 0 8px rgba(255, 0, 204, 0.3),
+    0 0 12px rgba(153, 0, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+/* 🌌 Eleganter Crypto-Weekend Look – Day Details */
+.day-details.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc15, #ff00cc15, #9900ff15, #00ffcc15);
+  background-size: 300% 300%;
+  animation: cryptoBarShift 8s ease infinite, cryptoGlowPulse 5s ease-in-out infinite;
+  color: #f0f0f0;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 204, 0.25);
+  box-shadow:
+    0 0 5px rgba(0, 255, 204, 0.2),
+    0 0 10px rgba(255, 0, 204, 0.15),
+    inset 0 0 5px rgba(0, 255, 204, 0.05);
+  text-shadow:
+    0 0 3px rgba(0, 255, 204, 0.3),
+    0 0 6px rgba(255, 0, 204, 0.25),
+    0 0 10px rgba(153, 0, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+
+/* 🎨 Session-Text im gleichen animierten Stil */
+#sessionText.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc, #ff00cc, #9900ff, #00ffcc);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: cryptoBarShift 12s ease-in-out infinite, cryptoTextGlow 4s ease-in-out infinite;
+}
+
+/* 🔄 Weicher Farbverlauf */
+@keyframes cryptoBarShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 💨 Sanft pulsierender Glow */
+@keyframes cryptoGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(0, 255, 204, 0.25),
+      0 0 16px rgba(255, 0, 204, 0.2),
+      inset 0 0 6px rgba(0, 255, 204, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(0, 255, 204, 0.4),
+      0 0 24px rgba(255, 0, 204, 0.35),
+      inset 0 0 10px rgba(0, 255, 204, 0.15);
+  }
+}
+
+/* ✨ Sanftes Text-Leuchten */
+@keyframes cryptoTextGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 4px rgba(0, 255, 204, 0.4),
+      0 0 8px rgba(255, 0, 204, 0.35),
+      0 0 14px rgba(153, 0, 255, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 6px rgba(0, 255, 204, 0.6),
+      0 0 12px rgba(255, 0, 204, 0.5),
+      0 0 18px rgba(153, 0, 255, 0.4);
+  }
+}
+
+
+
+
