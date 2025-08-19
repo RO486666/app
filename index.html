@@ -335,37 +335,110 @@
 	 /* ==========================================
        ♿ Tabele UI
        ========================================== */
-	.trade-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-  background: #111;
-  color: #eee;
-  border-radius: 10px;
-  overflow: hidden;
+/* 🖼 Steuer-/Netto-Planer Box */
+#calc-taxpro .stats-box {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 15px;
   box-shadow: 0 0 10px rgba(0,255,100,0.3);
+  color: #ddd;
+  font-family: Arial, sans-serif;
 }
 
-.trade-table th, .trade-table td {
+/* Labels & Inputs */
+#calc-taxpro label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #aaa;
+}
+
+#calc-taxpro input[type="number"] {
+  width: 100%;
   padding: 10px;
-  border-bottom: 1px solid #333;
-  text-align: center;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.tax-button {
+  margin-top: 15px;
+  padding: 12px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #00aa44, #00cc66);
+  color: white;
+  box-shadow: 0 0 10px rgba(0,255,100,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tax-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(0,255,120,0.7);
+}
+
+/* Umschalter */
+#planToggleBtn {
+  margin-top: 20px;
+  background: linear-gradient(90deg, #444, #666);
+  box-shadow: 0 0 8px rgba(255,255,255,0.2);
+}
+
+#planToggleBtn:hover {
+  transform: scale(1.02);
+  background: linear-gradient(90deg, #555, #777);
+}
+
+/* Ausgabe-Box */
+#steuerAusgabe, #nettoAusgabe {
+  margin-top: 15px;
+  padding: 12px;
+  background: #111;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5em;
+  box-shadow: inset 0 0 5px rgba(0,255,100,0.2);
+}
+
+/* Tabelle für Trades */
+.trade-table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 14px;
+  color: #ddd;
 }
 
 .trade-table th {
-  background: #222;
-  font-weight: bold;
+  background: #00aa44;
+  color: white;
+  padding: 10px;
+  text-align: left;
 }
 
-.trade-table tr:hover {
-  background: rgba(0,255,100,0.05);
+.trade-table td {
+  background: #2b2b2b;
+  padding: 10px;
+  border-bottom: 1px solid #333;
 }
 
-.trade-table .sum-row {
+.trade-table tr.sum-row td {
   font-weight: bold;
-  background: #222;
-  color: #0f0;
+  background: #1a1a1a;
 }
+
+/* Delete Button */
 .delete-btn {
   padding: 5px 10px;
   background: #aa0000;
@@ -380,6 +453,7 @@
   background: #ff2222;
 }
 
+/* Alle löschen Button */
 .delete-all-btn {
   margin-top: 10px;
   padding: 10px 15px;
@@ -389,12 +463,14 @@
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  width: 100%;
   box-shadow: 0 0 5px rgba(255,0,0,0.5);
 }
 
 .delete-all-btn:hover {
   background: #ff2222;
 }
+
 
 
     /* ==========================================
@@ -432,13 +508,7 @@
 </head>
 <body>
 
-<!-- 🔔 Session-Test Button -->
-<button onclick="showSessionStartNotification('New York', '🔥 NY Session beginnt! Fokus auf Gold & USD!')"
-        style="position: fixed; bottom: 20px; right: 20px; background: #00aa44; color: white;
-               border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold;
-               box-shadow: 0 0 12px #00ff99; z-index: 9999;">
-  🔔 Session-Test
-</button>
+
 
 <!-- 🎨 Session-Hintergrund -->
 <div id="sessionBackgroundOverlay"></div>
@@ -498,27 +568,33 @@
 
       <label><input type="checkbox" id="kirchensteuer"> ✝️ Kirchensteuer (9 %)</label><br>
       <label><input type="checkbox" id="soliZuschlag"> 💣 Solidaritätszuschlag (5.5 %)</label><br>
-      <label><input type="checkbox" id="reserveZehn"> 💥 +10 % Reserve</label><br>
+      <label><input type="checkbox" id="reserveZehn"> 💥 +Reserve (1 Quartal)</label><br>
 
       <button onclick="berechneSteuern()" class="tax-button">📊 Steuer berechnen</button>
       <div id="steuerAusgabe"></div>
     </div>
 
-    <!-- 🏦 Netto-Planer -->
-    <div id="nettoMode" style="display:none">
-      <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
-      <input type="number" id="nettoBrutto" placeholder="z. B. 1000">
+<!-- 🏦 Netto-Planer -->
+<div id="nettoMode" style="display:none">
+  <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
+  <input type="number" id="nettoBrutto" placeholder="z. B. 1000">
 
-      <label for="nettoSteuer">💸 Steuerlast (€):</label>
-      <input type="number" id="nettoSteuer" placeholder="z. B. 350">
+  <label for="nettoSteuer">💸 Steuerlast (€):</label>
+  <input type="number" id="nettoSteuer" placeholder="z. B. 350">
 
-      <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
-      <input type="number" id="nettoEntnommen" placeholder="z. B. 800">
+  <label for="nettoReserve">💥 Reserve (€):</label>
+  <input type="number" id="nettoReserve" placeholder="z. B. 250">
 
-      <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
-      <div id="nettoAusgabe"></div>
-    </div>
-	<div id="tradeTable" style="margin-top:20px;"></div>
+  <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
+  <input type="number" id="nettoEntnommen" placeholder="z. B. 800">
+
+  <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
+  <div id="nettoAusgabe"></div>
+</div>
+
+
+    <!-- 📊 Trades -->
+    <div id="tradeTable" style="margin-top:20px;"></div>
 
     <!-- 🔄 Umschalter -->
     <button onclick="switchPlanMode()" id="planToggleBtn"
@@ -529,7 +605,7 @@
     </button>
 
   </div>
-</div>
+</div>w
 
 
 
