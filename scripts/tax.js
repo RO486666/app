@@ -18,6 +18,7 @@ function switchPlanMode() {
     toggleBtn.textContent = "🔁 Zu Netto-Planer wechseln";
   }
 }
+
 // 🗂 Speicher für Trades
 let trades = JSON.parse(localStorage.getItem("tradeHistory") || "[]");
 
@@ -54,6 +55,14 @@ function berechneSteuern() {
   if (mitReserve) reserve = vorauszahlung;
 
   const netto = tradingGewinn - steuerlast - reserve;
+  
+    // 👉 Automatisch Werte in Netto-Planer übertragen
+  document.getElementById("nettoBrutto").value = tradingGewinn.toFixed(2);
+  document.getElementById("nettoSteuer").value = steuerlast.toFixed(2);
+  document.getElementById("nettoReserve").value = reserve.toFixed(2); // Reserve extra Feld
+  document.getElementById("nettoEntnommen").value = ""; // User trägt Entnahme ein
+  document.getElementById("nettoAusgabe").innerHTML = ""; // Reset Ausgabe
+
 
   // Ergebnis + Speichern-Button
   ausgabe.innerHTML = `
@@ -75,18 +84,27 @@ function berechneSteuern() {
     </button>
   `;
   ausgabe.style.color = "#0f0";
+
+  // Eingabefeld nach Berechnung zurücksetzen
+  document.getElementById("gewinnBetrag").value = "";
 }
 
 // 💾 Manuelles Speichern
 function speichereTrade(gewinn, steuer, reserve, netto) {
   const trade = {
-    id: Date.now(), // eindeutige ID
+    id: Date.now(),
     datum: new Date().toLocaleString(),
     gewinn, steuer, reserve, netto
   };
   trades.push(trade);
   localStorage.setItem("tradeHistory", JSON.stringify(trades));
   updateTradeTable();
+
+  // Übernahme für Netto-Planer
+  document.getElementById("nettoBrutto").value = gewinn.toFixed(2);
+  document.getElementById("nettoSteuer").value = steuer.toFixed(2);
+  document.getElementById("nettoEntnommen").value = "";
+  document.getElementById("nettoAusgabe").innerHTML = "";
 }
 
 // ❌ Einzelnen Trade löschen
@@ -121,9 +139,7 @@ function updateTradeTable() {
       <td>${t.steuer.toFixed(2)} €</td>
       <td>${t.reserve.toFixed(2)} €</td>
       <td>${t.netto.toFixed(2)} €</td>
-      <td>
-        <button onclick="loescheTrade(${t.id})" class="delete-btn">🗑️</button>
-      </td>
+      <td><button onclick="loescheTrade(${t.id})" class="delete-btn">🗑️</button></td>
     </tr>`).join("");
 
   const sumGewinn = trades.reduce((a, t) => a + t.gewinn, 0);
@@ -134,9 +150,7 @@ function updateTradeTable() {
   tableDiv.innerHTML = `
     <table class="trade-table">
       <thead>
-        <tr>
-          <th>Datum</th><th>Gewinn</th><th>Steuer</th><th>Reserve</th><th>Netto</th><th>Aktion</th>
-        </tr>
+        <tr><th>Datum</th><th>Gewinn</th><th>Steuer</th><th>Reserve</th><th>Netto</th><th>Aktion</th></tr>
       </thead>
       <tbody>
         ${rows}
@@ -154,16 +168,14 @@ function updateTradeTable() {
   `;
 }
 
-
 // 👉 Beim Laden alte Tabelle laden
 window.addEventListener("DOMContentLoaded", updateTradeTable);
-
-
 
 // 🧮 Netto-Berechnung + Entnahmeprüfung
 function berechneNettoPlan() {
   const brutto = parseFloat(document.getElementById("nettoBrutto").value);
   const steuer = parseFloat(document.getElementById("nettoSteuer").value);
+  const reserve = parseFloat(document.getElementById("nettoReserve").value) || 0;
   const entnommen = parseFloat(document.getElementById("nettoEntnommen").value);
   const ausgabe = document.getElementById("nettoAusgabe");
 
@@ -173,11 +185,13 @@ function berechneNettoPlan() {
     return;
   }
 
-  const netto = brutto - steuer;
+  // Netto nach Steuer & Reserve
+  const netto = brutto - steuer - reserve;
   const differenz = entnommen - netto;
 
   let output = `
-    📦 Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>
+    📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
+    💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
     🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
   `;
 
@@ -196,12 +210,13 @@ function berechneNettoPlan() {
 
   // 💾 Netto-Auswertung speichern
   localStorage.setItem("nettoPlanMemory", JSON.stringify({
-    brutto, steuer, entnommen, differenz,
+    brutto, steuer, reserve, entnommen, differenz,
     timestamp: new Date().toISOString()
   }));
 }
 
-// 🧹 Beim Laden: Felder zurücksetzen
+
+// 🧹 Beim Laden: Nettofelder leeren
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("nettoBrutto").value = "";
   document.getElementById("nettoSteuer").value = "";
