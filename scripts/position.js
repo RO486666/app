@@ -1,3 +1,79 @@
+// 🔹 Beispielpreise (müssen alle 1–2 Wochen manuell aktualisiert werden)
+
+function getCurrentPrice(symbol) {
+// ✅ Live-Preise (manuell aktualisieren)
+const livePrices = {
+  // Forex
+  "EUR/USD": 1.16610,
+  "GBP/USD": 1.3497,
+  "USD/JPY": 147.747,
+  "EUR/JPY": 172.29,
+  "GBP/JPY": 199.424,
+  "CAD/JPY": 106.60,
+  "AUD/JPY": 95.42,
+  "NZD/JPY": 87.188,
+  "AUD/CAD": 0.89504,
+  "NZD/CAD": 0.81775,
+  "GBP/CHF": 1.08905,
+
+  // Indizes
+  "US30": 44946.50,
+  "NAS100": 23483.80,
+  "SPX500": 6426.10,
+
+  // Metalle
+  "XAU/USD": 3325.17,
+
+  // Krypto
+  "BTC/USD": 114014.24,
+  "ETH/USD": 4206.08,
+  "XRP/USD": 2.9484
+};
+  return livePrices[symbol] || null;  // ✅ wichtig!
+}
+
+// ✅ Pip-Werte (fix nach Symboltyp)
+const pipValues = {
+  "XAU/USD": 1,
+  "XAG/USD": 0.01,
+
+  "BTC/USD": 1,
+  "ETH/USD": 1,
+  "XRP/USD": 0.0001,
+
+  "US30": 1, "NAS100": 1, "SPX500": 1, "GER40": 1, "UK100": 1,
+
+  "EUR/USD": 10, "GBP/USD": 10, "AUD/USD": 10, "NZD/USD": 10,
+  "USD/CHF": 9.26, "USD/CAD": 7.94,
+  "USD/JPY": 9.17, "EUR/JPY": 9.17, "GBP/JPY": 9.17,
+  "CHF/JPY": 9.17, "AUD/JPY": 9.17, "NZD/JPY": 9.17, "CAD/JPY": 9.17,
+  "EUR/GBP": 10, "EUR/AUD": 10, "EUR/CAD": 10,
+  "GBP/AUD": 10, "GBP/CAD": 10, "AUD/CAD": 7.94
+};
+
+// ✅ Basiswerte (Lot-Kontraktgrößen)
+const basisWerte = {
+  "XAU/USD": 100,
+  "XAG/USD": 5000,
+
+  "BTC/USD": 1,
+  "ETH/USD": 1,
+  "XRP/USD": 100000,
+
+  "US30": 1, "NAS100": 1, "SPX500": 1, "GER40": 1, "UK100": 1,
+
+  "EUR/USD": 100000, "GBP/USD": 100000, "AUD/USD": 100000, "NZD/USD": 100000,
+  "USD/CAD": 100000, "USD/CHF": 100000, "USD/JPY": 100000,
+  "EUR/JPY": 100000, "GBP/JPY": 100000, "CHF/JPY": 100000,
+  "AUD/JPY": 100000, "NZD/JPY": 100000, "CAD/JPY": 100000,
+  "EUR/GBP": 100000, "EUR/AUD": 100000, "EUR/CAD": 100000,
+  "GBP/AUD": 100000, "GBP/CAD": 100000, "AUD/CAD": 100000
+};
+
+
+
+
+
 function calculatePositionSize() {
   const accountSize = parseFloat(document.getElementById("accountSize").value);
   const riskPercent = parseFloat(document.getElementById("riskPercent").value);
@@ -7,28 +83,7 @@ function calculatePositionSize() {
   const manualLots = parseFloat(document.getElementById("manualLots")?.value);
   const resultEl = document.getElementById("positionSizeResult");
 
-  const pipValues = {
-    "XAU/USD": 100, "XAG/USD": 50,
-    "BTC/USD": 30000, "ETH/USD": 1800,
-    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
-    "AUD/USD": 10, "EUR/USD": 10, "GBP/USD": 10, "NZD/USD": 10,
-    "USD/CHF": 9.26, "USD/CAD": 7.94,
-    "USD/JPY": 9.17, "EUR/JPY": 9.17, "GBP/JPY": 9.17,
-    "CHF/JPY": 9.17, "AUD/JPY": 9.17, "NZD/JPY": 9.17, "CAD/JPY": 9.17,
-    "EUR/GBP": 10, "EUR/AUD": 10, "EUR/CAD": 10,
-    "GBP/AUD": 10, "GBP/CAD": 10, "AUD/CAD": 7.94
-  };
-
-  const basisWerte = {
-    "XAU/USD": 200000, "XAG/USD": 125000, "BTC/USD": 30000, "ETH/USD": 1800,
-    "US30": 10, "NAS100": 20, "SPX500": 10, "GER40": 25, "UK100": 10,
-    "EUR/USD": 100000, "GBP/USD": 100000, "AUD/USD": 100000, "NZD/USD": 100000,
-    "USD/CAD": 100000, "USD/CHF": 100000, "USD/JPY": 100000, "EUR/JPY": 100000,
-    "GBP/JPY": 100000, "CHF/JPY": 100000, "AUD/JPY": 100000, "NZD/JPY": 100000,
-    "CAD/JPY": 100000, "EUR/GBP": 100000, "EUR/AUD": 100000, "EUR/CAD": 100000,
-    "GBP/AUD": 100000, "GBP/CAD": 100000, "AUD/CAD": 100000
-  };
-
+ 
   const pipValueStandard = pipValues[symbol];
   const basis = basisWerte[symbol] || 100000;
 
@@ -44,7 +99,10 @@ function calculatePositionSize() {
 
   const riskAmount = accountSize * (riskPercent / 100);
   let baseLot = riskAmount / (stopLossPips * pipValueStandard);
-  const maxLots = (accountSize * leverage) / basis;
+  const price = getCurrentPrice(symbol); // aktueller Marktpreis vom Symbol
+const contractSize = basisWerte[symbol]; // Lot-Größe (z.B. 100000 bei Forex, 1 bei BTC)
+const maxLots = (accountSize * leverage) / (price * contractSize);
+
   let output = "";
 
   if (0.01 > maxLots) {
@@ -122,48 +180,41 @@ function switchCalcTab(tab) {
 }
 function calculateMaxPositions() {
   const accountSize = parseFloat(document.getElementById("maxposAccountSize").value);
+  const riskPercent = parseFloat(document.getElementById("maxposRiskPercent").value);
   const stopLossPips = parseFloat(document.getElementById("maxposStopLoss").value);
   const leverage = parseFloat(document.getElementById("maxposLeverage").value);
   const lotFrom = parseFloat(document.getElementById("lotFrom").value);
   const lotTo = parseFloat(document.getElementById("lotTo").value);
 
-  if (!accountSize || !stopLossPips || !leverage || !lotFrom) {
-    document.getElementById("maxposResults").innerHTML = "❌ Bitte alle Pflichtfelder ausfüllen!";
+  if (!accountSize || !riskPercent || !stopLossPips || !leverage || !lotFrom || !lotTo) {
+    document.getElementById("maxposResults").innerHTML = "❌ Bitte alle Felder ausfüllen!";
     return;
   }
 
-  // Standardwerte (Forex)
-  const pipValueStandard = 10; // 1 Lot = 10€ pro Pip
-  const basis = 100000;        // Standard-Kontraktgröße
+  // Standardwerte für Forex
+  const pipValueStandard = 10; // $10 pro Pip pro 1 Lot
+  const basis = 100000; // Standard Kontraktgröße
 
-  // Margin-Berechnung für max Lots
+  // Maximale Lots nach Margin-Bedingung
   const maxLots = (accountSize * leverage) / basis;
 
   let html = `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br><br>`;
 
-  // Berechnung für Lotgröße 1 (Pflicht)
-  html += calcLotRow(lotFrom, maxLots, pipValueStandard, stopLossPips, accountSize);
+  [lotFrom, lotTo].forEach(lot => {
+    const maxPos = Math.floor(maxLots / lot);
+    const risikoEuro = stopLossPips * (pipValueStandard * lot);
+    const risikoProzent = (risikoEuro / accountSize) * 100;
+    const risikoText = getRiskComment(risikoProzent);
 
-  // Berechnung für Lotgröße 2 (optional)
-  if (!isNaN(lotTo) && lotTo > 0) {
-    html += calcLotRow(lotTo, maxLots, pipValueStandard, stopLossPips, accountSize);
-  }
+    html += `Lotgröße ${lot.toFixed(2)} → max. ${maxPos} Positionen 
+             <input type="number" min="0" max="${maxPos}" 
+                    onchange="updateTotalRisk(${risikoEuro}, ${accountSize})" 
+                    style="width:60px; margin-left:10px;"> 
+             <br>📉 Risiko pro Position: ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %) – ${risikoText}<br><br>`;
+  });
 
   html += `<div id="totalRiskDisplay" style="margin-top:10px;"></div>`;
   document.getElementById("maxposResults").innerHTML = html;
-}
-
-function calcLotRow(lot, maxLots, pipValueStandard, stopLossPips, accountSize) {
-  const maxPos = Math.floor(maxLots / lot);
-  const risikoEuro = stopLossPips * (pipValueStandard * lot);
-  const risikoProzent = (risikoEuro / accountSize) * 100;
-  const risikoText = getRiskComment(risikoProzent);
-
-  return `Lotgröße ${lot.toFixed(2)} → max. ${maxPos} Positionen 
-          <input type="number" min="0" max="${maxPos}" 
-                 onchange="updateTotalRisk(${risikoEuro}, ${accountSize})" 
-                 style="width:60px; margin-left:10px;"> 
-          <br>📉 Risiko pro Position: ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %) – ${risikoText}<br><br>`;
 }
 
 function updateTotalRisk(riskPerPos, accountSize) {
@@ -187,10 +238,8 @@ function getRiskComment(percent) {
 }
 
 
-
-
 function switchPosMode() {
-  const posBox = document.getElementById("calc-pos");
+  const posBox = document.querySelector("#calc-pos .stats-box");
   const maxPosBox = document.getElementById("calc-maxpos");
 
   if (posBox.style.display !== "none") {
