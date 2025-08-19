@@ -1,5 +1,4 @@
 let planMode = "steuer";
-let activeCalcTab = null;
 
 // 🔁 Umschalten zwischen Steuer- und Netto-Planer
 function switchPlanMode() {
@@ -19,57 +18,147 @@ function switchPlanMode() {
     toggleBtn.textContent = "🔁 Zu Netto-Planer wechseln";
   }
 }
+// 🗂 Speicher für Trades
+let trades = JSON.parse(localStorage.getItem("tradeHistory") || "[]");
 
-// 📊 Steuerberechnung
+// 📊 Steuerberechnung (ohne Auto-Speichern)
 function berechneSteuern() {
-  const betrag = parseFloat(document.getElementById("gewinnBetrag").value);
-  const estSatz = parseFloat(document.getElementById("einkommenSteuer").value);
+  const jahresEinkommen = parseFloat(document.getElementById("jahresEinkommen").value) || 0;
+  const tradingGewinn = parseFloat(document.getElementById("gewinnBetrag").value) || 0;
+
   const mitKirche = document.getElementById("kirchensteuer").checked;
   const mitSoli = document.getElementById("soliZuschlag").checked;
   const mitReserve = document.getElementById("reserveZehn").checked;
   const ausgabe = document.getElementById("steuerAusgabe");
 
-  if (isNaN(betrag) || isNaN(estSatz) || betrag <= 0 || estSatz <= 0) {
-    ausgabe.innerHTML = "❌ Bitte Gewinn & Steuersatz korrekt eingeben!";
+  if (tradingGewinn <= 0) {
+    ausgabe.innerHTML = "❌ Bitte Gewinn eingeben!";
     ausgabe.style.color = "#f44";
     return;
   }
 
-  const est = betrag * (estSatz / 100);
+  const gesamtEinkommen = jahresEinkommen + tradingGewinn;
+  let estSatz = 0.25;
+  if (gesamtEinkommen <= 11000) estSatz = 0.0;
+  else if (gesamtEinkommen <= 62000) estSatz = 0.30;
+  else if (gesamtEinkommen <= 277000) estSatz = 0.42;
+  else estSatz = 0.45;
+
+  let est = tradingGewinn * estSatz;
   const kirche = mitKirche ? est * 0.09 : 0;
   const soli = mitSoli ? est * 0.055 : 0;
-  const reserve = mitReserve ? betrag * 0.10 : 0;
-
-  const steuerlast = est + kirche + soli;
-  const netto = betrag - steuerlast;
+  let steuerlast = est + kirche + soli;
   const vorauszahlung = steuerlast / 4;
 
-  let output = `
-    📊 <strong>Summe Gewinne:</strong> ${betrag.toFixed(2)} €<br>
-    💸 <strong>Einkommensteuer:</strong> ${est.toFixed(2)} €<br>
-    ${mitKirche ? `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>` : ""}
-    ${mitSoli ? `💣 Soli: ${soli.toFixed(2)} €<br>` : ""}
-    ${mitReserve ? `💥 Reserve: ${reserve.toFixed(2)} €<br>` : ""}
-    <br>📦 <strong>Gesamtsteuerlast:</strong> ${steuerlast.toFixed(2)} €<br>
-    💰 <strong>Netto-Gewinn:</strong> ${netto.toFixed(2)} €<br><br>
-    🔮 <strong>Vorauszahlung nächstes Jahr (vierteljährlich):</strong> ${vorauszahlung.toFixed(2)} €
+  let reserve = 0;
+  if (mitReserve) reserve = vorauszahlung;
+
+  const netto = tradingGewinn - steuerlast - reserve;
+
+  // Ergebnis + Speichern-Button
+  ausgabe.innerHTML = `
+    📈 <strong>Trading-Gewinn:</strong> ${tradingGewinn.toFixed(2)} €<br>
+    💼 <strong>Jahreseinkommen (Job):</strong> ${jahresEinkommen.toFixed(2)} €<br>
+    ⚖️ <strong>Gesamteinkommen:</strong> ${gesamtEinkommen.toFixed(2)} €<br>
+    ➡️ <strong>Steuersatz:</strong> ${(estSatz * 100).toFixed(1)} %<br><br>
+    💸 <strong>Steuer:</strong> ${est.toFixed(2)} €<br>
+    ${mitKirche ? `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>` : ""}
+    ${mitSoli ? `💣 Soli: ${soli.toFixed(2)} €<br>` : ""}
+    ${mitReserve ? `💥 Reserve (1 Quartal): ${reserve.toFixed(2)} €<br>` : ""}
+    <br>📦 <strong>Gesamt zurücklegen:</strong> ${(steuerlast + reserve).toFixed(2)} €<br>
+    💰 <strong>Verfügbarer Netto-Gewinn:</strong> ${netto.toFixed(2)} €<br><br>
+    🔮 <strong>Vorauszahlung pro Quartal:</strong> ${vorauszahlung.toFixed(2)} €<br><br>
+
+    <button onclick='speichereTrade(${tradingGewinn}, ${steuerlast}, ${reserve}, ${netto})' 
+      style="padding:10px 15px; border:none; border-radius:8px; background:#00aa44; color:#fff; font-weight:bold; cursor:pointer;">
+      💾 Speichern
+    </button>
   `;
-
-  ausgabe.innerHTML = output;
   ausgabe.style.color = "#0f0";
-
-  // 💾 Steuerdaten speichern
-  localStorage.setItem("lastTaxPlan", JSON.stringify({
-    betrag, est, kirche, soli, reserve, steuerlast, netto, vorauszahlung,
-    timestamp: new Date().toISOString()
-  }));
-
-  // 🔁 Werte für Netto-Planer vorbereiten
-  document.getElementById("nettoBrutto").value = betrag.toFixed(2);
-  document.getElementById("nettoSteuer").value = steuerlast.toFixed(2);
-  document.getElementById("nettoEntnommen").value = "";
-  document.getElementById("nettoAusgabe").innerHTML = "";
 }
+
+// 💾 Manuelles Speichern
+function speichereTrade(gewinn, steuer, reserve, netto) {
+  const trade = {
+    id: Date.now(), // eindeutige ID
+    datum: new Date().toLocaleString(),
+    gewinn, steuer, reserve, netto
+  };
+  trades.push(trade);
+  localStorage.setItem("tradeHistory", JSON.stringify(trades));
+  updateTradeTable();
+}
+
+// ❌ Einzelnen Trade löschen
+function loescheTrade(id) {
+  trades = trades.filter(t => t.id !== id);
+  localStorage.setItem("tradeHistory", JSON.stringify(trades));
+  updateTradeTable();
+}
+
+// ❌ Alle Trades löschen
+function loescheAlleTrades() {
+  if (!confirm("⚠️ Wirklich alle gespeicherten Trades löschen?")) return;
+  trades = [];
+  localStorage.removeItem("tradeHistory");
+  updateTradeTable();
+}
+
+// 📊 Tabelle rendern
+function updateTradeTable() {
+  const tableDiv = document.getElementById("tradeTable");
+  if (!tableDiv) return;
+
+  if (trades.length === 0) {
+    tableDiv.innerHTML = "Noch keine Trades gespeichert.";
+    return;
+  }
+
+  let rows = trades.map(t => `
+    <tr>
+      <td>${t.datum}</td>
+      <td>${t.gewinn.toFixed(2)} €</td>
+      <td>${t.steuer.toFixed(2)} €</td>
+      <td>${t.reserve.toFixed(2)} €</td>
+      <td>${t.netto.toFixed(2)} €</td>
+      <td>
+        <button onclick="loescheTrade(${t.id})" class="delete-btn">🗑️</button>
+      </td>
+    </tr>`).join("");
+
+  const sumGewinn = trades.reduce((a, t) => a + t.gewinn, 0);
+  const sumSteuer = trades.reduce((a, t) => a + t.steuer, 0);
+  const sumReserve = trades.reduce((a, t) => a + t.reserve, 0);
+  const sumNetto = trades.reduce((a, t) => a + t.netto, 0);
+
+  tableDiv.innerHTML = `
+    <table class="trade-table">
+      <thead>
+        <tr>
+          <th>Datum</th><th>Gewinn</th><th>Steuer</th><th>Reserve</th><th>Netto</th><th>Aktion</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+        <tr class="sum-row">
+          <td>Σ Summe</td>
+          <td>${sumGewinn.toFixed(2)} €</td>
+          <td>${sumSteuer.toFixed(2)} €</td>
+          <td>${sumReserve.toFixed(2)} €</td>
+          <td>${sumNetto.toFixed(2)} €</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <button onclick="loescheAlleTrades()" class="delete-all-btn">❌ Alle löschen</button>
+  `;
+}
+
+
+// 👉 Beim Laden alte Tabelle laden
+window.addEventListener("DOMContentLoaded", updateTradeTable);
+
+
 
 // 🧮 Netto-Berechnung + Entnahmeprüfung
 function berechneNettoPlan() {
@@ -88,14 +177,14 @@ function berechneNettoPlan() {
   const differenz = entnommen - netto;
 
   let output = `
-    📦 Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>
-    🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
+    📦 Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>
+    🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
   `;
 
   if (differenz > 0) {
     output += `
-      ⚠️ Du hast <strong>${differenz.toFixed(2)} €</strong> zu viel entnommen.<br>
-      💡 Empfehlung: Beim nächsten Gewinn mindestens <strong>${differenz.toFixed(2)} €</strong> zurücklegen.
+      ⚠️ Du hast <strong>${differenz.toFixed(2)} €</strong> zu viel entnommen.<br>
+      💡 Empfehlung: Beim nächsten Gewinn mindestens <strong>${differenz.toFixed(2)} €</strong> zurücklegen.
     `;
     ausgabe.style.color = "#ffaa00";
   } else {
@@ -111,32 +200,6 @@ function berechneNettoPlan() {
     timestamp: new Date().toISOString()
   }));
 }
-let activeCalcTab = null;
-
-function switchCalcTab(tab) {
-  const targetId = "calc-" + tab;
-  const target = document.getElementById(targetId);
-  const button = document.getElementById("btn-calc-" + tab);
-
-  // Sichtbarkeit prüfen
-  const isOpen = target.style.display === "block";
-
-  // Alles schließen
-  document.querySelectorAll(".calc-box").forEach(el => el.style.display = "none");
-  document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
-
-  // Wenn nicht offen → öffnen
-  if (!isOpen) {
-    target.style.display = "block";
-    button.classList.add("active");
-    activeCalcTab = tab;
-  } else {
-    activeCalcTab = null; // bewusst schließen
-  }
-}
-
-
-
 
 // 🧹 Beim Laden: Felder zurücksetzen
 window.addEventListener("DOMContentLoaded", () => {
