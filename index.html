@@ -543,7 +543,8 @@
     <input type="number" id="lotTo" step="0.01">
 
     <button onclick="calculateMaxPositions()">📊 Berechnen</button>
-    <div id="maxposResults" style="margin-top:10px; font-weight:bold;"></div>
+    <div id="maxposResults" class="maxpos-box"></div>
+
 
     <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
   </div>
@@ -886,9 +887,15 @@
 <script src="scripts/buttons.js"></script>
 <script src="scripts/screen.js"></script>
 <script src="scripts/background-session.js"></script>
+
+<!-- ✅ Erst die Daten -->
 <script src="scripts/pairsData.js"></script>
+
+<!-- ✅ Dann die Rechner -->
 <script src="scripts/position.js"></script>
 <script src="scripts/Piprechner.js"></script>
+
+<!-- Rest -->
 <script src="scripts/dawn.js"></script>
 <script src="scripts/tax.js"></script>
 <script src="imageStorage.js"></script>
@@ -898,6 +905,7 @@
 <script src="scripts/pwa.js"></script>
 <script src="scripts/rules.js"></script>
 <script type="module" src="pocketbase-init.js"></script>
+
 
 
 </body>
