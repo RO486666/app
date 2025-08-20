@@ -19,7 +19,17 @@ sessionText.addEventListener("click", () => {
 
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
+  const riskBox = document.getElementById("positionSizeResult");
+  const maxposBox = document.querySelector(".maxpos-box");
   if (!el) return;
+
+  const sessionColors = {
+    "London": "#ffd700",
+    "New York": "#ff3333",
+    "Tokyo": "#00aaff",
+    "Sydney": "#9c27b0",
+    "Crypto": "#00ffcc"
+  };
 
   // 🔹 Wenn Crypto → spezieller Gradient statt einzelner Farbe
   if (activeSessionName === "Crypto") {
@@ -37,8 +47,17 @@ function updateSessionTextStyle(activeSessionName) {
     el.style.animation = "cryptoBarShift 8s linear infinite";
     el.style.webkitBackgroundClip = "text";
     el.style.webkitTextFillColor = "transparent";
-
     el.classList.add("crypto-weekend");
+
+    if (riskBox) {
+      riskBox.className = "";
+      riskBox.classList.add("session-crypto");
+    }
+    if (maxposBox) {
+      maxposBox.style.setProperty("--session-color", "#00ffcc");
+      maxposBox.style.setProperty("--session-gradient", "linear-gradient(135deg, #00ffcc, #111)");
+    }
+
     return; // ✅ Rest überspringen
   }
 
@@ -52,7 +71,19 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-text-shadow1", `${color}66`);
   el.style.setProperty("--session-text-shadow2", `${color}33`);
   el.classList.remove("crypto-weekend");
+
+  if (riskBox) {
+    riskBox.className = "";
+    riskBox.classList.add("session-" + activeSessionName.toLowerCase().replace(/\s+/g, ""));
+  }
+
+  if (maxposBox) {
+    maxposBox.style.setProperty("--session-color", color);
+    maxposBox.style.setProperty("--session-gradient", `linear-gradient(135deg, ${color}, #111)`);
+  }
 }
+
+
 
 
 
