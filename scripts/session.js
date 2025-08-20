@@ -20,7 +20,8 @@ sessionText.addEventListener("click", () => {
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
   const riskBox = document.getElementById("positionSizeResult");
-  const maxposBox = document.querySelector(".maxpos-box");
+  const maxposBox = document.querySelector("#maxposResults");
+  const pipBox = document.getElementById("pipResult");
   if (!el) return;
 
   const sessionColors = {
@@ -30,6 +31,15 @@ function updateSessionTextStyle(activeSessionName) {
     "Sydney": "#9c27b0",
     "Crypto": "#00ffcc"
   };
+
+  // Hilfsfunktion → Box-Klassen sauber setzen
+  function applySessionClass(box, sessionClass) {
+    if (!box) return;
+    // alte Session-Klassen erst entfernen
+    box.classList.remove("session-london","session-newyork","session-tokyo","session-sydney","session-crypto");
+    // Basis-Klasse immer behalten + neue Session setzen
+    box.classList.add("result-box", sessionClass);
+  }
 
   // 🔹 Wenn Crypto → spezieller Gradient statt einzelner Farbe
   if (activeSessionName === "Crypto") {
@@ -49,15 +59,9 @@ function updateSessionTextStyle(activeSessionName) {
     el.style.webkitTextFillColor = "transparent";
     el.classList.add("crypto-weekend");
 
-    if (riskBox) {
-      riskBox.className = "";
-      riskBox.classList.add("session-crypto");
-    }
-    if (maxposBox) {
-      maxposBox.style.setProperty("--session-color", "#00ffcc");
-      maxposBox.style.setProperty("--session-gradient", "linear-gradient(135deg, #00ffcc, #111)");
-    }
-
+    applySessionClass(riskBox, "session-crypto");
+    applySessionClass(maxposBox, "session-crypto");
+    applySessionClass(pipBox, "session-crypto");
     return; // ✅ Rest überspringen
   }
 
@@ -72,16 +76,13 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-text-shadow2", `${color}33`);
   el.classList.remove("crypto-weekend");
 
-  if (riskBox) {
-    riskBox.className = "";
-    riskBox.classList.add("session-" + activeSessionName.toLowerCase().replace(/\s+/g, ""));
-  }
-
-  if (maxposBox) {
-    maxposBox.style.setProperty("--session-color", color);
-    maxposBox.style.setProperty("--session-gradient", `linear-gradient(135deg, ${color}, #111)`);
-  }
+  const sessionClass = "session-" + activeSessionName.toLowerCase().replace(/\s+/g, "");
+  applySessionClass(riskBox, sessionClass);
+  applySessionClass(maxposBox, sessionClass);
+  applySessionClass(pipBox, sessionClass);
 }
+
+
 
 
 
