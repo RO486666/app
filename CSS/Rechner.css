@@ -64,16 +64,6 @@
   background: linear-gradient(90deg, #555, #777);
 }
 
-/* Ausgabe-Box */
-#steuerAusgabe, #nettoAusgabe {
-  margin-top: 15px;
-  padding: 12px;
-  background: #111;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.5em;
-  box-shadow: inset 0 0 5px rgba(0,255,100,0.2);
-}
 
 /* Tabelle für Trades */
 .trade-table {
@@ -356,117 +346,110 @@
   font-weight: bold;
 }
 
+/* Basis für jede Risiko-Zeile */
+.risk-step {
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #fff !important;             /* Alles weiß */
+  backdrop-filter: blur(14px);        /* Glas-Effekt */
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(20, 20, 20, 0.55); /* dunkler, edler */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-shadow: 0 0 6px rgba(0,0,0,0.6); /* leichte Tiefe */
+  transition: all 0.3s ease;
+}
 
-/* 🎨 Ausgabe-Style für Positionsgröße */
-#positionSizeResult {
+/* Hover Effekt für Extra iOS-Feeling */
+.risk-step:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255,255,255,0.15);
+}
+
+/* Grüntöne */
+.risk-step.low1 { background: rgba(0, 80, 0, 0.55); }
+.risk-step.low2 { background: rgba(0, 130, 0, 0.55); }
+
+/* Gelb/Orange */
+.risk-step.mid1 { background: rgba(170, 120, 0, 0.55); }
+.risk-step.mid2 { background: rgba(200, 100, 0, 0.55); }
+
+/* Rot */
+.risk-step.high    { background: rgba(170, 0, 0, 0.55); }
+.risk-step.extreme { background: rgba(110, 0, 0, 0.6); }
+
+
+
+
+
+/* 🎨 Gemeinsame Basis für alle Ergebnisboxen */
+.result-box,
+.maxpos-box {
+  display: none; /* Start unsichtbar */
   margin-top: 15px;
   padding: 14px 18px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #1c1c1c, #262626);
-  /* neutrales Shadow, kein Grün mehr */
-  box-shadow: inset 0 0 6px rgba(255,255,255,0.05),
-              0 0 10px rgba(0,0,0,0.4);
+  background: var(--session-gradient, linear-gradient(135deg, #1c1c1c, #262626));
+  box-shadow:
+    inset 0 0 6px rgba(255,255,255,0.05),
+    0 0 10px rgba(0,0,0,0.4),
+    0 0 12px var(--session-box-shadow1, transparent),
+    0 0 22px var(--session-box-shadow2, transparent),
+    0 0 32px var(--session-box-shadow3, transparent);
   color: #eee;
   font-size: 14px;
   line-height: 1.6;
   font-weight: normal;
+  text-align: left;
+  transition: all 0.3s ease;
   animation: riskPulse 3s ease-in-out infinite;
-  text-align: left;
-  transition: all 0.3s ease;
-}
-
-/* Risiko-Texte */
-#positionSizeResult strong {
-  font-weight: bold;
-}
-
-#positionSizeResult .risk-low {
-  color: #00ff99;
-  text-shadow: 0 0 4px rgba(0,255,120,0.6);
-}
-#positionSizeResult .risk-mid {
-  color: #ffd700;
-  text-shadow: 0 0 4px rgba(255,215,0,0.6);
-}
-#positionSizeResult .risk-high {
-  color: #ff8800;
-  text-shadow: 0 0 4px rgba(255,136,0,0.6);
-}
-#positionSizeResult .risk-extreme {
-  color: #ff0033;
-  font-weight: bold;
-  text-shadow: 0 0 6px rgba(255,0,0,0.8), 0 0 12px rgba(255,0,0,0.5);
-}
-
-/* Session-Farben für Risiko-Box */
-#positionSizeResult.session-sydney {
-  box-shadow: inset 0 0 6px rgba(51,136,255,0.5),
-              0 0 14px rgba(51,136,255,0.6);
-}
-#positionSizeResult.session-tokyo {
-  box-shadow: inset 0 0 6px rgba(0,170,255,0.5),
-              0 0 14px rgba(0,170,255,0.6);
-}
-#positionSizeResult.session-london {
-  box-shadow: inset 0 0 6px rgba(255,215,0,0.5),
-              0 0 14px rgba(255,215,0,0.7);
-}
-#positionSizeResult.session-newyork {
-  box-shadow: inset 0 0 6px rgba(255,69,0,0.6),
-              0 0 14px rgba(255,69,0,0.8);
-}
-#positionSizeResult.session-crypto {
-  box-shadow: inset 0 0 8px rgba(153,0,255,0.6),
-              0 0 16px rgba(153,0,255,0.8);
-}
-
-
-
-/* 🎨 Ausgabe-Style für Pip-Rechner */
-#pipResult {
-  margin-top: 15px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1c1c1c, #262626);
-  box-shadow: inset 0 0 6px rgba(255,255,255,0.05),
-              0 0 10px rgba(0,0,0,0.4);
-  color: #eee;
-  font-size: 14px;
-  line-height: 1.6;
-  text-align: left;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
 /* ✨ Wichtige Zahlen */
-#pipResult strong {
+.result-box strong,
+.maxpos-box strong {
   font-weight: bold;
   color: var(--session-color, #00e0ff);
   text-shadow: 0 0 6px var(--session-color, #00e0ff);
 }
 
-/* ✅ Risiko-Farben (falls Risiko angezeigt wird) */
-#pipResult .risk-low { color: #00ff99; text-shadow: 0 0 6px rgba(0,255,120,0.7); font-weight: bold; }
-#pipResult .risk-mid { color: #ffd700; text-shadow: 0 0 6px rgba(255,215,0,0.7); font-weight: bold; }
-#pipResult .risk-high{ color: #ff8800; text-shadow: 0 0 8px rgba(255,136,0,0.8); font-weight: bold; }
-#pipResult .risk-extreme {
+/* ✅ Risiko-Farben */
+.result-box .risk-low,
+.maxpos-box .risk-low {
+  color: #00ff99;
+  text-shadow: 0 0 6px rgba(0,255,120,0.7);
+  font-weight: bold;
+}
+.result-box .risk-mid,
+.maxpos-box .risk-mid {
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255,215,0,0.7);
+  font-weight: bold;
+}
+.result-box .risk-high,
+.maxpos-box .risk-high {
+  color: #ff8800;
+  text-shadow: 0 0 8px rgba(255,136,0,0.8);
+  font-weight: bold;
+}
+.result-box .risk-extreme,
+.maxpos-box .risk-extreme {
   color: #ff0033;
   font-weight: bold;
   text-shadow: 0 0 10px rgba(255,0,0,0.9), 0 0 18px rgba(255,0,0,0.7);
   animation: pulseExtreme 1.2s infinite alternate;
 }
 
-/* 🌍 Session-Farben für Pip-Box */
-#pipResult.session-sydney  { box-shadow: inset 0 0 6px rgba(51,136,255,0.5), 0 0 14px rgba(51,136,255,0.6); }
-#pipResult.session-tokyo   { box-shadow: inset 0 0 6px rgba(0,170,255,0.5), 0 0 14px rgba(0,170,255,0.6); }
-#pipResult.session-london  { box-shadow: inset 0 0 6px rgba(255,215,0,0.5), 0 0 14px rgba(255,215,0,0.7); }
-#pipResult.session-newyork { box-shadow: inset 0 0 6px rgba(255,69,0,0.6), 0 0 14px rgba(255,69,0,0.8); }
-#pipResult.session-crypto  { box-shadow: inset 0 0 8px rgba(153,0,255,0.6), 0 0 16px rgba(153,0,255,0.8); }
+/* 🌍 Fallback Session-Klassen (falls Variablen mal nicht gesetzt sind) */
+.result-box.session-sydney  { box-shadow: inset 0 0 6px rgba(51,136,255,0.5), 0 0 14px rgba(51,136,255,0.6); }
+.result-box.session-tokyo   { box-shadow: inset 0 0 6px rgba(0,170,255,0.5), 0 0 14px rgba(0,170,255,0.6); }
+.result-box.session-london  { box-shadow: inset 0 0 6px rgba(255,215,0,0.5), 0 0 14px rgba(255,215,0,0.7); }
+.result-box.session-newyork { box-shadow: inset 0 0 6px rgba(255,69,0,0.6), 0 0 14px rgba(255,69,0,0.8); }
+.result-box.session-crypto  { box-shadow: inset 0 0 8px rgba(153,0,255,0.6), 0 0 16px rgba(153,0,255,0.8); }
 
-
-
-
-
-
-
+/* 💡 Extra Effekt für Extremrisiko */
+@keyframes pulseExtreme {
+  from { text-shadow: 0 0 6px rgba(255,0,0,0.8), 0 0 12px rgba(255,0,0,0.5); }
+  to   { text-shadow: 0 0 10px rgba(255,0,0,1), 0 0 20px rgba(255,0,0,0.7); }
+}
