@@ -507,15 +507,15 @@
     <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
     <input type="number" id="stopLossPips" placeholder="z. B. 20">
 
-<label for="symbolSelector">💱 Trading-Paar:</label>
-<select id="symbolSelector"></select>
-
+    <label for="symbolSelector">💱 Trading-Paar:</label>
+    <select id="symbolSelector"></select>
 
     <label for="leverage">⚙️ Hebel:</label>
     <input type="number" id="leverage" value="500" min="1">
 
     <button onclick="calculatePositionSize()">📐 Berechnen</button>
-    <p id="positionSizeResult" style="font-weight:bold; margin-top:10px;"></p>
+    <!-- Ergebnis-Box -->
+    <div id="positionSizeResult" class="result-box"></div>
 
     <!-- Umschalter -->
     <button onclick="switchPosMode('max')" style="margin-top:15px; width:100%;">🔁 Zu Max-Positions-Rechner</button>
@@ -542,38 +542,42 @@
     <label>📏 Lotgröße bis:</label>
     <input type="number" id="lotTo" step="0.01">
 
-    <button onclick="calculateMaxPositions()">📊 Berechnen</button>
-    <div id="maxposResults" class="maxpos-box"></div>
-
+    <button onclick="calculateMaxPositions()">📏 Berechnen</button>
+    <!-- Ergebnis-Box -->
+    <div id="maxposResults" class="result-box"></div>
 
     <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
   </div>
 
-<!-- Pip-Rechner -->
-<div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
-  <label>💱 Symbol:</label>
-<select id="pipSymbolSelector"></select>
+  <!-- Pip-Rechner -->
+  <div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
+    <label>💱 Symbol:</label>
+    <select id="pipSymbolSelector"></select>
 
-<label>📦 Lots:</label>
-<input type="number" id="lots" value="0.01" step="0.01">
+    <label>📦 Lots:</label>
+    <input type="number" id="lots" value="0.01" step="0.01">
 
-<label>🛑 Stop-Loss (Pips):</label>
-<input type="number" id="slPips" placeholder="z. B. 20">
+    <label>🛑 Stop-Loss (Pips):</label>
+    <input type="number" id="slPips" placeholder="z. B. 20">
 
-<label>🎯 TP1 (Pips):</label>
-<input type="number" id="tp1Pips" placeholder="z. B. 50">
+    <label>🎯 TP1 (Pips):</label>
+    <input type="number" id="tp1Pips" placeholder="z. B. 50">
 
-<label>🎯 TP2 (Pips):</label>
-<input type="number" id="tp2Pips" placeholder="z. B. 80">
+    <label>🎯 TP2 (Pips):</label>
+    <input type="number" id="tp2Pips" placeholder="z. B. 80">
 
-<label>🎯 TP3 (Pips):</label>
-<input type="number" id="tp3Pips" placeholder="z. B. 100">
+    <label>🎯 TP3 (Pips):</label>
+    <input type="number" id="tp3Pips" placeholder="z. B. 100">
 
-<button onclick="calculatePipsByLots()">📏 Berechnen</button>
-<p id="pipResult"></p>
+    <button onclick="calculatePipsByLots()">📏 Berechnen</button>
+    <!-- Ergebnis-Box -->
+    <div id="pipResult" class="result-box"></div>
 
-  <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
+    <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
+  </div>
+
 </div>
+
 
 
 
