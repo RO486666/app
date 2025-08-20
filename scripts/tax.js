@@ -32,9 +32,13 @@ function berechneSteuern() {
   const mitReserve = document.getElementById("reserveZehn").checked;
   const ausgabe = document.getElementById("steuerAusgabe");
 
+  // 👉 Einheitliches Styling aktivieren
+  ausgabe.className = "result-box";
+  ausgabe.style.display = "block";
+
   if (tradingGewinn <= 0) {
     ausgabe.innerHTML = "❌ Bitte Gewinn eingeben!";
-    ausgabe.style.color = "#f44";
+    ausgabe.classList.add("risk-extreme");
     return;
   }
 
@@ -179,9 +183,13 @@ function berechneNettoPlan() {
   const entnommen = parseFloat(document.getElementById("nettoEntnommen").value);
   const ausgabe = document.getElementById("nettoAusgabe");
 
+  // 👉 Einheitliches Styling aktivieren
+  ausgabe.className = "result-box";
+  ausgabe.style.display = "block";
+
   if ([brutto, steuer, entnommen].some(v => isNaN(v))) {
     ausgabe.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
-    ausgabe.style.color = "#f44";
+    ausgabe.classList.add("risk-extreme");
     return;
   }
 
@@ -195,15 +203,23 @@ function berechneNettoPlan() {
     🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
   `;
 
-  if (differenz > 0) {
-    output += `
+   if (differenz > 0) {
+    ausgabe.innerHTML = `
+      📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
+      💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
+      🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
       ⚠️ Du hast <strong>${differenz.toFixed(2)} €</strong> zu viel entnommen.<br>
       💡 Empfehlung: Beim nächsten Gewinn mindestens <strong>${differenz.toFixed(2)} €</strong> zurücklegen.
     `;
-    ausgabe.style.color = "#ffaa00";
+    ausgabe.classList.add("risk-high");
   } else {
-    output += `✅ Entnahme im Rahmen. Kein Ausgleich nötig.`;
-    ausgabe.style.color = "#0f0";
+    ausgabe.innerHTML = `
+      📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
+      💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
+      🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
+      ✅ Entnahme im Rahmen. Kein Ausgleich nötig.
+    `;
+    ausgabe.classList.add("risk-low");
   }
 
   ausgabe.innerHTML = output;
