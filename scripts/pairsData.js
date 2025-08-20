@@ -118,6 +118,11 @@ function populateSymbolDropdown(selectId) {
   });
 }
 
+function getCurrentPrice(symbol) {
+  return livePrices[symbol] || null;
+}
+
+
 // ✅ Beim Laden beide Dropdowns mit Kategorien befüllen
 document.addEventListener("DOMContentLoaded", () => {
   populateSymbolDropdown("symbolSelector");     // Positionsgrößenrechner
