@@ -8,7 +8,6 @@ function calculatePositionSize() {
   const manualLots = parseFloat(document.getElementById("manualLots")?.value);
   const resultEl = document.getElementById("positionSizeResult");
 
- 
   const pipValueStandard = pipValues[symbol];
   const basis = basisWerte[symbol] || 100000;
 
@@ -24,9 +23,9 @@ function calculatePositionSize() {
 
   const riskAmount = accountSize * (riskPercent / 100);
   let baseLot = riskAmount / (stopLossPips * pipValueStandard);
-  const price = getCurrentPrice(symbol); // aktueller Marktpreis vom Symbol
-const contractSize = basisWerte[symbol]; // Lot-Größe (z.B. 100000 bei Forex, 1 bei BTC)
-const maxLots = (accountSize * leverage) / (price * contractSize);
+  const price = getCurrentPrice(symbol);
+  const contractSize = basisWerte[symbol];
+  const maxLots = (accountSize * leverage) / (price * contractSize);
 
   let output = "";
 
@@ -49,25 +48,38 @@ const maxLots = (accountSize * leverage) / (price * contractSize);
   const risikoEuroEmpfohlen = stopLossPips * pipValueActual;
   const risikoProzentEmpfohlen = (risikoEuroEmpfohlen / accountSize) * 100;
 
+  // 🔥 Risiko-Kommentar mit CSS-Klassen
   function getRiskComment(riskPercent) {
-    if (riskPercent < 1) return "✅ Sehr konservativ";
-    if (riskPercent < 2) return "🟢 Konservativ";
-    if (riskPercent < 5) return "🟡 Neutral";
-    if (riskPercent < 10) return "🟠 Erhöhtes Risiko";
-    if (riskPercent < 20) return "🔴 Sehr hohes Risiko";
-    return "🔥 Extrem riskant – nur für Profis!";
+    if (riskPercent < 1) return "<span class='risk-low'>✅ Sehr konservativ</span>";
+    if (riskPercent < 2) return "<span class='risk-low'>🟢 Konservativ</span>";
+    if (riskPercent < 5) return "<span class='risk-mid'>🟡 Neutral</span>";
+    if (riskPercent < 10) return "<span class='risk-high'>🟠 Erhöhtes Risiko</span>";
+    if (riskPercent < 20) return "<span class='risk-high'>🔴 Sehr hohes Risiko</span>";
+    return "<span class='risk-extreme'>🔥 Extrem riskant – nur für Profis!</span>";
   }
 
   output += `<br>${getRiskComment(risikoProzentEmpfohlen)}<br><br>`;
 
+  // 🔥 Titel + Value farbig machen
+  let risikoClass = "risk-low";
   let risikoTitel = "📉 Dein Risiko:";
-  if (risikoProzentEmpfohlen >= 10) risikoTitel = "⚠️ Dein Risiko (nicht empfohlen):";
-  else if (risikoProzentEmpfohlen >= 5) risikoTitel = "🟠 Dein Risiko (grenzwertig):";
-  else if (risikoProzentEmpfohlen >= 2) risikoTitel = "🟡 Dein Risiko (moderat):";
-  else risikoTitel = "✅ Dein Risiko (empfohlen):";
+  if (risikoProzentEmpfohlen >= 10) {
+    risikoClass = "risk-extreme";
+    risikoTitel = "⚠️ Dein Risiko (nicht empfohlen):";
+  } else if (risikoProzentEmpfohlen >= 5) {
+    risikoClass = "risk-high";
+    risikoTitel = "🟠 Dein Risiko (grenzwertig):";
+  } else if (risikoProzentEmpfohlen >= 2) {
+    risikoClass = "risk-mid";
+    risikoTitel = "🟡 Dein Risiko (moderat):";
+  } else {
+    risikoClass = "risk-low";
+    risikoTitel = "✅ Dein Risiko (empfohlen):";
+  }
 
-  output += `<strong>${risikoTitel}</strong><br>`;
-  output += `💸 <strong>${risikoEuroEmpfohlen.toFixed(2)} €</strong> (${risikoProzentEmpfohlen.toFixed(2)} % von ${accountSize} €)<br><br>`;
+  output += `<strong class="${risikoClass}">${risikoTitel}</strong><br>`;
+  output += `💸 <span class="${risikoClass}">${risikoEuroEmpfohlen.toFixed(2)} €</span> 
+             (${risikoProzentEmpfohlen.toFixed(2)} % von ${accountSize} €)<br><br>`;
 
   const steps = [1, 2, 3, 4, 5];
   output += `✅ Empfohlen: <strong>${(baseLot * steps[0]).toFixed(2)}</strong> Lots<br>`;
@@ -78,18 +90,24 @@ const maxLots = (accountSize * leverage) / (price * contractSize);
   output += `⚠️ Mehr als ${(baseLot * steps[4]).toFixed(2)} Lots = über deinem Risiko-Limit<br><hr>`;
   output += `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br>`;
 
+  // 🔧 Manuelle Lots berücksichtigen
   if (!isNaN(manualLots) && manualLots > 0) {
     const pipValueManuell = pipValueStandard * manualLots;
     const risikoEuroManuell = stopLossPips * pipValueManuell;
     const risikoProzentManuell = (risikoEuroManuell / accountSize) * 100;
 
     output += `<hr><strong>📉 Risiko bei manueller Lotgröße (${manualLots}):</strong><br>`;
-    output += `💸 <strong>${risikoEuroManuell.toFixed(2)} €</strong> (${risikoProzentManuell.toFixed(2)} % von ${accountSize} €)<br>`;
+    output += `💸 <span class="${risikoProzentManuell >= 10 ? "risk-extreme" :
+                               risikoProzentManuell >= 5 ? "risk-high" :
+                               risikoProzentManuell >= 2 ? "risk-mid" : "risk-low"}">
+                 ${risikoEuroManuell.toFixed(2)} €</span> 
+                 (${risikoProzentManuell.toFixed(2)} % von ${accountSize} €)<br>`;
   }
 
   resultEl.innerHTML = output;
-  resultEl.style.color = "#0f0";
+  resultEl.style.color = "#eee"; // Standardfarbe, Details kommen über CSS-Klassen
 }
+
 
 function switchCalcTab(tab) {
   document.querySelectorAll(".calc-box").forEach(box => {
@@ -123,24 +141,58 @@ function calculateMaxPositions() {
   // Maximale Lots nach Margin-Bedingung
   const maxLots = (accountSize * leverage) / basis;
 
-  let html = `📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong><br><br>`;
+  let html = `<div class="maxpos-box">📏 Maximal erlaubt bei ${leverage}x Hebel: 
+                <strong>${maxLots.toFixed(2)} Lots</strong><br><br>`;
 
   [lotFrom, lotTo].forEach(lot => {
     const maxPos = Math.floor(maxLots / lot);
     const risikoEuro = stopLossPips * (pipValueStandard * lot);
     const risikoProzent = (risikoEuro / accountSize) * 100;
-    const risikoText = getRiskComment(risikoProzent);
+
+    // 🎨 Risiko-Klasse wählen
+    const riskClass =
+      risikoProzent >= 20 ? "risk-extreme" :
+      risikoProzent >= 10 ? "risk-high" :
+      risikoProzent >= 5  ? "risk-mid" :
+                            "risk-low";
 
     html += `Lotgröße ${lot.toFixed(2)} → max. ${maxPos} Positionen 
              <input type="number" min="0" max="${maxPos}" 
                     onchange="updateTotalRisk(${risikoEuro}, ${accountSize})" 
                     style="width:60px; margin-left:10px;"> 
-             <br>📉 Risiko pro Position: ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %) – ${risikoText}<br><br>`;
+             <br>📉 Risiko pro Position: 
+             <span class="${riskClass}">
+               ${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %)
+             </span><br><br>`;
   });
 
-  html += `<div id="totalRiskDisplay" style="margin-top:10px;"></div>`;
+  html += `<div id="totalRiskDisplay" style="margin-top:10px;"></div></div>`;
   document.getElementById("maxposResults").innerHTML = html;
 }
+
+function updateTotalRisk(riskPerPos, accountSize) {
+  const inputs = document.querySelectorAll('#maxposResults input[type="number"]');
+  let totalRisk = 0;
+  inputs.forEach(inp => {
+    const val = parseInt(inp.value) || 0;
+    totalRisk += val * riskPerPos;
+  });
+  const totalRiskPercent = (totalRisk / accountSize) * 100;
+
+  // 🎨 Risiko-Klasse wählen
+  const riskClass =
+    totalRiskPercent >= 20 ? "risk-extreme" :
+    totalRiskPercent >= 10 ? "risk-high" :
+    totalRiskPercent >= 5  ? "risk-mid" :
+                             "risk-low";
+
+  document.getElementById("totalRiskDisplay").innerHTML =
+    `📉 Risiko gesamt für deine Auswahl: 
+     <span class="${riskClass}">
+       ${totalRisk.toFixed(2)} € (${totalRiskPercent.toFixed(2)} %)
+     </span>`;
+}
+
 
 function updateTotalRisk(riskPerPos, accountSize) {
   const inputs = document.querySelectorAll('#maxposResults input[type="number"]');
