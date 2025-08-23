@@ -32,7 +32,6 @@ function berechneSteuern() {
   const mitReserve = document.getElementById("reserveZehn").checked;
   const ausgabe = document.getElementById("steuerAusgabe");
 
-  // 👉 Einheitliches Styling aktivieren
   ausgabe.className = "result-box";
   ausgabe.style.display = "block";
 
@@ -42,6 +41,7 @@ function berechneSteuern() {
     return;
   }
 
+  // 👉 Steuersatz nach Einkommen
   const gesamtEinkommen = jahresEinkommen + tradingGewinn;
   let estSatz = 0.25;
   if (gesamtEinkommen <= 11000) estSatz = 0.0;
@@ -49,26 +49,27 @@ function berechneSteuern() {
   else if (gesamtEinkommen <= 277000) estSatz = 0.42;
   else estSatz = 0.45;
 
+  // 👉 Steuerberechnung
   let est = tradingGewinn * estSatz;
   const kirche = mitKirche ? est * 0.09 : 0;
   const soli = mitSoli ? est * 0.055 : 0;
   let steuerlast = est + kirche + soli;
-  const vorauszahlung = steuerlast / 4;
 
+  // 👉 Vorauszahlung (komplett statt 1 Quartal)
   let reserve = 0;
-  if (mitReserve) reserve = vorauszahlung;
+  if (mitReserve) reserve = steuerlast;  
 
-  const netto = tradingGewinn - steuerlast - reserve;
-  
-    // 👉 Automatisch Werte in Netto-Planer übertragen
+  const gesamtZuruecklegen = steuerlast + reserve;
+  const netto = tradingGewinn - gesamtZuruecklegen;
+
+  // Auto-Übertragung in Netto-Planer
   document.getElementById("nettoBrutto").value = tradingGewinn.toFixed(2);
   document.getElementById("nettoSteuer").value = steuerlast.toFixed(2);
-  document.getElementById("nettoReserve").value = reserve.toFixed(2); // Reserve extra Feld
-  document.getElementById("nettoEntnommen").value = ""; // User trägt Entnahme ein
-  document.getElementById("nettoAusgabe").innerHTML = ""; // Reset Ausgabe
+  document.getElementById("nettoReserve").value = reserve.toFixed(2);
+  document.getElementById("nettoEntnommen").value = "";
+  document.getElementById("nettoAusgabe").innerHTML = "";
 
-
-  // Ergebnis + Speichern-Button
+  // 👉 Ausgabe
   ausgabe.innerHTML = `
     📈 <strong>Trading-Gewinn:</strong> ${tradingGewinn.toFixed(2)} €<br>
     💼 <strong>Jahreseinkommen (Job):</strong> ${jahresEinkommen.toFixed(2)} €<br>
@@ -77,10 +78,11 @@ function berechneSteuern() {
     💸 <strong>Steuer:</strong> ${est.toFixed(2)} €<br>
     ${mitKirche ? `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>` : ""}
     ${mitSoli ? `💣 Soli: ${soli.toFixed(2)} €<br>` : ""}
-    ${mitReserve ? `💥 Reserve (1 Quartal): ${reserve.toFixed(2)} €<br>` : ""}
-    <br>📦 <strong>Gesamt zurücklegen:</strong> ${(steuerlast + reserve).toFixed(2)} €<br>
+    ${mitReserve ? `💥 Vorauszahlung (komplett): ${reserve.toFixed(2)} €<br>` : ""}
+
+    <hr>
+    📦 <strong>Gesamt zurücklegen:</strong> ${gesamtZuruecklegen.toFixed(2)} €<br>
     💰 <strong>Verfügbarer Netto-Gewinn:</strong> ${netto.toFixed(2)} €<br><br>
-    🔮 <strong>Vorauszahlung pro Quartal:</strong> ${vorauszahlung.toFixed(2)} €<br><br>
 
     <button onclick='speichereTrade(${tradingGewinn}, ${steuerlast}, ${reserve}, ${netto})' 
       style="padding:10px 15px; border:none; border-radius:8px; background:#00aa44; color:#fff; font-weight:bold; cursor:pointer;">
@@ -89,7 +91,6 @@ function berechneSteuern() {
   `;
   ausgabe.style.color = "#0f0";
 
-  // Eingabefeld nach Berechnung zurücksetzen
   document.getElementById("gewinnBetrag").value = "";
 }
 
