@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="CSS/star.css" />
   <link rel="stylesheet" href="CSS/session.css" />
   <link rel="stylesheet" href="CSS/Rechner.css" />
+  <link rel="stylesheet" href="CSS/rules.css" />
 
   <!-- PWA / Manifest -->
   <link rel="manifest" href="manifest.json" />
@@ -211,132 +212,7 @@
       }
     }
 
-    /* ==========================================
-       📋 REGEL-TOGGLE & FIRE-LOOK BOX
-       ========================================== */
-    #ruleBox {
-      background: linear-gradient(135deg, #1a1a1a, #292929);
-      box-shadow: 0 0 8px rgba(0, 255, 153, 0.25);
-      border: 1px solid rgba(0, 255, 153, 0.3);
-      border-radius: 10px;
-      padding: 12px 18px;
-      color: #00ff99;
-      font-weight: bold;
-      transition: box-shadow 0.3s ease, transform 0.2s ease;
-      cursor: pointer;
-    }
-    #ruleBox:hover { box-shadow: 0 0 12px rgba(0, 255, 153, 0.4); }
-
-    .rules-fire-wrapper {
-      position: relative;
-      z-index: 0;
-      border-radius: 14px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-
-    #rulesBox {
-      background: linear-gradient(135deg, #1a0f0f, #2a1111);
-      border: 1px solid #cc3333;
-      color: #ff5555;
-      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
-      border-radius: 14px;
-      padding: 20px;
-      line-height: 1.6;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      position: relative;
-      z-index: 1;
-      animation: redPulse 2.4s ease-in-out infinite alternate,
-                 fieryGlow 3s ease-in-out infinite alternate;
-      box-shadow:
-        0 0 10px rgba(255, 50, 50, 0.3),
-        0 0 20px rgba(255, 30, 30, 0.2),
-        inset 0 0 10px rgba(255, 0, 0, 0.1);
-    }
-
-    @keyframes redPulse {
-      0%   { text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 2px rgba(255, 0, 0, 0.15); }
-      100% { text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 0 0 5px rgba(255, 60, 60, 0.25); }
-    }
-
-    @keyframes fieryGlow {
-      0% {
-        box-shadow:
-          0 0 10px rgba(255, 60, 0, 0.3),
-          0 0 18px rgba(255, 80, 0, 0.2),
-          inset 0 0 10px rgba(255, 0, 0, 0.1);
-      }
-      100% {
-        box-shadow:
-          0 0 16px rgba(255, 100, 0, 0.6),
-          0 0 32px rgba(255, 150, 0, 0.3),
-          inset 0 0 14px rgba(255, 50, 0, 0.25);
-      }
-    }
-
-    /* kleine, animierte Funken (optional) */
-    .fire-particles {
-      pointer-events: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 6px;
-      height: 6px;
-      z-index: 3;
-      background: radial-gradient(circle, rgba(255, 140, 0, 0.8) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: fireSparkOut 1.5s linear infinite;
-      transform: translate(-50%, -50%);
-    }
-
-    @keyframes fireSparkOut {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-200%, -200%) scale(0.4);
-        opacity: 0;
-      }
-    }
-
-    /* Listen & Typo im Rules-Box-Kontext */
-    #rulesBox ul, #rulesBox ol {
-      margin-left: 20px;
-      padding-left: 0;
-      list-style-position: inside;
-    }
-    #rulesBox li { padding-left: 8px; margin-bottom: 4px; }
-    #rulesBox strong {
-      display: inline-block;
-      margin-top: 10px;
-      color: #ff7777;
-      text-shadow: 1px 1px 1px #000, 0 0 4px rgba(255, 80, 80, 0.4);
-    }
-    #rulesBox hr {
-      border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      margin: 20px 0;
-    }
-    #rulesBox button {
-      background: linear-gradient(135deg, #550000, #770000);
-      color: white;
-      border: 1px solid #000;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
-      transition: all 0.25s ease;
-    }
-    #rulesBox button:hover {
-      background: #992222;
-      box-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
-    }
-
-
-
-
+    
 
 
     /* ==========================================
@@ -773,108 +649,230 @@
   <img id="lightboxImage" src="" alt="Full Screenshot" />
 </div>
 
-
-<!-- 📋 Toggle-Box für deine Trading-Regeln -->
+<!-- 📋 Toggle-Box -->
 <div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
   📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
 </div>
 
-<!-- 🔥 Regeln mit Fire-Animation -->
+<!-- 🔥 Regeln -->
 <div class="rules-fire-wrapper">
   <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
-    <strong>Rules Of Rules</strong><br><br>
+    <strong>📜 Rules of Rules – Deutsch</strong><br><br>
 
-    <!-- Seite 1 -->
-    <div id="rulePage1">
-      <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
+    <!-- 🔘 Umschalter -->
+    <div style="text-align:right; margin-bottom:15px;">
+      <button id="switchModeBtn" onclick="switchMode()">🔄 Zu Day-Trading Regeln wechseln</button>
+    </div>
 
-      <strong>AOI-Zone wählen:</strong><br>
-      Buy/Sell nur bei Weekly oder Daily AOI<br>
-      → Alle Timeframes darunter dienen nur zur Entry-Bestätigung.<br><br>
+    <!-- ========== SWING ========== -->
+    <div id="swingRules">
+       <!-- Seite 1 -->
+    <div id="rulePageSwing1">
+      <strong>Grundregeln für Entry & Struktur</strong><br><br>
 
-      <strong>Kein Entry ohne Rejection von:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Strukturpunkt</li>
-        <li>EMA</li>
-        <li>AOI</li>
-        <li>Runder psychologischer Level</li>
-        <li>Weekly Rejection Candle (Weekly/Daily sichtbar)</li>
+      <ul style="margin-left:20px;">
+        <strong>AOI-Zone wählen:</strong><br>
+          Ein Entry (Kauf/Verkauf) darf nur an einer Weekly- oder Daily-AOI stattfinden.<br>
+          → Alle Timeframes darunter (H4 und kleiner) dienen ausschließlich zur Entry-Bestätigung.
+        </li><br>
+
+        <strong>Kein Entry ohne Rejection von:</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Strukturpunkt</li>
+            <li>EMA</li>
+            <li>AOI</li>
+            <li>Runder psychologischer Level (00 / 50)</li>
+            <li>Weekly Rejection Candle (sichtbar im Weekly oder Daily)</li>
+          </ul>
+        <br>
+
+        <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Buy nur bei einem bestätigten Higher Low (HL) im 4H</li>
+            <li>Sell nur bei einem bestätigten Lower High (LH) im 4H</li>
+            <li>Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI (Support/Resistance)</li>
+          </ul>
+        <br>
+
+        <strong>Entry-Prozess nach HL/LH:</strong><br>
+          Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift (15M–1H) beobachtet und mit dem höheren TF abgeglichen werden.
+        <br>
+
+        <strong>Nach dem Struktur-Shift (15M, 30M, 1H):</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Suche nach einer Engulfing-Candle im 1H / 2H / 4H</li>
+            <li>Je höher der TF, desto stärker die Bestätigung</li>
+          </ul>
+        
       </ul><br>
 
-      <strong>Buy/Sell Entry-Bedingung:</strong>
-      <ul style="margin-left: 20px;">
-        <li>4H Higher Low (HL) für Buy</li>
-        <li>4H Lower High (LH) für Sell</li>
-        <li>Oder potenzieller HL/LH mit Engulfing an AOI</li>
-      </ul><br>
+      <strong>Stop-Loss & Take-Profit Regeln</strong><br><br>
+      <ul style="margin-left:20px; list-style:disc;">
+        <li><strong>Stop-Loss:</strong><br>
+          Der SL muss an dem Punkt gesetzt werden, an dem die Handelsidee vollständig ungültig wird.<br>
+          → Alternativ am Top/Bottom des Struktur-Shifts (15M, 30M, 1H), mit 5–7 Pips Sicherheitsabstand.
+        </li><br>
 
-      <strong>Entry-Prozess nach HL/LH:</strong><br>
-      Struktur-Shift 15M–1H abgleichen mit höherem TF.<br><br>
-
-      <strong>Nach Shift auf 15M, 30M, 1H:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Suche nach Engulfing Candle auf 1H / 2H / 4H</li>
-        <li>Je höher der TF → desto stärkere Bestätigung</li>
-      </ul><br>
-
-      <strong>⚠️ Stop-Loss-Regel:</strong><br>
-      SL immer an dem Punkt setzen, wo die Idee ungültig wird.<br><br>
-
-      <strong>🎯 Take-Profit-Regel:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Bei Weekly AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
-        <li>Bei Daily AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
+        <li><strong>Take-Profit:</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Wenn Entry an Weekly AOI → TP1 am Strukturpunkt (Kerzenkörper des HH/LL)</li>
+            <li>Wenn Entry an Daily AOI → TP1 am Strukturpunkt (Kerzenkörper des HH/LL)</li>
+          </ul>
+        </li>
       </ul>
     </div>
 
     <!-- Seite 2 -->
-    <div id="rulePage2" style="display:none;">
-      <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
+    <div id="rulePageSwing2" style="display:none;">
+      <strong>Confluence-Regeln für Long / Short</strong><br><br>
 
-      <strong>1. Markt-Bias Bewertung:</strong><br>
-      <ul style="margin-left: 20px;">
-        <li>Weekly Bullish/Bearish: 1 – 3</li>
-        <li>Daily Bullish/Bearish: 1 – 3</li>
-        <li>4H Bullish/Bearish: 1 – 3</li>
-      </ul>
+      <ol style="margin-left:20px;">
+        <li><strong>Markt-Bias Bewertung:</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Weekly Bullish/Bearish: Wert 1–3</li>
+            <li>Daily Bullish/Bearish: Wert 1–3</li>
+            <li>4H Bullish/Bearish: Wert 1–3</li>
+          </ul>
+          Bewertungsstufen:
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>1 = Markt oben (weit weg von AOI)</li>
+            <li>2 = Auf dem Weg zur AOI</li>
+            <li>3 = In der AOI</li>
+          </ul>
+        </li><br>
 
-      <strong>1.1 Bewertungsstufen:</strong>
-      <ul style="margin-left: 20px;">
-        <li>1 = Oben</li>
-        <li>2 = Auf dem Weg zur AOI</li>
-        <li>3 = In der AOI</li>
-      </ul><hr>
+        <li><strong>Struktur-Retest (HTF):</strong><br>
+          Weekly retestet vorherigen Strukturpunkt
+        </li><br>
 
-      <strong>2. Struktur-Retest (HTF):</strong>
-      <ul style="margin-left: 20px;">
-        <li>Weekly retestet vorherigen Strukturpunkt</li>
-      </ul><hr>
+        <li><strong>Daily Rejection:</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Rejection an AOI</li>
+            <li>Rejection an rundem psychologischen Level (00 / 50)</li>
+          </ul>
+        </li><br>
 
-      <strong>3. Daily Rejection:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Rejection an AOI</li>
-        <li>Rejection an rundem psychologischen Level (00 / 50)</li>
-      </ul><hr>
+        <li><strong>Strukturaufbau (LTF):</strong>
+          <ul style="margin-left:20px; list-style:disc;">
+            <li>Warten auf HL / LH</li>
+            <li>Struktur-Shift auf 15M / 30M / 1H</li>
+          </ul>
+        </li><br>
 
-      <strong>4. Strukturaufbau (LTF):</strong>
-      <ul style="margin-left: 20px;">
-        <li>Warten auf HL / LH</li>
-        <li>Struktur-Shift auf 15M / 30M / 1H</li>
-      </ul><hr>
+        <li><strong>Entry-Signal:</strong><br>
+          Bestätigung durch bullisches oder bärisches Candle-Muster (1H / 2H / 4H)
+        </li><br>
 
-      <strong>5. Entry-Signal:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Bestätigung durch bullische/bärische Formation</li>
-      </ul><hr>
-
-      <strong>6. Set and Forget:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Nach Entry nicht eingreifen</li>
-        <li>Setup vertrauen, kein Nachjustieren</li>
-      </ul>
-
-      <div class="fire-sparks"></div>
+        <li><strong>Set and Forget:</strong><br>
+          Nach Entry nicht eingreifen – Setup vertrauen, kein Nachjustieren
+        </li>
+      </ol>
     </div>
+	</div>
+
+    <!-- ========== DAY ========== -->
+<div id="dayRules" style="display:none;">
+
+  <!-- Seite 1 Day -->
+  <div id="rulePageDay1">
+    <strong>Grundregeln für Entry & Struktur (Day-Trading)</strong><br><br>
+
+    <ul style="margin-left:20px;">
+		<strong>AOI-Zone wählen:</strong><br>
+        Ein Entry darf nur an einer Daily- oder 4H-AOI stattfinden.<br>
+        → 1H/15M dienen ausschließlich zur Entry-Bestätigung.
+      <br>
+
+      <strong>Kein Entry ohne Rejection von:</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Strukturpunkt</li>
+          <li>EMA</li>
+          <li>AOI</li>
+          <li>Runder psychologischer Level (00 / 50)</li>
+          <li>Daily/4H Rejection Candle</li>
+        </ul>
+      <br>
+
+      <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Buy: bestätigtes HL im 1H oder 4H</li>
+          <li>Sell: bestätigtes LH im 1H oder 4H</li>
+          <li>Oder potenzielles HL/LH mit Engulfing an einer AOI</li>
+        </ul>
+      <br>
+
+      <strong>Entry-Prozess nach HL/LH:</strong><br>
+        Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift (15M–1H) beobachtet und mit dem höheren TF (4H/D1) abgeglichen werden.
+      <br>
+
+      <strong>Nach dem Struktur-Shift (15M/1H):</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Suche nach einer Engulfing-Candle im 1H oder 4H</li>
+        </ul>
+      
+    </ul><br>
+
+    <strong>Stop-Loss & Take-Profit Regeln</strong><br><br>
+    <ul style="margin-left:20px; list-style:disc;">
+      <li><strong>Stop-Loss:</strong><br>
+        SL am Punkt setzen, wo die Handelsidee ungültig wird.<br>
+        → Alternativ am Top/Bottom des Struktur-Shifts (15M/1H), mit 3–5 Pips Sicherheitsabstand.
+      </li><br>
+
+      <li><strong>Take-Profit:</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Wenn Entry an 4H AOI → TP1 am nächsten 1H/4H Strukturpunkt</li>
+          <li>Wenn Entry an Daily AOI → TP1 am Daily Strukturpunkt</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Seite 2 Day -->
+  <div id="rulePageDay2" style="display:none;">
+    <strong>Confluence-Regeln für Long / Short (Day-Trading)</strong><br><br>
+
+    <ol style="margin-left:20px;">
+      <li><strong>Markt-Bias Bewertung:</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Daily Bullish/Bearish: Wert 1–3</li>
+          <li>4H Bullish/Bearish: Wert 1–3</li>
+          <li>1H Bullish/Bearish: Wert 1–3</li>
+        </ul>
+        Bewertungsstufen:
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>1 = Markt oben (weit weg von AOI)</li>
+          <li>2 = Auf dem Weg zur AOI</li>
+          <li>3 = In der AOI</li>
+        </ul>
+      </li><br>
+
+      <li><strong>Struktur-Retest:</strong><br>
+        4H retestet vorherigen Strukturpunkt
+      </li><br>
+
+      <li><strong>Rejection:</strong><br>
+        Daily/4H Rejection an AOI oder psychologischem Level (00/50)
+      </li><br>
+
+      <li><strong>Strukturaufbau:</strong>
+        <ul style="margin-left:20px; list-style:disc;">
+          <li>Warten auf HL / LH</li>
+          <li>Struktur-Shift auf 15M oder 1H</li>
+        </ul>
+      </li><br>
+
+      <li><strong>Entry-Signal:</strong><br>
+        Bestätigung durch Candle-Muster (15M/1H)
+      </li><br>
+
+      <li><strong>Set and Forget:</strong><br>
+        Nach Entry nicht eingreifen – Setup vertrauen
+      </li>
+    </ol>
+  </div>
+</div>
+
 
     <!-- Navigation -->
     <div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -885,6 +883,7 @@
     <div class="fire-particles"></div>
   </div>
 </div>
+
 
 
 
