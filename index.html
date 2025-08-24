@@ -631,119 +631,6 @@
   </button>
 </div>
 
-
-<!-- 📋 Toggle-Box für deine Trading-Regeln -->
-<div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
-  📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
-</div>
-
-<!-- 🔥 Regeln mit Fire-Animation -->
-<div class="rules-fire-wrapper">
-  <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
-    <strong>Rules Of Rules</strong><br><br>
-
-    <!-- Seite 1 -->
-    <div id="rulePage1">
-      <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
-
-      <strong>AOI-Zone wählen:</strong><br>
-      Buy/Sell nur bei Weekly oder Daily AOI<br>
-      → Alle Timeframes darunter dienen nur zur Entry-Bestätigung.<br><br>
-
-      <strong>Kein Entry ohne Rejection von:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Strukturpunkt</li>
-        <li>EMA</li>
-        <li>AOI</li>
-        <li>Runder psychologischer Level</li>
-        <li>Weekly Rejection Candle (Weekly/Daily sichtbar)</li>
-      </ul><br>
-
-      <strong>Buy/Sell Entry-Bedingung:</strong>
-      <ul style="margin-left: 20px;">
-        <li>4H Higher Low (HL) für Buy</li>
-        <li>4H Lower High (LH) für Sell</li>
-        <li>Oder potenzieller HL/LH mit Engulfing an AOI</li>
-      </ul><br>
-
-      <strong>Entry-Prozess nach HL/LH:</strong><br>
-      Struktur-Shift 15M–1H abgleichen mit höherem TF.<br><br>
-
-      <strong>Nach Shift auf 15M, 30M, 1H:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Suche nach Engulfing Candle auf 1H / 2H / 4H</li>
-        <li>Je höher der TF → desto stärkere Bestätigung</li>
-      </ul><br>
-
-      <strong>⚠️ Stop-Loss-Regel:</strong><br>
-      SL immer an dem Punkt setzen, wo die Idee ungültig wird.<br><br>
-
-      <strong>🎯 Take-Profit-Regel:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Bei Weekly AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
-        <li>Bei Daily AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
-      </ul>
-    </div>
-
-    <!-- Seite 2 -->
-    <div id="rulePage2" style="display:none;">
-      <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
-
-      <strong>1. Markt-Bias Bewertung:</strong><br>
-      <ul style="margin-left: 20px;">
-        <li>Weekly Bullish/Bearish: 1 – 3</li>
-        <li>Daily Bullish/Bearish: 1 – 3</li>
-        <li>4H Bullish/Bearish: 1 – 3</li>
-      </ul>
-
-      <strong>1.1 Bewertungsstufen:</strong>
-      <ul style="margin-left: 20px;">
-        <li>1 = Oben</li>
-        <li>2 = Auf dem Weg zur AOI</li>
-        <li>3 = In der AOI</li>
-      </ul><hr>
-
-      <strong>2. Struktur-Retest (HTF):</strong>
-      <ul style="margin-left: 20px;">
-        <li>Weekly retestet vorherigen Strukturpunkt</li>
-      </ul><hr>
-
-      <strong>3. Daily Rejection:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Rejection an AOI</li>
-        <li>Rejection an rundem psychologischen Level (00 / 50)</li>
-      </ul><hr>
-
-      <strong>4. Strukturaufbau (LTF):</strong>
-      <ul style="margin-left: 20px;">
-        <li>Warten auf HL / LH</li>
-        <li>Struktur-Shift auf 15M / 30M / 1H</li>
-      </ul><hr>
-
-      <strong>5. Entry-Signal:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Bestätigung durch bullische/bärische Formation</li>
-      </ul><hr>
-
-      <strong>6. Set and Forget:</strong>
-      <ul style="margin-left: 20px;">
-        <li>Nach Entry nicht eingreifen</li>
-        <li>Setup vertrauen, kein Nachjustieren</li>
-      </ul>
-
-      <div class="fire-sparks"></div>
-    </div>
-
-    <!-- Navigation -->
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-      <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
-      <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
-    </div>
-
-    <div class="fire-particles"></div>
-  </div>
-</div>
-
 <!-- 📘 Journal-Eingabe -->
 <div id="calc-journal" class="calc-box" style="display:none; margin-top: 10px;">
   <div class="stats-box journal-box">
@@ -880,10 +767,126 @@
   </div>
 </div>
 
+
 <!-- Lightbox für Screenshots -->
 <div id="lightboxOverlay" style="display:none;" onclick="closeLightbox()">
   <img id="lightboxImage" src="" alt="Full Screenshot" />
 </div>
+
+
+<!-- 📋 Toggle-Box für deine Trading-Regeln -->
+<div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
+  📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
+</div>
+
+<!-- 🔥 Regeln mit Fire-Animation -->
+<div class="rules-fire-wrapper">
+  <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
+    <strong>Rules Of Rules</strong><br><br>
+
+    <!-- Seite 1 -->
+    <div id="rulePage1">
+      <strong>📍 Grundregeln für Entry & Struktur</strong><br><br>
+
+      <strong>AOI-Zone wählen:</strong><br>
+      Buy/Sell nur bei Weekly oder Daily AOI<br>
+      → Alle Timeframes darunter dienen nur zur Entry-Bestätigung.<br><br>
+
+      <strong>Kein Entry ohne Rejection von:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Strukturpunkt</li>
+        <li>EMA</li>
+        <li>AOI</li>
+        <li>Runder psychologischer Level</li>
+        <li>Weekly Rejection Candle (Weekly/Daily sichtbar)</li>
+      </ul><br>
+
+      <strong>Buy/Sell Entry-Bedingung:</strong>
+      <ul style="margin-left: 20px;">
+        <li>4H Higher Low (HL) für Buy</li>
+        <li>4H Lower High (LH) für Sell</li>
+        <li>Oder potenzieller HL/LH mit Engulfing an AOI</li>
+      </ul><br>
+
+      <strong>Entry-Prozess nach HL/LH:</strong><br>
+      Struktur-Shift 15M–1H abgleichen mit höherem TF.<br><br>
+
+      <strong>Nach Shift auf 15M, 30M, 1H:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Suche nach Engulfing Candle auf 1H / 2H / 4H</li>
+        <li>Je höher der TF → desto stärkere Bestätigung</li>
+      </ul><br>
+
+      <strong>⚠️ Stop-Loss-Regel:</strong><br>
+      SL immer an dem Punkt setzen, wo die Idee ungültig wird.<br><br>
+
+      <strong>🎯 Take-Profit-Regel:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Bei Weekly AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
+        <li>Bei Daily AOI → TP1 = Strukturpunkt (Kerzenkörper)</li>
+      </ul>
+    </div>
+
+    <!-- Seite 2 -->
+    <div id="rulePage2" style="display:none;">
+      <strong>📘 Confluence Short / Long Regelwerk</strong><br><br>
+
+      <strong>1. Markt-Bias Bewertung:</strong><br>
+      <ul style="margin-left: 20px;">
+        <li>Weekly Bullish/Bearish: 1 – 3</li>
+        <li>Daily Bullish/Bearish: 1 – 3</li>
+        <li>4H Bullish/Bearish: 1 – 3</li>
+      </ul>
+
+      <strong>1.1 Bewertungsstufen:</strong>
+      <ul style="margin-left: 20px;">
+        <li>1 = Oben</li>
+        <li>2 = Auf dem Weg zur AOI</li>
+        <li>3 = In der AOI</li>
+      </ul><hr>
+
+      <strong>2. Struktur-Retest (HTF):</strong>
+      <ul style="margin-left: 20px;">
+        <li>Weekly retestet vorherigen Strukturpunkt</li>
+      </ul><hr>
+
+      <strong>3. Daily Rejection:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Rejection an AOI</li>
+        <li>Rejection an rundem psychologischen Level (00 / 50)</li>
+      </ul><hr>
+
+      <strong>4. Strukturaufbau (LTF):</strong>
+      <ul style="margin-left: 20px;">
+        <li>Warten auf HL / LH</li>
+        <li>Struktur-Shift auf 15M / 30M / 1H</li>
+      </ul><hr>
+
+      <strong>5. Entry-Signal:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Bestätigung durch bullische/bärische Formation</li>
+      </ul><hr>
+
+      <strong>6. Set and Forget:</strong>
+      <ul style="margin-left: 20px;">
+        <li>Nach Entry nicht eingreifen</li>
+        <li>Setup vertrauen, kein Nachjustieren</li>
+      </ul>
+
+      <div class="fire-sparks"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+      <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
+      <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
+    </div>
+
+    <div class="fire-particles"></div>
+  </div>
+</div>
+
+
 
 
 <!-- 📜 Skript-Einbindungen -->
@@ -916,8 +919,7 @@
 
 </body>
 
-</script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 
 
