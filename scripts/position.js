@@ -57,6 +57,7 @@ function calculatePositionSize() {
     if (riskPercent < 10) return "risk-high";
     return "risk-extreme";
   }
+  
 
   // 🌍 Session-Glow
   let sessionClass = "";
