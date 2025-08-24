@@ -32,28 +32,29 @@ function saveJournalEntry() {
     };
   }
 
-  // 🧠 Immer updaten
-  Object.assign(entry, {
-    pair: document.getElementById("journalSymbol").value.trim(),
-    direction: document.getElementById("journalDirection").value.toLowerCase(),
-    entry: parseFloat(document.getElementById("journalEntry").value),
-    exit: parseFloat(document.getElementById("journalExit").value),
-    lots: parseFloat(document.getElementById("journalLots").value),
-    pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
-    emotionBefore: parseInt(document.getElementById("emotionBefore").value),
-    emotionAfter: parseInt(document.getElementById("emotionAfter").value),
-    tradingMode,
-    biasTimeframes: selectedBiasFrames,
-    ruleAOI: document.getElementById("ruleAOI")?.checked || false,
-    ruleEntry: document.getElementById("ruleEntry")?.checked || false,
-    rulePsych: document.getElementById("rulePsych")?.checked || false,
-    ruleSession: document.getElementById("ruleSession")?.checked || false,
-    ruleRR: document.getElementById("ruleRR")?.checked || false,
-    ruleLTFShift: document.getElementById("ruleLTFShift")?.checked || false,
-    ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
-    notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
-    notesAfter: document.getElementById("journalNotesAfter")?.value.trim()
-  });
+// 🧠 Immer updaten
+Object.assign(entry, {
+  pair: document.getElementById("journalSymbol").value.trim(),
+  direction: document.getElementById("journalDirection").value.toLowerCase(),
+  entry: parseFloat(document.getElementById("journalEntry").value),
+  // ✅ Exit optional → wenn Feld fehlt oder leer, dann 0
+  lots: parseFloat(document.getElementById("journalLots").value),
+  pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
+  emotionBefore: parseInt(document.getElementById("emotionBefore").value),
+  emotionAfter: parseInt(document.getElementById("emotionAfter").value),
+  tradingMode,
+  biasTimeframes: selectedBiasFrames,
+  ruleAOI: document.getElementById("ruleAOI")?.checked || false,
+  ruleEntry: document.getElementById("ruleEntry")?.checked || false,
+  rulePsych: document.getElementById("rulePsych")?.checked || false,
+  ruleSession: document.getElementById("ruleSession")?.checked || false,
+  ruleRR: document.getElementById("ruleRR")?.checked || false,
+  ruleLTFShift: document.getElementById("ruleLTFShift")?.checked || false,
+  ruleEntrySignal: document.getElementById("ruleEntrySignal")?.checked || false,
+  notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
+  notesAfter: document.getElementById("journalNotesAfter")?.value.trim()
+});
+
 
   // 📸 Bildzuweisung
   if (files.length === 0) {
@@ -83,10 +84,12 @@ function saveJournalEntry() {
 function finishSave(entry, editId, allEntries) {
   if (editId) {
     const index = allEntries.findIndex(e => e.id == editId);
-    if (index !== -1) allEntries[index] = entry;
+    if (index !== -1) {
+      allEntries[index] = entry;   // ✅ bestehenden überschreiben
+    }
     delete document.getElementById("saveJournalEntryButton").dataset.editId;
   } else {
-    allEntries.push(entry);
+    allEntries.push(entry);        // ✅ nur neu, wenn kein edit
   }
 
   localStorage.setItem("journalData", JSON.stringify(allEntries));
@@ -94,6 +97,7 @@ function finishSave(entry, editId, allEntries) {
   document.getElementById("calc-journal").style.display = "none";
   alert("✅ Journal-Eintrag gespeichert!");
 }
+
 
 
 
@@ -728,7 +732,7 @@ function editEntry(entryId) {
   document.getElementById("journalSymbol").value = entry.pair;
   document.getElementById("journalDirection").value = entry.direction?.toLowerCase();
   document.getElementById("journalEntry").value = entry.entry;
-  document.getElementById("journalExit").value = entry.exit;
+  
   document.getElementById("journalLots").value = entry.lots;
   document.getElementById("journalPnL").value = entry.pnl;
   document.getElementById("emotionBefore").value = entry.emotionBefore;
@@ -956,6 +960,7 @@ function closeLightbox() {
 }
 
 
+
 function deleteEntry(entryId) {
   if (!confirm("❌ Diesen Eintrag wirklich löschen?")) return;
 
@@ -1024,48 +1029,10 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-//jornal
 
-document.getElementById("journalEntry").addEventListener("input", autoCalculateExit);
-document.getElementById("journalDirection").addEventListener("change", autoCalculateExit);
 
-function autoCalculateExit() {
-  const entryInput = document.getElementById("journalEntry");
-  const exitInput = document.getElementById("journalExit");
-  const direction = document.getElementById("journalDirection")?.value?.toLowerCase() || "long";
 
-  let entry = parseFloat(entryInput.value.replace(",", "."));
-  if (isNaN(entry)) return;
 
-  const decimals = (entry.toString().split(".")[1] || "").length;
-  const step = Math.pow(10, -decimals || 1); // fallback auf 0.1
-
-  const exit = direction === "short"
-    ? entry - step
-    : entry + step;
-
-  exitInput.value = exit.toFixed(decimals);
-}
-
-function saveJournalEntryWithImages(imageIds) {
-  const entries = JSON.parse(localStorage.getItem("journalData") || []);
-
-  const newEntry = {
-    id: Date.now(),
-    date: new Date().toISOString().slice(0, 10),
-    comment: document.getElementById("journalComment")?.value || "",
-    result: document.getElementById("resultSelect")?.value || "neutral",
-    images: {
-      before: imageIds,
-      after: [] // vorerst leer
-    }
-  };
-
-  entries.push(newEntry);
-  localStorage.setItem("journalData", JSON.stringify(entries));
-  alert("✅ Journal gespeichert mit Bildern!");
-  buildJournalCalendar(); // ⬅️ Kalender aktualisieren
-}
 
 
 document.getElementById("screenshotInput").addEventListener("change", function (event) {
@@ -1088,16 +1055,7 @@ document.getElementById("screenshotInput").addEventListener("change", function (
 });
 
 
-function showLightbox(src) {
-  const overlay = document.getElementById("lightboxOverlay");
-  const image = document.getElementById("lightboxImage");
-  image.src = src;
-  overlay.style.display = "flex";
-}
 
-function closeLightbox() {
-  document.getElementById("lightboxOverlay").style.display = "none";
-}
 function saveImageToIndexedDB(base64, id) {
   const request = indexedDB.open("TradeAppDB", 1);
   request.onupgradeneeded = function(event) {
