@@ -25,11 +25,14 @@ function updateSessionTextStyle(activeSessionName) {
   if (!el) return;
 
   const sessionColors = {
-    "London": "#ffd700",
-    "New York": "#ff3333",
-    "Tokyo": "#00aaff",
-    "Sydney": "#9c27b0",
-    "Crypto": "#00ffcc"
+    "Sydney":           "#3388ff",
+  "Tokyo":            "#00aaff",
+  "London":           "#ffd700",
+  "New York":         "#ff4500",
+  "London Killzone":  "#ccff00",
+  "New York Killzone": "#ff8800",
+  "Deadzone":         "#333333",
+  "Crypto":           "#9900ff"
   };
 
   // Hilfsfunktion → Box-Klassen sauber setzen
