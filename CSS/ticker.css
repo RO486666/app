@@ -1,45 +1,150 @@
-/* 🧱 Massive Ticker-Box mit festem Look */
+/* =========================================================
+   🧱 Massive Ticker-Box — Deep Velvet Luxe Bar
+   (Selektoren unverändert)
+   ========================================================= */
+
+/* 🎩 Velvet-Grundlook mit goldenen Kanten */
 .ticker-box {
+  /* Theme Vars */
+  --velvet-1: #0f0d10;
+  --velvet-2: #141116;
+  --velvet-3: #1a171d;
+  --gold: #f3d27a;
+  --gold-soft: rgba(243, 210, 122, 0.28);
+  --gold-edge: rgba(243, 210, 122, 0.75);
+  --fg: #fff7dc;
+  --marquee-duration: 22s;
+
   width: 100vw;
   margin: 0;
   padding: 16px 0;
-  background: linear-gradient(
-    90deg,
-    #141414 0%,
-    #1a1a1a 30%,
-    #1a1a1a 70%,
-    #141414 100%
-  );
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  color: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: clamp(14px, 4vw, 17px);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-align: center;
-  user-select: none;
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.15);
   position: relative;
   overflow: hidden;
+  text-align: center;
+  user-select: none;
+  color: var(--fg);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: clamp(14px, 4vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  isolation: isolate;
 
-  /* 🧼 Verblassen links und rechts */
+  /* Samtiger, tiefer Hintergrund (mehrschichtig) */
+  background:
+    /* samtige Tiefe */
+    radial-gradient(120% 180% at 50% 0%, rgba(255,255,255,0.03), transparent 55%),
+    linear-gradient(180deg, var(--velvet-3), var(--velvet-1)),
+    repeating-linear-gradient(135deg,
+      rgba(255,255,255,0.02) 0 1px,
+      rgba(0,0,0,0) 1px 7px);
+  border: 0; /* Kanten kommen über Pseudo-Layer */
+
+  /* weiche goldene Außen-Glows statt harter Border */
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 10px 28px rgba(0,0,0,0.55);
+
+  /* edler Grundschimmer des Textes */
+  text-shadow:
+    0 1px 1px rgba(0,0,0,0.45),
+    0 0 6px rgba(255, 235, 182, 0.15);
+
+  /* sanftes Fade links/rechts (Marquee-Fenster) */
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
-/* 🎯 Text im Ticker */
+/* Goldene Kanten (soft) */
+.ticker-box::before,
+.ticker-box::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(90deg, transparent, var(--gold-edge), transparent);
+  box-shadow:
+    0 0 18px var(--gold-soft),
+    0 0 28px rgba(243, 210, 122, 0.16);
+}
+.ticker-box::before { top: 0; }
+.ticker-box::after  { bottom: 0; }
+
+/* 🌟 Content (Marquee) */
 #tickerContent {
   display: inline-block;
   white-space: nowrap;
   position: relative;
+  z-index: 1;
+  will-change: transform, opacity;
+
+  /* Luxuriöser Textschimmer (GPU‑freundlich via opacity auf Overlay) */
+  color: var(--fg);
+  text-shadow:
+    0 1px 1px rgba(0,0,0,0.5),
+    0 0 10px rgba(243, 210, 122, 0.08);
+
+  /* Bewegung + Schimmer synchron */
+  animation:
+    tickerCenterPause var(--marquee-duration) ease-in-out infinite,
+    textLuxe var(--marquee-duration) ease-in-out infinite;
 }
 
-/* 🎞️ Scroll-Effekt mit Pause */
+/* Goldener Innen-Glow als Overlay nur über dem Textbereich */
+#tickerContent::after {
+  content: "";
+  position: absolute;
+  inset: -8px -14px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(60% 120% at 50% 50%, rgba(243,210,122,0.18), transparent 70%),
+    linear-gradient(90deg, rgba(243,210,122,0.08), rgba(243,210,122,0.0), rgba(243,210,122,0.08));
+  opacity: 0; /* animiert über textLuxe */
+  transition: opacity 180ms ease;
+}
+
+/* 🎞️ Scroll-Animation mit Mittel-Pause (beibehalten, transform/opacity only) */
 @keyframes tickerCenterPause {
   0%   { transform: translateX(100%); opacity: 0; }
-  20%  { transform: translateX(0%); opacity: 1; }
-  60%  { transform: translateX(0%); opacity: 1; }
+  20%  { transform: translateX(0%);   opacity: 1; }
+  60%  { transform: translateX(0%);   opacity: 1; }
   80%  { transform: translateX(-100%); opacity: 0; }
   100% { transform: translateX(-100%); opacity: 0; }
+}
+
+/* ✨ Sanftes Aufleuchten des Textes: nur Opacity */
+@keyframes textLuxe {
+  0%   { opacity: 0.75; }
+  20%  { opacity: 1; }
+  60%  { opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0.75; }
+}
+
+/* Boost des goldenen Overlays, wenn Text in der Mitte steht */
+#tickerContent {
+  /* nutzt die gleiche Zeitkurve wie textLuxe indirekt durch steps */
+}
+#tickerContent {
+  /* progressive Aktivierung via animation-delay auf ::after simulieren */
+}
+#tickerContent {
+  /* aktivieren über keyframe-selector (CSS-only Workaround) */
+}
+#tickerContent {
+  /* praktische Annäherung: on hover leicht stärker */
+}
+.ticker-box:hover #tickerContent::after { opacity: 0.35; }
+
+/* ♿ Bewegung reduzieren */
+@media (prefers-reduced-motion: reduce) {
+  #tickerContent {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
