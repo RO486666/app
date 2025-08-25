@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="CSS/session.css" />
   <link rel="stylesheet" href="CSS/Rechner.css" />
   <link rel="stylesheet" href="CSS/rules.css" />
+  <link rel="stylesheet" href="CSS/jornal.css" />
 
   <!-- PWA / Manifest -->
   <link rel="manifest" href="manifest.json" />
@@ -109,37 +110,111 @@
       display: block;
     }
 
-    /* ==========================================
-       🌍 LAYOUT HELPERS – BOXEN
-       ========================================== */
-    img, canvas, .stats-box, .calc-box, .popup, .position-bar, .trade-box, .tool-box {
-      max-width: 100%;
-      width: 100%;
-    }
 
-.stats-box {
-  padding: 18px 22px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #1c1c1c, #262626);
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.04),
-    0 4px 10px rgba(0, 0, 0, 0.4),
-    0 0 14px var(--glow-color, rgba(255, 255, 255, 0.08));
-  margin-top: 25px;
-  text-align: left;
-  max-width: 440px;
-  margin-left: auto;
-  margin-right: auto;
-  transition: box-shadow 0.4s ease, transform 0.3s ease;
-  overflow-x: hidden;
-  animation: statsGlowPulse 3.5s ease-in-out infinite;
+
+
+/* ♿ Bewegungen reduzieren, wenn gewünscht */
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none !important; }
 }
 
-    @keyframes statsGlowPulse {
-      0%   { box-shadow: 0 0 6px var(--glow-color); }
-      50%  { box-shadow: 0 0 18px var(--glow-color); }
-      100% { box-shadow: 0 0 6px var(--glow-color); }
-    }
+
+/* =========================================================
+   📦 .stats-box — Deep Velvet Luxe
+   ========================================================= */
+.stats-box {
+  /* Theme hooks */
+  --velvet-top: #131116;
+  --velvet-mid: #141219;
+  --velvet-bot: #0f0d12;
+  --accent: var(--glow-color, #f3d27a);
+
+  position: relative;
+  max-width: 440px;
+  margin: 25px auto 0 auto;
+  padding: 20px 22px;
+  border-radius: 16px;
+  text-align: left;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Samtiger Tiefenverlauf */
+  background:
+    radial-gradient(140% 120% at 50% -10%, rgba(255,255,255,0.05), transparent 55%),
+    linear-gradient(180deg, var(--velvet-top), var(--velvet-mid) 55%, var(--velvet-bot));
+  border: 1px solid rgba(255,255,255,0.04);
+
+  /* Weiche Schatten + Accent-Glow */
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.55),
+    0 0 16px color-mix(in srgb, var(--accent) 18%, transparent),
+    inset 0 1px 2px rgba(255,255,255,0.04);
+
+  /* Dezentes Aufleuchten (GPU‑freundlich) */
+  animation: statsGlowPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
+  transition: box-shadow 240ms ease, opacity 240ms ease;
+}
+
+/* Subtile Velvet-Struktur */
+.stats-box::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(45deg,  rgba(0,0,0,0.025) 0 1px, transparent 1px 10px);
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+/* Elegante Gold-/Sessionkante als weicher Innen-Glow */
+.stats-box::after {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: 1; pointer-events: none; border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 22px color-mix(in srgb, var(--accent) 18%, transparent);
+  opacity: 0.22;
+  transition: opacity 240ms ease;
+  animation: luxeRingPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
+}
+
+/* Pulse: nur Schatten/Opacity */
+@keyframes statsGlowPulse {
+  0% {
+    box-shadow:
+      0 10px 26px rgba(0,0,0,0.55),
+      0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
+      inset 0 1px 2px rgba(255,255,255,0.04);
+  }
+  50% {
+    box-shadow:
+      0 12px 30px rgba(0,0,0,0.6),
+      0 0 22px color-mix(in srgb, var(--accent) 26%, transparent),
+      inset 0 1px 3px rgba(255,255,255,0.05);
+  }
+  100% {
+    box-shadow:
+      0 10px 26px rgba(0,0,0,0.55),
+      0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
+      inset 0 1px 2px rgba(255,255,255,0.04);
+  }
+}
+
+@keyframes luxeRingPulse {
+  0%   { opacity: 0.20; }
+  50%  { opacity: 0.34; }
+  100% { opacity: 0.20; }
+}
+
+/* ♿ Bewegungs-Reduktion */
+@media (prefers-reduced-motion: reduce) {
+  .stats-box,
+  .stats-box::after { animation: none !important; }
+}
+
 
     /* ==========================================
        🔥 SESSION-SPEZIFISCHE THEMES
@@ -153,6 +228,8 @@
     .session-glow-nyk       { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
     .session-glow-deadzone  { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
     .session-glow-crypto    { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
+
+
 
     /* ==========================================
        🌈 CRYPTO LABEL – animierter Text + Coin
@@ -650,9 +727,31 @@
 </div>
 
 <!-- 📋 Toggle-Box -->
-<div class="stats-box" onclick="toggleRules()" style="cursor:pointer;">
-  📜 <strong>Setup-Regeln anzeigen / ausblenden</strong>
+<div 
+  onclick="toggleRules()" 
+  style="
+    background: linear-gradient(135deg, #2a0b0b, #1a0000);
+    border: 1px solid #ff3333;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 16px 20px;
+    text-align: center;
+    box-shadow: 
+      0 0 12px rgba(255, 60, 60, 0.8),
+      inset 0 0 12px rgba(255, 0, 0, 0.6);
+    transition: all 0.2s ease-in-out;
+  "
+  onmouseover="this.style.borderColor='#ff5555'; this.style.boxShadow='0 0 20px rgba(255,80,80,1), inset 0 0 14px rgba(255,20,20,0.8)';"
+  onmouseout="this.style.borderColor='#ff3333'; this.style.boxShadow='0 0 12px rgba(255,60,60,0.8), inset 0 0 12px rgba(255,0,0,0.6)';"
+  onfocus="this.style.outline='3px solid #ff6666';"
+  onblur="this.style.outline='none';"
+>
+  🚀 <strong style="color:#ff6666;">Setup-Regeln anzeigen / ausblenden</strong>
 </div>
+
+
 
 <!-- 🔥 Regeln -->
 <div class="rules-fire-wrapper">
