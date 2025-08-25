@@ -1,11 +1,4 @@
-/* =========================================================
-   📊 Session-Bar (Gradient-Leiste oben)
-   ========================================================= */
-.session-bar {
-  height: 10px;
-  background: linear-gradient(to right, #00aaff, #ffaa00, #ff3300);
-  margin-top: 5px;
-}
+
 
 /* =========================================================
    📦 Main-Container & Buttons
@@ -95,126 +88,196 @@
  
 
 /* =========================================================
-   🔘 Tab-Buttons (3 Buttons mit Glow)
+   🔘 Tab-Buttons — Carbon Fiber Glow
+   (Selektoren unverändert)
    ========================================================= */
 .tab-buttons {
   text-align: center;
   margin-top: 20px;
 }
 
+/* Base Button */
 .tab-buttons button {
-  padding: 10px 15px;
-  margin: 5px;
+  /* Theme hooks */
+  --cf-d1: #0f1011;
+  --cf-d2: #17191b;
+  --cf-d3: #1e2124;
+  --txt: #f4f7fb;
+  --edge: color-mix(in srgb, var(--glow-color, #00ffd5) 75%, #ffffff 0%);
+
+  position: relative;
+  display: inline-block;
+  margin: 6px;
+  padding: 12px 18px;
+  border: 2px solid var(--edge);
   border-radius: 10px;
-  font-weight: bold;
-  font-size: 15px;
+  font: 700 15px/1.2 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: .4px;
+  color: var(--txt);
   cursor: pointer;
-  transition: all 0.3s ease;
-  transform: scale(1);
-  border: none;
-  animation: pulseGlow 2.5s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--glow-color, #fff);
-}
-
-.tab-buttons button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-.tab-buttons .active {
-  background: #0077cc;
-}
-
-/* 🔄 Pulsierender Glow-Effekt für Tab-Buttons */
-@keyframes pulseGlow {
-  0%   { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
-  50%  { box-shadow: 0 0 12px 6px var(--glow-color, #fff); }
-  100% { box-shadow: 0 0 6px 2px var(--glow-color, #fff); }
-}
-
-
-/* =========================================================
-   📅 Ticker
-   ========================================================= */
-   
-   .ticker {
-  width: 100%;
-  background: linear-gradient(135deg, #161616, #1f1f1f); /* sanfter Dunkelverlauf */
-  color: #99ffcc;
-  padding: 12px 16px;
-  text-align: center;
-  font-size: 17px;
-  font-weight: 600;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   user-select: none;
-  border: 1px solid rgba(153, 255, 204, 0.08);
-  border-radius: 12px;
+  transform: translateZ(0); /* promote layer */
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, border-color 160ms ease;
+  will-change: transform, opacity;
+
+  /* Carbon fiber texture */
+  background:
+    repeating-linear-gradient(45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px),
+    repeating-linear-gradient(-45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px);
+  background-color: var(--cf-d3);
+
+  /* Neon ring (subtle by default) */
   box-shadow:
-    0 0 6px rgba(0, 0, 0, 0.4),
-    inset 0 0 4px rgba(153, 255, 204, 0.05);
-  text-shadow: 0 0 1px rgba(153, 255, 204, 0.15);
-  backdrop-filter: blur(1.5px);
-  transition: all 0.3s ease;
+    0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 30%, transparent),
+    inset 0 0 10px rgba(255,255,255,0.04);
+  text-shadow:
+    0 0 2px rgba(255,255,255,0.25),
+    0 0 6px color-mix(in srgb, var(--glow-color, #00ffd5) 25%, transparent);
+
+  /* keep existing pulse but refine via opacity/box-shadow */
+  animation: pulseGlow 2.5s ease-in-out infinite;
 }
-.ticker:hover {
-  transform: scale(1.01);
+
+/* Carbon fiber sheen layer */
+.tab-buttons button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%),
+    radial-gradient(100% 60% at 50% -20%, rgba(255,255,255,0.10), transparent 60%);
+  opacity: .7;
+  transition: opacity 160ms ease;
+}
+
+/* Hover / Focus */
+.tab-buttons button:hover,
+.tab-buttons button:focus-visible {
+  transform: translateY(-1px);
   box-shadow:
-    0 0 8px rgba(153, 255, 204, 0.1),
-    inset 0 0 6px rgba(153, 255, 204, 0.06);
+    0 0 16px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent),
+    inset 0 0 12px rgba(255,255,255,0.06);
+  outline: 2px solid var(--edge);
+  outline-offset: 3px;
+}
+.tab-buttons button:hover::before,
+.tab-buttons button:focus-visible::before { opacity: .9; }
+
+/* Active state: stronger neon edge + inner glow */
+.tab-buttons .active {
+  background:
+    repeating-linear-gradient(45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px),
+    repeating-linear-gradient(-45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px);
+  border-color: color-mix(in srgb, var(--glow-color, #00ffd5) 100%, #ffffff 0%);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--glow-color, #00ffd5) 60%, transparent),
+    0 0 36px color-mix(in srgb, var(--glow-color, #00ffd5) 35%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--glow-color, #00ffd5) 35%, transparent);
+  text-shadow:
+    0 0 3px rgba(255,255,255,0.35),
+    0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent);
 }
 
-@keyframes tickerScroll {
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-
-@keyframes sessionGlowFlow {
+/* Gentle glow pulse (GPU‑friendly: opacity + shadow only) */
+@keyframes pulseGlow {
   0% {
-    background-position: 0% 50%;
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 28%, transparent),
+      inset 0 0 10px rgba(255,255,255,0.04);
+    opacity: 0.98;
+  }
+  50% {
+    box-shadow:
+      0 0 16px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent),
+      inset 0 0 12px rgba(255,255,255,0.06);
+    opacity: 1;
   }
   100% {
-    background-position: 100% 50%;
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 28%, transparent),
+      inset 0 0 10px rgba(255,255,255,0.04);
+    opacity: 0.98;
   }
 }
 
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .tab-buttons button { animation: none !important; transition: none !important; }
+}
+
+
+
 
 /* =========================================================
-   🕒 Session-Text Anzeige (aktuelle Session oben)
+   🕒 Session-Text Anzeige (Carbon Fiber Glow)
    ========================================================= */
 #sessionText {
-  background: linear-gradient(90deg, #202020 0%, #2a2a2a 50%, #202020 100%);
-  color: var(--session-text-color, #fff);
+  --cf-dark: #111;
+  --cf-mid: #1a1a1a;
+  --cf-light: #222;
+
+  position: relative;
+  margin: 16px 0;
+  padding: 18px 24px;
+  text-align: center;
   font-size: clamp(16px, 5vw, 20px);
   font-weight: 700;
-  position: relative;
-  z-index: 5;
-  text-align: center;
-  padding: 18px 24px;
-  border-radius: 14px;
-  border: 1px solid var(--session-border, rgba(255, 255, 255, 0.12));
-  box-shadow:
-    0 0 10px var(--session-box-shadow1, rgba(255, 255, 255, 0.06)),
-    inset 0 0 8px var(--session-box-shadow2, rgba(255, 255, 255, 0.04)),
-    0 0 18px var(--session-box-shadow3, rgba(255, 255, 255, 0.05));
-  text-shadow:
-    0 0 2px var(--session-text-shadow1, rgba(255, 255, 255, 0.2)),
-    0 0 6px var(--session-text-shadow2, rgba(255, 255, 255, 0.15));
-  margin: 16px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--session-text-color, #fff);
+  letter-spacing: 0.6px;
   user-select: none;
   cursor: pointer;
-  transition: all 0.25s ease-in-out;
-  letter-spacing: 0.6px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 12px;
+  border: 2px solid var(--session-border, #00ffcc);
+  z-index: 5;
+
+  /* Carbon-Fiber Textur */
+  background:
+    repeating-linear-gradient(45deg,
+      var(--cf-dark) 0 6px,
+      var(--cf-mid) 6px 12px),
+    repeating-linear-gradient(-45deg,
+      var(--cf-dark) 0 6px,
+      var(--cf-mid) 6px 12px);
+  background-blend-mode: multiply;
+  background-color: var(--cf-light);
+
+  /* Glow & Tiefe */
+  box-shadow:
+    0 0 12px var(--session-box-shadow1, rgba(255,255,255,0.08)),
+    inset 0 0 10px var(--session-box-shadow2, rgba(255,255,255,0.05)),
+    0 0 18px var(--session-box-shadow3, rgba(255,255,255,0.07));
+  text-shadow:
+    0 0 2px var(--session-text-shadow1, rgba(255,255,255,0.3)),
+    0 0 6px var(--session-text-shadow2, rgba(255,255,255,0.15));
+
+  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+  will-change: transform, opacity;
 }
 
-#sessionText:hover {
+#sessionText:hover,
+#sessionText:focus-visible {
   transform: scale(1.02);
+  opacity: 0.95;
   box-shadow:
-    0 0 20px rgba(255, 255, 255, 0.15),
-    inset 0 0 10px rgba(255, 255, 255, 0.07),
-    0 0 30px rgba(255, 255, 255, 0.05);
+    0 0 20px var(--session-box-shadow1, rgba(255,255,255,0.15)),
+    inset 0 0 14px var(--session-box-shadow2, rgba(255,255,255,0.07)),
+    0 0 32px var(--session-box-shadow3, rgba(255,255,255,0.12));
+  outline: 2px solid var(--session-border, #00ffcc);
+  outline-offset: 3px;
 }
+
+/* ♿ Bewegung reduzieren */
+@media (prefers-reduced-motion: reduce) {
+  #sessionText {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 
 /* =========================================================
    📋 Session-Details Box
@@ -263,75 +326,282 @@
 .session-crypto { box-shadow: 0 0 10px #9900ff66; border-color: #9900ff55; }
 
 /* =========================================================
-   📈 Fortschrittsbalken (Progress Bar)
+   📈 Progress Bar – Dark "Glass & Carbon" (rechteckig)
+   - Container: tiefschwarz + feine Schraff-/Carbon-Textur
+   - Bar: "liquid neon" mit diagonal wandernden Reflexen
+   - JS kann weiterhin nur die Breite von #progressBar setzen
    ========================================================= */
+
 .progress-container {
+  --h: 30px;
+  --bg: #0a0a0a;                 /* tiefes Schwarz */
+  --edge: #0d0d0d;               /* Kante / Rahmen */
+  --innerHi: rgba(255,255,255,.08);
+  --innerLo: rgba(0,0,0,.6);
+
+  position: relative;
   width: 100%;
-  height: 24px; /* Größer gemacht */
-  background: #111;
-  border-radius: 6px;
-  margin-top: 5px;
+  height: var(--h);
   overflow: hidden;
-  box-shadow: 0 0 14px 4px rgba(153, 0, 255, 0.4);
+  border: 1px solid var(--edge);
+  background-color: var(--bg);
+
+  /* ✳️ Carbon + Schraff-Layer (sehr fein & dezent) */
+  background-image:
+    /* leichte Vignette für Tiefe */
+    radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,.0) 0%, rgba(0,0,0,.35) 100%),
+    /* feine Kreuz-Schraffur */
+    repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(45deg,  rgba(255,255,255,.02) 0 1px, transparent 1px 7px),
+    /* subtile Carbon-Quadrate */
+    linear-gradient(45deg,
+      rgba(255,255,255,.04) 25%, transparent 25%, transparent 50%,
+      rgba(255,255,255,.04) 50%, rgba(255,255,255,.04) 75%, transparent 75%, transparent);
+  background-size:
+    100% 100%,
+    8px 8px,
+    8px 8px,
+    6px 6px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+
+  /* Glas-Kanten innen */
+  box-shadow:
+    inset 0 1px 0 var(--innerHi),
+    inset 0 -1px 0 var(--innerLo),
+    0 0 0 1px rgba(255,255,255,.04);
 }
 
+/* feiner Glas-Reflex oben & unten */
+.progress-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      rgba(255,255,255,.12), rgba(255,255,255,0) 35%,
+      rgba(0,0,0,0) 65%, rgba(0,0,0,.35));
+}
+
+/* ===== Der „liquid neon“ Balken ===== */
 #progressBar {
+  --c1: #00ffe1;   /* Neon Cyan */
+  --c2: #a855ff;   /* Electric Violet */
+  --c3: #00d1ff;   /* Ice Blue */
+
+  position: relative;
   height: 100%;
-  width: 0;
-  background: linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff);
+  width: 0; /* JS setzt die Breite */
+  background: linear-gradient(90deg, var(--c1), var(--c2) 45%, var(--c3));
   background-size: 200% 100%;
-  animation: cryptoBarShift 8s linear infinite;
-  transition: width 0.3s ease-in-out;
+  animation: neonFlow 9s linear infinite;
+  will-change: background-position;
+
+  /* leichte Innenkante + dezente Außen-Aura */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 0 16px rgba(168,85,255,.25);
+  filter: saturate(1.08) brightness(1.03);
 }
 
-@keyframes cryptoBarShift {
+/* Schräg wandernde Highlights/Reflexe (überlagern Basis, auch wenn JS BG überschreibt) */
+#progressBar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    /* breiter Glas-Sheen */
+    linear-gradient(-25deg,
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,.22) 50%,
+      rgba(255,255,255,0) 60%),
+    /* feine, diagonale Lichtstreifen */
+    repeating-linear-gradient(-25deg,
+      rgba(255,255,255,.08) 0 2px,
+      rgba(255,255,255,0) 2px 16px);
+  background-size: 220% 100%, 28px 100%;
+  background-repeat: no-repeat, repeat;
+  mix-blend-mode: screen;                  /* edler „liquid“ Look */
+  animation: sheenSlide 2.8s linear infinite;
+  will-change: background-position;
+}
+
+/* optional: zusätzlicher zarter „Bloom“ im Bar-Innenraum */
+#progressBar::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 10% 50%, rgba(255,255,255,.10), transparent 60%);
+  opacity: .5;
+  animation: bloomDrift 6s ease-in-out infinite alternate;
+}
+
+/* ===== Motion ===== */
+@keyframes neonFlow {
   0%   { background-position: 0% 50%; }
   100% { background-position: 100% 50%; }
+}
+@keyframes sheenSlide {
+  0%   { background-position: -40% 50%, 0 0; }
+  100% { background-position: 140% 50%, 28px 0; }
+}
+@keyframes bloomDrift {
+  0%   { transform: translateX(0);   opacity: .45; }
+  100% { transform: translateX(6%); opacity: .6; }
+}
+
+/* ♿ Wenn Nutzer weniger Bewegung wünscht → Animationen aus */
+@media (prefers-reduced-motion: reduce) {
+  #progressBar,
+  #progressBar::before,
+  #progressBar::after { animation: none; }
 }
 
 /* =========================================================
    📅 Tageszusammenfassung & Details
    ========================================================= */
-.day-summary {
-  background: linear-gradient(135deg, #1b1b1b, #252525);
-  color: #ffdd66;
-  font-size: clamp(12px, 3.5vw, 16px);
-  cursor: pointer;
-  padding: 12px 16px;
-  white-space: normal;
-  word-break: break-word;
-  max-width: 100%;
-  text-align: center;
-  border: 1px solid rgba(255, 221, 102, 0.1);
-  border-radius: 12px;
-  text-shadow: 0 0 1px rgba(255, 221, 102, 0.2);
-  box-shadow:
-    0 0 6px rgba(0, 0, 0, 0.4),
-    inset 0 0 4px rgba(255, 221, 102, 0.04);
-  backdrop-filter: blur(1.5px);
-  transition: all 0.3s ease;
+
+   /*🌑 Vars (industrial gold)*/
+ 
+:root{
+  --bg: #111214;           /* dunkler Body */
+  --fg: #f6da7a;           /* lesbares Gold */
+  --accent: #d4af37;       /* Industrial Gold */
+  --shraff-alpha: 0.08;    /* Linien-Deckkraft */
+  --gap: 8px;              /* Abstand Crosshatch */
+  --border: #b8901f;       /* Rahmenfarbe */
+  --panel: #151618;        /* Paneel-Grund */
+  --panel2:#121315;        /* Paneel-2 */
 }
 
-.day-details {
-  background: linear-gradient(135deg, #1a1a1a, #222222);
-  color: #f0f0f0;
-  margin: 10px 15px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.6;
+/* Page baseline */
+html,body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height:1.65;
+}
+
+/* ================
+   ✨ Crosshatch
+   ================ */
+.day-summary,
+.day-details{
+  position: relative;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--panel), var(--panel2));
+  color: var(--fg);
+  border-radius: 0 !important; /* harte Kanten */
+  overflow: hidden; /* für ::before */
+  isolation: isolate; /* sauberer Layer-Stack */
+}
+
+/* Schraffur-Layer */
+.day-summary::before,
+.day-details::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(212,175,55,var(--shraff-alpha)) 0 1px,
+      transparent 1px calc(var(--gap))
+    ),
+    repeating-linear-gradient(135deg,
+      rgba(212,175,55,var(--shraff-alpha)) 0 1px,
+      transparent 1px calc(var(--gap))
+    );
+  opacity:1;
+  transform: translate3d(0,0,0);
+  transition: opacity 160ms ease, transform 160ms ease;
+  z-index:0;
+}
+
+/* Goldene Oberkante als Industrial-Detail */
+.day-summary{
+  border-top: 2px solid var(--accent);
+  color: var(--fg);
+  font-size: clamp(12px, 3.2vw, 16px);
+  cursor: pointer;
+  padding: 14px 18px;
+  text-align: center;
+  text-shadow: 0 0 1px rgba(0,0,0,0.35);
+  will-change: transform; /* nur das Element selbst */
+  transition: transform 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
+  box-shadow: 0 0 0 0 transparent;
+}
+
+/* Hover/Focus: dezenter Lift + drift der Schraffur */
+.day-summary:hover,
+.day-summary:focus-visible{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  outline: 2px solid #ffdf66; /* klare Focus-Outline */
+  outline-offset: 3px;
+}
+.day-summary:hover::before,
+.day-summary:focus-visible::before{
+  transform: translate3d(3px,-3px,0); /* subtiler Drift */
+  opacity: 1;
+}
+
+/* Details: flächiger, mit Innenrahmen */
+.day-details{
+  margin: 12px 16px;
+  padding: 14px 16px;
+  font-size: clamp(12px, 2.8vw, 15px);
   text-align: left;
   user-select: none;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4),
-              inset 0 0 4px rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(1px);
-  transition: all 0.3s ease;
+  border-left: 3px solid var(--accent);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 0 32px rgba(0,0,0,0.35);
+  transition: box-shadow 160ms ease, outline-color 160ms ease;
+}
+.day-details:hover{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 0 36px rgba(0,0,0,0.4);
+}
+.day-details:focus-visible{
+  outline: 2px solid #ffdf66;
+  outline-offset: 3px;
 }
 
-.day-details:hover {
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08),
-              inset 0 0 6px rgba(255, 255, 255, 0.05);
+/* A11y: starke Kontraste auf Links/Strong */
+.day-details a{ color:#ffe08b; text-underline-offset: 3px; }
+.day-details strong{ color:#ffe08b; }
+
+/* Motion-Preferences */
+@media (prefers-reduced-motion: reduce){
+  .day-summary, .day-details { transition: none !important; }
+  .day-summary::before, .day-details::before { transition: none !important; }
+}
+
+/* Small layout helper for demo */
+.wrapper{
+  max-width: 720px;
+  margin: 28px auto;
+  padding: 0 14px 40px;
+}
+h1{
+  font-size: clamp(18px, 4.5vw, 24px);
+  margin: 10px 0 14px;
+  color: #ffe08b;
+  letter-spacing: .3px;
+  font-weight: 700;
+}
+.sub{
+  color:#c9b06a; opacity:.9; margin: 0 0 14px;
+  font-size: clamp(12px, 2.6vw, 14px);
 }
 
 
