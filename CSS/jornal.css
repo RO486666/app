@@ -1,0 +1,171 @@
+/* ==========================================
+   📘 Journal Eingabe — Industrial Ledger Monochrome
+   ========================================== */
+#calc-journal {
+  --fx-bg: #1a1a1a;
+  --fx-surface: #222;
+  --fx-border: #333;
+  --fx-fg: #f2f2f2;
+  --fx-fg-dim: #ccc;
+  --fx-accent: #e6e6e6;
+  --fx-outline: #d9d9d9;
+}
+
+#calc-journal .stats-box.journal-box {
+  background: var(--fx-bg);
+  border: 1px solid var(--fx-border);
+  border-radius: 3px;
+  padding: 20px;
+  color: var(--fx-fg);
+  box-shadow: none;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Labels */
+#calc-journal label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: 600;
+  color: var(--fx-fg);
+}
+
+/* Inputs, Selects, Textareas */
+#calc-journal .input,
+#calc-journal input[type="date"],
+#calc-journal input[type="text"],
+#calc-journal input[type="number"],
+#calc-journal select,
+#calc-journal textarea,
+#calc-journal input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  background: var(--fx-surface);
+  color: var(--fx-fg);
+  border: 1px solid var(--fx-border);
+  border-radius: 3px;
+  box-sizing: border-box;
+  font: inherit;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+#calc-journal .input::placeholder,
+#calc-journal input::placeholder,
+#calc-journal textarea::placeholder {
+  color: var(--fx-fg-dim);
+}
+
+/* Hover */
+#calc-journal .input:hover,
+#calc-journal select:hover,
+#calc-journal textarea:hover,
+#calc-journal input[type="file"]:hover {
+  border-color: var(--fx-accent);
+}
+
+/* Fokuszustände */
+#calc-journal .input:focus-visible,
+#calc-journal select:focus-visible,
+#calc-journal textarea:focus-visible,
+#calc-journal input[type="file"]:focus-visible,
+#saveJournalEntryButton:focus-visible {
+  outline: 3px solid var(--fx-outline);
+  outline-offset: 2px;
+}
+
+/* Symbol-Suggestions */
+#symbolSuggestions {
+  background: #111;
+  color: var(--fx-fg);
+  padding: 6px;
+  border: 1px solid var(--fx-border);
+  border-radius: 0;
+}
+
+/* Emotion-Block */
+#calc-journal .emotion-block {
+  border: 1px solid var(--fx-border);
+  padding: 10px;
+  border-radius: 3px;
+  background: #181818;
+  margin-top: 12px;
+}
+
+/* Setup-Box */
+#setupBoxWrapper {
+  margin-top: 15px;
+  padding: 16px;
+  border: 1px solid var(--fx-border);
+  background: #191919;
+  border-radius: 3px;
+  color: var(--fx-fg);
+  box-shadow: none;
+}
+
+/* Checkliste & Bias */
+#biasTimeframes label,
+#ruleChecklist label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fx-fg);
+}
+
+#biasTimeframes input,
+#ruleChecklist input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fx-accent);
+  cursor: pointer;
+}
+
+/* Setup-Score */
+#setupScoreDisplay {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--fx-border);
+  background: #151515;
+  font-weight: 700;
+  border-radius: 3px;
+  color: var(--fx-fg);
+}
+
+/* Kommentare */
+#calc-journal textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Button */
+#saveJournalEntryButton {
+  margin-top: 12px;
+  padding: 12px;
+  background: #2b2b2b;
+  color: var(--fx-fg);
+  border: 1px solid var(--fx-border);
+  border-radius: 3px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+#saveJournalEntryButton:hover {
+  background: #333;
+  border-color: var(--fx-accent);
+  transform: translateY(-1px);
+}
+
+#saveJournalEntryButton:active {
+  transform: translateY(0);
+}
+
+/* ♿ Motion reduzieren */
+@media (prefers-reduced-motion: reduce) {
+  #calc-journal .input,
+  #saveJournalEntryButton {
+    transition: none !important;
+  }
+}
+
+
+
