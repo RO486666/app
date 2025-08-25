@@ -16,6 +16,7 @@ sessionText.addEventListener("click", () => {
   }
 });
 
+//Obere INFO Sessions
 
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
@@ -32,7 +33,7 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-text-shadow2", `${color}33`);
 }
 
-
+//Über den blaken 
 
 function formatHM(mins) {
   const h = Math.floor(mins / 60) % 24;
@@ -51,6 +52,9 @@ const sessionColors = {
   "Crypto": "#9900ff"
 };
 
+
+
+//Alle Sessions
 
 const sessions = [
   {
@@ -625,16 +629,7 @@ function updateDaySummary() {
     "Sonntag": `🛠️ Vorbereitung auf neue Woche – Forex inaktiv.\n🪙 BTC Pre-Move oft ab 18–20 Uhr – Setup planen!`
   };
 
-  const sessionColors = {
-    "Sydney": "#3388ff",
-    "Tokyo": "#00aaff",
-    "London": "#ffd700",
-    "New York": "#ff4500",
-    "London Killzone": "#ccff00",
-    "New York Killzone": "#ff8800",
-    "Deadzone": "#333333",
-    "Crypto": "#9900ff"
-  };
+
 
   const now = new Date();
   const minutesNow = now.getHours() * 60 + now.getMinutes();
