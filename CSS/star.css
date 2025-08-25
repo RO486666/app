@@ -1,13 +1,47 @@
+/* ==========================================
+   ⭐ Minimal Matte Mint Star-Rating
+   ========================================== */
 .star-rating {
   unicode-bidi: bidi-override;
   direction: rtl;
   display: inline-flex;
+  user-select: none;
+  gap: 4px;
 }
+
 .star-rating span {
-  font-size: 24px;
+  font-size: 28px;
+  line-height: 1;
+  padding: 6px;
   cursor: pointer;
-  color: #777;
+  color: var(--star-base, #7a7a7a);
+  transition: transform 150ms ease, opacity 150ms ease, color 150ms ease;
+  border-radius: 2px;
+  outline: none;
 }
+
+.star-rating span:hover,
+.star-rating span:focus-visible {
+  transform: scale(1.05);
+  opacity: 0.9;
+  color: var(--star-selected, #7fe3c4);
+  outline: 2px solid var(--star-selected, #7fe3c4);
+  outline-offset: 2px;
+}
+
 .star-rating span.selected {
-  color: gold;
+  color: var(--star-selected, #7fe3c4);
+  transform: scale(1.05);
+  opacity: 1;
 }
+
+/* ♿ Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .star-rating span {
+    transition: none;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+
