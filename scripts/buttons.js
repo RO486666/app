@@ -1,16 +1,17 @@
 function updateTabButtonColors(activeSessionNames) {
-  const sessionColors = {
-    "Sydney": "#3388ff",
-    "Tokyo": "#00aaff",
-    "London": "#ffd700",
-    "New York": "#ff4500",
-    "London Killzone": "#ccff00",
-    "New York Killzone": "#ff8800",
-    "Deadzone": "#333333",
-    "Crypto": "#9900ff"   // 💜 Crypto-Farbe
-  };
+const sessionColors = {
+  "Sydney": "#3388ff",
+  "Tokyo": "#00aaff",
+  "London": "#ffd700",
+  "New York": "#ff4500",
+  "London Killzone": "#ccff00",
+  "New York Killzone": "#ff8800",
+  "Deadzone": "#333333",
+  "Crypto": "#9900ff"
+};
 
-  const btns = [
+
+ const btns = [
     document.getElementById("btn-calc-pos"),
     document.getElementById("btn-calc-dawn"),
     document.getElementById("btn-calc-taxpro")
@@ -23,35 +24,15 @@ function updateTabButtonColors(activeSessionNames) {
   if (colorQueue.length === 0) return;
 
   btns.forEach((btn, i) => {
+    const color = colorQueue[i % colorQueue.length];
     if (!btn) return;
 
-    const color = colorQueue[i % colorQueue.length];
-
     btn.style.transition = "all 0.4s ease";
-
-    // 🟣 Spezialfall Crypto → Gradient + Glow
-    if (color === "#9900ff") {
-      btn.style.background = "linear-gradient(90deg,#9900ff,#ff00cc,#00ffff)";
-      btn.style.color = "#fff";
-      btn.style.boxShadow = "0 0 12px #9900ff, 0 0 24px #ff00cc, 0 0 36px #00ffff";
-      btn.style.animation = "glowPulse 2s ease-in-out infinite";
-    } else {
-      // Standard für andere Sessions
-      btn.style.background = color;
-      btn.style.setProperty('--glow-color', color);
-      btn.style.color = (["#ffd700", "#ccff00"].includes(color)) ? "#111" : "#fff";
-      btn.style.animation = "glowPulse 2s ease-in-out infinite";
-      btn.style.boxShadow = `0 0 10px ${color}`;
-    }
+    btn.style.background = color;
+    btn.style.setProperty('--glow-color', color);
+    btn.style.color = (["#ffd700", "#ccff00"].includes(color)) ? "#111" : "#fff";
+    btn.style.animation = "glowPulse 2s ease-in-out infinite";
   });
-
-  // 🔥 Glow auf .stats-box anwenden
-  if (activeSessionNames.length > 0) {
-    applyStatsBoxGlow(activeSessionNames[0]); 
-  }
-}
-
-
 
   // 🔥 Glow auf .stats-box anwenden
   if (activeSessionNames.length > 0) {
