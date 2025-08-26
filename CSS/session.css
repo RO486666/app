@@ -510,16 +510,7 @@ html,body{
   content:"";
   position:absolute; inset:0;
   pointer-events:none;
-  background:
-    repeating-linear-gradient(45deg,
-      rgba(212,175,55,var(--shraff-alpha)) 0 1px,
-      transparent 1px calc(var(--gap))
-    ),
-    repeating-linear-gradient(135deg,
-      rgba(212,175,55,var(--shraff-alpha)) 0 1px,
-      transparent 1px calc(var(--gap))
-    );
-  opacity:1;
+ 
   transform: translate3d(0,0,0);
   transition: opacity 160ms ease, transform 160ms ease;
   z-index:0;
