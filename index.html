@@ -668,37 +668,62 @@
       <option value="HH HL LH LL">HH HL LH LL</option>
     </select>
 
-    <!-- ✅ Setup-Check Box -->
-    <div id="setupBoxWrapper" style="margin-top: 10px; border-radius: 12px; padding: 16px; background: linear-gradient(135deg, #3d1e1e, #6b2f2f); border: 2px solid #aa3333; color: #eee; box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);">
-      <label style="font-weight: bold; font-size: 16px;">✅ Setup-Check</label>
+<!-- ✅ Setup-Check Box -->
+<div id="setupBoxWrapper" style="margin-top: 10px; border-radius: 12px; padding: 16px; background: linear-gradient(135deg, #3d1e1e, #6b2f2f); border: 2px solid #aa3333; color: #eee; box-shadow: 0 0 8px rgba(255, 50, 50, 0.25);">
+  <label style="font-weight: bold; font-size: 16px;">✅ Setup-Check</label>
 
-      <!-- Bias Auswahl -->
-      <label>🧭 Multi-Timeframe Bias:</label>
-      <div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
-        <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
-        <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
-        <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
-        <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
-        <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
-      </div>
+<!-- Bias Auswahl -->
+<label>🧭 Multi-Timeframe Bias (max 30%):</label>
+<div id="biasTimeframes" style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <label><input type="checkbox" value="15M" onchange="updateSetupScoreDisplay()" /> 15M</label>
+  <label><input type="checkbox" value="30M" onchange="updateSetupScoreDisplay()" /> 30M</label>
+  <label><input type="checkbox" value="1H" onchange="updateSetupScoreDisplay()" /> 1H</label>
+  <label><input type="checkbox" value="4H" onchange="updateSetupScoreDisplay()" /> 4H</label>
+  <label><input type="checkbox" value="D1" onchange="updateSetupScoreDisplay()" /> D1</label>
+  <label><input type="checkbox" value="W1" onchange="updateSetupScoreDisplay()" /> W1</label>
+</div>
 
-      <!-- Checkliste -->
-      <div id="ruleChecklist" style="display: flex; flex-direction: column; gap: 10px; margin-top:10px;">
-        <label><input type="checkbox" id="ruleAOI" onchange="updateSetupScoreDisplay()" /> 🧱 AOI / POI reagiert sichtbar</label>
-        <label><input type="checkbox" id="ruleEntry" onchange="updateSetupScoreDisplay()" /> 🎯 Entry-Trigger bestätigt</label>
-        <label><input type="checkbox" id="ruleEntryPattern" onchange="updateSetupScoreDisplay()" /> 🧠 Einstiegsmuster sichtbar</label>
-        <label><input type="checkbox" id="rulePsych" onchange="updateSetupScoreDisplay()" /> 💡 Psychologisches Level</label>
-        <label><input type="checkbox" id="ruleSession" onchange="updateSetupScoreDisplay()" /> 🕒 Richtiges Zeitfenster</label>
-        <label><input type="checkbox" id="ruleRR" onchange="updateSetupScoreDisplay()" /> 📏 Minimum 1:2.5 RR</label>
-        <label><input type="checkbox" id="ruleLTFShift" onchange="updateSetupScoreDisplay()" /> 🔁 LTF Strukturwechsel</label>
 
-        <!-- Setup-Score Anzeige -->
-        <div id="setupScoreDisplay" style="margin-top: 12px; font-weight: bold;">
-          📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
-        </div>
-      </div>
-    </div>
+
+
+
+  <!-- Checklisten (werden per JS dynamisch gezeigt) -->
+  <div id="ruleChecklistSwing" class="ruleChecklist">
+    <label><input id="ruleAOI" type="checkbox" value="20" onchange="updateSetupScoreDisplay()"> 🧱 AOI nur Weekly/Daily </label>
+    <label><input id="ruleRejection" type="checkbox" value="15" onchange="updateSetupScoreDisplay()"> ❌ Kein Entry ohne Rejection </label>
+    <label><input id="ruleHLH" type="checkbox" value="15" onchange="updateSetupScoreDisplay()"> 🔺 Buy HL (4H) | 🔻 Sell LH (4H) </label>
+    <label><input id="ruleShift" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🔁 Struktur-Shift (15M–1H) </label>
+    <label><input id="ruleSLTP" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🎯 SL/TP korrekt </label>
+    <label><input id="ruleBiasW" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 📈 Weekly Bias </label>
+    <label><input id="ruleBiasD" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 📊 Daily Bias </label>
+    <label><input id="ruleBiasH4" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 🕓 H4 Bias </label>
+    <label><input id="ruleRetest" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🔄 Weekly Retest </label>
+    <label><input id="ruleDailyRejection" type="checkbox" value="4" onchange="updateSetupScoreDisplay()"> 📉 Daily Rejection </label>
+    <label><input id="ruleCandle" type="checkbox" value="5" onchange="updateSetupScoreDisplay()"> 🕯️ Candle-Muster </label>
+  </div>
+
+  <div id="ruleChecklistDay" class="ruleChecklist" style="display:none;">
+    <label><input id="ruleAOI_day" type="checkbox" value="20" onchange="updateSetupScoreDisplay()"> 🧱 AOI nur 1H </label>
+    <label><input id="ruleRejection_day" type="checkbox" value="15" onchange="updateSetupScoreDisplay()"> ❌ Kein Entry ohne Rejection </label>
+    <label><input id="ruleShift_day" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🔁 Struktur-Shift (5M–15M) </label>
+    <label><input id="ruleSLTP_day" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🎯 SL/TP korrekt </label>
+    <label><input id="ruleSession_day" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 🕒 Session Killzone </label>
+    <label><input id="ruleBias1H_day" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 📈 1H Bias </label>
+    <label><input id="ruleBias4H_day" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 🕓 4H Bias </label>
+    <label><input id="ruleBiasD1_day" type="checkbox" value="2" onchange="updateSetupScoreDisplay()"> 📊 Daily Bias </label>
+    <label><input id="ruleLiquidity_day" type="checkbox" value="10" onchange="updateSetupScoreDisplay()"> 💧 Liquidity Grab/FVG </label>
+    <label><input id="ruleDailyRejection_day" type="checkbox" value="4" onchange="updateSetupScoreDisplay()"> 📉 Daily Rejection </label>
+    <label><input id="ruleCandle_day" type="checkbox" value="5" onchange="updateSetupScoreDisplay()"> 🕯️ Candle-Muster </label>
+  </div>
+
+  <!-- Ergebnis -->
+  <div id="setupScoreDisplay" style="margin-top:12px;font-weight:bold;">
+    📊 Setup-Score: <strong>0%</strong> – ❌ Nicht gültig
+  </div>
+</div>
+
+
+
 
     <!-- Kommentare -->
     <div style="margin-top: 20px;">
