@@ -37,7 +37,6 @@ Object.assign(entry, {
   pair: document.getElementById("journalSymbol").value.trim(),
   direction: document.getElementById("journalDirection").value.toLowerCase(),
   entry: parseFloat(document.getElementById("journalEntry").value),
-  // ✅ Exit optional → wenn Feld fehlt oder leer, dann 0
   lots: parseFloat(document.getElementById("journalLots").value),
   pnl: parseFloat(document.getElementById("journalPnL").value.replace(",", ".")),
   emotionBefore: parseInt(document.getElementById("emotionBefore").value),
@@ -54,6 +53,30 @@ Object.assign(entry, {
   notesBefore: document.getElementById("journalNotesBefore")?.value.trim(),
   notesAfter: document.getElementById("journalNotesAfter")?.value.trim()
 });
+
+// 📋 Checkliste gesammelt speichern
+entry.checklist = {
+  AOI: document.getElementById("ruleAOI")?.checked || false,
+  Entry: document.getElementById("ruleEntry")?.checked || false,
+  Psych: document.getElementById("rulePsych")?.checked || false,
+  Session: document.getElementById("ruleSession")?.checked || false,
+  RR: document.getElementById("ruleRR")?.checked || false,
+  LTFShift: document.getElementById("ruleLTFShift")?.checked || false,
+  EntrySignal: document.getElementById("ruleEntrySignal")?.checked || false
+};
+
+
+
+// 📊 Score + Grade speichern
+const liveScore = getLiveSetupScoreFromForm();
+entry.setupScore = liveScore.score;
+entry.letterGrade =
+  liveScore.score >= 95 ? "A+" :
+  liveScore.score >= 80 ? "A"  :
+  liveScore.score >= 60 ? "B"  :
+  liveScore.score >= 40 ? "C"  :
+  liveScore.score >= 20 ? "D"  : "F";
+
 
 
   // 📸 Bildzuweisung
@@ -155,6 +178,54 @@ function populateLotSuggestions() {
 
 
 
+
+
+
+function openLightbox(src) {
+  const overlay = document.getElementById("lightboxOverlay");
+  const img = document.getElementById("lightboxImage");
+  img.src = src;
+  overlay.style.display = "flex";
+}
+
+function closeLightbox() {
+  const overlay = document.getElementById("lightboxOverlay");
+  const img = document.getElementById("lightboxImage");
+  overlay.style.display = "none";
+  img.src = "";
+}
+
+function updateBiasOptions() {
+  const mode = document.getElementById("tradingMode").value;
+
+  // Bias je nach Modus
+  const allowed = (mode === "swing")
+    ? ["W1", "D1", "4H"]   // Swing
+    : ["D1", "4H", "1H"];  // Day
+
+  document.querySelectorAll('#biasTimeframes input').forEach(cb => {
+    const tf = cb.value;
+    const label = cb.closest("label");
+    if (allowed.includes(tf)) {
+      label.style.display = "inline-flex";
+    } else {
+      cb.checked = false;
+      label.style.display = "none";
+    }
+  });
+
+  // === Regel-Checklisten umschalten ===
+  const swingBox = document.getElementById("ruleChecklistSwing");
+  const dayBox   = document.getElementById("ruleChecklistDay");
+  if (swingBox && dayBox) {
+    swingBox.style.display = (mode === "swing") ? "block" : "none";
+    dayBox.style.display   = (mode === "day")   ? "block" : "none";
+  }
+
+  updateSetupScoreDisplay();
+}
+
+
 function getSetupScore(entry) {
   const tfList = entry.biasTimeframes || [];
   const mode = entry.tradingMode || "day";
@@ -198,74 +269,74 @@ if (entry.ruleEntrySignal) score += 10;
 }
 
 
-function openLightbox(src) {
-  const overlay = document.getElementById("lightboxOverlay");
-  const img = document.getElementById("lightboxImage");
-  img.src = src;
-  overlay.style.display = "flex";
-}
-
-function closeLightbox() {
-  const overlay = document.getElementById("lightboxOverlay");
-  const img = document.getElementById("lightboxImage");
-  overlay.style.display = "none";
-  img.src = "";
-}
-
-function updateBiasOptions() {
-  const mode = document.getElementById("tradingMode")?.value || "day";
-  const allowed = mode === "day" ? ["1H", "4H", "D1"] : ["4H", "D1", "W1"];
-
-  document.querySelectorAll('#biasTimeframes input').forEach(cb => {
-    const tf = cb.value;
-    const label = cb.closest("label");
-    if (allowed.includes(tf)) {
-      label.style.display = "inline-flex";
-    } else {
-      cb.checked = false; // abwählen falls nicht erlaubt
-      label.style.display = "none";
-    }
-  });
-
-  updateSetupScoreDisplay(); // gleich aktualisieren
-}
-
-
 function getLiveSetupScoreFromForm() {
-  const tfList = Array.from(document.querySelectorAll('#biasTimeframes input:checked')).map(cb => cb.value);
+  const tfList = Array.from(document.querySelectorAll('#biasTimeframes input:checked'))
+    .map(cb => cb.value);
   const mode = document.getElementById("tradingMode")?.value || "day";
 
   let score = 0;
+  let hasAllBias = false;
 
-  // 📌 Bias-Timeframes (max 3 TFs à 10 %)
-  score += Math.min(tfList.length, 3) * 10;
+  if (mode === "swing") {
+    // Pflicht-TFs für Swing
+    const required = ["W1", "D1", "4H"];
+    hasAllBias = required.every(tf => tfList.includes(tf));
+    if (hasAllBias) score += 30; // Bias-Block
 
-  // 📌 AOI (Area of Interest)
-  if (document.getElementById("ruleAOI")?.checked) score += 10;
+    // === Grundregeln angepasst ===
+    if (document.getElementById("ruleAOI")?.checked) score += 10;       // AOI 10 %
+    if (document.getElementById("ruleRejection")?.checked) score += 10; // Kein Entry 10 %
+    if (document.getElementById("ruleHLH")?.checked) score += 10;       // Buy HL / Sell LH 10 %
+    if (document.getElementById("ruleShift")?.checked) score += 5;      // Struktur-Shift 5 %
+    if (document.getElementById("ruleSLTP")?.checked) score += 10;      // SL/TP 10 %
 
-  // 📌 AOI-Timeframe korrekt (je nach Modus)
-  const hasValidAOITF =
-    (mode === "swing" && tfList.includes("4H") && tfList.includes("D1")) ||
-    (mode === "day" && tfList.includes("1H"));
-  if (hasValidAOITF) score += 10;
+    // === Confluence ===
+    if (document.getElementById("ruleBiasW")?.checked) score += 2;
+    if (document.getElementById("ruleBiasD")?.checked) score += 2;
+    if (document.getElementById("ruleBiasH4")?.checked) score += 2;
+    if (document.getElementById("ruleRetest")?.checked) score += 10;
+    if (document.getElementById("ruleDailyRejection")?.checked) score += 4;
+    if (document.getElementById("ruleCandle")?.checked) score += 5;
 
-  // 📌 Weitere Regelpunkte
-  if (document.getElementById("ruleEntry")?.checked) score += 10;       // Entry Confirmation
-  if (document.getElementById("rulePsych")?.checked) score += 5;        // Psych Level
-  if (document.getElementById("ruleSession")?.checked) score += 5;      // Session
-  if (document.getElementById("ruleRR")?.checked) score += 5;           // Risk:Reward
-  if (document.getElementById("ruleLTFShift")?.checked) score += 10;    // LTF Shift
-  if (document.getElementById("ruleEntrySignal")?.checked) score += 10; // Signal
+  } else if (mode === "day") {
+    // Pflicht-TFs für Day
+    const required = ["D1", "4H", "1H"];
+    hasAllBias = required.every(tf => tfList.includes(tf));
+    if (hasAllBias) score += 30;
 
-  // 📌 Endscore (A+ bei Day schon ab 85 %)
-  const cappedScore = Math.min(score, 95); // Maximal 95 %
-  const validBias = tfList.length >= 2;    // mindestens 2 Bias-TFs erforderlich
+    // === Grundregeln angepasst ===
+    if (document.getElementById("ruleAOI_day")?.checked) score += 10;       // AOI 10 %
+    if (document.getElementById("ruleRejection_day")?.checked) score += 10; // Kein Entry 10 %
+    if (document.getElementById("ruleShift_day")?.checked) score += 5;      // Struktur-Shift 5 %
+    if (document.getElementById("ruleSLTP_day")?.checked) score += 10;      // SL/TP 10 %
+    if (document.getElementById("ruleSession_day")?.checked) score += 10;   // Session Killzone 10 %
+
+    // === Confluence ===
+    if (document.getElementById("ruleBias1H_day")?.checked) score += 2;
+    if (document.getElementById("ruleBias4H_day")?.checked) score += 2;
+    if (document.getElementById("ruleBiasD1_day")?.checked) score += 2;
+    if (document.getElementById("ruleLiquidity_day")?.checked) score += 10;
+    if (document.getElementById("ruleDailyRejection_day")?.checked) score += 4;
+    if (document.getElementById("ruleCandle_day")?.checked) score += 5;
+  }
+
+  // Endscore (max 95 %)
+  const cappedScore = Math.min(score, 95);
 
   return {
     score: cappedScore,
-    validBias
+    validBias: hasAllBias
   };
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -348,37 +419,43 @@ document.getElementById("setupScoreDisplay").innerHTML = `
 
 updateSetupScoreDisplay();
 
-function renderStars(value) {
-  const v = Math.max(1, Math.min(10, parseInt(value) || 0));
-  return "⭐".repeat(v) + "☆".repeat(10 - v) + ` (${v}/10)`;
-}
-
 function setupStarRating(containerId, inputId) {
   const container = document.getElementById(containerId);
   const input = document.getElementById(inputId);
 
+  // Container immer leeren → keine Doppel-Sterne
+  container.innerHTML = "";
+
+  // 10 Sterne erzeugen (von 10 bis 1)
   for (let i = 10; i >= 1; i--) {
     const star = document.createElement("span");
-    star.innerHTML = "★";
+    star.textContent = "★";
     star.dataset.value = i;
-    star.onclick = () => {
+
+    // Klick-Event → Wert setzen + Sterne aktualisieren
+    star.addEventListener("click", () => {
       input.value = i;
       updateStarVisuals(containerId, i);
-    };
+    });
+
     container.appendChild(star);
   }
 
-  updateStarVisuals(containerId, parseInt(input.value));
+  // Initial Rendering mit vorhandenem Wert
+  const initialValue = parseInt(input.value) || 5;
+  updateStarVisuals(containerId, initialValue);
 }
 
 function updateStarVisuals(containerId, value) {
   const container = document.getElementById(containerId);
   const stars = container.querySelectorAll("span");
-  stars.forEach(s => {
-    s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
+
+  stars.forEach(star => {
+    const starValue = parseInt(star.dataset.value);
+    star.classList.toggle("selected", starValue <= value);
   });
 
-  // Textanzeige je nach Bewertung
+  // Beschreibungen für jedes Rating
   const labelMap = {
     1: "😵 Totale Unsicherheit / komplett unklar",
     2: "😣 Sehr unsicher – kein Vertrauen in Setup",
@@ -389,10 +466,10 @@ function updateStarVisuals(containerId, value) {
     7: "😎 Gute Kontrolle – vertraue dem Plan",
     8: "🔥 Scharfer Fokus – Setup passt perfekt",
     9: "💪 Volles Vertrauen – komplett im Flow",
-    10: "🧠 100 % Fokus – State of Zen / Maschinenmodus"
+    10:"🧠 100 % Fokus – State of Zen / Maschinenmodus"
   };
 
-  // Bestehendes Text-Element finden oder neu anlegen
+  // Text-Element unter den Sternen
   let description = container.querySelector(".star-description");
   if (!description) {
     description = document.createElement("div");
@@ -586,25 +663,22 @@ for (let day = 1; day <= daysInMonth; day++) {
   const monthlyEntries = entries
     .filter(e => e.date.startsWith(currentMonthKey))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
-let validSetups = 0;
-let shakySetups = 0;
-let failedSetups = 0;
+// === Neue Auswertung: Letter Grades ===
+let gradeCounts = { "A+":0, "A":0, "B":0, "C":0, "D":0, "F":0 };
 
 monthlyEntries.forEach(e => {
-  const result = getSetupScore(e);
-  const score = result?.score ?? 0;
-  const valid = result?.valid ?? false;
+ const score = e.setupScore ?? getSetupScore(e).score;
+const grade = e.letterGrade ?? (
+  score >= 95 ? "A+" :
+  score >= 80 ? "A" :
+  score >= 60 ? "B" :
+  score >= 40 ? "C" :
+  score >= 20 ? "D" : "F"
+);
+gradeCounts[grade]++;
 
-  if (!valid) {
-    failedSetups++;
-  } else if (score >= 40) {
-    validSetups++;
-  } else if (score >= 20) {
-    shakySetups++;
-  } else {
-    failedSetups++;
-  }
 });
+
 
 
 
@@ -709,9 +783,13 @@ document.getElementById("calendarStats").innerHTML = `
 
 
     🧠 <strong>Setup-Auswertung:</strong><br>
-    ✅ Valide Setups: <strong>${validSetups}</strong><br>
-    ⚠️ Wacklige Setups: <strong>${shakySetups}</strong><br>
-    ❌ Regelbruch-Setups: <strong>${failedSetups}</strong>
+🌟 A+ Setups: <strong>${gradeCounts["A+"]}</strong><br>
+🟢 A Setups: <strong>${gradeCounts["A"]}</strong><br>
+🟡 B Setups: <strong>${gradeCounts["B"]}</strong><br>
+🟧 C Setups: <strong>${gradeCounts["C"]}</strong><br>
+🟥 D Setups: <strong>${gradeCounts["D"]}</strong><br>
+❌ Fails (F): <strong>${gradeCounts["F"]}</strong>
+
   </div>
 `;
 
@@ -732,52 +810,54 @@ function editEntry(entryId) {
   document.getElementById("journalSymbol").value = entry.pair;
   document.getElementById("journalDirection").value = entry.direction?.toLowerCase();
   document.getElementById("journalEntry").value = entry.entry;
-  
   document.getElementById("journalLots").value = entry.lots;
   document.getElementById("journalPnL").value = entry.pnl;
+  document.getElementById("journalNotesBefore").value = entry.notesBefore || "";
+  document.getElementById("journalNotesAfter").value = entry.notesAfter || "";
   document.getElementById("emotionBefore").value = entry.emotionBefore;
   document.getElementById("emotionAfter").value = entry.emotionAfter;
 
-  // ⭐ Update Sternanzeige richtig anzeigen
+  // ⭐ Sterne wiederherstellen
   updateStarVisuals("starsBefore", parseInt(entry.emotionBefore));
   updateStarVisuals("starsAfter", parseInt(entry.emotionAfter));
 
-  // 📋 Regeln (Checkliste) setzen
-  ["AOI", "Entry", "Psych", "Session", "RR", "LTFShift", "EntrySignal"].forEach(id => {
+// 📋 Checkliste wiederherstellen
+if (entry.checklist) {
+  Object.entries(entry.checklist).forEach(([key, val]) => {
+    const el = document.getElementById("rule" + key);
+    if (el) el.checked = val;
+  });
+} else {
+  // Fallback für alte Einträge ohne checklist
+  ["AOI","Entry","Psych","Session","RR","LTFShift","EntrySignal"].forEach(id => {
     const el = document.getElementById("rule" + id);
     if (el) el.checked = !!entry["rule" + id];
   });
+}
 
-  // Bias-TFs
+  // 📐 Bias-Frames wiederherstellen
   document.querySelectorAll('#biasTimeframes input').forEach(cb => {
     cb.checked = entry.biasTimeframes?.includes(cb.value) || false;
   });
 
-  // Trading Mode
-  document.getElementById("tradingMode").value = entry.tradingMode || "day";
-  updateBiasOptions();
-
-  // Setup-Score berechnen
+  // 📊 Setup Score neu berechnen
   updateSetupScoreDisplay();
 
-  // 🧠 Signal zum Überschreiben statt neu anlegen
+  // 🧠 Edit-Flag setzen
   document.getElementById("saveJournalEntryButton").dataset.editId = entryId;
 
-  // 🖊️ Formular anzeigen & hervorheben
+  // Formular sichtbar machen + highlight
   const formEl = document.getElementById("calc-journal");
   formEl.style.display = "block";
 
-  // 🔽 Smooth scroll zum Formular mit Abstand (für Sticky Header etc.)
   const topOffset = formEl.getBoundingClientRect().top + window.scrollY - 60;
   window.scrollTo({ top: topOffset, behavior: "smooth" });
 
-  // ✨ Visuelles Highlight für Feedback
   formEl.style.transition = "box-shadow 0.3s ease";
   formEl.style.boxShadow = "0 0 12px 4px #0077cc";
-  setTimeout(() => {
-    formEl.style.boxShadow = "none";
-  }, 1000);
+  setTimeout(() => { formEl.style.boxShadow = "none"; }, 1000);
 }
+
 
 
 function showEntriesForDate(dateStr) {
@@ -792,22 +872,30 @@ function showEntriesForDate(dateStr) {
   }
 
   filtered.forEach(entry => {
-    const result = getSetupScore(entry);
-    const score = result.score;
-    const valid = result.valid;
+    // ⚡ Score & Grade aus gespeicherten Entry-Daten
+    const score = entry.setupScore ?? getSetupScore(entry).score;
+    const grade = entry.letterGrade ?? (
+      score >= 95 ? "A+" :
+      score >= 80 ? "A" :
+      score >= 60 ? "B" :
+      score >= 40 ? "C" :
+      score >= 20 ? "D" : "F"
+    );
 
-    let verdict = "❌ Regelbruch";
-    if (!valid) verdict = "❌ Nicht gültig (Bias fehlt)";
-    else if (score >= 95) verdict = "✅ Perfekt";
-    else if (score >= 80) verdict = "🟢 Sehr stark";
-    else if (score >= 60) verdict = "🟨 Solide";
-    else if (score >= 40) verdict = "🟧 Mittelmäßig";
-    else if (score >= 20) verdict = "🟥 Schwach";
+    let verdict;
+    switch (grade) {
+      case "A+": verdict = "🌟 A+ Setup"; break;
+      case "A":  verdict = "🟢 Sehr stark"; break;
+      case "B":  verdict = "🟡 Solide"; break;
+      case "C":  verdict = "🟧 Mittelmäßig"; break;
+      case "D":  verdict = "🟥 Schwach"; break;
+      default:   verdict = "❌ Fail (F)"; break;
+    }
 
     const biasStr = entry.biasTimeframes?.join(" + ") || "–";
     const modeStr = entry.tradingMode || "–";
 
-    const colorBox = entry.direction === "Long"
+    const colorBox = entry.direction === "long"
       ? "linear-gradient(135deg, #1e3d1e, #2f6b2f)"
       : "linear-gradient(135deg, #4a1e1e, #8b2f2f)";
 
@@ -818,86 +906,7 @@ function showEntriesForDate(dateStr) {
       pnlSummaryColor = entry.pnl > 0 ? "#1e5721" : entry.pnl < 0 ? "#8b2f2f" : "#666666";
     }
 
-// 🔽 Bilder laden (getrennt nach Vorher/Nachher)
-let imageHTML = "";
-
-// Neue Struktur mit "before"/"after"
-if (entry.images?.before?.length > 0 || entry.images?.after?.length > 0) {
-  if (entry.images.before?.length > 0) {
-    const beforeId = "img_before_" + entry.id;
-    imageHTML += `
-      <div style="margin-top: 10px;">
-        <strong>📸 Vor dem Trade:</strong>
-        <div id="${beforeId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
-      </div>
-    `;
-    setTimeout(() => {
-      const el = document.getElementById(beforeId);
-      if (el) {
-        entry.images.before.forEach(id => {
-          const box = document.createElement("div");
-          box.textContent = "⏳";
-          el.appendChild(box);
-          loadImageFromIndexedDB(id, base64 => {
-            box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
-          });
-        });
-      }
-    }, 0);
-  }
-
-  if (entry.images.after?.length > 0) {
-    const afterId = "img_after_" + entry.id;
-    imageHTML += `
-      <div style="margin-top: 10px;">
-        <strong>📸 Nach dem Trade:</strong>
-        <div id="${afterId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
-      </div>
-    `;
-    setTimeout(() => {
-      const el = document.getElementById(afterId);
-      if (el) {
-        entry.images.after.forEach(id => {
-          const box = document.createElement("div");
-          box.textContent = "⏳";
-          el.appendChild(box);
-          loadImageFromIndexedDB(id, base64 => {
-            box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
-          });
-        });
-      }
-    }, 0);
-  }
-}
-
-// 🔙 Fallback für alte Struktur (wenn entry.imageIds noch genutzt wird)
-if (!entry.images && entry.imageIds?.length > 0) {
-  const fallbackId = "img_fallback_" + entry.id;
-  imageHTML += `
-    <div style="margin-top: 10px;">
-      <strong>📸 Bilder:</strong>
-      <div id="${fallbackId}" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;"></div>
-    </div>
-  `;
-  setTimeout(() => {
-    const el = document.getElementById(fallbackId);
-    if (el) {
-      entry.imageIds.forEach(id => {
-        const box = document.createElement("div");
-        box.textContent = "⏳";
-        el.appendChild(box);
-        loadImageFromIndexedDB(id, base64 => {
-          box.innerHTML = `<img src="${base64}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="showLightbox('${base64}')" />`;
-        });
-      });
-    }
-  }, 0);
-}
-
-
-
-
-
+    // 🔽 Bilder etc. wie gehabt …
 
     list.innerHTML += `
       <details class="trade-box" style="margin-top: 10px; border-radius: 8px; overflow: hidden; background: ${colorBox};">
@@ -905,19 +914,15 @@ if (!entry.images && entry.imageIds?.length > 0) {
           ${entry.pair} (${entry.direction}) – 💰 ${pnlDisplay}
         </summary>
         <div class="trade-details" style="background:#1a1a1a; color:#eee; padding: 12px;">
-          ${renderStars(entry.emotionBefore)} Fokus<br>
-          ${renderStars(entry.emotionAfter)} Nach dem Trade<br>
           🧭 Modus: <strong>${modeStr}</strong><br>
           📐 Bias-TFs: <strong>${biasStr}</strong><br>
-          📊 Setup Score: <strong>${score}%</strong> – ${verdict}<br><br>
+          📊 Setup Score: <strong>${score}% (${grade})</strong> – ${verdict}<br><br>
 
           <strong>📝 Kommentar vor dem Trade:</strong><br>
           ${entry.notesBefore || "–"}<br><br>
 
           <strong>📝 Kommentar nach dem Trade:</strong><br>
           ${entry.notesAfter || "–"}<br><br>
-
-          ${imageHTML}
 
           <div style="display:flex; gap:10px; margin-top: 10px;">
             <button onclick="editEntry(${entry.id})"
@@ -934,6 +939,8 @@ if (!entry.images && entry.imageIds?.length > 0) {
     `;
   });
 }
+
+
 
 function loadImageFromIndexedDB(id, callback) {
   const request = indexedDB.open("TradeAppDB", 1);
@@ -1071,3 +1078,27 @@ function saveImageToIndexedDB(base64, id) {
     store.put({ id, image: base64 });
   };
 }
+
+// Haptic + Seal-Effekt beim Anklicken
+document.querySelectorAll('#ruleChecklistSwing input, #ruleChecklistDay input, #biasTimeframes input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const parentLabel = cb.closest('label');
+
+    // 💥 Haptisches Feedback (nur auf unterstützten Devices)
+    if (navigator.vibrate) {
+      navigator.vibrate([40, 30, 40]); // kleiner Doppelpuls
+    }
+
+    // 🔒 Seal-Animation
+    parentLabel.classList.add('sealed');
+    setTimeout(() => parentLabel.classList.remove('sealed'), 400); // nach 0,4s wieder zurück
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateBiasOptions();
+});
+
+document.getElementById("tradingMode").addEventListener("change", () => {
+  updateBiasOptions();
+});
