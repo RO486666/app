@@ -11,16 +11,6 @@
   --fx-outline: #d9d9d9;
 }
 
-#calc-journal .stats-box.journal-box {
-  background: var(--fx-bg);
-  border: 1px solid var(--fx-border);
-  border-radius: 3px;
-  padding: 20px;
-  color: var(--fx-fg);
-  box-shadow: none;
-  max-width: 720px;
-  margin: 0 auto;
-}
 
 /* Labels */
 #calc-journal label {
@@ -168,4 +158,83 @@
 }
 
 
+/* ==========================================
+   ✅ Setup-Check (Industrial Ledger Monochrome)
+   ========================================== */
+#setupBoxWrapper {
+  margin-top: 15px;
+  padding: 16px 18px;
+  border: 1px solid var(--fx-border);
+  background: var(--fx-surface);
+  border-radius: 4px;
+  color: var(--fx-fg);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+}
 
+#setupBoxWrapper .setup-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--fx-fg);
+}
+
+#setupBoxWrapper .setup-subtitle {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--fx-fg-dim);
+}
+
+/* Bias- & Regel-Checkboxen */
+#biasTimeframes,
+#ruleChecklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+#biasTimeframes label,
+#ruleChecklist label {
+  flex: 1 1 45%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--fx-fg);
+  background: linear-gradient(135deg, #2a1a1a, #1a1111); /* 🔴 Dunkelrot-Braun */
+  border: 1px solid #3a2323; /* dezente Outline */
+  border-radius: 4px;
+  padding: 8px 10px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+}
+
+#biasTimeframes label:hover,
+#ruleChecklist label:hover {
+  border-color: #cc4444;         /* kräftiger Rot-Akzent beim Hover */
+  background: #332020;           /* etwas heller bei Hover */
+}
+
+/* Checkbox selbst */
+#biasTimeframes input,
+#ruleChecklist input {
+  width: 16px;
+  height: 16px;
+  accent-color: #cc4444; /* roter Akzent */
+  cursor: pointer;
+}
+
+
+/* Seal-Animation (Boom Effekt) */
+#ruleChecklist label.sealed,
+#biasTimeframes label.sealed {
+  background: linear-gradient(135deg, #4a1f1f, #2a1212);
+  border-color: #ff4444;
+  box-shadow: 0 0 12px rgba(255, 80, 80, 0.6);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
