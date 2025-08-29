@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="CSS/Rechner.css" />
   <link rel="stylesheet" href="CSS/rules.css" />
   <link rel="stylesheet" href="CSS/jornal.css" />
-
+ <link rel="stylesheet" href="CSS/quiz.css" />
   <!-- PWA / Manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00aa44" />
@@ -776,8 +776,6 @@
   🚀 <strong style="color:#ff6666;">Setup-Regeln anzeigen / ausblenden</strong>
 </div>
 
-
-
 <!-- 🔥 Regeln -->
 <div class="rules-fire-wrapper">
   <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
@@ -1008,6 +1006,21 @@
   </div>
 </div>
 
+<!-- 🧠 Theorie-Test Button -->
+<button id="btn-calc-quiz">🧠 Theorie-Test</button>
+
+<!-- === Quiz Popup === -->
+<div id="quizOverlay" class="quiz-overlay">
+  <div class="quiz-modal">
+    <button class="quiz-close" onclick="closeQuiz()">✖</button>
+    <h2>🧠 Theorie-Test</h2>
+    <div id="quizContent">
+      <!-- Hier rendert die JS-Engine die Fragen -->
+    </div>
+  </div>
+</div>
+
+
 
 
 
@@ -1038,7 +1051,18 @@
 <script src="scripts/rules.js"></script>
 <script type="module" src="pocketbase-init.js"></script>
 
+<script src="scripts/quiz.js"></script>
+<script src="scripts/quiz-db.js"></script>
+<script>
+// Auto-Mount ins Popup
+document.addEventListener("DOMContentLoaded", () => {
+  const content = document.getElementById("quizContent");
+  if (content) {
+    TradingQuiz.mount(content);
+  }
+});
 
+</script>
 
 </body>
 
