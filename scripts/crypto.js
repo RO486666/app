@@ -44,19 +44,31 @@
     }
   ];
 
-  // ---- Day-Details nur für Wochenende ----
-  const dayDetailsMap = {
-    "Samstag": `
+// ---- Day-Details nur für Wochenende ----
+const dayDetailsMap = {
+  "Samstag": `
 🪙 <strong>Krypto (Samstag)</strong><br>
-• Geringere Liquidität → Range/Mean-Reversion.<br>
-• Fokus: BTC/ETH Range-Edges, enge SL. Backtesting & Watchlist vorbereiten.
+• Sehr geringe Liquidität – Institutionelle sind raus.<br>
+• Markt bewegt sich oft in engen Ranges → Range-Trading ideal.<br>
+• BTC/ETH reagieren meist nur auf Retail-Struktur (Range-Edges, Liquidity Sweeps).<br>
+• Daytrading-Setup: <br>
+&nbsp;&nbsp;– Fokus auf Range-High/Low, Mean-Reversion, kleine Scalps.<br>
+&nbsp;&nbsp;– Kein aggressives Trendtrading – Breakouts scheitern oft.<br>
+• Zusatz: Samstag eignet sich gut für <em>Backtesting, Journal & Watchlist-Updates</em>.<br>
 `,
-    "Sonntag": `
+
+  "Sonntag": `
 🪙 <strong>Krypto (Sonntag)</strong><br>
-• Abends häufig „Pre-Move“ der neuen Woche.<br>
-• Dominance/USDT-Flows beobachten. Keine Overnights ohne Plan.
+• Vormittag: Sehr ruhiger Markt, kaum Volumen.<br>
+• Nachmittag/Abend (ab 18–20 Uhr): „Pre-Move“ der neuen Woche setzt oft ein.<br>
+• Smart Money positioniert sich → häufig Fakeouts oder Liquidity Sweeps vor dem Montag.<br>
+• Daytrading-Setup: <br>
+&nbsp;&nbsp;– Fokus auf BTC/ETH an wichtigen Levels kurz vor Forex-Open.<br>
+&nbsp;&nbsp;– Typisch: schnelle Moves Sonntagabend → oft Richtungsanzeige für Montag.<br>
+• Zusatz: Keine Overnights ohne Plan – am Montag kann alles kippen.<br>
 `
-  };
+};
+
 
   // ---- UI: Day-Summary + klickbare Details ----
   function updateDaySummaryWeekend() {
