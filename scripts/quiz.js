@@ -109,26 +109,36 @@
   }
 
   function startQuiz(host) {
-    state.questionCount = Math.max(5, Math.min(100, parseInt($("#questionCount", host).value || "15", 10)));
+  state.questionCount = Math.max(5, Math.min(100, parseInt($("#questionCount", host).value || "15", 10)));
 
-    if (state.mode === "themen") {
-      state.selectedTopics = $$(`#topicList input[type="checkbox"]:checked`, host).map(cb => cb.value);
-      if (!state.selectedTopics.length) { alert("Bitte wähle mindestens ein Thema aus."); return; }
-    } else {
-      state.selectedTopics = getAllTopics();
-    }
-
-    const pool = collectQuestionsByTopics(state.selectedTopics);
-    if (!pool.length) { alert("Keine Fragen im Pool. Fülle zuerst die Datenbank."); return; }
-
-    state.deck = pickRandom(pool, state.questionCount);
-    state.i = 0; state.score = 0; state.answered = false;
-
-    $("#quizSetup", host).style.display = "none";
-    $("#quizResult", host).style.display = "none";
-    $("#quizRun", host).style.display = "block";
-    renderQuestion(host);
+  if (state.mode === "themen") {
+    state.selectedTopics = $$(`#topicList input[type="checkbox"]:checked`, host).map(cb => cb.value);
+    if (!state.selectedTopics.length) { alert("Bitte wähle mindestens ein Thema aus."); return; }
+  } else {
+    state.selectedTopics = getAllTopics();
   }
+
+  const pool = collectQuestionsByTopics(state.selectedTopics);
+  if (!pool.length) { alert("Keine Fragen im Pool. Fülle zuerst die Datenbank."); return; }
+
+  // HIER: Fragen ziehen und pro Frage Antworten mischen
+  state.deck = pickRandom(pool, state.questionCount).map(withShuffledAnswers);
+
+  state.i = 0; state.score = 0; state.answered = false;
+
+  $("#quizSetup", host).style.display = "none";
+  $("#quizResult", host).style.display = "none";
+  $("#quizRun", host).style.display = "block";
+  renderQuestion(host);
+}
+
+function withShuffledAnswers(q) {
+  const idxs = q.a.map((_, i) => i);
+  const shuffledIdxs = shuffle(idxs);
+  const newAnswers = shuffledIdxs.map(i => q.a[i]);
+  const newCorrect = shuffledIdxs.indexOf(q.correct);
+  return { ...q, a: newAnswers, correct: newCorrect };
+}
 
   function renderQuestion(host) {
     const q = state.deck[state.i];
