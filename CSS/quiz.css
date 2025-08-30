@@ -95,3 +95,38 @@
   outline: 2px solid #00ff99;
   outline-offset: 4px;
 }
+
+/* 📱 Mobile Fix fürs Quiz */
+@media screen and (max-width: 480px) {
+  #calc-quiz {
+    font-size: 15px;         /* kleinere Schrift */
+    line-height: 1.5;        /* besser lesbar */
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  /* Fragen-Text */
+  #calc-quiz .question {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    word-wrap: break-word;   /* lange Wörter umbrechen */
+  }
+
+  /* Antwort-Buttons */
+  #calc-quiz button {
+    font-size: 14px;
+    padding: 10px 12px;
+    margin: 6px 0;
+    width: 100%;             /* volle Breite → einfacher zu tippen */
+    text-align: left;
+  }
+
+  /* Quiz-Container begrenzen + scroll */
+  #calc-quiz {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
