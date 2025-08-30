@@ -1,0 +1,353 @@
+/* =========================================================
+   🪙 Crypto Weekend UI – Neon Purple Edition
+   (aktiv nur mit .is-crypto-weekend)
+   ========================================================= */
+:is(body).is-crypto-weekend {
+  --crypto-color: #b34dff;                /* Neon-Lila */
+  --crypto-color-soft: rgba(179, 77, 255, .55);
+  --crypto-surface: #0f0b12;              /* Tiefer, violettstichiger Hintergrund */
+  --crypto-panel: rgba(255,255,255,.03);  /* Kartenfläche */
+  --crypto-text: #f3ecff;                 /* Primärtext */
+  --crypto-dim: #d7c9ff;                  /* Sekundärtext */
+  --crypto-outline: rgba(179,77,255,.65); /* Rahmen/Outline */
+
+  /* Neon-Purple Verläufe */
+  --crypto-grad: linear-gradient(90deg,
+    rgba(179,77,255,1) 0%,
+    rgba(179,77,255,.86) 33%,
+    rgba(179,77,255,.68) 66%,
+    rgba(179,77,255,1) 100%
+  );
+  --crypto-grad-shimmer: linear-gradient(270deg,
+    rgba(179,77,255,1),
+    rgba(179,77,255,.65),
+    rgba(179,77,255,1)
+  );
+
+  background: var(--crypto-surface);
+  color: var(--crypto-text);
+}
+
+
+
+/* =========================================================
+   🔘 Tab-Buttons — Purple Parität
+   ========================================================= */
+.is-crypto-weekend .tab-buttons {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.is-crypto-weekend .tab-buttons button {
+  --cf-d1: #120c19; --cf-d2: #15101f; --cf-d3: #130d1b;
+  --txt: var(--crypto-text);
+  --glow-color: var(--crypto-color);
+  --edge: color-mix(in srgb, var(--glow-color) 75%, #ffffff 0%);
+  position: relative; display: inline-block;
+  margin: 6px; padding: 12px 18px;
+  border: 2px solid var(--edge); border-radius: 10px;
+  font: 700 15px/1.2 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: .4px; color: var(--txt);
+  cursor: pointer; user-select: none;
+  transform: translateZ(0);
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, border-color 160ms ease;
+  will-change: transform, opacity;
+  background:
+    repeating-linear-gradient(45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px),
+    repeating-linear-gradient(-45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px);
+  background-color: var(--cf-d3);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--glow-color) 30%, transparent),
+    inset 0 0 10px rgba(255,255,255,0.04);
+  text-shadow:
+    0 0 2px rgba(255,255,255,0.25),
+    0 0 6px color-mix(in srgb, var(--glow-color) 25%, transparent);
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+.is-crypto-weekend .tab-buttons button::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  pointer-events: none; mix-blend-mode: screen;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%),
+    radial-gradient(100% 60% at 50% -20%, rgba(255,255,255,0.10), transparent 60%);
+  opacity: .7; transition: opacity 160ms ease;
+}
+.is-crypto-weekend .tab-buttons button:hover,
+.is-crypto-weekend .tab-buttons button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--glow-color) 45%, transparent),
+    inset 0 0 12px rgba(255,255,255,0.06);
+  outline: 2px solid color-mix(in srgb, var(--glow-color) 85%, #fff 0%); outline-offset: 3px;
+}
+.is-crypto-weekend .tab-buttons button:hover::before,
+.is-crypto-weekend .tab-buttons button:focus-visible::before { opacity: .9; }
+.is-crypto-weekend .tab-buttons .active {
+  border-color: color-mix(in srgb, var(--glow-color) 100%, #ffffff 0%);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--glow-color) 60%, transparent),
+    0 0 36px color-mix(in srgb, var(--glow-color) 35%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--glow-color) 35%, transparent);
+  text-shadow:
+    0 0 3px rgba(255,255,255,0.35),
+    0 0 10px color-mix(in srgb, var(--glow-color) 45%, transparent);
+}
+
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .is-crypto-weekend .tab-buttons button { animation: none !important; transition: none !important; }
+}
+
+/* =========================================================
+   🕒 Session-Text & Info — Purple
+   ========================================================= */
+.is-crypto-weekend #sessionText{
+  display: block;
+  padding: 10px 12px;
+  margin: 10px 0 6px 0;
+  border: 1px solid var(--crypto-outline);
+  border-radius: 10px;
+  color: var(--crypto-text);
+  text-shadow: 0 0 6px rgba(179,77,255,.6);
+  box-shadow: inset 0 0 6px rgba(179,77,255,.15), 0 0 10px rgba(179,77,255,.12);
+  background: radial-gradient(120% 140% at 50% 120%, rgba(179,77,255,.10), transparent 60%);
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+}
+.is-crypto-weekend #sessionText:hover,
+.is-crypto-weekend #sessionText:focus-visible{
+  transform: scale(1.02); opacity: .98;
+  outline: 2px solid var(--crypto-outline); outline-offset: 3px;
+  box-shadow:
+    0 0 20px rgba(179,77,255,.25),
+    inset 0 0 14px rgba(255,255,255,.07),
+    0 0 32px rgba(179,77,255,.20);
+}
+
+.is-crypto-weekend #sessionInfo{
+  padding: 10px 12px;
+  margin: 6px 0 10px 0;
+  border: 1px dashed var(--crypto-outline);
+  border-radius: 10px;
+  color: var(--crypto-text);
+  background: rgba(179,77,255,.07);
+  text-shadow: 0 0 2px var(--crypto-color), 0 0 6px rgba(179,77,255,.3);
+  box-shadow: inset 0 0 6px rgba(179,77,255,.15);
+}
+
+/* =========================================================
+   📋 Session-Details Box — Purple
+   ========================================================= */
+.is-crypto-weekend #sessionDetailsBox,
+.is-crypto-weekend .session-details-box {
+  display: none;
+  background: rgba(20, 12, 32, 0.85);
+  padding: 14px 12px;
+  margin: 10px 0 16px 0;
+  border-left: 4px solid var(--crypto-color);
+  border-radius: 10px;
+  color: var(--crypto-dim);
+  line-height: 1.6;
+  box-shadow:
+    0 0 12px rgba(0, 0, 0, 0.6),
+    inset 0 0 8px rgba(179,77,255,.25);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-in-out;
+}
+.is-crypto-weekend #sessionDetailsBox strong,
+.is-crypto-weekend .session-details-box strong {
+  color: var(--crypto-text);
+}
+
+/* Alle Session-Typen → Lila */
+.is-crypto-weekend .session-sydney,
+.is-crypto-weekend .session-tokyo,
+.is-crypto-weekend .session-london,
+.is-crypto-weekend .session-ny,
+.is-crypto-weekend .session-killzone,
+.is-crypto-weekend .session-crypto {
+  box-shadow: 0 0 10px #b34dff66;
+  border-color: #b34dff55;
+}
+
+/* =========================================================
+   📈 Progress Bar — Purple
+   ========================================================= */
+.is-crypto-weekend .progress-container{
+  width: 100%;
+  height: 25px;
+  background: #0b0811;
+  border: 1px solid var(--crypto-outline);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 14px 4px rgba(179,77,255,.35);
+  position: relative;
+}
+.is-crypto-weekend .progress-container::before{
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,.10), rgba(255,255,255,0) 35%,
+    rgba(0,0,0,0) 65%, rgba(0,0,0,.35));
+}
+
+.is-crypto-weekend #progressBar{
+  width: var(--progress, 0%);
+  height: 100%;
+  background: var(--crypto-grad);
+  background-size: 200% 100%;
+  will-change: transform, background-position;
+  animation: cryptoBarShift 8s linear infinite, pulseScale 3.5s ease-in-out infinite, sheenSlide 2.8s linear infinite;
+  transition: width .3s ease-in-out;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 0 16px rgba(179,77,255,.25);
+  filter: saturate(1.05) brightness(1.02);
+}
+.is-crypto-weekend #progressBar::after{
+  content: ""; position: absolute; inset: 1px; pointer-events: none;
+  background: radial-gradient(120% 100% at 10% 50%, rgba(255,255,255,.10), transparent 60%);
+  opacity: .5; animation: bloomDrift 6s ease-in-out infinite alternate;
+}
+
+@keyframes cryptoBarShift { 0% { background-position: 0% 50% } 100% { background-position: 100% 50% } }
+@keyframes pulseScale { 0%,100% { transform: scale(1) } 50% { transform: scale(1.02) } }
+@keyframes sheenSlide { 0% { background-position: -40% 50% } 100% { background-position: 140% 50% } }
+@keyframes bloomDrift { 0% { transform: translateX(0); opacity:.45 } 100% { transform: translateX(6%); opacity:.6 } }
+
+@media (prefers-reduced-motion: reduce){
+  .is-crypto-weekend #progressBar,
+  .is-crypto-weekend #progressBar::after { animation: none !important; }
+}
+
+/* =========================================================
+   📅 Day Summary / Details — Purple
+   ========================================================= */
+.is-crypto-weekend #daySummary,
+.is-crypto-weekend .day-summary{
+  display: block;
+  padding: 10px 12px;
+  margin: 12px 0 6px 0;
+  border: 1px solid var(--crypto-outline);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  background: var(--crypto-grad-shimmer);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: cryptoBarShift 8s linear infinite;
+  transition: transform 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
+  text-align: center;
+  text-shadow: 0 0 1px rgba(0,0,0,0.35);
+}
+.is-crypto-weekend #daySummary:hover,
+.is-crypto-weekend #daySummary:focus-visible,
+.is-crypto-weekend .day-summary:hover,
+.is-crypto-weekend .day-summary:focus-visible{
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  outline: 2px solid var(--crypto-outline); outline-offset: 3px;
+}
+
+.is-crypto-weekend #dayDetails,
+.is-crypto-weekend .day-details{
+  display: none; /* JS toggelt */
+  margin: 12px 16px;
+  padding: 14px 16px;
+  font-size: clamp(12px, 2.8vw, 15px);
+  text-align: left; user-select: none;
+  border-left: 3px solid var(--crypto-color);
+  border-radius: 10px;
+  background: var(--crypto-panel);
+  color: #d9ccff; line-height: 1.6;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 0 32px rgba(0,0,0,0.35);
+  transition: box-shadow 160ms ease, outline-color 160ms ease;
+}
+.is-crypto-weekend #dayDetails:hover,
+.is-crypto-weekend .day-details:hover{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 0 36px rgba(0,0,0,0.4);
+}
+.is-crypto-weekend #dayDetails .crypto-details-card{
+  padding:16px; margin:15px 0; border-left:4px solid var(--crypto-color);
+  border-radius:10px; background:var(--crypto-panel);
+  box-shadow: inset 0 0 8px rgba(179,77,255,.25);
+  color:#e8dcff; line-height:1.6;
+}
+.is-crypto-weekend #dayDetails .crypto-details-title{
+  font-size:18px; font-weight:800; color: var(--crypto-text);
+  text-shadow: 0 0 8px rgba(179,77,255,.45), 0 0 16px rgba(179,77,255,.25);
+  margin-bottom:8px;
+}
+
+/* =========================================================
+   🧩 Wrapper & Headings — Purple
+   ========================================================= */
+.is-crypto-weekend .wrapper{
+  max-width: 720px; margin: 28px auto; padding: 0 14px 40px;
+}
+.is-crypto-weekend h1{
+  font-size: clamp(18px, 4.5vw, 24px);
+  margin: 10px 0 14px; color: #ceb0ff;
+  letter-spacing: .3px; font-weight: 700;
+  text-shadow: 0 0 8px rgba(179,77,255,.25);
+}
+.is-crypto-weekend .sub{
+  color: var(--crypto-dim); opacity:.95; margin: 0 0 14px;
+  font-size: clamp(12px, 2.6vw, 14px);
+}
+
+/* =========================================================
+   ♿ Accessibility: Reduce Motion — Purple
+   ========================================================= */
+@media (prefers-reduced-motion: reduce){
+  .is-crypto-weekend #daySummary,
+  .is-crypto-weekend .day-summary,
+  .is-crypto-weekend #dayDetails,
+  .is-crypto-weekend .day-details { transition: none !important; }
+}
+
+/* =========================================================
+   ✨ Gemeinsame Keyframes
+   ========================================================= */
+@keyframes pulseGlow {
+  0% {
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--glow-color, var(--crypto-color)) 28%, transparent),
+      inset 0 0 10px rgba(255,255,255,0.04);
+    opacity: 0.98;
+  }
+  50% {
+    box-shadow:
+      0 0 16px color-mix(in srgb, var(--glow-color, var(--crypto-color)) 45%, transparent),
+      inset 0 0 12px rgba(255,255,255,0.06);
+    opacity: 1;
+  }
+  100% {
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--glow-color, var(--crypto-color)) 28%, transparent),
+      inset 0 0 10px rgba(255,255,255,0.04);
+    opacity: 0.98;
+  }
+}
+
+/* =========================================================
+   📱 Kleinere Screens — Purple
+   ========================================================= */
+@media (max-width: 480px){
+  .is-crypto-weekend #sessionText,
+  .is-crypto-weekend #sessionInfo,
+  .is-crypto-weekend #sessionDetailsBox,
+  .is-crypto-weekend #daySummary{
+    font-size: 14px;
+    padding: 10px;
+  }
+  .is-crypto-weekend .progress-container{ height: 14px; }
+}
