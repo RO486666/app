@@ -339,15 +339,52 @@
 }
 
 /* =========================================================
-   📱 Kleinere Screens — Purple
+   📱 Mobile Optimierung — Crypto Weekend
    ========================================================= */
 @media (max-width: 480px){
-  .is-crypto-weekend #sessionText,
-  .is-crypto-weekend #sessionInfo,
-  .is-crypto-weekend #sessionDetailsBox,
-  .is-crypto-weekend #daySummary{
-    font-size: 14px;
-    padding: 10px;
+
+  /* Fortschrittsbalken kompakter */
+  .is-crypto-weekend .progress-container {
+    height: 12px;
+    border-radius: 6px;
+    margin: 8px auto;
+    max-width: 90%;
   }
-  .is-crypto-weekend .progress-container{ height: 14px; }
+
+  .is-crypto-weekend #progressBar {
+    border-radius: 6px;
+    animation: cryptoBarShift 6s linear infinite, pulseScale 3s ease-in-out infinite;
+  }
+
+  /* Session-Text + Info enger setzen */
+  .is-crypto-weekend #sessionText,
+  .is-crypto-weekend #sessionInfo {
+    font-size: 13px;
+    padding: 8px 10px;
+    margin: 6px 0;
+  }
+
+  /* Tageszusammenfassung */
+  .is-crypto-weekend #daySummary {
+    font-size: 13px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+
+  /* Details-Box enger */
+  .is-crypto-weekend #dayDetails,
+  .is-crypto-weekend #sessionDetailsBox {
+    font-size: 13px;
+    padding: 10px;
+    margin: 8px;
+  }
+
+  /* Buttons kleiner */
+  .is-crypto-weekend .tab-buttons button {
+    padding: 8px 12px;
+    font-size: 13px;
+    margin: 4px;
+    border-radius: 8px;
+  }
 }
+
