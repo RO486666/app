@@ -2,12 +2,14 @@
 // Unter der Woche macht session.js alles; keine Überschneidung.
 
 (function () {
-  // ---- nur am Wochenende aktivieren ----
   const isWeekend = (d = new Date()) => {
-    const wd = d.getDay(); // So=0, Mo=1,... Sa=6
-    return wd === 0 || wd === 6;
+    const wd = d.getDay(); // Sonntag = 0, Montag = 1 … Samstag = 6
+    return wd === 0 || wd === 6; // true nur Sa/So
   };
-  if (!isWeekend()) return; // Werktage: komplett inert
+
+  if (!isWeekend()) return; // wenn kein Wochenende → Script sofort stoppen
+})();
+
 
   // ---- DOM Refs ----
   const $  = (s, r=document) => r.querySelector(s);
