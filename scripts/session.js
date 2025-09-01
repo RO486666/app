@@ -205,7 +205,11 @@ function requestNotificationPermission() {
 
 
 function updateRealTimeBar() {
-	 if (isCryptoWeekend()) return; // 🚀 Killt Werktags-Logik am Wochenende
+	const wd = new Date().getDay(); // Sonntag=0, Montag=1 ... Samstag=6
+if (wd === 0 || wd === 6) {
+  console.log("⏹️ Session.js deaktiviert (Wochenende).");
+  return;
+}
 	
   const now = new Date();
   const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
@@ -659,7 +663,13 @@ function hexToRgba(hex, opacity) {
 }
 
 function updateDaySummary() {
-	 if (isCryptoWeekend()) return; // 🚀 Killt Werktags-Logik am Wochenende
+	   const wd = new Date().getDay();
+
+  if (wd === 0 || wd === 6) {
+    console.log("⏹️ DaySummary deaktiviert (Wochenende).");
+    return;
+  }
+
   const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const infos = {
     "Montag": `🚀 Start in die Woche – neue Impulse, frische Trends möglich.\n🪙 Krypto oft ruhig nach Sonntag – Fokus auf BTC-Reaktion.`,
