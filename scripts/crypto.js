@@ -8,8 +8,6 @@
   };
 
   if (!isWeekend()) return; // wenn kein Wochenende → Script sofort stoppen
-})();
-
 
   // ---- DOM Refs ----
   const $  = (s, r=document) => r.querySelector(s);
@@ -32,7 +30,7 @@
   const pad2 = n => String(n).padStart(2,"0");
   const formatHM = mins => `${pad2(Math.floor(mins/60)%24)}:${pad2(mins%60)}`;
 
-  // ---- Weekend-"Sessions" (nur für Anzeige/Details) ----
+  // ---- Weekend-"Sessions" ----
   const weekendSessions = [
     {
       name: "Crypto 24/7",
