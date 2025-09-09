@@ -478,32 +478,36 @@
     <button onclick="switchPosMode('pips')" style="margin-top:10px; width:100%;">🔁 Zu Pip-Rechner</button>
   </div>
 
-  <!-- Max Positions Rechner -->
-  <div id="pos-mode-max" class="stats-box sub-box" style="display:none;">
-    <label for="maxposAccountSize">📦 Kontogröße (€):</label>
-    <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
+<!-- Max Positions Rechner -->
+<div id="pos-mode-max" class="stats-box sub-box" style="display:none;">
+  <label for="maxposAccountSize">📦 Kontogröße (€):</label>
+  <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
 
-    <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
-    <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1">
+  <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
+  <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1">
+  
+  <label for="maxposSymbol">💱 Trading-Paar:</label>
+<select id="maxposSymbol"></select>
 
-    <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
-    <input type="number" id="maxposStopLoss" placeholder="z. B. 20">
+  <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
+  <input type="number" id="maxposStopLoss" placeholder="z. B. 20">
 
-    <label for="maxposLeverage">⚙️ Hebel:</label>
-    <input type="number" id="maxposLeverage" value="500" min="1">
+  <label for="maxposLeverage">⚙️ Hebel:</label>
+  <input type="number" id="maxposLeverage" value="500" min="1">
 
-    <label>📏 Lotgröße von:</label>
-    <input type="number" id="lotFrom" step="0.01">
+  <label for="lotMain">📏 Lotgröße (Pflicht):</label>
+  <input type="number" id="lotMain" step="0.01" placeholder="z. B. 0.10">
 
-    <label>📏 Lotgröße bis:</label>
-    <input type="number" id="lotTo" step="0.01">
+  <label for="lotAlt">📏 Alternative Lotgröße (optional):</label>
+  <input type="number" id="lotAlt" step="0.01" placeholder="z. B. 0.25">
 
-    <button onclick="calculateMaxPositions()">📏 Berechnen</button>
-    <!-- Ergebnis-Box -->
-    <div id="maxposResults" class="result-box"></div>
+  <button onclick="calculateMaxPositions()">📏 Berechnen</button>
+  <!-- Ergebnis-Box -->
+  <div id="maxposResults" class="result-box"></div>
 
-    <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
-  </div>
+  <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
+</div>
+
 
   <!-- Pip-Rechner -->
   <div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
@@ -1039,6 +1043,7 @@
 <script src="scripts/pairsData.js"></script>
 
 <!-- ✅ Dann die Rechner -->
+<script src="scripts/posmax.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/Piprechner.js"></script>
 
