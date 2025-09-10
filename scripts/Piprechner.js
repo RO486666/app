@@ -51,21 +51,41 @@ function calculatePipsByLots() {
     sessionClass = "session-" + activeSessionName.toLowerCase();
   }
 
-  // 📊 Ausgabe bauen
-  let output = `<div class="pip-box">
-    📉 <strong>Stop-Loss:</strong> ${slPips} Pips 
-    → <span class="${riskClass}">${slMoney.toFixed(2)} €</span><br><br>`;
+// 📊 Ausgabe bauen
+let output = `
+  <div class="pip-box">
+    <div class="risk-box ${riskClass}">
+      📉 <strong>Stop-Loss:</strong><br>
+      ${slPips} Pips → <span>${slMoney.toFixed(2)} €</span>
+    </div>
+    <br>
+`;
 
-  // 🎯 Take Profits
-  [tp1, tp2, tp3].forEach((tp, i) => {
-    if (!isNaN(tp) && tp > 0) {
-      const tpMoney = tp * pipValue * lots;
-      output += `🎯 <strong>TP${i + 1}:</strong> ${tp} Pips 
-                 → <span class="risk-low">+${tpMoney.toFixed(2)} €</span><br>`;
-    }
-  });
+// 🎯 Take Profits
+[tp1, tp2, tp3].forEach((tp, i) => {
+  if (!isNaN(tp) && tp > 0) {
+    const tpMoney = tp * pipValue * lots;
+    output += `
+      <div class="risk-box risk-low">
+        🎯 <strong>TP${i + 1}:</strong><br>
+        ${tp} Pips → <span>+${tpMoney.toFixed(2)} €</span>
+      </div>
+      <br>
+    `;
+  }
+});
 
-  output += `<hr><small>ℹ️ Basisdaten → Pip=${pipValue}, Preis=${price}, Kontrakt=${contractSize}</small></div>`;
+// ℹ️ Basisdaten
+output += `
+    <hr>
+    <div class="risk-mid">
+      ℹ️ <strong>Basisdaten</strong><br>
+      Pip = ${pipValue}<br>
+      Preis = ${price}<br>
+      Kontrakt = ${contractSize}
+    </div>
+  </div>
+`;
 
   // ✅ Ergebnisbox sichtbar machen + Klassen setzen
   resultBox.style.display = "block";
