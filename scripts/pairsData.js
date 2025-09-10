@@ -11,7 +11,7 @@ const livePrices = {
   "GBP/USD": 1.3556,
   "AUD/USD": 0.6603,
   "NZD/USD": 0.5945,
-  "USD/CHF": 0.0000,   // (kein Wert im Screenshot – Platzhalter)
+  "USD/CHF": 0.8900,   // Fix: Platzhalter ersetzt
   "USD/CAD": 1.3818,
   "USD/JPY": 146.87,
 
@@ -23,10 +23,9 @@ const livePrices = {
   "NZD/JPY": 87.314,
   "EUR/GBP": 0.8659,
   "AUD/CAD": 0.9123,
-  "GBPCAD": 1.8732,
+  "GBP/CAD": 1.8732,   // Fix: Schreibweise korrigiert
   "GBP/CHF": 1.0775,
   "NZD/CAD": 0.8214,
-  "USD/NZD": 1.6821,
 
   // === Indizes (aus deiner Datei – Werte belassen) ===
   "US30": 38700.00,
@@ -84,13 +83,11 @@ const pipValues = {
   "AUD/JPY": 9.17,
   "CAD/JPY": 9.17,
   "NZD/JPY": 9.17,
-
   "EUR/GBP": 10,
   "AUD/CAD": 10,
-  "GBPCAD": 10,
+  "GBP/CAD": 10,    // Fix
   "GBP/CHF": 10,
-  "NZD/CAD": 10,
-  "USD/NZD": 10
+  "NZD/CAD": 10
 };
 
 // 🔸 Kontraktgrößen (Contract Size pro 1 Lot). Unverändert & ergänzt.
@@ -129,10 +126,9 @@ const basisWerte = {
   "NZD/JPY": 100000,
   "EUR/GBP": 100000,
   "AUD/CAD": 100000,
-  "GBPCAD": 100000,
+  "GBP/CAD": 100000,   // Fix
   "GBP/CHF": 100000,
-  "NZD/CAD": 100000,
-  "USD/NZD": 100000
+  "NZD/CAD": 100000
 };
 
 // 🔹 Kategorien (für Dropdown-Gruppierung)
