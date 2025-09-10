@@ -9,7 +9,8 @@ function calculatePositionSize() {
   const resultEl = document.getElementById("positionSizeResult");
 
   const pipValueStandard = pipValues[symbol];
-  const basis = basisWerte[symbol] || 100000;
+  const contractSize = basisWerte[symbol] || 100000;
+  const price = getCurrentPrice(symbol);
 
   // ❌ Fehlerprüfung
   if (
@@ -25,9 +26,15 @@ function calculatePositionSize() {
 
   const riskAmount = accountSize * (riskPercent / 100);
   let baseLot = riskAmount / (stopLossPips * pipValueStandard);
-  const price = getCurrentPrice(symbol);
-  const contractSize = basisWerte[symbol];
-  const maxLots = (accountSize * leverage) / (price * contractSize);
+
+  // 📏 Margin-Berechnung
+  let maxLots;
+  if (symbol.endsWith("/JPY")) {
+    // Yen-Paare: Kurs nicht nochmal berücksichtigen
+    maxLots = (accountSize * leverage) / contractSize;
+  } else {
+    maxLots = (accountSize * leverage) / (price * contractSize);
+  }
 
   let output = "";
 
@@ -50,14 +57,13 @@ function calculatePositionSize() {
   const risikoEuroEmpfohlen = stopLossPips * pipValueActual;
   const risikoProzentEmpfohlen = (risikoEuroEmpfohlen / accountSize) * 100;
 
-  // Hilfsfunktion für Risiko-Klassen
+  // Risiko-Klasse
   function getRiskClass(riskPercent) {
     if (riskPercent < 2) return "risk-low";
     if (riskPercent < 5) return "risk-mid";
     if (riskPercent < 10) return "risk-high";
     return "risk-extreme";
   }
-  
 
   // 🌍 Session-Glow
   let sessionClass = "";
@@ -72,29 +78,28 @@ function calculatePositionSize() {
                (${risikoProzentEmpfohlen.toFixed(2)} % von ${accountSize} €)
              </div><br>`;
 
-  // 📈 Verschiedene Szenarien
-const steps = [
-  { mult: 1, label: "✅ Empfohlen", cls: "low1" },
-  { mult: 2, label: "🟡 Riskant",   cls: "low2" },
-  { mult: 3, label: "🟡 Riskant",   cls: "mid1" },
-  { mult: 4, label: "🔥 Hoch",      cls: "mid2" },
-  { mult: 5, label: "🧮 Sehr hoch", cls: "high" },
-];
+  // 📈 Szenarien
+  const steps = [
+    { mult: 1, label: "✅ Empfohlen", cls: "low1" },
+    { mult: 2, label: "🟡 Riskant",   cls: "low2" },
+    { mult: 3, label: "🟡 Riskant",   cls: "mid1" },
+    { mult: 4, label: "🔥 Hoch",      cls: "mid2" },
+    { mult: 5, label: "🧮 Sehr hoch", cls: "high" },
+  ];
 
-steps.forEach(s => {
-  const lot = (baseLot * s.mult).toFixed(2);
-  const risk = (risikoProzentEmpfohlen * s.mult).toFixed(1);
-  output += `<div class="risk-step ${s.cls}">
-               ${s.label}: ${lot} Lots (Risiko ${risk}%)
+  steps.forEach(s => {
+    const lot = (baseLot * s.mult).toFixed(2);
+    const risk = (risikoProzentEmpfohlen * s.mult).toFixed(1);
+    output += `<div class="risk-step ${s.cls}">
+                 ${s.label}: ${lot} Lots (Risiko ${risk}%)
+               </div>`;
+  });
+
+  // ⚠️ Limit-Zeile dunkelrot
+  const limitLots = (baseLot * steps[4].mult).toFixed(2);
+  output += `<div class="risk-step extreme">
+               ⚠️ Mehr als ${limitLots} Lots = über deinem Risiko-Limit
              </div>`;
-});
-
-// ⚠️ Limit-Zeile dunkelrot
-const limitLots = (baseLot * steps[4].mult).toFixed(2);
-output += `<div class="risk-step extreme">
-             ⚠️ Mehr als ${limitLots} Lots = über deinem Risiko-Limit
-           </div>`;
-
 
   // 📏 Hebel-Limit
   output += `<div class="risk-mid">📏 Maximal erlaubt bei ${leverage}x Hebel: <strong>${maxLots.toFixed(2)} Lots</strong></div>`;
@@ -113,11 +118,12 @@ output += `<div class="risk-step extreme">
                </div>`;
   }
 
-  // ✅ Ausgabe einblenden
+  // ✅ Ausgabe
   resultEl.style.display = "block";
   resultEl.className = "result-box " + sessionClass;
   resultEl.innerHTML = output;
 }
+
 
 
 
