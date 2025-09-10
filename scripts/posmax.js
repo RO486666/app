@@ -3,7 +3,7 @@ function calculateMaxPositions() {
   const riskPercent = parseFloat(document.getElementById("maxposRiskPercent").value);
   const stopLossPips = parseFloat(document.getElementById("maxposStopLoss").value);
   const leverage = parseFloat(document.getElementById("maxposLeverage").value);
-  const symbol = document.getElementById("maxposSymbol").value; // ✅ Symbol aus Dropdown
+  const symbol = document.getElementById("maxposSymbol").value;
   const lotMain = parseFloat(document.getElementById("lotMain").value);
   const lotAlt = parseFloat(document.getElementById("lotAlt").value);
   const resultBox = document.getElementById("maxposResults");
@@ -29,6 +29,7 @@ function calculateMaxPositions() {
   const contractSize = contract;
   const currentPrice = price || 1;
 
+  // Max Lots anhand Margin
   const maxLots = (accountSize * leverage) / (currentPrice * contractSize);
 
   // Session-Glow
@@ -43,9 +44,18 @@ function calculateMaxPositions() {
     <strong>${maxLots.toFixed(2)} Lots</strong><br><br>
   `;
 
+  // 👉 Risiko-Block
   function renderLotBlock(lot, label) {
     if (!lot || lot <= 0) return "";
-    const maxPos = Math.floor(maxLots / lot);
+
+    let maxPos = maxLots / lot;
+    // Keine Nullen mehr – kleine Werte als Dezimalzahl anzeigen
+    if (maxPos < 1 && maxPos > 0) {
+      maxPos = maxPos.toFixed(2);
+    } else {
+      maxPos = Math.floor(maxPos);
+    }
+
     const risikoEuro = stopLossPips * (pipValueStandard * lot);
     const risikoProzent = (risikoEuro / accountSize) * 100;
 
@@ -67,12 +77,13 @@ function calculateMaxPositions() {
     `;
   }
 
+  // Pflichtfeld + Optionalfeld
   html += renderLotBlock(lotMain, "Pflicht-Lotgröße");
   if (!isNaN(lotAlt) && lotAlt > 0) {
     html += renderLotBlock(lotAlt, "Alternative Lotgröße");
   }
 
-  // Profi-Empfehlungen dynamisch nach Risiko%
+  // ✅ Profi-Empfehlungen dynamisch mit Preis & Kontrakt
   const riskBase = riskPercent / 100;
   const rec1 = ((accountSize * riskBase) / (stopLossPips * pipValueStandard)).toFixed(2);
   const rec2 = ((accountSize * riskBase * 2) / (stopLossPips * pipValueStandard)).toFixed(2);
