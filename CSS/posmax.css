@@ -1,0 +1,96 @@
+/* ================================
+   🎨 Dark Velvet Finance Theme
+   ================================ */
+
+:root {
+  --velvet-bg: #0d0f14;
+  --velvet-panel: #151820;
+  --velvet-box: #1b1f29;
+  --gold: #d4af37;
+  --gold-soft: #f1d77b;
+  --text-main: #f5f7fa;
+  --text-muted: #a8b4c8;
+  --border: #2d3344;
+}
+
+/* Container */
+.result-box {
+  background: var(--velvet-panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 18px;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-main);
+  box-shadow: 0 0 20px rgba(0,0,0,0.45);
+  animation: fadeIn 0.4s ease;
+}
+
+/* Headings / Accents */
+.result-box strong {
+  color: var(--gold);
+}
+
+.result-box hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
+
+/* Risk-Box */
+.risk-box {
+  background: var(--velvet-box);
+  border-left: 4px solid var(--gold);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  transition: 0.25s ease;
+}
+.risk-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* Inline Text */
+.risk-box em {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Empfehlungsliste */
+.result-box .rec {
+  background: var(--velvet-box);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.rec strong {
+  color: var(--gold-soft);
+}
+
+/* Risk Colors */
+.result-box .low { color: #4caf50; }
+.result-box .mid { color: #ffb300; }
+.result-box .high { color: #ff7043; }
+.result-box .extreme { color: #e53935; }
+
+.result-box span {
+  font-weight: bold;
+}
+
+/* Glow Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .result-box,
+  .risk-box {
+    transition: none !important;
+    animation: none !important;
+  }
+}
