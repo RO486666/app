@@ -44,12 +44,26 @@ function calculateMaxPositions() {
     <strong>${maxLots.toFixed(2)} Lots</strong><br><br>
   `;
 
-  // 👉 Risiko-Block
   function renderLotBlock(lot, label) {
     if (!lot || lot <= 0) return "";
 
+    // Helper zum Formatieren von Lots
+    function formatLot(val) {
+      return parseFloat(val.toFixed(3)); // bis zu 3 Nachkommastellen
+    }
+
+    // 🔎 Check: ist die Lotgröße überhaupt handelbar?
+    if (lot > maxLots) {
+      return `
+        <div class="risk-box extreme">
+          📌 <strong>${label}</strong><br>
+          ❌ <span>Diese Lotgröße (${formatLot(lot)}) ist mit deinem Konto und Hebel nicht möglich.</span><br>
+          📏 Maximal erlaubt: <strong>${maxLots.toFixed(2)} Lots</strong>
+        </div><br>
+      `;
+    }
+
     let maxPos = maxLots / lot;
-    // Keine Nullen mehr – kleine Werte als Dezimalzahl anzeigen
     if (maxPos < 1 && maxPos > 0) {
       maxPos = maxPos.toFixed(2);
     } else {
@@ -68,7 +82,7 @@ function calculateMaxPositions() {
     return `
       <div class="risk-box">
         📌 <strong>${label}</strong><br>
-        Lotgröße: <strong>${lot.toFixed(2)}</strong><br>
+        Lotgröße: <strong>${formatLot(lot)}</strong><br>
         ➡️ Max. Positionen möglich: <strong>${maxPos}</strong><br>
         📉 Risiko pro Position: 
         <span>${risikoEuro.toFixed(2)} € (${risikoProzent.toFixed(2)} %)</span><br>
@@ -85,17 +99,34 @@ function calculateMaxPositions() {
 
   // ✅ Profi-Empfehlungen dynamisch mit Preis & Kontrakt
   const riskBase = riskPercent / 100;
-  const rec1 = ((accountSize * riskBase) / (stopLossPips * pipValueStandard)).toFixed(2);
-  const rec2 = ((accountSize * riskBase * 2) / (stopLossPips * pipValueStandard)).toFixed(2);
-  const rec3 = ((accountSize * riskBase * 3) / (stopLossPips * pipValueStandard)).toFixed(2);
 
-  html += `
-    <hr>
-    🎯 <strong>Empfehlungen basierend auf ${riskPercent}% Risiko:</strong><br>
-    • Konservativ (${riskPercent}%): <strong>${rec1} Lots</strong><br>
-    • Moderat (${riskPercent * 2}%): <strong>${rec2} Lots</strong><br>
-    • Aggressiv (${riskPercent * 3}%): <strong>${rec3} Lots</strong><br>
-  `;
+ function clampLot(lot) {
+  if (lot < 0.01) return 0.01;  // Minimum
+  if (lot > 100) return 100;    // Maximum
+  // Auf 0.01 Lots runden
+  return Math.round(lot * 100) / 100;
+}
+
+  function formatLot(val) {
+    return parseFloat(val.toFixed(3));
+  }
+
+const rec1Val = (accountSize * riskBase) / (stopLossPips * pipValueStandard);
+const rec2Val = (accountSize * (riskBase * 2)) / (stopLossPips * pipValueStandard);
+const rec3Val = (accountSize * (riskBase * 3)) / (stopLossPips * pipValueStandard);
+
+const rec1 = clampLot(rec1Val).toFixed(2);
+const rec2 = clampLot(rec2Val).toFixed(2);
+const rec3 = clampLot(rec3Val).toFixed(2);
+
+html += `
+  <hr>
+  🎯 <strong>Empfehlungen basierend auf ${riskPercent}% Risiko:</strong><br>
+  • Konservativ (${riskPercent}%): <strong>${rec1} Lots</strong><br>
+  • Moderat (${riskPercent * 2}%): <strong>${rec2} Lots</strong><br>
+  • Aggressiv (${riskPercent * 3}%): <strong>${rec3} Lots</strong><br>
+`;
+
 
   resultBox.style.display = "block";
   resultBox.className = "result-box " + sessionClass;
