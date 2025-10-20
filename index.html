@@ -510,35 +510,71 @@
   <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
 </div>
 
+<!-- Pip-Rechner -->
+<div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
+  <label>💱 Symbol:</label>
+  <select id="pipSymbolSelector"></select>
 
-  <!-- Pip-Rechner -->
-  <div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
-    <label>💱 Symbol:</label>
-    <select id="pipSymbolSelector"></select>
+  <label>📦 Lots:</label>
+  <input type="number" id="lots" value="0.01" step="0.01">
 
-    <label>📦 Lots:</label>
-    <input type="number" id="lots" value="0.01" step="0.01">
+  <label>🛑 Stop-Loss (Pips):</label>
+  <input type="number" id="slPips" placeholder="z. B. 20">
 
-    <label>🛑 Stop-Loss (Pips):</label>
-    <input type="number" id="slPips" placeholder="z. B. 20">
+  <label>🎯 TP1 (Pips):</label>
+  <input type="number" id="tp1Pips" placeholder="z. B. 50">
 
-    <label>🎯 TP1 (Pips):</label>
-    <input type="number" id="tp1Pips" placeholder="z. B. 50">
+  <label>🎯 TP2 (Pips):</label>
+  <input type="number" id="tp2Pips" placeholder="z. B. 80">
 
-    <label>🎯 TP2 (Pips):</label>
-    <input type="number" id="tp2Pips" placeholder="z. B. 80">
+  <label>🎯 TP3 (Pips):</label>
+  <input type="number" id="tp3Pips" placeholder="z. B. 100">
 
-    <label>🎯 TP3 (Pips):</label>
-    <input type="number" id="tp3Pips" placeholder="z. B. 100">
+  <button onclick="calculatePipsByLots()">📏 Berechnen</button>
 
-    <button onclick="calculatePipsByLots()">📏 Berechnen</button>
-    <!-- Ergebnis-Box -->
-    <div id="pipResult" class="result-box"></div>
+  <!-- Ergebnis-Box -->
+  <div id="pipResult" class="result-box"></div>
 
-    <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
+  <!-- 🔘 Neuer Button zum Swap-Rechner -->
+  <button id="openSwapBtn" style="margin-top:10px; width:100%;">🔁 Swap-Rechner öffnen</button>
+
+  <!-- 🔁 Optimaler Swap-Rechner -->
+  <div id="swap-calc" class="sub-box" style="display:none; margin-top:10px;">
+    <h3>🔁 Optimaler Swap-Rechner</h3>
+
+    <div class="grid">
+      <label>Swap Long (in Punkten/Pips pro Tag)
+        <input id="swapLongPts" type="number" step="0.01" placeholder="z. B. -3.96" />
+      </label>
+
+      <label>Swap Short (in Punkten/Pips pro Tag)
+        <input id="swapShortPts" type="number" step="0.01" placeholder="z. B. -2.36" />
+      </label>
+
+      <label class="row">
+        <input id="swapTripleDay" type="checkbox" checked />
+        Mittwoch 3× (FX-Standard)
+      </label>
+
+      <label class="row">
+        <input id="swapShowWeek" type="checkbox" checked />
+        Woche (Mo–Fr) anzeigen
+      </label>
+
+      <button id="swapCalcBtn" type="button">Swap berechnen</button>
+    </div>
+
+    <div id="swapResult" class="result-box" style="display:none"></div>
+
+    <button id="closeSwapBtn" style="margin-top:10px; width:100%;">⬅️ Swap-Rechner schließen</button>
   </div>
 
+  <!-- Zurück zum Hauptmenü -->
+  <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
 </div>
+
+
+
 
 
 
@@ -1048,6 +1084,7 @@
 <script src="scripts/posmax.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/Piprechner.js"></script>
+<script src="scripts/swapCalc.js"></script>
 
 <!-- Rest -->
 <script src="scripts/dawn.js"></script>
