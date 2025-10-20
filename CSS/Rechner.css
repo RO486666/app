@@ -263,6 +263,151 @@
     transition: none;
   }
 }
+/* === 🎨 SWAP-RECHNER DESIGN – Premium Look === */
+.swap-visible {
+  display: block !important;
+  background: linear-gradient(135deg, #121212, #1a1a1a);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-top: 16px;
+  color: #e5e5e5;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 0 20px rgba(0, 0, 0, 0.8),
+    inset 0 0 18px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(6px);
+  transition: all 0.35s ease;
+}
+
+.swap-visible:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 24px rgba(0, 255, 180, 0.25),
+    inset 0 0 16px rgba(255, 255, 255, 0.06);
+}
+
+/* 💎 Titel */
+.swap-head {
+  font-size: 1.1rem;
+  color: #00ffff;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+  letter-spacing: 0.4px;
+}
+
+/* 📊 Linienstruktur */
+.swap-section {
+  margin: 10px 0 12px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #181818, #101010);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.swap-section:hover {
+  box-shadow:
+    inset 0 0 14px rgba(0, 255, 200, 0.08),
+    0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+/* 🔹 Einzellinien */
+.swap-line {
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+/* 💶 Werte */
+.swap-val.pos {
+  color: #00ff9d;
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+  animation: fadeInUp 0.5s ease;
+}
+
+.swap-val.neg {
+  color: #ff5a5a;
+  text-shadow: 0 0 8px rgba(255, 90, 90, 0.5);
+  animation: fadeInUp 0.5s ease;
+}
+
+/* ⚪ Neutral */
+.swap-val.neutral {
+  color: #aaa;
+}
+
+/* 🧾 Untersektionen */
+.swap-sub {
+  font-size: 0.92rem;
+  margin-top: 8px;
+  color: #bbb;
+  padding-left: 8px;
+  border-left: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 📄 Kleine Zusatzinfos */
+.swap-small {
+  margin-top: 10px;
+  color: #888;
+  font-size: 0.83em;
+  text-align: right;
+  letter-spacing: 0.3px;
+}
+
+/* ✨ Animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🔘 Buttons */
+#openSwapBtn,
+#closeSwapBtn,
+#swapCalcBtn {
+  background: linear-gradient(145deg, #242424, #181818);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0f0f0;
+  font-weight: bold;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+#openSwapBtn:hover,
+#closeSwapBtn:hover,
+#swapCalcBtn:hover {
+  background: linear-gradient(145deg, #00c851, #00994b);
+  box-shadow: 0 0 16px rgba(0, 255, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 📊 Einklappbare Animation */
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.collapsible-content.open {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+
 
 
 /* ==========================================
