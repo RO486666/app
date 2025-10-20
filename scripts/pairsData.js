@@ -1,50 +1,50 @@
 // ============================================================
-// pairsData.js – Zentrale Datenbank (Stand: 09.09.2025)
+// pairsData.js – Zentrale Datenbank (Stand: 20.10.2025)
 // Hinweis: Live-Preise werden manuell gepflegt oder per API ersetzt.
 // Pip-Werte & Kontraktgrößen NICHT ändern, außer du sagst es.
 // ============================================================
 
-// 🔹 Live-Preise (aus deiner TradingView-Liste + bestehende Symbole)
+// 🔹 Live-Preise (aus deiner TradingView-Liste + aktuelle Marktdaten)
 const livePrices = {
   // === Forex Majors & Minors ===
-  "EUR/USD": 1.1738,
-  "GBP/USD": 1.3556,
-  "AUD/USD": 0.6603,
-  "NZD/USD": 0.5945,
-  "USD/CHF": 0.8900,   // Fix: Platzhalter ersetzt
-  "USD/CAD": 1.3818,
-  "USD/JPY": 146.87,
+  "EUR/USD": 1.1656,
+  "GBP/USD": 1.3430,
+  "AUD/USD": 0.6511,
+  "NZD/USD": 0.5729,
+  "USD/CHF": 0.7929,
+  "USD/CAD": 1.4030,
+  "USD/JPY": 150.81,
 
-  // === Crosses ===
-  "EUR/JPY": 172.41,
-  "GBP/JPY": 199.11,
-  "AUD/JPY": 96.98,
-  "CAD/JPY": 106.30,
-  "NZD/JPY": 87.314,
-  "EUR/GBP": 0.8659,
-  "AUD/CAD": 0.9123,
-  "GBP/CAD": 1.8732,   // Fix: Schreibweise korrigiert
-  "GBP/CHF": 1.0775,
-  "NZD/CAD": 0.8214,
+  // === Crosses (aus Majors berechnet) ===
+  "EUR/JPY": 175.78,
+  "GBP/JPY": 202.54,
+  "AUD/JPY": 98.19,
+  "CAD/JPY": 107.49,
+  "NZD/JPY": 86.398,
+  "EUR/GBP": 0.8679,
+  "AUD/CAD": 0.9135,
+  "GBP/CAD": 1.8842,
+  "GBP/CHF": 1.0649,
+  "NZD/CAD": 0.8038,
 
-  // === Indizes (aus deiner Datei – Werte belassen) ===
-  "US30": 38700.00,
-  "NAS100": 16800.00,
-  "SPX500": 5100.00,
-  "GER40": 18400.00,
-  "UK100": 8100.00,
+  // === Indizes ===
+  "US30": 46190.61,
+  "NAS100": 24817.95,
+  "SPX500": 6664.01,
+  "GER40": 24035.19,
+  "UK100": 9385.25,
 
   // === Metalle ===
-  "XAU/USD": 3649.69,     // laut Watchlist
-  "XAG/USD": 30.20,
+  "XAU/USD": 4254.59,
+  "XAG/USD": 51.97,
 
   // === Energie ===
-  "BRENT": 86.545,
+  "BRENT": 61.01,
 
   // === Krypto ===
-  "BTC/USD": 112839.24,
-  "ETH/USD": 4300.00,
-  "XRP/USD": 2.90
+  "BTC/USD": 110961.00,
+  "ETH/USD": 4052.51,
+  "XRP/USD": 2.4733
 };
 
 // 🔸 Pip-Werte (pro 1 Lot / pro Pip). Unverändert beibehalten & ergänzt.
