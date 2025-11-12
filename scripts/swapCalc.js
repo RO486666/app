@@ -5,6 +5,7 @@
     hydratePipSymbols();
 
     const sym = document.getElementById("pipSymbolSelector");
+    const lotsEl = document.getElementById("lots");
     const btn = document.getElementById("swapCalcBtn");
 
     sym?.addEventListener("change", () => {
@@ -30,7 +31,7 @@ function hydratePipSymbols() {
   });
 }
 
-// ---- Punktbasierte Hauptberechnung ----------------------------------------
+// ---- Hauptberechnung -----------------------------------------------------
 function calculateSwapFromPip() {
   const symbol = document.getElementById("pipSymbolSelector")?.value;
   const lots = parseFloat(document.getElementById("lots")?.value);
@@ -47,53 +48,35 @@ function calculateSwapFromPip() {
     return;
   }
 
-  // 💶 Fixe Basis
-  const usdToEur = 0.92;           // fixer Kurs (vereinfacht)
-  const pipValueUSD = 10;          // 1 Lot Pip-Wert in USD
+  // 💶 EUR-Berechnung
+  const usdToEur = 0.92; // fixer Kurs
+  const pipValueUSD = 10; // Standardwert pro 1 Lot
   const pipValueEUR = pipValueUSD * usdToEur;
 
-  // 🧠 Punkte → Pips Umrechnung (Broker arbeitet in Punkten!)
-  const pointFactor = symbol.includes("JPY") ? 100 : 10; 
-  // JPY-Paare haben 2 Nachkommastellen -> 100 Punkte = 1 Pip
-  // sonst Standard: 10 Punkte = 1 Pip (Forex, Gold, etc.)
-
-  const longPerDay = (longPts / pointFactor) * pipValueEUR * lots;
-  const shortPerDay = (shortPts / pointFactor) * pipValueEUR * lots;
+  // Swap-Kosten in €
+  const longPerDay = longPts * pipValueEUR * lots;
+  const shortPerDay = shortPts * pipValueEUR * lots;
   const tripleLong = tripleDay ? longPerDay * 3 : longPerDay;
   const tripleShort = tripleDay ? shortPerDay * 3 : shortPerDay;
 
-  let weekLong = null, weekShort = null;
+  let weekLong = null,
+    weekShort = null;
   if (showWeek) {
     weekLong = longPerDay * 4 + tripleLong;
     weekShort = shortPerDay * 4 + tripleShort;
   }
 
-  // === Gerendertes Ergebnis ===
+  // === Schönes gerendertes Ergebnis ===
   box.style.display = "block";
   box.className = "result-box swap-visible";
   box.innerHTML = `
     <div class="swap-wrapper">
       <div class="swap-head">💎 Swap-Ergebnis (EUR)</div>
-      <div class="swap-line">
-        📉 <strong>Long pro Tag:</strong>
-        <span class="swap-val ${longPerDay >= 0 ? "pos" : "neg"}">${longPerDay.toFixed(2)} €</span>
-      </div>
-      <div class="swap-line">
-        📈 <strong>Short pro Tag:</strong>
-        <span class="swap-val ${shortPerDay >= 0 ? "pos" : "neg"}">${shortPerDay.toFixed(2)} €</span>
-      </div>
-      ${tripleDay ? `<div class="swap-line">
-        📆 Triple-Tag (Mittwoch): Long ${tripleLong.toFixed(2)} € | Short ${tripleShort.toFixed(2)} €
-      </div>` : ""}
-      ${showWeek ? `<div class="swap-line">
-        🗓️ Woche (inkl. 3× Mittwoch): Long ${weekLong.toFixed(2)} € | Short ${weekShort.toFixed(2)} €
-      </div>` : ""}
-      <div class="swap-small">
-        <small>
-          Pip-Wert (1 Lot): ${pipValueEUR.toFixed(2)} €<br>
-          1 Pip = ${pointFactor} Punkte
-        </small>
-      </div>
+      <div class="swap-line">📉 <strong>Long pro Tag:</strong> <span class="swap-val ${longPerDay >= 0 ? "pos" : "neg"}">${longPerDay.toFixed(2)} €</span></div>
+      <div class="swap-line">📈 <strong>Short pro Tag:</strong> <span class="swap-val ${shortPerDay >= 0 ? "pos" : "neg"}">${shortPerDay.toFixed(2)} €</span></div>
+      ${tripleDay ? `<div class="swap-line">📆 Triple-Tag: Long ${tripleLong.toFixed(2)} € | Short ${tripleShort.toFixed(2)} €</div>` : ""}
+      ${showWeek ? `<div class="swap-line">🗓️ Woche: Long ${weekLong.toFixed(2)} € | Short ${weekShort.toFixed(2)} €</div>` : ""}
+      <div class="swap-small"><small>Pip-Value (1.00 Lot): ${pipValueEUR.toFixed(2)} €</small></div>
     </div>
   `;
 }
