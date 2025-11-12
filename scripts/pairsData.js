@@ -1,11 +1,5 @@
 // ============================================================
-// pairsData.js – Zentrale Datenbank (Stand: 20.10.2025)
-// Hinweis: Live-Preise werden manuell gepflegt oder per API ersetzt.
-// Pip-Werte & Kontraktgrößen NICHT ändern, außer du sagst es.
-// ============================================================
-
-// ============================================================
-// pairsData.js – Zentrale Datenbank (Stand: 28.10.2025)
+// pairsData.js – Zentrale Datenbank (Stand: 12.11.2025)
 // Hinweis: Live-Preise werden manuell gepflegt oder per API ersetzt.
 // Pip-Werte & Kontraktgrößen NICHT ändern, außer du sagst es.
 // ============================================================
@@ -13,55 +7,56 @@
 // 🔹 Live-Preise (aus deiner TradingView-Liste + aktuelle Marktdaten)
 const livePrices = {
   // === Forex Majors & Minors ===
-  "EUR/USD": 1.1660,
-  "GBP/USD": 1.3276,
-  "AUD/USD": 0.6589,
-  "NZD/USD": 0.5784,
-  "USD/CHF": 0.7932,
-  "USD/CAD": 1.3940,
-  "USD/JPY": 152.16,
+  "EUR/USD": 1.1562,
+  "GBP/USD": 1.3130,
+  "AUD/USD": 0.6542,
+  "NZD/USD": 0.5660,
+  "USD/CHF": 0.7868,
+  "USD/CAD": 1.4007,
+  "USD/JPY": 153.967,
 
   // === Crosses (aus Majors berechnet) ===
-  "EUR/JPY": 177.42,
-  "GBP/JPY": 202.01,
-  "AUD/JPY": 100.26,
-  "CAD/JPY": 109.15,
-  "NZD/JPY": 88.01,
-  "EUR/GBP": 0.8783,
-  "AUD/CAD": 0.9185,
-  "GBP/CAD": 1.8507,
-  "GBP/CHF": 1.0531,
-  "NZD/CAD": 0.8063,
-  "AUD/NZD": 1.1392, // ✅ Neu
+  "EUR/JPY": 178.02,
+  "GBP/JPY": 202.16,
+  "AUD/JPY": 100.73,
+  "CAD/JPY": 109.92,
+  "NZD/JPY": 87.15,
+  "EUR/GBP": 0.8806,
+  "AUD/CAD": 0.9163,
+  "GBP/CAD": 1.8391,
+  "GBP/CHF": 1.0331,
+  "NZD/CAD": 0.7928,
+  "AUD/NZD": 1.1558,
+  "GBP/AUD": 2.0076, // ✅ Neu hinzugefügt
 
   // === Indizes (Broker/CFD-Werte können leicht abweichen)
-  "US30": 47544.59,
-  "NAS100": 26029.90,
-  "SPX500": 5991.57,
-  "GER40": 24275.00,
-  "UK100": 9696.74,
+  "US30": 47927.96,
+  "NAS100": 25533.49,
+  "SPX500": 6846.61,
+  "GER40": 24396.23,
+  "UK100": 9902.23,
 
   // === Metalle (Spot)
-  "XAU/USD": 3957.40,
-  "XAG/USD": 47.33,
+  "XAU/USD": 4129.17,
+  "XAG/USD": 51.60,
 
   // === Energie
-  "BRENT": 63.75,
+  "BRENT": 64.54,
 
   // === Krypto
-  "BTC/USD": 115164.00,
-  "ETH/USD": 4140.36,
-  "XRP/USD": 2.67
+  "BTC/USD": 104879.46,
+  "ETH/USD": 3455.92,
+  "XRP/USD": 2.42
 };
 
-// 🔸 Pip-Werte (pro 1 Lot / pro Pip). Unverändert beibehalten & ergänzt.
+// 🔸 Pip-Werte (pro 1 Lot / pro Pip)
 const pipValues = {
   // Metalle
-  "XAU/USD": 10,         // 1 Pip = 0.10 USD
-  "XAG/USD": 50,         // 1 Pip = 0.01 USD
+  "XAU/USD": 10,
+  "XAG/USD": 50,
 
-  // Energie (CFD – konservativ)
-  "BRENT": 0.1,          // 0.1 pro Pip je Lot (anpassbar, falls Broker-spezifisch)
+  // Energie
+  "BRENT": 0.1,
 
   // Krypto
   "BTC/USD": 1,
@@ -92,20 +87,21 @@ const pipValues = {
   "NZD/JPY": 9.17,
   "EUR/GBP": 10,
   "AUD/CAD": 10,
-  "GBP/CAD": 10,    // Fix
+  "GBP/CAD": 10,
   "GBP/CHF": 10,
   "NZD/CAD": 10,
-  "AUD/NZD": 10     // ✅ Neu für Dropdowns & Rechner
+  "AUD/NZD": 10,
+  "GBP/AUD": 10       // ✅ Neu hinzugefügt
 };
 
-// 🔸 Kontraktgrößen (Contract Size pro 1 Lot). Unverändert & ergänzt.
+// 🔸 Kontraktgrößen (Contract Size pro 1 Lot)
 const basisWerte = {
   // Metalle
   "XAU/USD": 100,
   "XAG/USD": 5000,
 
   // Energie
-  "BRENT": 1,           // häufig brokerabhängig; bei Bedarf anpassen
+  "BRENT": 1,
 
   // Krypto
   "BTC/USD": 1,
@@ -119,7 +115,7 @@ const basisWerte = {
   "GER40": 1,
   "UK100": 1,
 
-  // Forex – Standard
+  // Forex
   "EUR/USD": 100000,
   "GBP/USD": 100000,
   "AUD/USD": 100000,
@@ -134,21 +130,20 @@ const basisWerte = {
   "NZD/JPY": 100000,
   "EUR/GBP": 100000,
   "AUD/CAD": 100000,
-  "GBP/CAD": 100000,   // Fix
+  "GBP/CAD": 100000,
   "GBP/CHF": 100000,
   "NZD/CAD": 100000,
-  "AUD/NZD": 100000    // ✅ Neu
+  "AUD/NZD": 100000,
+  "GBP/AUD": 100000    // ✅ Neu hinzugefügt
 };
 
 // 🔹 Kategorien (für Dropdown-Gruppierung)
-// ⚠️ Fixes:
-// - "GBPCAD" → "GBP/CAD" (Tippfehler korrigiert)
-// - "USD/NZD" entfernt (du nutzt NZD/USD); stattdessen "AUD/NZD" hinzugefügt
 const categories = {
   "🌍 Forex (Majors)": ["EUR/USD", "GBP/USD", "AUD/USD", "NZD/USD", "USD/CHF", "USD/CAD", "USD/JPY"],
   "🔀 Forex (Crosses)": [
     "EUR/JPY", "GBP/JPY", "AUD/JPY", "CAD/JPY", "NZD/JPY",
-    "EUR/GBP", "AUD/CAD", "GBP/CAD", "GBP/CHF", "NZD/CAD", "AUD/NZD"
+    "EUR/GBP", "AUD/CAD", "GBP/CAD", "GBP/CHF",
+    "NZD/CAD", "AUD/NZD", "GBP/AUD"  // ✅ Neu hinzugefügt
   ],
   "📊 Indizes": ["US30", "NAS100", "SPX500", "GER40", "UK100"],
   "🥇 Metalle": ["XAU/USD", "XAG/USD"],
