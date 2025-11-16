@@ -64,78 +64,84 @@ const sessions = [
     name: "Sydney",
     start: 1380,
     end: 480,
-    info: "Ruhiger Markt, geringere Liquidität, Vorbereitung auf Asien.",
+    info: "Ruhiger Start in den globalen Handel. Liquidity-Aufbau, Range-Bildung.",
     weekDaysInfo: [
-      { day: "Montag", text: "🌏 Asien-Session startet – AUD/USD, NZD/USD im Fokus" },
-      { day: "Mittwoch", text: "📊 Wirtschaftsdaten Australien – AUD/CAD, AUD/JPY interessant" },
-      { day: "Freitag", text: "📅 Wöchentliche Analyse & Planung – AUD/NZD Moves möglich" }
+      { day: "Montag", text: "🌏 Asia-Opening → AUD/NZD setzen die Wochenrange." },
+      { day: "Mittwoch", text: "🔄 Klare Struktur in AUD/JPY & AUD/USD (saubere HL/LH Bewegungen)." },
+      { day: "Freitag", text: "📌 Vorbereitungsphase für London – AUD/NZD bleiben technisch sauber." },
     ],
   },
+
   {
     name: "Tokyo",
     start: 60,
     end: 600,
-    info: "Moderate Volatilität, Fokus auf JPY/AUD/NZD, Breakouts möglich.",
+    info: "Klare Struktur, häufig Trendbeginn für JPY-Paare. Ruhige, aber saubere Moves.",
     weekDaysInfo: [
-      { day: "Dienstag", text: "🏦 BoJ Pressekonferenz – EUR/JPY, GBP/JPY sehr aktiv" },
-      { day: "Donnerstag", text: "📈 Japan BIP-Daten – USD/JPY, CAD/JPY im Blick behalten" },
-      { day: "Freitag", text: "🇺🇸 US NFP wirkt oft nach – Yen-Paare volatil: USD/JPY, GBP/JPY" }
+      { day: "Dienstag", text: "📈 Tokyo setzt häufig den JPY-Wochentrend (USD/JPY, GBP/JPY)." },
+      { day: "Donnerstag", text: "🎯 JPY-Paare reagieren technisch stark (HL/LH sehr sauber)." },
+      { day: "Freitag", text: "⚡ Positionsglättung → frühe Volatilität in Yen-Paaren." },
     ],
   },
+
   {
     name: "London",
     start: 540,
     end: 1020,
-    info: "Hohe Liquidität, starke Bewegungen, europäische Wirtschaftsdaten.",
+    info: "Stärkste Liquidität. Hauptsession des gesamten Forex-Marktes.",
     weekDaysInfo: [
-      { day: "Montag", text: "📉 EU Handelsdaten – EUR/USD, EUR/JPY, DAX" },
-      { day: "Dienstag", text: "🏛️ Zinsentscheidungen der EZB – EUR/USD, EUR/GBP, EUR/CHF" },
-      { day: "Donnerstag", text: "📊 Inflationsdaten UK – GBP/USD, GBP/JPY, FTSE100" },
-      { day: "Freitag", text: "📅 Arbeitsmarktdaten UK – GBP/USD, EUR/GBP" }
+      { day: "Montag", text: "📉 Wochenrange formt sich – EUR/GBP/JPY bewegen sich technisch." },
+      { day: "Dienstag", text: "📈 Trendaufbau – London definiert die Tagesrichtung sehr klar." },
+      { day: "Donnerstag", text: "⚡ Starke directional Moves → Positionsanpassungen vor Freitag." },
+      { day: "Freitag", text: "📅 Gewinnmitnahmen → schnelle Sweeps & Reversals möglich." },
     ],
   },
+
   {
     name: "New York",
     start: 870,
     end: 1380,
-    info: "Hohe Volatilität, US-Daten dominieren, Trendfortsetzungen möglich.",
+    info: "Hohe Volatilität. US-Liquidität bestimmt die Gesamttrendstärke.",
     weekDaysInfo: [
-      { day: "Mittwoch", text: "🏦 Fed Zinsentscheidungen – USD/JPY, EUR/USD, Gold (XAU/USD)" },
-      { day: "Freitag", text: "📊 US NFP Arbeitsmarktdaten – XAU/USD, NAS100, USD/CHF" },
-      { day: "Freitag", text: "📈 Wöchentliche Arbeitslosenmeldung – EUR/USD, USD/CAD" }
+      { day: "Montag", text: "🔄 Häufig träge oder fehlausbruchsanfällig – Vorsicht bei Gold & Indizes." },
+      { day: "Mittwoch", text: "⚡ Midweek Momentum – starke Moves in USD/JPY, XAU/USD & NAS100." },
+      { day: "Freitag", text: "🔥 Weekend-Pricing → Gold & NAS100 extrem volatil." },
     ],
   },
+
   {
     name: "London Killzone",
     start: 420,
     end: 660,
-    info: "Volatile Phase vor London-Open, Stop-Hunts möglich.",
+    info: "Liquidity-Grabs, Sweeps, Pre-London Manipulation. Optimal für ICT Entries.",
     weekDaysInfo: [
-      { day: "Montag", text: "⚡ Hohe Volatilität durch Marktöffnung – GBP/USD, EUR/JPY" },
-      { day: "Mittwoch", text: "🔥 Breakouts oft möglich – GBP/JPY, DAX, EUR/USD" }
+      { day: "Montag", text: "⚠️ Wochenstart-Liquidity wird gejagt – Sweeps auf GBP/USD & EUR/JPY." },
+      { day: "Mittwoch", text: "🔥 Midweek Sweep → perfekte MSS/FVG Setups, sehr saubere Entries." },
     ],
   },
+
   {
     name: "New York Killzone",
     start: 810,
     end: 1020,
-    info: "Start der NY Session, hohe Aktivität, gute Chancen für Daytrader.",
+    info: "Erster US-Impuls. Trendsetzung oder Reversal, starker Volume Shift.",
     weekDaysInfo: [
-      { day: "Dienstag", text: "⚡ Erhöhte Volatilität durch US-Daten – XAU/USD, NAS100" },
-      { day: "Donnerstag", text: "🎙️ Fed Reden & Daten – USD/JPY, Gold, SPX500" }
+      { day: "Dienstag", text: "📈 Starke US-Liquidität → XAU/USD & NAS100 bewegen sauber." },
+      { day: "Donnerstag", text: "⚡ Häufig Trendwechsel → perfekte Pullback-Trades." },
     ],
   },
+
   {
     name: "Deadzone",
     start: 1380,
     end: 0,
-    info: "Niedrige Volatilität, Seitwärtsbewegungen, Ruhephase.",
+    info: "Niedrige Liquidität. Range, Mean-Reversion, kaum Trend.",
     weekDaysInfo: [
-      { day: "Täglich", text: "😴 Markt ruhig, kaum Bewegung – Scalping-Pause empfohlen" }
+      { day: "Täglich", text: "😴 Seitwärts → Scalping vermeiden, Markt pausiert." },
     ],
   },
-  
 ];
+
 
 
 
