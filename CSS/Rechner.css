@@ -2,176 +2,133 @@
    ♿ Tabelle UI — Industrial Ledger Monochrome
    ========================================== */
 
-/* 🖼 Steuer-/Netto-Planer Box */
-#calc-taxpro .stats-box {
-  background: #1a1a1a;
-  color: #e6e6e6;
-  padding: 20px;
-  border-radius: 3px;
-  border: 1px solid #2a2a2a;
-  box-shadow: none;
-  font-family: Arial, sans-serif;
-  transition: opacity .15s ease, transform .15s ease;
+/* ============================================
+   📊 PAIR-PROFIL PREMIUM-DESIGN (NEU)
+   ============================================ */
+
+/* Hauptbox */
+#pairProfileBox {
+  padding: 25px 22px;
+  border-radius: 18px;
+
+  background:
+    radial-gradient(circle at top, rgba(160, 60, 255, 0.15), transparent 70%),
+    linear-gradient(180deg, #1a1521, #0f0d12);
+  border: 1px solid rgba(180, 0, 255, 0.2);
+
+  box-shadow:
+    0 0 30px rgba(120, 0, 255, 0.25),
+    inset 0 0 18px rgba(120, 0, 255, 0.15),
+    0 6px 24px rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(6px);
 }
 
-/* Labels & Inputs */
-#calc-taxpro label {
-  display: block;
-  margin-top: 10px;
+/* Header */
+#pairProfileBox h3 {
+  font-size: 20px;
   font-weight: 700;
-  color: #cfcfcf;
+  letter-spacing: 0.7px;
+  color: #fff;
+  text-shadow:
+    0 0 12px rgba(180, 0, 255, 0.45),
+    0 0 22px rgba(180, 0, 255, 0.25);
 }
 
-#calc-taxpro input[type="number"] {
-  width: 100%;
+/* Dropdown */
+#pairProfileSymbol {
+  background: #1b1a1f;
+  border: 1px solid rgba(180, 0, 255, 0.25);
   padding: 10px;
-  margin-top: 5px;
-  border-radius: 3px;
-  border: 1px solid #3a3a3a;
-  background: #181818;
-  color: #f5f5f5;
+  border-radius: 8px;
+  color: #eee;
+  width: 100%;
+  cursor: pointer;
   font-size: 14px;
-  box-sizing: border-box;
   outline: none;
-  transition: opacity .15s ease, transform .15s ease, border-color .15s ease;
+  margin-bottom: 18px;
+  transition: all 0.22s ease;
+}
+#pairProfileSymbol:hover {
+  border-color: #c084fc;
+  box-shadow: 0 0 14px rgba(192, 132, 252, 0.25);
 }
 
-#calc-taxpro input[type="number"]::placeholder {
-  color: #9a9a9a;
-}
-
-#calc-taxpro input[type="number"]:hover {
-  border-color: #4a4a4a;
-}
-
-/* Buttons – flach, kantig, Outline-Hover (kein Shadow) */
-.tax-button,
-#planToggleBtn {
-  margin-top: 15px;
-  padding: 12px;
-  width: 100%;
+/* Abschnittstitel */
+#pairProfileBasics strong,
+#pairProfileBehavior strong,
+#pairProfileNotes strong {
+  display: block;
   font-size: 15px;
-  font-weight: 700;
-  border: 1px solid #3a3a3a;
-  border-radius: 3px;
-  cursor: pointer;
-  background: #2b2b2b;
-  color: #f2f2f2;
-  box-shadow: none;
-  transition: opacity .15s ease, transform .15s ease, outline-color .15s ease, background-color .15s ease, border-color .15s ease;
+  color: #e2ccff;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+  text-shadow:
+    0 0 10px rgba(150, 0, 255, 0.5),
+    0 0 4px rgba(150, 0, 255, 0.3);
 }
 
-.tax-button:hover,
-#planToggleBtn:hover {
-  background: #313131;
-  border-color: #4a4a4a;
-  outline: 2px solid #8f8f8f;
-  outline-offset: 2px;
-  transform: translateY(-1px);
-}
-
-.tax-button:active,
-#planToggleBtn:active {
-  transform: translateY(0);
-}
-
-#planToggleBtn {
-  margin-top: 20px;
-}
-
-/* Tabelle für Trades */
-.trade-table {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
-  border-radius: 3px; /* wird bei collapse kaum sichtbar, dient nur als Kante */
-  overflow: hidden;
+/* Basisdaten & Verhalten */
+#pairProfileBasics div,
+#pairProfileBehavior p {
+  color: #e1e1e1;
   font-size: 14px;
-  color: #e0e0e0;
-  border: 1px solid #2a2a2a;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 
-.trade-table th {
-  background: #ededed;
-  color: #111111;
-  padding: 10px;
-  text-align: left;
-  border-bottom: 2px solid #1f1f1f;
-  font-weight: 700;
+/* Extra Info Box */
+#pairProfileBasics .extraInfo {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(160, 0, 255, 0.08);
+  border-left: 3px solid #b564ff;
+  border-radius: 8px;
+
+  color: #e9e2ff;
+  line-height: 1.5;
+
+  box-shadow: inset 0 0 12px rgba(150, 0, 255, 0.22);
+  backdrop-filter: blur(2px);
 }
 
-.trade-table td {
-  background: #1b1b1b;
-  padding: 10px;
-  border-bottom: 1px solid #2a2a2a;
-}
-
-.trade-table tbody tr:nth-child(odd) td {
-  background: #1b1b1b;
-}
-
-.trade-table tbody tr:nth-child(even) td {
-  background: #232323;
-}
-
-.trade-table tr.sum-row td {
-  font-weight: 700;
-  background: #171717;
-  border-top: 2px solid #2f2f2f;
-}
-
-/* Delete Buttons – flach, kantig */
-.delete-btn,
-.delete-all-btn {
-  padding: 8px 12px;
-  background: #2b2b2b;
-  color: #f2f2f2;
-  border: 1px solid #3a3a3a;
-  border-radius: 3px;
-  cursor: pointer;
-  width: auto;
-  box-shadow: none;
-  font-weight: 700;
-  transition: opacity .15s ease, transform .15s ease, outline-color .15s ease, background-color .15s ease, border-color .15s ease;
-}
-
-.delete-btn:hover,
-.delete-all-btn:hover {
-  background: #313131;
-  border-color: #4a4a4a;
-  outline: 2px solid #8f8f8f;
-  outline-offset: 2px;
-  transform: translateY(-1px);
-}
-
-/* Große „Alle löschen“ Fläche bleibt 100% Breite */
-.delete-all-btn {
+/* 🔥 Premium Notes – Glow Bullets */
+#pairProfileNotesList {
   margin-top: 10px;
-  width: 100%;
+  padding-left: 0;
+  list-style: none;
 }
 
-/* ♿ :focus-visible – gut sichtbare Outline (2–3px) */
-#calc-taxpro input[type="number"]:focus-visible,
-.tax-button:focus-visible,
-#planToggleBtn:focus-visible,
-.delete-btn:focus-visible,
-.delete-all-btn:focus-visible {
-  outline: 3px solid #d9d9d9;
-  outline-offset: 2px;
+#pairProfileNotesList li {
+  color: #d8d8d8;
+  font-size: 13.5px;
+  line-height: 1.55;
+  padding-left: 22px;
+  margin-bottom: 8px;
+  position: relative;
 }
 
-/* ♿ Reduzierte Bewegung */
-@media (prefers-reduced-motion: reduce) {
-  #calc-taxpro .stats-box,
-  #calc-taxpro input[type="number"],
-  .tax-button,
-  #planToggleBtn,
-  .delete-btn,
-  .delete-all-btn {
-    transition: none;
-  }
+/* Glow Bullet */
+#pairProfileNotesList li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 18px;
+  line-height: 14px;
+
+  color: #c084fc;
+  text-shadow:
+    0 0 6px rgba(192, 132, 252, 0.8),
+    0 0 10px rgba(150, 0, 255, 0.6);
 }
 
+/* Sauberer Abstand zwischen Abschnitten */
+#pairProfileBasics,
+#pairProfileBehavior,
+#pairProfileNotes {
+  margin-bottom: 26px;
+}
 
 
 /* ==========================================
