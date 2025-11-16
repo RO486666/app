@@ -134,6 +134,7 @@
   position: relative;
   max-width: 440px;
   margin: 25px auto 0 auto;
+  margin-bottom: 25px !important;
   padding: 20px 22px;
   border-radius: 16px;
   text-align: left;
@@ -317,14 +318,7 @@
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
 </canvas>
 
-<!-- 📚 Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="scripts/position.js"></script>
-<script src="scripts/dawn.js"></script>
-<script src="scripts/tax.js"></script>
-<script src="scripts/bg-candles.js"></script>
-<script src="scripts/ticker.js"></script> <!-- 👈 wichtig -->
-<script src="imageStorage.js"></script>
+
 
 </head>
 <body>
@@ -373,7 +367,59 @@
   <button id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
   <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')">🌒 Dawn Rechner</button>
   <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">📄 Steuer / Netto-Planer</button>
+  <!-- 🧠 NEU: Pair-Profil Button -->
+  <button id="btn-calc-pairprofile" onclick="openPairProfile()">📊 Pair-Profil</button>
+
+
 </div>
+<!-- 🧠 Pair-Profil Modul -->
+<div id="calc-pairProfile" class="calc-box" style="margin-top: 15px; display:none;">
+  <div class="stats-box" id="pairProfileBox">
+    
+    <!-- Header / Titel -->
+    <h3 style="margin-top: 0; margin-bottom: 10px;">
+      📊 Pair-Profil
+      <span style="font-size: 12px; color:#aaa; display:block; margin-top:4px;">
+        Statisches Wissensprofil pro Trading-Paar – Daten aus deiner pairsData.js
+      </span>
+    </h3>
+
+    <!-- Paar-Auswahl -->
+    <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
+    <select id="pairProfileSymbol" style="width:100%; margin-bottom:10px;">
+      <!-- Wird später per JavaScript geladen -->
+      <option value="">– Bitte Paar wählen –</option>
+    </select>
+
+    <!-- Kurzinfo / Basisdaten -->
+    <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
+      <strong>Basis-Daten:</strong>
+      <div style="margin-top:6px;">
+        <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
+        <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
+        <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
+        <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
+      </div>
+    </div>
+
+    <!-- Verhalten / Charakteristik -->
+    <div id="pairProfileBehavior" style="margin-top: 15px; font-size: 14px; line-height:1.5;">
+      <strong>Verhalten & Charakteristik:</strong>
+      <!-- ❗ Muss leer sein, damit JS 100% überschreibt -->
+      <p id="pairProfileText" style="margin-top:6px;"></p>
+    </div>
+
+    <!-- Zusätzliche Notizen / Setup-Hinweise -->
+    <div id="pairProfileNotes" style="margin-top: 15px; font-size: 13px; color:#ccc;">
+      <strong>Setup-Notizen:</strong>
+      <!-- ❗ Muss leer sein, damit JS Notizen einfügt -->
+      <ul id="pairProfileNotesList" style="margin-top:6px; padding-left:18px;"></ul>
+    </div>
+
+  </div>
+</div>
+
+
 
 <!-- 📄 Steuer-/Netto-Planer -->
 <div id="calc-taxpro" class="calc-box" style="margin-top: 15px; display: none;">
@@ -574,7 +620,7 @@
   <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
 
 </div> <!-- ← Pip-Rechner sauber geschlossen -->
-
+</div>
 <!-- 🧩 Eingabe-Filter für Handy -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -594,27 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  <!-- ℹ️ Info-Box -->
-  <div style="text-align:right; margin-bottom: 5px;">
-    <span onclick="toggleInfoBox()"
-          style="cursor:pointer; background:#444; border-radius:50%; padding:3px 8px;
-                 font-weight:bold; color:#0ff;"
-          title="Erklärung anzeigen">i</span>
-  </div>
-  <div id="posInfoBox"
-       style="display:none; background:#222; padding:12px; border-radius:8px; margin-top:10px;
-              color:#ccc; font-size:14px; text-align:left;">
-    <strong>ℹ️ Was macht dieser Rechner?</strong><br><br>
-    Der Positionsgrößen-Rechner hilft dir zu ermitteln, wie viele Lots du in einem Trade einsetzen darfst, ohne mehr als einen bestimmten Prozentsatz deines Kontos zu riskieren...
-  </div>
-</div>
 
-
-
-<!-- Lightbox für Screenshots -->
-<div id="lightboxOverlay" style="display:none;" onclick="closeLightbox()">
-  <img id="lightboxImage" src="" alt="Full Screenshot" />
-</div>
 
 <!-- 📋 Toggle-Box -->
 <div 
@@ -886,8 +912,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 
-
-
+<!-- 📜 DATENBANK -->
+<script src="scripts/pairProfileData.js"></script>
+<script src="scripts/pairsData.js"></script>
 
 
 <!-- 📜 Skript-Einbindungen -->
@@ -899,10 +926,10 @@ document.addEventListener("DOMContentLoaded", () => {
 <script src="scripts/screen.js"></script>
 <script src="scripts/background-session.js"></script>
 
-<!-- ✅ Erst die Daten -->
-<script src="scripts/pairsData.js"></script>
+
 
 <!-- ✅ Dann die Rechner -->
+<script src="scripts/pairProfile.js"></script>
 <script src="scripts/posmax.js"></script>
 <script src="scripts/position.js"></script>
 <script src="scripts/Piprechner.js"></script>
