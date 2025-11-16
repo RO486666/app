@@ -11,10 +11,7 @@
   padding: 25px 22px;
   border-radius: 18px;
 
-  background:
-    radial-gradient(circle at top, rgba(160, 60, 255, 0.15), transparent 70%),
-    linear-gradient(180deg, #1a1521, #0f0d12);
-  border: 1px solid rgba(180, 0, 255, 0.2);
+
 
   box-shadow:
     0 0 30px rgba(120, 0, 255, 0.25),
