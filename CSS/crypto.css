@@ -52,6 +52,106 @@ background-color: var(--crypto-surface);
   100% { background-position: 200px -200px, -200px 200px, 40px 40px, 40px 40px; }
 }
 
+/* ================================================
+   🔮 CRYPTO-WEEKEND: Haupt-Session-Box
+   ================================================ */
+
+.is-crypto-weekend .session-details-box {
+  background: rgba(40, 0, 60, 0.55);
+  border: 1px solid rgba(185, 70, 255, 0.55);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 18px 10px;
+  box-shadow:
+    0 0 22px rgba(160, 0, 255, 0.45),
+    inset 0 0 18px rgba(80, 0, 140, 0.3);
+  backdrop-filter: blur(3px);
+  color: #f3e6ff;
+}
+
+/* Titel "Aktive Sessions" */
+.is-crypto-weekend .session-details-box h3,
+.is-crypto-weekend #activeSessionsTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #d9b7ff;
+  text-shadow: 0 0 10px rgba(200, 80, 255, 0.55);
+}
+
+/* London / Tokyo / NY Titel */
+.is-crypto-weekend .session-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffbfff;
+  margin-bottom: 6px;
+  text-shadow: 0 0 6px rgba(210, 120, 255, 0.75);
+}
+
+/* Zeitangaben */
+.is-crypto-weekend .session-time {
+  font-size: 14px;
+  color: #e5d4ff;
+  margin-bottom: 4px;
+}
+.is-crypto-weekend .session-start,
+.is-crypto-weekend .session-end {
+  color: #d8c1ff;
+  font-weight: 600;
+}
+
+/* Info-Text (Stärkste Liquidität …) */
+.is-crypto-weekend .session-info {
+  margin: 10px 0 12px 0;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-left: 3px solid #c55bff;
+  color: #efddff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(140, 0, 255, 0.35);
+}
+
+/* Wochentage (Montag … Freitag) */
+.is-crypto-weekend .session-day-line {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(140, 0, 200, 0.14);
+  border-left: 3px solid #b34dff;
+  color: #f2d6ff;
+  box-shadow:
+    inset 0 0 10px rgba(150, 0, 255, 0.28),
+    0 0 10px rgba(100, 0, 155, 0.35);
+  font-size: 14px;
+  line-height: 1.45;
+  backdrop-filter: blur(2px);
+}
+
+.is-crypto-weekend .session-day-line strong {
+  color: #ffbfff;
+}
+
+/* Hover Effekt */
+.is-crypto-weekend .session-day-line:hover {
+  background: rgba(170, 60, 255, 0.22);
+  box-shadow:
+    inset 0 0 12px rgba(190, 0, 255, 0.45),
+    0 0 16px rgba(120, 0, 180, 0.55);
+  border-left-color: #d57fff;
+}
+
+/* Nächste Session Hinweis */
+.is-crypto-weekend #nextSessionBox {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: rgba(50, 0, 80, 0.55);
+  border-left: 4px solid #d47bff;
+  border-radius: 10px;
+  box-shadow: inset 0 0 14px rgba(160, 0, 255, 0.3);
+  color: #e8caff;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(200, 100, 255, 0.5);
+}
 
 
 /* =========================================================
