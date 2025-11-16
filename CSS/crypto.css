@@ -21,19 +21,31 @@
   );
 
   /* 🎨 Neuer Hintergrund */
-  background-color: var(--crypto-surface);
+background-color: var(--crypto-surface);
   background-image:
     radial-gradient(circle at top left,
-      rgba(179,77,255,0.15) 0%, transparent 60%),
+      rgba(179,77,255,0.18) 0%, transparent 60%),
     radial-gradient(circle at bottom right,
-      rgba(90,0,160,0.25) 0%, transparent 65%),
-    linear-gradient(0deg, rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      rgba(90,0,160,0.20) 0%, transparent 70%),
+    linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    40px 40px,
+    40px 40px;
   background-attachment: fixed;
-  animation: cryptoBgDrift 60s linear infinite;
-  color: var(--crypto-text);
+
+  /* neue Animation: nur das Raster bewegt sich */
+  animation: cryptoBgSoftShift 85s linear infinite;
 }
+
+/* 🟣 Sanfte Grid-Bewegung ohne Drift */
+@keyframes cryptoBgSoftShift {
+  0%   { background-position: 0 0, 0 0, 0 0, 0 0; }
+  100% { background-position: 0 0, 0 0, 40px 40px, 40px 40px; }
+}
+💎 Was ist jetzt an
 
 @keyframes cryptoBgDrift {
   0%   { background-position: 0 0, 100% 100%, 0 0, 0 0; }
