@@ -27,7 +27,8 @@ const livePrices = {
   "GBP/CHF": 1.0331,
   "NZD/CAD": 0.7928,
   "AUD/NZD": 1.1558,
-  "GBP/AUD": 2.0076, // ✅ Neu hinzugefügt
+  "GBP/AUD": 2.0076,
+  "AUD/CHF": 0.5188, // ✅ korrigiert
 
   // === Indizes (Broker/CFD-Werte können leicht abweichen)
   "US30": 47927.96,
@@ -91,7 +92,8 @@ const pipValues = {
   "GBP/CHF": 10,
   "NZD/CAD": 10,
   "AUD/NZD": 10,
-  "GBP/AUD": 10       // ✅ Neu hinzugefügt
+  "GBP/AUD": 10,
+  "AUD/CHF": 10
 };
 
 // 🔸 Kontraktgrößen (Contract Size pro 1 Lot)
@@ -134,7 +136,8 @@ const basisWerte = {
   "GBP/CHF": 100000,
   "NZD/CAD": 100000,
   "AUD/NZD": 100000,
-  "GBP/AUD": 100000    // ✅ Neu hinzugefügt
+  "GBP/AUD": 100000,
+  "AUD/CHF": 100000
 };
 
 // 🔹 Kategorien (für Dropdown-Gruppierung)
@@ -143,7 +146,7 @@ const categories = {
   "🔀 Forex (Crosses)": [
     "EUR/JPY", "GBP/JPY", "AUD/JPY", "CAD/JPY", "NZD/JPY",
     "EUR/GBP", "AUD/CAD", "GBP/CAD", "GBP/CHF",
-    "NZD/CAD", "AUD/NZD", "GBP/AUD"  // ✅ Neu hinzugefügt
+    "NZD/CAD", "AUD/NZD", "GBP/AUD", "AUD/CHF"
   ],
   "📊 Indizes": ["US30", "NAS100", "SPX500", "GER40", "UK100"],
   "🥇 Metalle": ["XAU/USD", "XAG/USD"],
