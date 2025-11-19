@@ -1,11 +1,10 @@
 /* ============================================
-   🔥 OVERLAY (klickbar, blockiert Hintergrund)
+   🔥 OVERLAY (immer hinten, blockiert NICHTS)
    ============================================ */
 .conf-overlay {
   position: fixed;
   inset: 0;
   display: none;
-
   justify-content: center;
   align-items: center;
 
@@ -16,97 +15,86 @@
 }
 
 /* ============================================
-   🔥 POPUP (Container – NICHT scrollen!)
+   🔥 POPUP (immer ganz vorne, klickbar)
    ============================================ */
 .conf-popup {
   position: relative;
-  z-index: 10000;
+  z-index: 10000 !important;
   pointer-events: auto !important;
 
-  width: 92%;
+  width: 90%;
   max-width: 520px;
-  height: 90vh;
+  max-height: 90vh;
 
-  display: flex;
-  flex-direction: column;
-
-  padding: 0;
-  border-radius: 16px;
+  padding: 18px 18px 20px;
+  border-radius: 18px;
   box-sizing: border-box;
+  overflow-y: auto;
 
-  background: radial-gradient(circle at top left, #141421 0%, #0b0b11 45%, #06060a 100%);
+  background: radial-gradient(circle at top left, #141421 0%, #0b0b11 50%, #06060a 100%);
   border: 1px solid rgba(0,255,153,0.5);
   box-shadow: 0 0 35px rgba(0,255,153,0.25);
-  overflow: hidden;
 
   animation: popupFade 0.25s ease;
 }
 
+@keyframes popupFade {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
 /* ============================================
-   🔥 OBERER TEIL (Header + Summary)
+   🔥 Header
    ============================================ */
 .conf-popup-header {
-  padding: 14px 16px 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(20,20,30,0.7);
-  backdrop-filter: blur(4px);
-  z-index: 30;
+  margin-bottom: 10px;
 }
 
-.conf-summary {
-  position: sticky;
-  top: 0;
-  z-index: 25;
+.conf-popup-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
 
-  padding: 8px 16px 12px;
-  background: rgba(20,20,30,0.8);
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 7px rgba(0,0,0,0.45);
+.conf-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.conf-close-btn:hover {
+  opacity: 1;
 }
 
 /* ============================================
-   🔥 UNTERER Scroll-Bereich (Akkordeon)
-   ============================================ */
-.conf-body-scroll {
-  flex: 1;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px;
-}
-
-
-/* ============================================
-   🔥 SUMMARY (sticky)
+   🔥 Summary bleibt oben kleben
    ============================================ */
 .conf-summary {
   position: sticky;
   top: 0;
-  z-index: 200;
-
-  padding: 6px 0 12px;
-
+  z-index: 100;
   background: radial-gradient(circle at top left, #141421 0%, #0b0b11 50%, #06060a 100%);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 7px rgba(0,0,0,0.45);
+  padding-bottom: 10px;
+  padding-top: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.45);
 }
 
 .conf-summary-grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(3, minmax(0,1fr));
   gap: 8px;
   margin-top: 6px;
 }
 
-/* BOXEN */
 .conf-box {
   padding: 8px 10px;
   border-radius: 10px;
-
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
-
+  border: 1px solid rgba(255,255,255,0.06);
   transition: 0.2s;
 }
 
@@ -120,36 +108,32 @@
   font-size: 14px;
 }
 
-/* Aktiv (grün) */
 .conf-box.active {
   background: rgba(0,255,120,0.12);
   border: 1px solid rgba(0,255,150,0.55);
+  color: #00ff9a !important;
   box-shadow: 0 0 12px rgba(0,255,140,0.25);
 }
-.conf-box.active span,
-.conf-box.active strong {
-  color: #00ff9a !important;
-}
 
-/* TOTAL Box */
+/* TOTAL BOX */
 .conf-total-box {
-  margin-top: 10px;
-  padding: 8px 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
   border-radius: 12px;
-
   background: linear-gradient(135deg, rgba(0,255,153,0.12), rgba(0,180,120,0.25));
   border: 1px solid rgba(0,255,153,0.55);
-
   text-align: center;
 }
+
 .conf-total-value {
-  font-size: 24px;
+  margin-top: 4px;
+  font-size: 26px;
   font-weight: 700;
 }
 .conf-total-text {
+  margin-top: 2px;
   font-size: 12px;
   opacity: 0.85;
-  margin-top: 3px;
 }
 
 /* ============================================
@@ -174,11 +158,12 @@
   justify-content: space-between;
   cursor: pointer;
 
-  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.25));
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.25));
   transition: 0.25s;
 }
+
 .conf-acc-header:hover {
-  background: linear-gradient(135deg, rgba(0,255,153,0.12), rgba(0,0,0,0.4));
+  background: linear-gradient(135deg, rgba(0,255,153,0.12), rgba(0,0,0,0.45));
 }
 
 .acc-percent {
@@ -190,10 +175,10 @@
   display: none;
   flex-wrap: wrap;
   gap: 10px 22px;
-
   padding: 12px 14px 16px;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
+
 .conf-acc-item.open .conf-acc-body {
   display: flex;
 }
@@ -202,9 +187,19 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-/* Scrollbar ausblenden */
-.conf-popup::-webkit-scrollbar { width: 0; height: 0; }
+/* ============================================
+   🔥 Scrollbars verstecken
+   ============================================ */
+.conf-popup::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.conf-popup {
+  overflow-y: auto;
+  position: relative;
+  padding-top: 10px; /* damit sticky gut sitzt */
+}
