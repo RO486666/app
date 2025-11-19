@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="CSS/rules.css" />
   <link rel="stylesheet" href="CSS/jornal.css" />
  <link rel="stylesheet" href="CSS/quiz.css" />
+ <link rel="stylesheet" href="CSS/checklist.css" />
   <!-- PWA / Manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00aa44" />
@@ -366,8 +367,191 @@
 <div class="tab-buttons" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
   <button id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
   <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">📄 Steuer / Netto-Planer</button>
-  <!-- 🧠 NEU: Pair-Profil Button -->
+  <button id="btn-calc-confluence" onclick="openConfluence()">🧠 Confluence-Check</button>
   <button id="btn-calc-pairprofile" onclick="openPairProfile()">📊 Pair-Profil</button>
+</div>
+
+
+
+<!-- ======================================
+     🔥 OVERLAY (NICHT klickblockend)
+     ====================================== -->
+<div id="confOverlay" class="conf-overlay">
+
+
+
+  <!-- ======================================
+       🔥 POPUP (klickbar)
+       ====================================== -->
+  <div id="confPopup" class="conf-popup">
+
+      <div class="conf-popup-header">
+        <h2>🧠 Confluence Checklist</h2>
+        <button id="confCloseBtn" class="conf-close-btn">✖</button>
+      </div>
+
+
+
+      <!-- SUMMARY -->
+      <div class="conf-summary">
+        <h3>Confluence Summary</h3>
+
+        <div class="conf-summary-grid">
+          <div class="conf-box">
+            <span>Weekly</span>
+            <strong id="sum_weekly">0%</strong>
+          </div>
+          <div class="conf-box">
+            <span>Daily</span>
+            <strong id="sum_daily">0%</strong>
+          </div>
+          <div class="conf-box">
+            <span>4H</span>
+            <strong id="sum_h4">0%</strong>
+          </div>
+          <div class="conf-box">
+            <span>2H / 1H / 30m</span>
+            <strong id="sum_intraday">0%</strong>
+          </div>
+          <div class="conf-box">
+            <span>Lower TF</span>
+            <strong id="sum_lower">0%</strong>
+          </div>
+          <div class="conf-box">
+            <span>Entry</span>
+            <strong id="sum_entry">0%</strong>
+          </div>
+        </div>
+
+        <div class="conf-total-box">
+          <div>Total Overall Score</div>
+          <div id="confTotalValue" class="conf-total-value">0%</div>
+          <div id="confTotalText" class="conf-total-text">Low Confluence</div>
+        </div>
+      </div>
+
+      <hr>
+
+
+
+      <!-- ======================================
+           ⚡ KATEGORIEN / AKKORDEON
+           ====================================== -->
+      <div class="conf-accordion">
+
+
+
+        <!-- 🌍 BIAS (40%) -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_bias">
+            <span>📌 Bias (max 40%)</span>
+            <span id="acc_bias_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_bias" class="conf-acc-body">
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-points="12">1W Bias</label>
+            <label><input type="checkbox" class="conf-check" data-group="daily" data-points="12">D1 Bias</label>
+            <label><input type="checkbox" class="conf-check" data-group="h4" data-points="16">4H Bias</label>
+          </div>
+        </div>
+
+
+
+        <!-- 🎯 AOI (35%) -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_aoi">
+            <span>🎯 AOI (max 35%)</span>
+            <span id="acc_aoi_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_aoi" class="conf-acc-body">
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-points="10">Weekly AOI</label>
+            <label><input type="checkbox" class="conf-check" data-group="daily" data-points="10">Daily AOI</label>
+
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="5">Weekly/Daily Rejection Candle</label>
+
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="2.5">Rejection Struktur</label>
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="2.5">00/50 Level</label>
+
+            <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="3">Rejection EMA</label>
+            <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="2">Rejection AOI</label>
+          </div>
+        </div>
+
+
+
+        <!-- 📈 STRUKTUR (35%) -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_struktur">
+            <span>📈 Struktur (max 35%)</span>
+            <span id="acc_struktur_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_struktur" class="conf-acc-body">
+
+            <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="8">4H HL bestätigt (Buy)</label>
+            <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="8">4H LH bestätigt (Sell)</label>
+            <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="8">Potenzielles HL/LH + Engulfing</label>
+
+            <label><input type="checkbox" class="conf-check" data-group="lower" data-points="6">MSS 15M</label>
+            <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="6">MSS 30M</label>
+
+            <label><input type="checkbox" class="conf-check" data-group="lower" data-points="7">LTF Struktur-Shift</label>
+
+          </div>
+        </div>
+
+
+
+        <!-- 🎯 Entry Confirmation -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_entry">
+            <span>🎯 Entry Confirmation (max 15%)</span>
+            <span id="acc_entry_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_entry" class="conf-acc-body">
+            <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="4">Engulfing 1H</label>
+            <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="4">Engulfing 2H</label>
+            <label><input type="checkbox" class="conf-check" data-group="entry" data-points="4">Engulfing 4H</label>
+            <label><input type="checkbox" class="conf-check" data-group="entry" data-points="3">EMA Rejection</label>
+
+          </div>
+        </div>
+
+
+
+        <!-- 💰 Risk/Reward -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_rr">
+            <span>💰 Risk/Reward (max 5%)</span>
+            <span id="acc_rr_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_rr" class="conf-acc-body">
+            <label><input type="checkbox" class="conf-check" data-group="entry" data-points="3">SL Invalidation</label>
+            <label><input type="checkbox" class="conf-check" data-group="entry" data-points="1">SL Padding 5–7 pips</label>
+            <label><input type="checkbox" class="conf-check" data-group="entry" data-points="1">TP am Strukturpunkt</label>
+          </div>
+        </div>
+
+
+
+        <!-- 🧭 Psychological Levels -->
+        <div class="conf-acc-item">
+          <div class="conf-acc-header" data-target="acc_psy">
+            <span>🧭 Psych Levels (max 5%)</span>
+            <span id="acc_psy_sum" class="acc-percent">0%</span>
+          </div>
+          <div id="acc_psy" class="conf-acc-body">
+            <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="5">00 / 50 Level</label>
+          </div>
+        </div>
+
+
+
+      </div> <!-- END conf-accordion -->
+
+  </div> <!-- END confPopup -->
+
+</div> <!-- END confOverlay -->
+
+
 
 
 </div>
@@ -613,6 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
   allowNumeric(document.getElementById("swapLongPts"));
   allowNumeric(document.getElementById("swapShortPts"));
 });
+
 </script>
 
 
@@ -911,6 +1096,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <script src="scripts/position.js"></script>
 <script src="scripts/Piprechner.js"></script>
 <script src="scripts/swapCalc.js"></script>
+<script src="scripts/checklist.js"></script>
 
 <!-- Rest -->
 <script src="scripts/dawn.js"></script>
