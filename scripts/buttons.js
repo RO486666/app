@@ -14,7 +14,9 @@ const sessionColors = {
  const btns = [
     document.getElementById("btn-calc-pos"),
     document.getElementById("btn-calc-taxpro"),
-	document.getElementById("btn-calc-pairprofile")
+	document.getElementById("btn-calc-pairprofile"),
+	document.getElementById("btn-calc-confluence")
+
   ];
 
   const colorQueue = activeSessionNames
