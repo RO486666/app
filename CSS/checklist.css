@@ -1,3 +1,83 @@
+
+/* ============================================
+   📱 MOBILE OPTIMIERUNG (bis 600px)
+   ============================================ */
+@media (max-width: 600px) {
+
+  /* Popup etwas schmaler + höherer Rand */
+  .conf-popup {
+    width: 94%;
+    max-width: none;
+    max-height: 92vh;
+    padding: 14px 14px 18px;
+    border-radius: 16px;
+  }
+
+  /* Header kleiner */
+  .conf-popup-header h2 {
+    font-size: 16px;
+  }
+  .conf-close-btn {
+    font-size: 20px;
+  }
+
+  /* Summary-Grid enger */
+  .conf-summary-grid {
+    gap: 6px;
+  }
+
+  .conf-box {
+    padding: 6px 8px;
+    border-radius: 9px;
+  }
+
+  .conf-box span {
+    font-size: 10px;
+  }
+  .conf-box strong {
+    font-size: 13px;
+  }
+
+  /* Total-Box kompakter */
+  .conf-total-box {
+    margin-top: 10px;
+    padding: 8px 10px;
+  }
+  .conf-total-value {
+    font-size: 22px;
+  }
+  .conf-total-text {
+    font-size: 11px;
+  }
+
+  /* Akkordeon kleiner */
+  .conf-acc-header {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+  .acc-percent {
+    font-size: 11px;
+  }
+
+  .conf-acc-body {
+    padding: 10px 12px 13px;
+    gap: 8px 14px;
+  }
+
+  .conf-acc-body label {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  /* Checkbox Darstellung kleiner */
+  .conf-acc-body input[type="checkbox"],
+  .conf-acc-body input[type="radio"] {
+    transform: scale(0.9);
+  }
+}
+
+
+
 /* ============================================
    🔥 OVERLAY (immer hinten, blockiert NICHTS)
    ============================================ */
