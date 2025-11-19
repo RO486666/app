@@ -16,62 +16,66 @@
 }
 
 /* ============================================
-   🔥 POPUP (scrollbarer Container)
+   🔥 POPUP (Container – NICHT scrollen!)
    ============================================ */
 .conf-popup {
   position: relative;
-  z-index: 10000 !important;
+  z-index: 10000;
   pointer-events: auto !important;
 
   width: 92%;
   max-width: 520px;
-
-  /* 🔥 Mobile Fix: eigener Scroll-Container */
   height: 90vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
 
-  padding: 15px 16px 20px;
+  display: flex;
+  flex-direction: column;
+
+  padding: 0;
   border-radius: 16px;
   box-sizing: border-box;
 
   background: radial-gradient(circle at top left, #141421 0%, #0b0b11 45%, #06060a 100%);
   border: 1px solid rgba(0,255,153,0.5);
   box-shadow: 0 0 35px rgba(0,255,153,0.25);
+  overflow: hidden;
 
   animation: popupFade 0.25s ease;
 }
 
-@keyframes popupFade {
-  from { transform: scale(0.9); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-
 /* ============================================
-   🔥 HEADER (kompakt für Mobile)
+   🔥 OBERER TEIL (Header + Summary)
    ============================================ */
 .conf-popup-header {
+  padding: 14px 16px 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  margin-bottom: 4px;
+  background: rgba(20,20,30,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 30;
 }
 
-.conf-popup-header h2 {
-  margin: 0;
-  font-size: 16px;
+.conf-summary {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+
+  padding: 8px 16px 12px;
+  background: rgba(20,20,30,0.8);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 7px rgba(0,0,0,0.45);
 }
 
-.conf-close-btn {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  color: #fff;
-  cursor: pointer;
-  opacity: 0.7;
+/* ============================================
+   🔥 UNTERER Scroll-Bereich (Akkordeon)
+   ============================================ */
+.conf-body-scroll {
+  flex: 1;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
 }
-.conf-close-btn:hover { opacity: 1; }
+
 
 /* ============================================
    🔥 SUMMARY (sticky)
