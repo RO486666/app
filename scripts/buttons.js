@@ -13,7 +13,6 @@ const sessionColors = {
 
  const btns = [
     document.getElementById("btn-calc-pos"),
-    document.getElementById("btn-calc-dawn"),
     document.getElementById("btn-calc-taxpro"),
 	document.getElementById("btn-calc-pairprofile")
   ];
