@@ -1,0 +1,198 @@
+/* ============================================
+   🔥 OVERLAY (immer hinten, blockiert NICHTS)
+   ============================================ */
+.conf-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0,0,0,0.55);
+
+  pointer-events: auto !important;
+  z-index: 9998;
+}
+
+/* ============================================
+   🔥 POPUP (immer ganz vorne, klickbar)
+   ============================================ */
+.conf-popup {
+  position: relative;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+
+  width: 90%;
+  max-width: 520px;
+  max-height: 90vh;
+
+  padding: 18px 18px 20px;
+  border-radius: 18px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  background: radial-gradient(circle at top left, #141421 0%, #0b0b11 50%, #06060a 100%);
+  border: 1px solid rgba(0,255,153,0.5);
+  box-shadow: 0 0 35px rgba(0,255,153,0.25);
+
+  animation: popupFade 0.25s ease;
+}
+
+@keyframes popupFade {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   🔥 Header
+   ============================================ */
+.conf-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.conf-popup-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.conf-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.conf-close-btn:hover {
+  opacity: 1;
+}
+
+/* ============================================
+   🔥 Summary oben
+   ============================================ */
+.conf-summary {
+  margin-bottom: 10px;
+}
+
+.conf-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.conf-box {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: 0.2s;
+}
+
+.conf-box span {
+  font-size: 11px;
+  opacity: 0.75;
+}
+.conf-box strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+}
+
+.conf-box.active {
+  background: rgba(0,255,120,0.12);
+  border: 1px solid rgba(0,255,150,0.55);
+  color: #00ff9a !important;
+  box-shadow: 0 0 12px rgba(0,255,140,0.25);
+}
+
+/* TOTAL BOX */
+.conf-total-box {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0,255,153,0.12), rgba(0,180,120,0.25));
+  border: 1px solid rgba(0,255,153,0.55);
+  text-align: center;
+}
+
+.conf-total-value {
+  margin-top: 4px;
+  font-size: 26px;
+  font-weight: 700;
+}
+.conf-total-text {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* ============================================
+   🔥 Akkordeon
+   ============================================ */
+.conf-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.conf-acc-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.conf-acc-header {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.25));
+  transition: 0.25s;
+}
+
+.conf-acc-header:hover {
+  background: linear-gradient(135deg, rgba(0,255,153,0.12), rgba(0,0,0,0.45));
+}
+
+.acc-percent {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.conf-acc-body {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  padding: 12px 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.conf-acc-item.open .conf-acc-body {
+  display: flex;
+}
+
+.conf-acc-body label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ============================================
+   🔥 Scrollbars verstecken
+   ============================================ */
+.conf-popup::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.conf-popup {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
