@@ -134,9 +134,88 @@
 }
 
 
+
+/* ============================================================
+   📦 INDUSTRIAL MONOCHROME CHECKBOXES (Positionsrechner-Style)
+   ============================================================ */
+
+#calc-taxpro label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  color: #dcdcdc;
+  font-weight: 700;
+}
+
+/* Neues cleanes Checkbox-Design */
+#calc-taxpro input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 18px;
+  height: 18px;
+
+  margin-left: 4px;
+  margin-right: 10px;
+
+  background: #1a1a1a;
+  border: 2px solid #2f2f2f;
+  border-radius: 3px;
+
+  cursor: pointer;
+  position: relative;
+
+  box-shadow:
+    inset 0 0 4px rgba(255,255,255,0.04),
+    0 0 4px rgba(0,0,0,0.5);
+
+  transition:
+    background-color .15s ease,
+    border-color .15s ease,
+    transform .15s ease,
+    box-shadow .15s ease;
+}
+
+/* Hover */
+#calc-taxpro input[type="checkbox"]:hover {
+  border-color: #444;
+  background: #222;
+  box-shadow:
+    inset 0 0 5px rgba(255,255,255,0.06),
+    0 0 6px rgba(0,0,0,0.6);
+  transform: translateY(-1px);
+}
+
+/* Aktiv */
+#calc-taxpro input[type="checkbox"]:checked {
+  background: #e8e8e8;
+  border-color: #e8e8e8;
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,0.3),
+    0 0 6px rgba(255,255,255,0.15);
+}
+
+/* Haken */
+#calc-taxpro input[type="checkbox"]:checked::after {
+  content: "✔";
+  font-size: 12px;
+  font-weight: 900;
+  color: #000;
+
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  transform: translate(-50%, -50%);
+}
+
+
+
 /* ==========================================
    📐 Positionstab Styling — Industrial Ledger Monochrome
    ========================================== */
+
 #calc-pos .stats-box {
   background: #1a1a1a;
   padding: 20px;
@@ -206,7 +285,7 @@
   transform: translateY(0);
 }
 
-/* ♿ :focus-visible */
+/* ♿ Fokus */
 #calc-pos input[type="number"]:focus-visible,
 #calc-pos select:focus-visible,
 #calc-pos button:focus-visible {
@@ -214,7 +293,7 @@
   outline-offset: 2px;
 }
 
-/* ♿ Weniger Bewegung */
+/* Weniger Bewegung */
 @media (prefers-reduced-motion: reduce) {
   #calc-pos .stats-box,
   #calc-pos input[type="number"],
@@ -223,6 +302,7 @@
     transition: none;
   }
 }
+
 /* === 🎨 SWAP-RECHNER DESIGN – Premium Look === */
 .swap-visible {
   display: block !important;
@@ -369,191 +449,18 @@
 
 
 
-
-/* ==========================================
-   ☠️ Dawn Rechner Styling — Industrial Ledger Monochrome
-   ========================================== */
-#calc-dawn .stats-box {
-  background: #1a1a1a;
-  padding: 20px;
-  border-radius: 3px;
-  border: 1px solid #2a2a2a;
-  box-shadow: none;
-  color: #e6e6e6;
-  font-family: Arial, sans-serif;
-  margin-top: 20px;
-  transition: opacity .15s ease, transform .15s ease;
-}
-
-/* Labels */
-#calc-dawn label {
-  display: block;
-  margin-top: 10px;
-  font-weight: 700;
-  color: #cfcfcf;
-}
-
-/* Inputs */
-#calc-dawn input[type="number"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 3px;
-  border: 1px solid #3a3a3a;
-  background: #181818;
-  color: #f5f5f5;
-  font-size: 14px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color .15s ease, transform .15s ease;
-}
-
-#calc-dawn input[type="number"]:hover {
-  border-color: #4a4a4a;
-}
-
-/* Button */
-#calc-dawn button {
-  margin-top: 15px;
-  padding: 12px;
-  width: 100%;
-  font-size: 15px;
-  font-weight: 700;
-  border: 1px solid #3a3a3a;
-  border-radius: 3px;
-  cursor: pointer;
-  background: #2b2b2b;
-  color: #f2f2f2;
-  box-shadow: none;
-  transition: opacity .15s ease, transform .15s ease, border-color .15s ease;
-}
-
-#calc-dawn button:hover {
-  background: #313131;
-  border-color: #4a4a4a;
-  outline: 2px solid #8f8f8f;
-  outline-offset: 2px;
-  transform: translateY(-1px);
-}
-
-#calc-dawn button:active {
-  transform: translateY(0);
-}
-
-/* Ergebnis */
-#dawnDeathResult {
-  margin-top: 12px;
-  font-weight: 700;
-  font-size: 16px;
-  color: #e0e0e0;
-}
-
-/* ♿ :focus-visible */
-#calc-dawn input[type="number"]:focus-visible,
-#calc-dawn button:focus-visible {
-  outline: 3px solid #d9d9d9;
-  outline-offset: 2px;
-}
-
-/* ♿ Weniger Bewegung */
-@media (prefers-reduced-motion: reduce) {
-  #calc-dawn .stats-box,
-  #calc-dawn input[type="number"],
-  #calc-dawn button {
-    transition: none;
-  }
-}
-
-
-
-
-
-
-/* Allgemeiner Text in den Rechner-Boxen */
-#calc-taxpro .stats-box,
-#calc-pos .stats-box,
-#calc-dawn .stats-box {
-  color: #ffffff; /* klar weiß für besseren Kontrast */
-}
-
-/* Labels */
-#calc-taxpro label,
-#calc-pos label,
-#calc-dawn label {
-  color: #eeeeee; /* heller als vorher */
-}
-
-/* Inputs (Textfarbe) */
-#calc-taxpro input[type="number"],
-#calc-pos input[type="number"],
-#calc-pos select,
-#calc-dawn input[type="number"] {
-  color: #ffffff; /* Eingabetext in weiß */
-}
-
-
-
-/* Checkbox-Labels – Industrial Monochrome */
-#calc-taxpro label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  font-weight: 700;
-  color: #eee;
-  cursor: pointer;
-  user-select: none;
-}
-
-/* Standard-Checkbox im nüchternen Stil */
-#calc-taxpro input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 0;
-  border: 2px solid #ccc;
-  background: #222;
-  cursor: pointer;
-  position: relative;
-  transition: border-color 150ms ease, background-color 150ms ease;
-}
-
-/* Hover-Effekt – leichte Aufhellung */
-#calc-taxpro input[type="checkbox"]:hover {
-  border-color: #fff;
-}
-
-/* Wenn angehakt → Fläche schlicht weiß/grau */
-#calc-taxpro input[type="checkbox"]:checked {
-  background: #f5f5f5;
-  border-color: #fff;
-}
-
-/* ✅ Haken reinzeichnen – dunkel */
-#calc-taxpro input[type="checkbox"]:checked::after {
-  content: "✔";
-  position: absolute;
-  top: -2px;
-  left: 2px;
-  font-size: 14px;
-  color: #111;
-  font-weight: 700;
-}
-
-
 /* ==========================================
    📊 Risiko-Zeilen — Industrial Monochrome + Farbakzente
    ========================================== */
+
 .risk-step {
   padding: 8px 12px;
   margin: 5px 0;
-  border-radius: 3px;              /* kantiger Look */
+  border-radius: 3px;
   font-weight: 700;
   color: #fff !important;
-  background: #222;                /* flach, neutraler Hintergrund */
-  border: 2px solid #333;          /* klare Kontur */
+  background: #222;
+  border: 2px solid #333;
   text-shadow: none;
   transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
@@ -576,9 +483,12 @@
 .risk-step.high    { background: #4d0a0a; border-color: #aa1f1f; }
 .risk-step.extreme { background: #330000; border-color: #660000; color: #ffdddd; }
 
+
+
 /* ==========================================
    📦 Ergebnis- & Maxpos-Boxen
    ========================================== */
+
 .result-box,
 .maxpos-box {
   display: none;
@@ -602,7 +512,7 @@
   color: #fff;
 }
 
-/* ✅ Risiko-Farben */
+/* Risiko-Farben */
 .result-box .risk-low,
 .maxpos-box .risk-low {
   color: #00cc66;
@@ -625,14 +535,14 @@
   animation: pulseExtreme 1.2s infinite alternate;
 }
 
-/* 🌍 Session-Klassen als dezente Farbkanten */
+/* Session-Kanten */
 .result-box.session-sydney  { border-color: #3388ff; }
 .result-box.session-tokyo   { border-color: #00aaff; }
 .result-box.session-london  { border-color: #ffd700; }
 .result-box.session-newyork { border-color: #ff4500; }
 .result-box.session-crypto  { border-color: #9900ff; }
 
-/* 💡 Extra Effekt für Extremrisiko */
+/* Extreme Animation */
 @keyframes pulseExtreme {
   from { color: #ff334d; }
   to   { color: #ff0000; }
