@@ -371,7 +371,6 @@
   <button id="btn-calc-pairprofile" onclick="openPairProfile()">📊 Pair-Profil</button>
 </div>
 
-
 <!-- ======================================
      🔥 OVERLAY
      ====================================== -->
@@ -388,9 +387,9 @@
         <button id="confCloseBtn" class="conf-close-btn">✖</button>
       </div>
 
-      <!-- SUMMARY (sticky) -->
+      <!-- STICKY SUMMARY -->
       <div class="conf-summary">
-        <h3>Confluence Summary</h3>
+        <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
 
         <div class="conf-summary-grid">
           <div class="conf-box">
@@ -426,11 +425,8 @@
         </div>
       </div>
 
-      <!-- ======================================
-           🔥 SCROLL-BEREICH (NEU!)
-           → Nur dieser Bereich scrollt
-           ====================================== -->
-      <div class="conf-scroll">
+      <!-- SCROLLABLE CONTENT (Mobile fix) -->
+      <div class="conf-body-content">
 
         <div class="conf-accordion">
 
@@ -520,11 +516,12 @@
 
         </div> <!-- accordion -->
 
-      </div> <!-- conf-scroll -->
+      </div> <!-- body content -->
 
   </div> <!-- confPopup -->
 
 </div> <!-- confOverlay -->
+
 
 <!-- 🧠 Pair-Profil Modul -->
 <div id="calc-pairProfile" class="calc-box" style="margin-top: 15px; display:none;">
