@@ -2,6 +2,18 @@
    ♿ Tabelle UI — Industrial Ledger Monochrome
    ========================================== */
 
+/* ===== Confluence Popup – Overlay ===== */
+.conf-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.55);
+  display: none;               /* JS setzt später "flex" */
+  justify-content: center;     /* zentriert horizontal */
+  align-items: center;         /* zentriert vertikal */
+  z-index: 99999;
+}
+
 /* ============================================
    📊 PAIR-PROFIL PREMIUM-DESIGN (VELVET NIGHT)
    ============================================ */
