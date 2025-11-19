@@ -365,7 +365,6 @@
 <!-- 🔘 Tab-Buttons -->
 <div class="tab-buttons" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
   <button id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button id="btn-calc-dawn" onclick="switchCalcTab('dawn')">🌒 Dawn Rechner</button>
   <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">📄 Steuer / Netto-Planer</button>
   <!-- 🧠 NEU: Pair-Profil Button -->
   <button id="btn-calc-pairprofile" onclick="openPairProfile()">📊 Pair-Profil</button>
@@ -474,28 +473,6 @@
 </div>
 
 
-
-
-<!-- ☠️ Dawn Rechner -->
-<div id="calc-dawn" class="calc-box" style="display:none; margin-top: 15px;">
-  <div class="stats-box">
-    <label for="dawnCapital">📦 Startkapital (€):</label>
-    <input type="number" id="dawnCapital" placeholder="z. B. 1000">
-
-    <label for="dawnLoss">📉 Verlust pro Dawn (%) :</label>
-    <input type="number" id="dawnLoss" placeholder="z. B. 3" step="0.1">
-
-    <button onclick="simulateDawnDeath()"
-            style="background: #0077cc; color: white; border: none; border-radius: 6px;
-                   padding: 10px; font-weight: bold; margin-top: 12px; width: 100%;
-                   cursor: pointer;">
-      ☠️ Dawn-Simulation starten
-    </button>
-
- <p id="dawnDeathResult" style="margin-top: 10px; font-weight: bold; font-size: 16px;"></p>
-<canvas id="dawnChart" height="200" style="margin-top:15px;"></canvas>
-  </div>
-</div>
 
 <!-- 📐 Positionstab -->
 <div id="calc-pos" class="calc-box" style="margin-top:15px; display:none;">
