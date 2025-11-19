@@ -7,26 +7,25 @@
   display: none;
   justify-content: center;
   align-items: center;
-
   background: rgba(0,0,0,0.55);
-
   pointer-events: auto !important;
   z-index: 9998;
+  padding: 0; /* mobile fix */
 }
 
 /* ============================================
-   🔥 POPUP (immer ganz vorne, klickbar)
+   🔥 POPUP (mobil optimiert)
    ============================================ */
 .conf-popup {
   position: relative;
   z-index: 10000 !important;
   pointer-events: auto !important;
 
-  width: 90%;
+  width: 94%;
   max-width: 520px;
-  max-height: 90vh;
+  max-height: 92vh;
 
-  padding: 18px 18px 20px;
+  padding: 16px 16px 20px;
   border-radius: 18px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -36,6 +35,8 @@
   box-shadow: 0 0 35px rgba(0,255,153,0.25);
 
   animation: popupFade 0.25s ease;
+
+  -webkit-overflow-scrolling: touch; /* smoother mobile scroll */
 }
 
 @keyframes popupFade {
@@ -72,24 +73,39 @@
 
 /* ============================================
    🔥 Summary bleibt oben kleben
+   (Mobile-kompatibel!)
    ============================================ */
 .conf-summary {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 120;
   background: radial-gradient(circle at top left, #141421 0%, #0b0b11 50%, #06060a 100%);
+
   padding-bottom: 10px;
-  padding-top: 4px;
+  padding-top: 6px;
+
   box-shadow: 0 4px 8px rgba(0,0,0,0.45);
+
+  /* mobile fix */
+  margin: -2px -4px 0 -4px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .conf-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 8px;
+  gap: 6px;
   margin-top: 6px;
 }
 
+@media (max-width: 430px) {
+  .conf-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* BOXES */
 .conf-box {
   padding: 8px 10px;
   border-radius: 10px;
@@ -157,7 +173,6 @@
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-
   background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.25));
   transition: 0.25s;
 }
@@ -201,5 +216,5 @@
 .conf-popup {
   overflow-y: auto;
   position: relative;
-  padding-top: 10px; /* damit sticky gut sitzt */
+  padding-top: 10px;
 }
