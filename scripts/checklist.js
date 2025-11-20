@@ -11,18 +11,6 @@ const confGroups = {
 };
 
 /* ============================================================
-   🔥 Kategorie-Limits (max 135%)
-   ============================================================ */
-const accLimits = {
-  acc_bias: 40,
-  acc_aoi: 35,
-  acc_struktur: 35,
-  acc_entry: 15,
-  acc_rr: 5,
-  acc_psy: 5
-};
-
-/* ============================================================
    🔥 Summary Glow – stabil
    ============================================================ */
 function toggleActiveBox(id, value) {
@@ -40,14 +28,18 @@ function toggleActiveBox(id, value) {
 }
 
 /* ============================================================
-   🔥 Hauptberechnung
+   🔥 Hauptberechnung + Pflichtlogik integriert
    ============================================================ */
 function updateConfluenceScore() {
 
-    // Reset
+    /* ----------------------------------------
+       Reset
+    ---------------------------------------- */
     Object.keys(confGroups).forEach(g => confGroups[g] = 0);
 
-    // Inputs lesen
+    /* ----------------------------------------
+       Checkboxen einsammeln
+    ---------------------------------------- */
     document.querySelectorAll(".conf-check").forEach(box => {
         if (box.checked) {
             const pts = Number(box.dataset.points || 0);
@@ -59,7 +51,9 @@ function updateConfluenceScore() {
         }
     });
 
-    // Summary update
+    /* ----------------------------------------
+       Summary Update
+    ---------------------------------------- */
     document.getElementById("sum_weekly").textContent   = confGroups.weekly + "%";
     document.getElementById("sum_daily").textContent    = confGroups.daily + "%";
     document.getElementById("sum_h4").textContent       = confGroups.h4 + "%";
@@ -74,36 +68,84 @@ function updateConfluenceScore() {
     toggleActiveBox("sum_lower",    confGroups.lower);
     toggleActiveBox("sum_entry",    confGroups.entry);
 
-    // Kategorien
-    Object.keys(accLimits).forEach(accId => {
-      const container = document.getElementById(accId);
-      const sumEl = document.getElementById(accId + "_sum");
-      if (!container || !sumEl) return;
+    /* ----------------------------------------
+       Einzel-Summen der Untergruppen
+    ---------------------------------------- */
+    document.querySelectorAll(".conf-acc-item").forEach(item => {
+        const accId = item.querySelector(".conf-acc-header").dataset.target;
+        const body = document.getElementById(accId);
+        const sumEl = document.getElementById(accId + "_sum");
+        if (!body || !sumEl) return;
 
-      let sum = 0;
-      container.querySelectorAll(".conf-check").forEach(box => {
-        if (box.checked) sum += Number(box.dataset.points || 0);
-      });
+        let sum = 0;
+        body.querySelectorAll(".conf-check").forEach(box => {
+            if (box.checked) sum += Number(box.dataset.points || 0);
+        });
 
-      if (sum > accLimits[accId]) sum = accLimits[accId];
-      sumEl.textContent = sum + "%";
+        sumEl.textContent = sum + "%";
     });
 
-    // Total
-    let total = Object.values(confGroups).reduce((a,b) => a+b, 0);
+    /* ----------------------------------------
+       Score Elemente
+    ---------------------------------------- */
+    const scoreBox   = document.getElementById("confTotalBox");
+    const totalValue = document.getElementById("confTotalValue");
+    const totalText  = document.getElementById("confTotalText");
+
+    // Alle Glow-Klassen entfernen
+    scoreBox.classList.remove("glow-low", "glow-moderate", "glow-valid", "glow-strong", "glow-error");
+
+    /* ----------------------------------------
+       🔥 Pflichtlogik – Bias FIRST, dann AOI
+    ---------------------------------------- */
+
+    const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
+    const aoiTotal  = confGroups.intraday;
+
+    // 1. BIAS Pflicht (höchste Priorität)
+    if (biasTotal === 0) {
+        scoreBox.classList.add("glow-error");
+        totalValue.textContent = "❌";
+        totalText.textContent  = "Missing Bias";
+        return; 
+    }
+
+    // 2. AOI Pflicht (wenn Bias vorhanden)
+    if (aoiTotal === 0) {
+        scoreBox.classList.add("glow-error");
+        totalValue.textContent = "❌";
+        totalText.textContent  = "Missing AOI";
+        return;
+    }
+
+    /* ----------------------------------------
+       Normaler Score (nur wenn gültig)
+    ---------------------------------------- */
+    let total = Object.values(confGroups).reduce((a, b) => a + b, 0);
     if (total > 135) total = 135;
 
-    document.getElementById("confTotalValue").textContent = total + "%";
+    totalValue.textContent = total + "%";
 
-    const txt = document.getElementById("confTotalText");
-    if (total < 40) txt.textContent = "Low Confluence";
-    else if (total < 80) txt.textContent = "Moderate Confluence";
-    else if (total < 110) txt.textContent = "Valid Confluence";
-    else txt.textContent = "Strong Confluence";
+    if (total < 40) {
+        totalText.textContent = "Low Confluence";
+        scoreBox.classList.add("glow-low");
+    }
+    else if (total < 80) {
+        totalText.textContent = "Moderate Confluence";
+        scoreBox.classList.add("glow-moderate");
+    }
+    else if (total < 110) {
+        totalText.textContent = "Valid Confluence";
+        scoreBox.classList.add("glow-valid");
+    }
+    else {
+        totalText.textContent = "Strong Confluence";
+        scoreBox.classList.add("glow-strong");
+    }
 }
 
 /* ============================================================
-   🔥 Popup
+   🔥 Popup Handling
    ============================================================ */
 function openConfluence() {
     document.getElementById("confOverlay").style.display = "flex";
@@ -118,29 +160,24 @@ function closeConfluence() {
 }
 
 /* ============================================================
-   🔥 INIT – EINZIGER Listener
+   🔥 INIT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Checkbox Listener
     document.querySelectorAll(".conf-check").forEach(b => {
         b.addEventListener("change", updateConfluenceScore);
     });
 
-    // Close
     document.getElementById("confCloseBtn").addEventListener("click", closeConfluence);
 
-    // Overlay click
     document.getElementById("confOverlay").addEventListener("click", (e) => {
         if (e.target.id === "confOverlay") closeConfluence();
     });
 
-    // ESC close
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeConfluence();
     });
 
-    // Akkordeon
     document.querySelectorAll(".conf-acc-header").forEach(header => {
         header.addEventListener("click", () => {
             header.parentElement.classList.toggle("open");
