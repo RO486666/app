@@ -1,23 +1,30 @@
 function updateTabButtonColors(activeSessionNames) {
-const sessionColors = {
-  "Sydney": "#3388ff",
-  "Tokyo": "#00aaff",
-  "London": "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  "Deadzone": "#333333",
-  "Crypto": "#9900ff"
-};
+  const sessionColors = {
+    "Sydney": "#3388ff",
+    "Tokyo": "#00aaff",
+    "London": "#ffd700",
+    "New York": "#ff4500",
+    "London Killzone": "#ccff00",
+    "New York Killzone": "#ff8800",
+    "Deadzone": "#333333",
+    "Crypto": "#9900ff"
+  };
 
-
- const btns = [
+  // Alle alten Top-Buttons (falls noch existieren)
+  const topBtns = [
     document.getElementById("btn-calc-pos"),
     document.getElementById("btn-calc-taxpro"),
-	document.getElementById("btn-calc-pairprofile"),
-	document.getElementById("btn-calc-confluence")
-
+    document.getElementById("btn-calc-pairprofile"),
+    document.getElementById("btn-calc-confluence")
   ];
+
+  // NEU: Alle Sidebar-Buttons automatisch einsammeln
+  const sidebarBtns = Array.from(
+    document.querySelectorAll(".sidebar-nav button")
+  );
+
+  // Zusammenführen
+  const btns = [...topBtns, ...sidebarBtns].filter(Boolean);
 
   const colorQueue = activeSessionNames
     .filter(name => sessionColors[name])
@@ -36,11 +43,12 @@ const sessionColors = {
     btn.style.animation = "glowPulse 2s ease-in-out infinite";
   });
 
-  // 🔥 Glow auf .stats-box anwenden
+  // Glow für .stats-box anwenden
   if (activeSessionNames.length > 0) {
-    applyStatsBoxGlow(activeSessionNames[0]); // nur erster aktiver
+    applyStatsBoxGlow(activeSessionNames[0]);
   }
 }
+
 
 function applyStatsBoxGlow(sessionName) {
   const statsBoxes = document.querySelectorAll(".stats-box");
