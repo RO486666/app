@@ -14,8 +14,9 @@
   <link rel="stylesheet" href="CSS/Rechner.css" />
   <link rel="stylesheet" href="CSS/rules.css" />
   <link rel="stylesheet" href="CSS/jornal.css" />
- <link rel="stylesheet" href="CSS/quiz.css" />
- <link rel="stylesheet" href="CSS/checklist.css" />
+  <link rel="stylesheet" href="CSS/quiz.css" />
+  <link rel="stylesheet" href="CSS/checklist.css" />
+  <link rel="stylesheet" href="CSS/sidebar.css" />
   <!-- PWA / Manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00aa44" />
@@ -23,10 +24,8 @@
   <style>
     /* ==========================================
        🎯 GLOBAL BASICS + VARIABLES
-       - Ziel: Ordnung, saubere Defaults, keine Duplikate
        ========================================== */
     :root {
-      /* Basisfarben / Defaults */
       --color-bg: #111;
       --color-fg: #fff;
 
@@ -41,7 +40,7 @@
       /* Box-Glow Fallback */
       --glow-color: rgba(255, 255, 255, 0.08);
 
-      /* Grid-Lines (dezentes Raster im Hintergrund) */
+      /* Grid-Lines */
       --grid-line-color: rgba(255, 255, 255, 0.03);
 
       /* Crypto-Gradient Farben */
@@ -57,7 +56,8 @@
       --coin-rotate-duration: 1.5s;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -66,194 +66,235 @@
       box-sizing: border-box;
     }
 
-    *, *::before, *::after { box-sizing: inherit; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit;
+    }
 
     /* ==========================================
        🧱 PAGE BACKGROUND & TYPO
        ========================================== */
- body {
-  --session-bg-color: #111;
-  --session-glow: radial-gradient(ellipse at bottom, rgba(100, 0, 150, 0.2) 0%, transparent 70%);
+    body {
+      --session-bg-color: #111;
+      --session-glow: radial-gradient(
+        ellipse at bottom,
+        rgba(100, 0, 150, 0.2) 0%,
+        transparent 70%
+      );
 
-  background-color: var(--session-bg-color);
-  color: white;
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
+      background-color: var(--session-bg-color);
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
 
-  background-image:
-    var(--session-glow),
-    linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size:
-    100% 100%, 
-    40px 40px, 
-    40px 40px;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  animation: bgScroll 40s linear infinite;
-}
+      background-image: var(--session-glow),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      animation: bgScroll 40s linear infinite;
+    }
 
-    /* dezente, animierte Rasterbewegung */
     @keyframes bgScroll {
-      0%   { background-position: 0 0, 0 0, 0 0; }
-      100% { background-position: 400px 400px, 40px 40px, 40px 40px; }
+      0% {
+        background-position: 0 0, 0 0, 0 0;
+      }
+      100% {
+        background-position: 400px 400px, 40px 40px, 40px 40px;
+      }
     }
 
     /* Canvas für leichten Candle-Hintergrund */
     #bgCandles {
-      opacity: 0.035;         /* super dezent */
-      filter: blur(0.6px);    /* weiche Kanten */
-      pointer-events: none;   /* klickt nicht durch */
+      opacity: 0.035;
+      filter: blur(0.6px);
+      pointer-events: none;
       max-width: 100%;
       width: 100%;
       display: block;
     }
 
+    /* ♿ Bewegungen reduzieren */
+    @media (prefers-reduced-motion: reduce) {
+      body {
+        animation: none !important;
+      }
+    }
 
+    /* =========================================================
+       📦 .stats-box — Deep Velvet Luxe
+       ========================================================= */
+    .stats-box {
+      --velvet-top: #131116;
+      --velvet-mid: #141219;
+      --velvet-bot: #0f0d12;
+      --accent: var(--glow-color, #f3d27a);
 
+      position: relative;
+      max-width: 440px;
+      margin: 25px auto 0 auto;
+      margin-bottom: 25px !important;
+      padding: 20px 22px;
+      border-radius: 16px;
+      text-align: left;
+      overflow: hidden;
+      isolation: isolate;
 
-/* ♿ Bewegungen reduzieren, wenn gewünscht */
-@media (prefers-reduced-motion: reduce) {
-  body { animation: none !important; }
-}
+      background:
+        radial-gradient(140% 120% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+        linear-gradient(180deg, var(--velvet-top), var(--velvet-mid) 55%, var(--velvet-bot));
+      border: 1px solid rgba(255, 255, 255, 0.04);
 
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.55),
+        0 0 16px color-mix(in srgb, var(--accent) 18%, transparent),
+        inset 0 1px 2px rgba(255, 255, 255, 0.04);
 
-/* =========================================================
-   📦 .stats-box — Deep Velvet Luxe
-   ========================================================= */
-.stats-box {
-  /* Theme hooks */
-  --velvet-top: #131116;
-  --velvet-mid: #141219;
-  --velvet-bot: #0f0d12;
-  --accent: var(--glow-color, #f3d27a);
+      animation: statsGlowPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
+      transition: box-shadow 240ms ease, opacity 240ms ease;
+    }
 
-  position: relative;
-  max-width: 440px;
-  margin: 25px auto 0 auto;
-  margin-bottom: 25px !important;
-  padding: 20px 22px;
-  border-radius: 16px;
-  text-align: left;
-  overflow: hidden;
-  isolation: isolate;
+    .stats-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.015) 0 1px,
+          transparent 1px 8px
+        ),
+        repeating-linear-gradient(
+          45deg,
+          rgba(0, 0, 0, 0.025) 0 1px,
+          transparent 1px 10px
+        );
+      mix-blend-mode: overlay;
+      opacity: 0.6;
+    }
 
-  /* Samtiger Tiefenverlauf */
-  background:
-    radial-gradient(140% 120% at 50% -10%, rgba(255,255,255,0.05), transparent 55%),
-    linear-gradient(180deg, var(--velvet-top), var(--velvet-mid) 55%, var(--velvet-bot));
-  border: 1px solid rgba(255,255,255,0.04);
+    .stats-box::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
+        inset 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent),
+        0 0 22px color-mix(in srgb, var(--accent) 18%, transparent);
+      opacity: 0.22;
+      transition: opacity 240ms ease;
+      animation: luxeRingPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
+    }
 
-  /* Weiche Schatten + Accent-Glow */
-  box-shadow:
-    0 10px 26px rgba(0,0,0,0.55),
-    0 0 16px color-mix(in srgb, var(--accent) 18%, transparent),
-    inset 0 1px 2px rgba(255,255,255,0.04);
+    @keyframes statsGlowPulse {
+      0% {
+        box-shadow:
+          0 10px 26px rgba(0, 0, 0, 0.55),
+          0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
+          inset 0 1px 2px rgba(255, 255, 255, 0.04);
+      }
+      50% {
+        box-shadow:
+          0 12px 30px rgba(0, 0, 0, 0.6),
+          0 0 22px color-mix(in srgb, var(--accent) 26%, transparent),
+          inset 0 1px 3px rgba(255, 255, 255, 0.05);
+      }
+      100% {
+        box-shadow:
+          0 10px 26px rgba(0, 0, 0, 0.55),
+          0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
+          inset 0 1px 2px rgba(255, 255, 255, 0.04);
+      }
+    }
 
-  /* Dezentes Aufleuchten (GPU‑freundlich) */
-  animation: statsGlowPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
-  transition: box-shadow 240ms ease, opacity 240ms ease;
-}
+    @keyframes luxeRingPulse {
+      0% {
+        opacity: 0.2;
+      }
+      50% {
+        opacity: 0.34;
+      }
+      100% {
+        opacity: 0.2;
+      }
+    }
 
-/* Subtile Velvet-Struktur */
-.stats-box::before {
-  content: "";
-  position: absolute; inset: 0;
-  z-index: 0; pointer-events: none;
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 8px),
-    repeating-linear-gradient(45deg,  rgba(0,0,0,0.025) 0 1px, transparent 1px 10px);
-  mix-blend-mode: overlay;
-  opacity: 0.6;
-}
+    @media (prefers-reduced-motion: reduce) {
+      .stats-box,
+      .stats-box::after {
+        animation: none !important;
+      }
+    }
 
-/* Elegante Gold-/Sessionkante als weicher Innen-Glow */
-.stats-box::after {
-  content: "";
-  position: absolute; inset: 0;
-  z-index: 1; pointer-events: none; border-radius: inherit;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
-    inset 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 0 22px color-mix(in srgb, var(--accent) 18%, transparent);
-  opacity: 0.22;
-  transition: opacity 240ms ease;
-  animation: luxeRingPulse var(--stats-glow-duration, 3.5s) ease-in-out infinite;
-}
+    /* SESSION-SPEZIFISCHE THEMES */
+    .session-glow-sydney {
+      --glow-color: #3388ff;
+      background: linear-gradient(145deg, #1e1e1e, #223044);
+    }
+    .session-glow-tokyo {
+      --glow-color: #00aaff;
+      background: linear-gradient(145deg, #1e1e1e, #1c2e36);
+    }
+    .session-glow-london {
+      --glow-color: #ffd700;
+      background: linear-gradient(145deg, #1e1e1e, #3c3c1a);
+    }
+    .session-glow-ny {
+      --glow-color: #ff4500;
+      background: linear-gradient(145deg, #1e1e1e, #3a1e1e);
+    }
+    .session-glow-lk {
+      --glow-color: #ccff00;
+      background: linear-gradient(145deg, #1e1e1e, #3c4a1c);
+    }
+    .session-glow-nyk {
+      --glow-color: #ff8800;
+      background: linear-gradient(145deg, #1e1e1e, #4b2a1c);
+    }
+    .session-glow-deadzone {
+      --glow-color: #333333;
+      background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
+    }
+    .session-glow-crypto {
+      --glow-color: #9900ff;
+      background: linear-gradient(145deg, #1e1e1e, #3e1e4e);
+    }
 
-/* Pulse: nur Schatten/Opacity */
-@keyframes statsGlowPulse {
-  0% {
-    box-shadow:
-      0 10px 26px rgba(0,0,0,0.55),
-      0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
-      inset 0 1px 2px rgba(255,255,255,0.04);
-  }
-  50% {
-    box-shadow:
-      0 12px 30px rgba(0,0,0,0.6),
-      0 0 22px color-mix(in srgb, var(--accent) 26%, transparent),
-      inset 0 1px 3px rgba(255,255,255,0.05);
-  }
-  100% {
-    box-shadow:
-      0 10px 26px rgba(0,0,0,0.55),
-      0 0 14px color-mix(in srgb, var(--accent) 14%, transparent),
-      inset 0 1px 2px rgba(255,255,255,0.04);
-  }
-}
-
-@keyframes luxeRingPulse {
-  0%   { opacity: 0.20; }
-  50%  { opacity: 0.34; }
-  100% { opacity: 0.20; }
-}
-
-/* ♿ Bewegungs-Reduktion */
-@media (prefers-reduced-motion: reduce) {
-  .stats-box,
-  .stats-box::after { animation: none !important; }
-}
-
-
-    /* ==========================================
-       🔥 SESSION-SPEZIFISCHE THEMES
-       - setzen jeweils --glow-color + Hintergrund-Gradient
-       ========================================== */
-    .session-glow-sydney    { --glow-color: #3388ff; background: linear-gradient(145deg, #1e1e1e, #223044); }
-    .session-glow-tokyo     { --glow-color: #00aaff; background: linear-gradient(145deg, #1e1e1e, #1c2e36); }
-    .session-glow-london    { --glow-color: #ffd700; background: linear-gradient(145deg, #1e1e1e, #3c3c1a); }
-    .session-glow-ny        { --glow-color: #ff4500; background: linear-gradient(145deg, #1e1e1e, #3a1e1e); }
-    .session-glow-lk        { --glow-color: #ccff00; background: linear-gradient(145deg, #1e1e1e, #3c4a1c); }
-    .session-glow-nyk       { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
-    .session-glow-deadzone  { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
-    .session-glow-crypto    { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
-
-
-
-    /* ==========================================
-       🌈 CRYPTO LABEL – animierter Text + Coin
-       ========================================== */
+    /* 🌈 CRYPTO LABEL */
     .crypto-animate {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-weight: bold;
       font-size: 18px;
-      background: linear-gradient(90deg, var(--crypto-c1), var(--crypto-c2), var(--crypto-c3), var(--crypto-c1));
+      background: linear-gradient(
+        90deg,
+        var(--crypto-c1),
+        var(--crypto-c2),
+        var(--crypto-c3),
+        var(--crypto-c1)
+      );
       background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow:
-        0 0 6px rgba(0,255,255,0.8),
-        0 0 12px rgba(255,0,204,0.6),
-        0 0 20px rgba(153,0,255,0.4);
-      animation: cryptoGradientShift var(--crypto-gradient-duration) ease infinite,
-                 cryptoGlowPulse var(--crypto-pulse-duration) ease-in-out infinite;
+        0 0 6px rgba(0, 255, 255, 0.8),
+        0 0 12px rgba(255, 0, 204, 0.6),
+        0 0 20px rgba(153, 0, 255, 0.4);
+      animation:
+        cryptoGradientShift var(--crypto-gradient-duration) ease infinite,
+        cryptoGlowPulse var(--crypto-pulse-duration) ease-in-out infinite;
     }
 
     .crypto-animate .coin {
@@ -263,850 +304,1221 @@
       background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 8px rgba(255,0,204,0.8);
+      text-shadow: 0 0 8px rgba(255, 0, 204, 0.8);
       animation: spinCoin var(--coin-rotate-duration) linear infinite;
     }
 
     @keyframes spinCoin {
-      0%   { transform: rotateY(0deg); }
-      100% { transform: rotateY(360deg); }
+      0% {
+        transform: rotateY(0deg);
+      }
+      100% {
+        transform: rotateY(360deg);
+      }
     }
 
     @keyframes cryptoGradientShift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     @keyframes cryptoGlowPulse {
       0% {
         text-shadow:
-          0 0 6px rgba(0,255,255,0.8),
-          0 0 12px rgba(255,0,204,0.6),
-          0 0 20px rgba(153,0,255,0.4);
+          0 0 6px rgba(0, 255, 255, 0.8),
+          0 0 12px rgba(255, 0, 204, 0.6),
+          0 0 20px rgba(153, 0, 255, 0.4);
       }
       100% {
         text-shadow:
-          0 0 10px rgba(255,0,204,0.9),
-          0 0 18px rgba(0,255,255,0.7),
-          0 0 30px rgba(153,0,255,0.5);
+          0 0 10px rgba(255, 0, 204, 0.9),
+          0 0 18px rgba(0, 255, 255, 0.7),
+          0 0 30px rgba(153, 0, 255, 0.5);
       }
     }
 
-    
-
-
-    /* ==========================================
-       ♿ Optional: Bewegt sich weniger, wenn Nutzer es wünscht
-       ========================================== */
     @media (prefers-reduced-motion: reduce) {
-      body { animation: none; }
-      .stats-box, .crypto-animate, .crypto-animate .coin { animation: none; }
+      .crypto-animate,
+      .crypto-animate .coin {
+        animation: none;
+      }
     }
+
+    /* Panels (Sidebar Navigation) */
+    .main-panel {
+      width: 100%;
+    }
+	
+
   </style>
-<!-- 📱 Mobile Stylesheet -->
-<link rel="stylesheet" href="mobile.css" media="screen and (max-width: 480px)">
 
-<!-- 📢 Ticker -->
-<div class="ticker-box">
-  <div id="tickerContent" class="ticker-content">
-    📢 Lade Marktdaten...
-  </div>
-</div>
-
-<!-- 📊 Hintergrund-Candles -->
-<canvas id="bgCandles"
-        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
-</canvas>
-
-
+  <!-- 📱 Mobile Stylesheet -->
+  <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 480px)" />
 
 </head>
+
 <body>
+ <!-- ☰ Toggle MUSS außerhalb der Sidebar sein -->
+<div id="sidebarToggle" class="sidebar-toggle">☰</div>
+
+<aside id="sidebar">
+  <nav class="sidebar-nav">
+    <button data-panel="panel-dashboard">🏠 Dashboard</button>
+    <button data-panel="calc-pos">📐 Position Size</button>
+    <button data-panel="calc-taxpro">📄 Steuern / Netto</button>
+    <button data-panel="open-confluence">🧠 Confluence</button>
+    <button data-panel="calc-pairProfile">📊 Pair Profil</button>
+    <button data-panel="panel-rules">📜 Regeln</button>
+    <button data-panel="panel-quiz">🧪 Theorie-Test</button>
+  </nav>
+</aside>
 
 
-
-<!-- 🎨 Session-Hintergrund -->
-<div id="sessionBackgroundOverlay"></div>
-
-<!-- 🕒 Session-Zeit -->
-<div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
-
-<!-- 🗓️ Tageszusammenfassung -->
-<div id="daySummary" class="ticker day-summary">🗓️ Lade Tagesinfo...</div>
-
-<!-- 📦 Session-Details -->
-<div class="session-details-box" id="sessionDetailsBox"></div>
-
-<!-- 📄 Detail-Text zur Tageszusammenfassung -->
-<div id="dayDetails" class="day-details" style="display: none;"></div>
-
-<!-- 💬 Session-Kommentar -->
-<div id="sessionInfo"
-     style="margin-top: 12px; padding: 12px 18px; color: #fff;
-            font-size: clamp(13px, 3.5vw, 16px); font-style: italic; text-align: center;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(153, 0, 255, 0.12), rgba(153, 0, 255, 0.22));
-            text-shadow: 0 0 2px rgba(153, 0, 255, 0.6), 0 0 6px rgba(255, 0, 204, 0.3);
-            box-shadow: inset 0 0 10px rgba(153, 0, 255, 0.3), 0 0 6px rgba(255, 0, 204, 0.2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: 600;
-            backdrop-filter: blur(2px); transition: all 0.3s ease;">
-  Tipps und Infos zur Session erscheinen hier...
-</div>
+<div id="appContainer">
 
 
-<!-- 🟢 Fortschrittsbalken -->
-<div class="progress-container">
-  <div class="progress-bar" id="progressBar"></div>
-</div>
+  <!-- 🎨 Session-Hintergrund -->
+  <div id="sessionBackgroundOverlay"></div>
 
-<!-- 🚨 Alerts -->
-<div class="alert-below-header" id="alertBox"></div>
+  <!-- 🕒 Session-Zeit -->
+  <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
 
-<!-- 🔘 Tab-Buttons -->
-<div class="tab-buttons" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
-  <button id="btn-calc-pos" onclick="switchCalcTab('pos')">📐 Position Size</button>
-  <button id="btn-calc-taxpro" onclick="switchCalcTab('taxpro')">📄 Steuer / Netto-Planer</button>
-  <button id="btn-calc-confluence" onclick="openConfluence()">🧠 Confluence-Check</button>
-  <button id="btn-calc-pairprofile" onclick="openPairProfile()">📊 Pair-Profil</button>
-</div>
+  <!-- 🗓️ Tageszusammenfassung -->
+  <div id="daySummary" class="ticker day-summary">🗓️ Lade Tagesinfo...</div>
 
-<!-- ======================================
-     🔥 OVERLAY
-====================================== -->
-<div id="confOverlay" class="conf-overlay">
+  <!-- 📦 Session-Details -->
+  <div class="session-details-box" id="sessionDetailsBox"></div>
 
-  <!-- 🔥 POPUP -->
-  <div id="confPopup" class="conf-popup">
+  <!-- 📄 Detail-Text zur Tageszusammenfassung -->
+  <div id="dayDetails" class="day-details" style="display: none;"></div>
 
-      <!-- HEADER -->
-      <div class="conf-popup-header">
-        <h2>🧠 Confluence Checklist</h2>
-        <button id="confCloseBtn" class="conf-close-btn">✖</button>
-      </div>
-
-    <!-- STICKY SUMMARY -->
-<div class="conf-summary">
-  <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
-
-  <div class="conf-summary-grid">
-    <div class="conf-box"><span>Weekly</span><strong id="sum_weekly">0%</strong></div>
-    <div class="conf-box"><span>Daily</span><strong id="sum_daily">0%</strong></div>
-    <div class="conf-box"><span>4H</span><strong id="sum_h4">0%</strong></div>
-    <div class="conf-box"><span>2H / 1H / 30m</span><strong id="sum_intraday">0%</strong></div>
-    <div class="conf-box"><span>Lower TF</span><strong id="sum_lower">0%</strong></div>
-    <div class="conf-box"><span>Entry</span><strong id="sum_entry">0%</strong></div>
+  <!-- 💬 Session-Kommentar -->
+  <div
+    id="sessionInfo"
+    style="
+      margin-top: 12px;
+      padding: 12px 18px;
+      color: #fff;
+      font-size: clamp(13px, 3.5vw, 16px);
+      font-style: italic;
+      text-align: center;
+      border-radius: 12px;
+      background: linear-gradient(
+        135deg,
+        rgba(153, 0, 255, 0.12),
+        rgba(153, 0, 255, 0.22)
+      );
+      text-shadow:
+        0 0 2px rgba(153, 0, 255, 0.6),
+        0 0 6px rgba(255, 0, 204, 0.3);
+      box-shadow:
+        inset 0 0 10px rgba(153, 0, 255, 0.3),
+        0 0 6px rgba(255, 0, 204, 0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      backdrop-filter: blur(2px);
+      transition: all 0.3s ease;
+    "
+  >
+    Tipps und Infos zur Session erscheinen hier...
   </div>
 
-  <!-- 🔥 KORRIGIERT: ID hinzugefügt, Struktur kompatibel -->
-  <div id="confTotalBox" class="conf-total-box">
-      <div>Total Overall Score</div>
-      
-      <!-- KORREKT: IDs exakt wie JS -->
-      <div id="confTotalValue" class="conf-total-value">0%</div>
-      <div id="confTotalText" class="conf-total-text">Low Confluence</div>
+  <!-- 🟢 Fortschrittsbalken -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
   </div>
-</div>
 
+    <!-- Hauptinhalt -->
+    <main id="mainContent">
+      <!-- 🏠 Dashboard Panel -->
+      <section id="panel-dashboard" class="main-panel" style="margin-top: 15px;">
+        <div class="stats-box">
+          <h3 style="margin-top: 0;">🏠 Dashboard</h3>
+          <p>
+            Wähle links ein Modul in der Sidebar, um deine Tools zu öffnen
+            (Position Size, Steuern, Pair-Profil, Regeln, Quiz, Confluence).
+          </p>
+        </div>
+      </section>
 
-      <!-- BODY -->
-      <div class="conf-body-content">
+      <!-- ======================================
+           🔥 CONFLUENCE OVERLAY (global)
+           ====================================== -->
+      <div id="confOverlay" class="conf-overlay">
+        <div id="confPopup" class="conf-popup">
+          <!-- HEADER -->
+          <div class="conf-popup-header">
+            <h2>🧠 Confluence Checklist</h2>
+            <button id="confCloseBtn" class="conf-close-btn">✖</button>
+          </div>
 
-        <div class="conf-accordion">
+          <!-- STICKY SUMMARY -->
+          <div class="conf-summary">
+            <h3 style="margin: 0; font-size: 16px;">Confluence Summary</h3>
 
-          <!-- 🌍 BIAS (30%) -->
-          <div class="conf-acc-item">
-            <div class="conf-acc-header" data-target="acc_bias">
-              <span>📌 Bias (max 30%)</span>
-              <span id="acc_bias_sum" class="acc-percent">0%</span>
+            <div class="conf-summary-grid">
+              <div class="conf-box">
+                <span>Weekly</span><strong id="sum_weekly">0%</strong>
+              </div>
+              <div class="conf-box">
+                <span>Daily</span><strong id="sum_daily">0%</strong>
+              </div>
+              <div class="conf-box">
+                <span>4H</span><strong id="sum_h4">0%</strong>
+              </div>
+              <div class="conf-box">
+                <span>2H / 1H / 30m</span><strong id="sum_intraday">0%</strong>
+              </div>
+              <div class="conf-box">
+                <span>Lower TF</span><strong id="sum_lower">0%</strong>
+              </div>
+              <div class="conf-box">
+                <span>Entry</span><strong id="sum_entry">0%</strong>
+              </div>
             </div>
-            <div id="acc_bias" class="conf-acc-body">
-              <label><input type="checkbox" class="conf-check" data-group="weekly" data-points="10">1W Bias</label>
-              <label><input type="checkbox" class="conf-check" data-group="daily" data-points="10">D1 Bias</label>
-              <label><input type="checkbox" class="conf-check" data-group="h4" data-points="10">4H Bias</label>
+
+            <div id="confTotalBox" class="conf-total-box">
+              <div>Total Overall Score</div>
+              <div id="confTotalValue" class="conf-total-value">0%</div>
+              <div id="confTotalText" class="conf-total-text">Low Confluence</div>
             </div>
           </div>
-<!-- 🎯 AOI (40%) -->
-<div class="conf-acc-item">
-    <div class="conf-acc-header" data-target="acc_aoi">
-        <span>🎯 AOI (max 40%)</span>
-        <span id="acc_aoi_sum" class="acc-percent">0%</span>
-    </div>
 
-    <div id="acc_aoi" class="conf-acc-body">
+          <!-- BODY -->
+          <div class="conf-body-content">
+            <div class="conf-accordion">
+              <!-- 🌍 BIAS (30%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_bias">
+                  <span>📌 Bias (max 30%)</span>
+                  <span id="acc_bias_sum" class="acc-percent">0%</span>
+                </div>
+                <div id="acc_bias" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="weekly"
+                      data-points="10"
+                    />1W Bias</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="daily"
+                      data-points="10"
+                    />D1 Bias</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="h4"
+                      data-points="10"
+                    />4H Bias</label
+                  >
+                </div>
+              </div>
 
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="10">Weekly AOI</label>
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="10">Daily AOI</label>
+              <!-- 🎯 AOI (40%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_aoi">
+                  <span>🎯 AOI (max 40%)</span>
+                  <span id="acc_aoi_sum" class="acc-percent">0%</span>
+                </div>
 
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="5">
-            Weekly/Daily Rejection Candle
-        </label>
+                <div id="acc_aoi" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="10"
+                    />Weekly AOI</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="10"
+                    />Daily AOI</label
+                  >
 
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="2.5">
-            Rejection Struktur
-        </label>
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="5"
+                    />
+                    Weekly/Daily Rejection Candle
+                  </label>
 
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="2.5">
-            00/50 Level
-        </label>
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="2.5"
+                    />
+                    Rejection Struktur
+                  </label>
 
-        <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="10">
-            Rejection AOI
-        </label>
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="2.5"
+                    />
+                    00/50 Level
+                  </label>
 
-    </div>
-</div>
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="10"
+                    />
+                    Rejection AOI
+                  </label>
+                </div>
+              </div>
 
+              <!-- 📈 STRUKTUR (35%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_struktur">
+                  <span>📈 Struktur (max 35%)</span>
+                  <span id="acc_struktur_sum" class="acc-percent">0%</span>
+                </div>
 
-          <!-- 📈 STRUKTUR (35%) -->
-          <div class="conf-acc-item">
-            <div class="conf-acc-header" data-target="acc_struktur">
-              <span>📈 Struktur (max 35%)</span>
-              <span id="acc_struktur_sum" class="acc-percent">0%</span>
+                <div id="acc_struktur" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="radio"
+                      name="entry_htf"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="10"
+                    />4H HL (Buy)</label
+                  >
+                  <label
+                    ><input
+                      type="radio"
+                      name="entry_htf"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="10"
+                    />4H LH (Sell)</label
+                  >
+                  <label
+                    ><input
+                      type="radio"
+                      name="entry_htf"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="10"
+                    />HL/LH + Engulfing</label
+                  >
+
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-group2="lower"
+                      data-points="2"
+                    />
+                    30M HL/LH
+                  </label>
+
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="lower"
+                      data-points="5"
+                    />LTF Struktur-Shift</label
+                  >
+                </div>
+              </div>
+
+              <!-- 🎯 ENTRY CONFIRMATION (15%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_entry">
+                  <span>🎯 Entry Confirmation (max 15%)</span>
+                  <span id="acc_entry_sum" class="acc-percent">0%</span>
+                </div>
+
+                <div id="acc_entry" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="6"
+                    />Engulfing 1H</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="intraday"
+                      data-points="6"
+                    />Engulfing 2H</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="6"
+                    />Engulfing 4H</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="3"
+                    />EMA Rejection</label
+                  >
+                </div>
+              </div>
+
+              <!-- 💰 R/R (5%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_rr">
+                  <span>💰 Risk/Reward (max 5%)</span>
+                  <span id="acc_rr_sum" class="acc-percent">0%</span>
+                </div>
+
+                <div id="acc_rr" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="1"
+                    />SL Invalidation</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="1"
+                    />SL Padding 5–7 pips</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="entry"
+                      data-points="1"
+                    />TP am Strukturpunkt</label
+                  >
+                </div>
+              </div>
+
+              <!-- 🧭 PSYCH LEVELS (5%) -->
+              <div class="conf-acc-item">
+                <div class="conf-acc-header" data-target="acc_psy">
+                  <span>🧭 Psych Levels (max 5%)</span>
+                  <span id="acc_psy_sum" class="acc-percent">0%</span>
+                </div>
+
+                <div id="acc_psy" class="conf-acc-body">
+                  <label
+                    ><input
+                      type="checkbox"
+                      class="conf-check"
+                      data-group="weekly"
+                      data-group2="daily"
+                      data-points="6"
+                    />00 / 50 Level</label
+                  >
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div id="acc_struktur" class="conf-acc-body">
-              <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="10">4H HL (Buy)</label>
-              <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="10">4H LH (Sell)</label>
-              <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="10">HL/LH + Engulfing</label>
+      <!-- 🧠 Pair-Profil Modul -->
+      <section
+        id="calc-pairProfile"
+        class="main-panel calc-box"
+        style="margin-top: 15px; display: none;"
+      >
+        <div class="stats-box" id="pairProfileBox">
+          <h3 style="margin-top: 0; margin-bottom: 10px;">
+            📊 Pair-Profil
+            <span
+              style="
+                font-size: 12px;
+                color: #aaa;
+                display: block;
+                margin-top: 4px;
+              "
+            >
+              Statisches Wissensprofil pro Trading-Paar – Daten aus deiner
+              pairsData.js
+            </span>
+          </h3>
 
-              <!-- FIX: doppeltes data-group korrigiert -->
-              <label><input type="checkbox" class="conf-check" data-group="intraday" data-group2="lower" data-points="2">
-                30M HL/LH
+          <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
+          <select id="pairProfileSymbol" style="width: 100%; margin-bottom: 10px;">
+            <option value="">– Bitte Paar wählen –</option>
+          </select>
+
+          <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
+            <strong>Basis-Daten:</strong>
+            <div style="margin-top: 6px;">
+              <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
+              <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
+              <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
+              <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
+            </div>
+          </div>
+
+          <div
+            id="pairProfileBehavior"
+            style="margin-top: 15px; font-size: 14px; line-height: 1.5;"
+          >
+            <strong>Verhalten & Charakteristik:</strong>
+            <p id="pairProfileText" style="margin-top: 6px;"></p>
+          </div>
+
+          <div
+            id="pairProfileNotes"
+            style="margin-top: 15px; font-size: 13px; color: #ccc;"
+          >
+            <strong>Setup-Notizen:</strong>
+            <ul
+              id="pairProfileNotesList"
+              style="margin-top: 6px; padding-left: 18px;"
+            ></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 📄 Steuer-/Netto-Planer -->
+      <section
+        id="calc-taxpro"
+        class="main-panel calc-box"
+        style="margin-top: 15px; display: none;"
+      >
+        <div class="stats-box">
+          <label for="jahresEinkommen">💼 Jahresgehalt (9/5 Job, brutto €):</label>
+          <input type="number" id="jahresEinkommen" placeholder="z. B. 42000" />
+
+          <div id="steuerMode">
+            <label for="gewinnBetrag">📈 Trading-Gewinn (aktueller Gewinn €):</label>
+            <input
+              type="number"
+              id="gewinnBetrag"
+              placeholder="z. B. 500"
+            />
+
+            <label
+              ><input type="checkbox" id="kirchensteuer" />
+              ✝️ Kirchensteuer (9 %)</label
+            ><br />
+            <label
+              ><input type="checkbox" id="soliZuschlag" />
+              💣 Solidaritätszuschlag (5.5 %)</label
+            ><br />
+            <label
+              ><input type="checkbox" id="reserveZehn" />
+              💥 Komplette Vorauszahlung für nächstes Jahr</label
+            ><br />
+
+            <button onclick="berechneSteuern()" class="tax-button">
+              📊 Steuer berechnen
+            </button>
+            <div id="steuerAusgabe"></div>
+          </div>
+
+          <!-- 🏦 Netto-Planer -->
+          <div id="nettoMode" style="display: none;">
+            <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
+            <input
+              type="number"
+              id="nettoBrutto"
+              placeholder="z. B. 1000"
+            />
+
+            <label for="nettoSteuer">💸 Steuerlast (€):</label>
+            <input
+              type="number"
+              id="nettoSteuer"
+              placeholder="z. B. 350"
+            />
+
+            <label for="nettoReserve">💥 Reserve (€):</label>
+            <input
+              type="number"
+              id="nettoReserve"
+              placeholder="z. B. 250"
+            />
+
+            <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
+            <input
+              type="number"
+              id="nettoEntnommen"
+              placeholder="z. B. 800"
+            />
+
+            <button onclick="berechneNettoPlan()" class="tax-button">
+              💸 Netto berechnen
+            </button>
+            <div id="nettoAusgabe"></div>
+          </div>
+
+          <div id="tradeTable" style="margin-top: 20px;"></div>
+
+          <button onclick="switchPlanMode()" id="planToggleBtn">
+            🔁 Zu Netto-Planer wechseln
+          </button>
+        </div>
+      </section>
+
+      <!-- 📐 Positionstab -->
+      <section
+        id="calc-pos"
+        class="main-panel calc-box"
+        style="margin-top: 15px; display: none;"
+      >
+        <!-- Normaler Positionsgrößenrechner -->
+        <div id="pos-mode-main" class="stats-box sub-box" style="display: block;">
+          <label for="accountSize">📦 Kontogröße (€):</label>
+          <input
+            type="number"
+            id="accountSize"
+            placeholder="z. B. 1000"
+          />
+
+          <label for="riskPercent">⚠️ Risiko in %:</label>
+          <input
+            type="number"
+            id="riskPercent"
+            placeholder="z. B. 1"
+            step="0.1"
+          />
+
+          <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
+          <input
+            type="number"
+            id="stopLossPips"
+            placeholder="z. B. 20"
+          />
+
+          <label for="symbolSelector">💱 Trading-Paar:</label>
+          <select id="symbolSelector"></select>
+
+          <label for="leverage">⚙️ Hebel:</label>
+          <input type="number" id="leverage" value="500" min="1" />
+
+          <button onclick="calculatePositionSize()">📐 Berechnen</button>
+          <div id="positionSizeResult" class="result-box"></div>
+
+          <button
+            onclick="switchPosMode('max')"
+            style="margin-top: 15px; width: 100%;"
+          >
+            🔁 Zu Max-Positions-Rechner
+          </button>
+          <button
+            onclick="switchPosMode('pips')"
+            style="margin-top: 10px; width: 100%;"
+          >
+            🔁 Zu Pip-Rechner
+          </button>
+        </div>
+
+        <!-- Max Positions Rechner -->
+        <div id="pos-mode-max" class="stats-box sub-box" style="display: none;">
+          <label for="maxposAccountSize">📦 Kontogröße (€):</label>
+          <input
+            type="number"
+            id="maxposAccountSize"
+            placeholder="z. B. 1000"
+          />
+
+          <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
+          <input
+            type="number"
+            id="maxposRiskPercent"
+            placeholder="z. B. 1"
+            step="0.1"
+          />
+
+          <label for="maxposSymbol">💱 Trading-Paar:</label>
+          <select id="maxposSymbol"></select>
+
+          <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
+          <input
+            type="number"
+            id="maxposStopLoss"
+            placeholder="z. B. 20"
+          />
+
+          <label for="maxposLeverage">⚙️ Hebel:</label>
+          <input type="number" id="maxposLeverage" value="500" min="1" />
+
+          <label for="lotMain">📏 Lotgröße (Pflicht):</label>
+          <input
+            type="number"
+            id="lotMain"
+            step="0.01"
+            placeholder="z. B. 0.10"
+          />
+
+          <label for="lotAlt">📏 Alternative Lotgröße (optional):</label>
+          <input
+            type="number"
+            id="lotAlt"
+            step="0.01"
+            placeholder="z. B. 0.25"
+          />
+
+          <button onclick="calculateMaxPositions()">📏 Berechnen</button>
+          <div id="maxposResults" class="result-box"></div>
+
+          <button
+            onclick="switchPosMode('main')"
+            style="margin-top: 15px; width: 100%;"
+          >
+            🔁 Zurück
+          </button>
+        </div>
+
+        <!-- 📐 Pip-Rechner -->
+        <div id="pos-mode-pips" class="stats-box sub-box" style="display: none;">
+          <label>💱 Symbol:</label>
+          <select id="pipSymbolSelector"></select>
+
+          <label>📦 Lots:</label>
+          <input type="number" id="lots" value="0.01" step="0.01" />
+
+          <label>🛑 Stop-Loss (Pips):</label>
+          <input type="number" id="slPips" placeholder="z. B. 20" />
+
+          <label>🎯 TP1 (Pips):</label>
+          <input type="number" id="tp1Pips" placeholder="z. B. 50" />
+
+          <label>🎯 TP2 (Pips):</label>
+          <input type="number" id="tp2Pips" placeholder="z. B. 80" />
+
+          <label>🎯 TP3 (Pips):</label>
+          <input type="number" id="tp3Pips" placeholder="z. B. 100" />
+
+          <button onclick="calculatePipsByLots()">📏 Berechnen</button>
+
+          <div id="pipResult" class="result-box"></div>
+
+          <button id="openSwapBtn" style="margin-top: 10px; width: 100%;">
+            🔁 Swap-Rechner öffnen
+          </button>
+
+          <div id="swap-calc" class="sub-box" style="display: none; margin-top: 10px;">
+            <h3>🔁 Optimaler Swap-Rechner</h3>
+
+            <div class="grid">
+              <label
+                >Swap Long (in Punkten/Pips pro Tag)
+                <input
+                  id="swapLongPts"
+                  type="text"
+                  inputmode="text"
+                  placeholder="z. B. -3.96"
+                />
               </label>
 
-              <label><input type="checkbox" class="conf-check" data-group="lower" data-points="5">LTF Struktur-Shift</label>
+              <label
+                >Swap Short (in Punkten/Pips pro Tag)
+                <input
+                  id="swapShortPts"
+                  type="text"
+                  inputmode="text"
+                  placeholder="z. B. -2.36"
+                />
+              </label>
+
+              <label class="row">
+                <input id="swapTripleDay" type="checkbox" checked />
+                Mittwoch 3× (FX-Standard)
+              </label>
+
+              <label class="row">
+                <input id="swapShowWeek" type="checkbox" checked />
+                Woche (Mo–Fr) anzeigen
+              </label>
+
+              <button id="swapCalcBtn" type="button">Swap berechnen</button>
             </div>
+
+            <div id="swapResult" class="result-box" style="display: none;"></div>
+
+            <button id="closeSwapBtn" style="margin-top: 10px; width: 100%;">
+              ⬅️ Swap-Rechner schließen
+            </button>
           </div>
 
-          <!-- 🎯 ENTRY CONFIRMATION (15%) -->
-          <div class="conf-acc-item">
-            <div class="conf-acc-header" data-target="acc_entry">
-              <span>🎯 Entry Confirmation (max 15%)</span>
-              <span id="acc_entry_sum" class="acc-percent">0%</span>
+          <button
+            onclick="switchPosMode('main')"
+            style="margin-top: 15px; width: 100%;"
+          >
+            🔁 Zurück
+          </button>
+        </div>
+      </section>
+
+      <!-- 🧩 Eingabe-Filter für Handy -->
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const allowNumeric = (el) => {
+            if (!el) return;
+            el.addEventListener("input", () => {
+              el.value = el.value
+                .replace(/[^0-9.,-]/g, "")
+                .replace(/,/g, ".")
+                .replace(/(?!^)-/g, "");
+            });
+          };
+          allowNumeric(document.getElementById("swapLongPts"));
+          allowNumeric(document.getElementById("swapShortPts"));
+        });
+      </script>
+
+      <!-- 📜 Regeln Panel -->
+      <section
+        id="panel-rules"
+        class="main-panel"
+        style="margin-top: 15px; display: none;"
+      >
+        <!-- Toggle-Box -->
+        <div
+          onclick="toggleRules()"
+          style="
+            background: linear-gradient(135deg, #2a0b0b, #1a0000);
+            border: 1px solid #ff3333;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 16px 20px;
+            text-align: center;
+            box-shadow:
+              0 0 12px rgba(255, 60, 60, 0.8),
+              inset 0 0 12px rgba(255, 0, 0, 0.6);
+            transition: all 0.2s ease-in-out;
+          "
+          onmouseover="this.style.borderColor='#ff5555'; this.style.boxShadow='0 0 20px rgba(255,80,80,1), inset 0 0 14px rgba(255,20,20,0.8)';"
+          onmouseout="this.style.borderColor='#ff3333'; this.style.boxShadow='0 0 12px rgba(255,60,60,0.8), inset 0 0 12px rgba(255,0,0,0.6)';"
+          onfocus="this.style.outline='3px solid #ff6666';"
+          onblur="this.style.outline='none';"
+        >
+          🚀
+          <strong style="color: #ff6666;"
+            >Setup-Regeln anzeigen / ausblenden</strong
+          >
+        </div>
+
+        <div class="rules-fire-wrapper">
+          <div
+            id="rulesBox"
+            class="stats-box"
+            style="display: none; line-height: 1.6;"
+          >
+            <strong>📜 Rules of Rules – Deutsch</strong><br /><br />
+
+            <div style="text-align: right; margin-bottom: 15px;">
+              <button id="switchModeBtn" onclick="switchMode()">
+                🔄 Zu Day-Trading Regeln wechseln
+              </button>
             </div>
 
-            <div id="acc_entry" class="conf-acc-body">
-              <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="6">Engulfing 1H</label>
-              <label><input type="checkbox" class="conf-check" data-group="intraday" data-points="6">Engulfing 2H</label>
-              <label><input type="checkbox" class="conf-check" data-group="entry" data-points="6">Engulfing 4H</label>
-              <label><input type="checkbox" class="conf-check" data-group="entry" data-points="3">EMA Rejection</label>
+            <!-- ========== SWING ========== -->
+            <div id="swingRules">
+              <!-- Seite 1 -->
+              <div id="rulePageSwing1">
+                <strong>Grundregeln für Entry & Struktur</strong><br /><br />
+
+                <ul style="margin-left: 20px;">
+                  <strong>AOI-Zone wählen:</strong><br />
+                  Ein Entry (Kauf/Verkauf) darf nur an einer Weekly- oder
+                  Daily-AOI stattfinden.<br />
+                  → Alle Timeframes darunter (H4 und kleiner) dienen
+                  ausschließlich zur Entry-Bestätigung.
+                  <br /><br />
+
+                  <strong>Kein Entry ohne Rejection von:</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Strukturpunkt</li>
+                    <li>EMA</li>
+                    <li>AOI</li>
+                    <li>Runder psychologischer Level (00 / 50)</li>
+                    <li>
+                      Weekly Rejection Candle (sichtbar im Weekly oder Daily)
+                    </li>
+                  </ul>
+                  <br />
+
+                  <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Buy nur bei einem bestätigten Higher Low (HL) im 4H</li>
+                    <li>Sell nur bei einem bestätigten Lower High (LH) im 4H</li>
+                    <li>
+                      Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI
+                      (Support/Resistance)
+                    </li>
+                  </ul>
+                  <br />
+
+                  <strong>Entry-Prozess nach HL/LH:</strong><br />
+                  Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift
+                  (15M–1H) beobachtet und mit dem höheren TF abgeglichen
+                  werden.
+                  <br /><br />
+
+                  <strong>Nach dem Struktur-Shift (15M, 30M, 1H):</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Suche nach einer Engulfing-Candle im 1H / 2H / 4H</li>
+                    <li>Je höher der TF, desto stärker die Bestätigung</li>
+                  </ul>
+                </ul>
+                <br />
+
+                <strong>Stop-Loss & Take-Profit Regeln</strong><br /><br />
+                <ul style="margin-left: 20px; list-style: disc;">
+                  <li>
+                    <strong>Stop-Loss:</strong><br />
+                    Der SL muss an dem Punkt gesetzt werden, an dem die
+                    Handelsidee vollständig ungültig wird.<br />
+                    → Alternativ am Top/Bottom des Struktur-Shifts (15M, 30M,
+                    1H), mit 5–7 Pips Sicherheitsabstand.
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Take-Profit:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>
+                        Wenn Entry an Weekly AOI → TP1 am Strukturpunkt
+                        (Kerzenkörper des HH/LL)
+                      </li>
+                      <li>
+                        Wenn Entry an Daily AOI → TP1 am Strukturpunkt
+                        (Kerzenkörper des HH/LL)
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Seite 2 -->
+              <div id="rulePageSwing2" style="display: none;">
+                <strong>Confluence-Regeln für Long / Short</strong><br /><br />
+
+                <ol style="margin-left: 20px;">
+                  <li>
+                    <strong>Markt-Bias Bewertung:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>Weekly Bullish/Bearish: Wert 1–3</li>
+                      <li>Daily Bullish/Bearish: Wert 1–3</li>
+                      <li>4H Bullish/Bearish: Wert 1–3</li>
+                    </ul>
+                    Bewertungsstufen:
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>1 = Markt oben (weit weg von AOI)</li>
+                      <li>2 = Auf dem Weg zur AOI</li>
+                      <li>3 = In der AOI</li>
+                    </ul>
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Struktur-Retest (HTF):</strong><br />
+                    Weekly retestet vorherigen Strukturpunkt
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Daily Rejection:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>Rejection an AOI</li>
+                      <li>
+                        Rejection an rundem psychologischen Level (00 / 50)
+                      </li>
+                    </ul>
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Strukturaufbau (LTF):</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>Warten auf HL / LH</li>
+                      <li>Struktur-Shift auf 15M / 30M / 1H</li>
+                    </ul>
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Entry-Signal:</strong><br />
+                    Bestätigung durch bullisches oder bärisches Candle-Muster
+                    (1H / 2H / 4H)
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Set and Forget:</strong><br />
+                    Nach Entry nicht eingreifen – Setup vertrauen, kein
+                    Nachjustieren
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <!-- ========== DAY ========== -->
+            <div id="dayRules" style="display: none;">
+              <!-- Seite 1 Day -->
+              <div id="rulePageDay1">
+                <strong
+                  >Grundregeln für Entry & Struktur (Day-Trading)</strong
+                ><br /><br />
+
+                <ul style="margin-left: 20px;">
+                  <strong>AOI-Zone wählen:</strong><br />
+                  Ein Entry darf nur an einer Daily- oder 4H-AOI stattfinden.<br />
+                  → 1H/15M dienen ausschließlich zur Entry-Bestätigung.
+                  <br /><br />
+
+                  <strong>Kein Entry ohne Rejection von:</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Strukturpunkt</li>
+                    <li>EMA</li>
+                    <li>AOI</li>
+                    <li>Runder psychologischer Level (00 / 50)</li>
+                    <li>Daily/4H Rejection Candle</li>
+                  </ul>
+                  <br />
+
+                  <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Buy: bestätigtes HL im 1H oder 4H</li>
+                    <li>Sell: bestätigtes LH im 1H oder 4H</li>
+                    <li>
+                      Oder potenzielles HL/LH mit Engulfing an einer AOI
+                    </li>
+                  </ul>
+                  <br />
+
+                  <strong>Entry-Prozess nach HL/LH:</strong><br />
+                  Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift
+                  (15M–1H) beobachtet und mit dem höheren TF (4H/D1)
+                  abgeglichen werden.
+                  <br /><br />
+
+                  <strong>Nach dem Struktur-Shift (15M/1H):</strong>
+                  <ul style="margin-left: 20px; list-style: disc;">
+                    <li>Suche nach einer Engulfing-Candle im 1H oder 4H</li>
+                  </ul>
+                </ul>
+                <br />
+
+                <strong>Stop-Loss & Take-Profit Regeln</strong><br /><br />
+                <ul style="margin-left: 20px; list-style: disc;">
+                  <li>
+                    <strong>Stop-Loss:</strong><br />
+                    SL am Punkt setzen, wo die Handelsidee ungültig wird.<br />
+                    → Alternativ am Top/Bottom des Struktur-Shifts (15M/1H),
+                    mit 3–5 Pips Sicherheitsabstand.
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Take-Profit:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>
+                        Wenn Entry an 4H AOI → TP1 am nächsten 1H/4H
+                        Strukturpunkt
+                      </li>
+                      <li>
+                        Wenn Entry an Daily AOI → TP1 am Daily Strukturpunkt
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Seite 2 Day -->
+              <div id="rulePageDay2" style="display: none;">
+                <strong
+                  >Confluence-Regeln für Long / Short (Day-Trading)</strong
+                ><br /><br />
+
+                <ol style="margin-left: 20px;">
+                  <li>
+                    <strong>Markt-Bias Bewertung:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>Daily Bullish/Bearish: Wert 1–3</li>
+                      <li>4H Bullish/Bearish: Wert 1–3</li>
+                      <li>1H Bullish/Bearish: Wert 1–3</li>
+                    </ul>
+                    Bewertungsstufen:
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>1 = Markt oben (weit weg von AOI)</li>
+                      <li>2 = Auf dem Weg zur AOI</li>
+                      <li>3 = In der AOI</li>
+                    </ul>
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Struktur-Retest:</strong><br />
+                    4H retestet vorherigen Strukturpunkt
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Rejection:</strong><br />
+                    Daily/4H Rejection an AOI oder psychologischem Level
+                    (00/50)
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Strukturaufbau:</strong>
+                    <ul style="margin-left: 20px; list-style: disc;">
+                      <li>Warten auf HL / LH</li>
+                      <li>Struktur-Shift auf 15M oder 1H</li>
+                    </ul>
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Entry-Signal:</strong><br />
+                    Bestätigung durch Candle-Muster (15M/1H)
+                  </li>
+                  <br />
+
+                  <li>
+                    <strong>Set and Forget:</strong><br />
+                    Nach Entry nicht eingreifen – Setup vertrauen
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <div
+              style="
+                margin-top: 20px;
+                display: flex;
+                justify-content: space-between;
+              "
+            >
+              <button
+                onclick="showPage(1)"
+                id="prevPageBtn"
+                style="display: none;"
+              >
+                ⬅️ Zurück
+              </button>
+              <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
+            </div>
+
+            <div class="fire-particles"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 🧠 Theorie-Test Panel -->
+      <section
+        id="panel-quiz"
+        class="main-panel"
+        style="margin-top: 15px; display: none;"
+      >
+        <div class="stats-box">
+          <h3 style="margin-top: 0;">🧠 Theorie-Test</h3>
+          <p>Starte deinen Quiz, um dein Wissen zu testen.</p>
+          <button id="btn-calc-quiz">🧠 Theorie-Test starten</button>
+        </div>
+
+        <!-- Quiz Popup -->
+        <div id="quizOverlay" class="quiz-overlay">
+          <div class="quiz-modal">
+            <button class="quiz-close" onclick="closeQuiz()">✖</button>
+            <h2>🧠 Theorie-Test</h2>
+            <div id="quizContent">
+              <!-- JS rendert hier die Fragen -->
             </div>
           </div>
-
-          <!-- 💰 R/R (5%) -->
-          <div class="conf-acc-item">
-            <div class="conf-acc-header" data-target="acc_rr">
-              <span>💰 Risk/Reward (max 5%)</span>
-              <span id="acc_rr_sum" class="acc-percent">0%</span>
-            </div>
-
-            <div id="acc_rr" class="conf-acc-body">
-              <label><input type="checkbox" class="conf-check" data-group="entry" data-points="1">SL Invalidation</label>
-              <label><input type="checkbox" class="conf-check" data-group="entry" data-points="1">SL Padding 5–7 pips</label>
-              <label><input type="checkbox" class="conf-check" data-group="entry" data-points="1">TP am Strukturpunkt</label>
-            </div>
-          </div>
-
-          <!-- 🧭 PSYCH LEVELS (5%) -->
-          <div class="conf-acc-item">
-            <div class="conf-acc-header" data-target="acc_psy">
-              <span>🧭 Psych Levels (max 5%)</span>
-              <span id="acc_psy_sum" class="acc-percent">0%</span>
-            </div>
-
-            <div id="acc_psy" class="conf-acc-body">
-              <!-- Du willst 6 Punkte → ich lasse es -->
-              <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="6">00 / 50 Level</label>
-            </div>
-          </div>
-
-        </div> <!-- accordion -->
-
-      </div> <!-- body content -->
-
-  </div> <!-- confPopup -->
-
-</div> <!-- confOverlay -->
-
-
-
-
-<!-- 🧠 Pair-Profil Modul -->
-<div id="calc-pairProfile" class="calc-box" style="margin-top: 15px; display:none;">
-  <div class="stats-box" id="pairProfileBox">
-    
-    <!-- Header / Titel -->
-    <h3 style="margin-top: 0; margin-bottom: 10px;">
-      📊 Pair-Profil
-      <span style="font-size: 12px; color:#aaa; display:block; margin-top:4px;">
-        Statisches Wissensprofil pro Trading-Paar – Daten aus deiner pairsData.js
-      </span>
-    </h3>
-
-    <!-- Paar-Auswahl -->
-    <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
-    <select id="pairProfileSymbol" style="width:100%; margin-bottom:10px;">
-      <!-- Wird später per JavaScript geladen -->
-      <option value="">– Bitte Paar wählen –</option>
-    </select>
-
-    <!-- Kurzinfo / Basisdaten -->
-    <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
-      <strong>Basis-Daten:</strong>
-      <div style="margin-top:6px;">
-        <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
-        <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
-        <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
-        <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
-      </div>
-    </div>
-
-    <!-- Verhalten / Charakteristik -->
-    <div id="pairProfileBehavior" style="margin-top: 15px; font-size: 14px; line-height:1.5;">
-      <strong>Verhalten & Charakteristik:</strong>
-      <!-- ❗ Muss leer sein, damit JS 100% überschreibt -->
-      <p id="pairProfileText" style="margin-top:6px;"></p>
-    </div>
-
-    <!-- Zusätzliche Notizen / Setup-Hinweise -->
-    <div id="pairProfileNotes" style="margin-top: 15px; font-size: 13px; color:#ccc;">
-      <strong>Setup-Notizen:</strong>
-      <!-- ❗ Muss leer sein, damit JS Notizen einfügt -->
-      <ul id="pairProfileNotesList" style="margin-top:6px; padding-left:18px;"></ul>
-    </div>
-
-  </div>
-</div>
-
-
-
-<!-- 📄 Steuer-/Netto-Planer -->
-<div id="calc-taxpro" class="calc-box" style="margin-top: 15px; display: none;">
-  <div class="stats-box">
-
-    <!-- 💼 Jahresgehalt -->
-    <label for="jahresEinkommen">💼 Jahresgehalt (9/5 Job, brutto €):</label>
-    <input type="number" id="jahresEinkommen" placeholder="z. B. 42000">
-
-    <!-- 💰 Steuer-Berechnung -->
-    <div id="steuerMode">
-      <label for="gewinnBetrag">📈 Trading-Gewinn (aktueller Gewinn €):</label>
-      <input type="number" id="gewinnBetrag" placeholder="z. B. 500">
-
-      <label><input type="checkbox" id="kirchensteuer"> ✝️ Kirchensteuer (9 %)</label><br>
-      <label><input type="checkbox" id="soliZuschlag"> 💣 Solidaritätszuschlag (5.5 %)</label><br>
-<label><input type="checkbox" id="reserveZehn"> 💥 Komplette Vorauszahlung für nächstes Jahr</label><br>
-
-
-      <button onclick="berechneSteuern()" class="tax-button">📊 Steuer berechnen</button>
-      <div id="steuerAusgabe"></div>
-    </div>
-
-<!-- 🏦 Netto-Planer -->
-<div id="nettoMode" style="display:none">
-  <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
-  <input type="number" id="nettoBrutto" placeholder="z. B. 1000">
-
-  <label for="nettoSteuer">💸 Steuerlast (€):</label>
-  <input type="number" id="nettoSteuer" placeholder="z. B. 350">
-
-  <label for="nettoReserve">💥 Reserve (€):</label>
-  <input type="number" id="nettoReserve" placeholder="z. B. 250">
-
-  <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
-  <input type="number" id="nettoEntnommen" placeholder="z. B. 800">
-
-  <button onclick="berechneNettoPlan()" class="tax-button">💸 Netto berechnen</button>
-  <div id="nettoAusgabe"></div>
-</div>
-
-
-    <!-- 📊 Trades -->
-    <div id="tradeTable" style="margin-top:20px;"></div>
-
-    <!-- 🔄 Umschalter -->
-<button onclick="switchPlanMode()" id="planToggleBtn">
-  🔁 Zu Netto-Planer wechseln
-</button>
-
-  </div>
-</div>
-
-
-
-<!-- 📐 Positionstab -->
-<div id="calc-pos" class="calc-box" style="margin-top:15px; display:none;">
-
-  <!-- Normaler Positionsgrößenrechner -->
-  <div id="pos-mode-main" class="stats-box sub-box" style="display:block;">
-    <label for="accountSize">📦 Kontogröße (€):</label>
-    <input type="number" id="accountSize" placeholder="z. B. 1000">
-
-    <label for="riskPercent">⚠️ Risiko in %:</label>
-    <input type="number" id="riskPercent" placeholder="z. B. 1" step="0.1">
-
-    <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
-    <input type="number" id="stopLossPips" placeholder="z. B. 20">
-
-    <label for="symbolSelector">💱 Trading-Paar:</label>
-    <select id="symbolSelector"></select>
-
-    <label for="leverage">⚙️ Hebel:</label>
-    <input type="number" id="leverage" value="500" min="1">
-
-    <button onclick="calculatePositionSize()">📐 Berechnen</button>
-    <!-- Ergebnis-Box -->
-    <div id="positionSizeResult" class="result-box"></div>
-
-    <!-- Umschalter -->
-    <button onclick="switchPosMode('max')" style="margin-top:15px; width:100%;">🔁 Zu Max-Positions-Rechner</button>
-    <button onclick="switchPosMode('pips')" style="margin-top:10px; width:100%;">🔁 Zu Pip-Rechner</button>
+        </div>
+      </section>
+    </main>
   </div>
 
-<!-- Max Positions Rechner -->
-<div id="pos-mode-max" class="stats-box sub-box" style="display:none;">
-  <label for="maxposAccountSize">📦 Kontogröße (€):</label>
-  <input type="number" id="maxposAccountSize" placeholder="z. B. 1000">
+  <!-- 📜 DATENBANK -->
+  <script src="scripts/pairProfileData.js"></script>
+  <script src="scripts/pairsData.js"></script>
 
-  <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
-  <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1">
-  
-  <label for="maxposSymbol">💱 Trading-Paar:</label>
-<select id="maxposSymbol"></select>
+  <!-- 📜 Skript-Einbindungen -->
+   <script src="scripts/sidebar.js"></script>
+  <script src="scripts/session-popup.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="scripts/buttons.js"></script>
+  <script src="scripts/crypto.js"></script>
+  <script src="scripts/session.js"></script>
+  <script src="scripts/screen.js"></script>
+  <script src="scripts/background-session.js"></script>
 
-  <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
-  <input type="number" id="maxposStopLoss" placeholder="z. B. 20">
+  <!-- ✅ Dann die Rechner -->
+  <script src="scripts/pairProfile.js"></script>
+  <script src="scripts/posmax.js"></script>
+  <script src="scripts/position.js"></script>
+  <script src="scripts/Piprechner.js"></script>
+  <script src="scripts/swapCalc.js"></script>
+  <script src="scripts/checklist.js"></script>
 
-  <label for="maxposLeverage">⚙️ Hebel:</label>
-  <input type="number" id="maxposLeverage" value="500" min="1">
+  <!-- Rest -->
+  <script src="scripts/dawn.js"></script>
+  <script src="scripts/tax.js"></script>
+  <script src="imageStorage.js"></script>
+  <script src="scripts/bg-candles.js"></script>
+  <script src="scripts/ticker.js"></script>
+  <script src="scripts/jornal.js"></script>
+  <script src="scripts/pwa.js"></script>
+  <script src="scripts/rules.js"></script>
+  <script type="module" src="pocketbase-init.js"></script>
 
-  <label for="lotMain">📏 Lotgröße (Pflicht):</label>
-  <input type="number" id="lotMain" step="0.01" placeholder="z. B. 0.10">
+  <script src="scripts/quiz.js"></script>
+  <script src="scripts/quiz-db.js"></script>
 
-  <label for="lotAlt">📏 Alternative Lotgröße (optional):</label>
-  <input type="number" id="lotAlt" step="0.01" placeholder="z. B. 0.25">
-
-  <button onclick="calculateMaxPositions()">📏 Berechnen</button>
-  <!-- Ergebnis-Box -->
-  <div id="maxposResults" class="result-box"></div>
-
-  <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
-</div>
-
-<!-- 📐 Pip-Rechner -->
-<div id="pos-mode-pips" class="stats-box sub-box" style="display:none;">
-
-  <label>💱 Symbol:</label>
-  <select id="pipSymbolSelector"></select>
-
-  <label>📦 Lots:</label>
-  <input type="number" id="lots" value="0.01" step="0.01">
-
-  <label>🛑 Stop-Loss (Pips):</label>
-  <input type="number" id="slPips" placeholder="z. B. 20">
-
-  <label>🎯 TP1 (Pips):</label>
-  <input type="number" id="tp1Pips" placeholder="z. B. 50">
-
-  <label>🎯 TP2 (Pips):</label>
-  <input type="number" id="tp2Pips" placeholder="z. B. 80">
-
-  <label>🎯 TP3 (Pips):</label>
-  <input type="number" id="tp3Pips" placeholder="z. B. 100">
-
-  <button onclick="calculatePipsByLots()">📏 Berechnen</button>
-
-  <!-- Ergebnis -->
-  <div id="pipResult" class="result-box"></div>
-
-  <!-- 🔘 Swap-Rechner öffnen -->
-  <button id="openSwapBtn" style="margin-top:10px; width:100%;">🔁 Swap-Rechner öffnen</button>
-
-  <!-- 🔁 Optimaler Swap-Rechner -->
-  <div id="swap-calc" class="sub-box" style="display:none; margin-top:10px;">
-    <h3>🔁 Optimaler Swap-Rechner</h3>
-
-    <div class="grid">
-      <label>Swap Long (in Punkten/Pips pro Tag)
-        <input id="swapLongPts" type="text" inputmode="text" placeholder="z. B. -3.96">
-      </label>
-
-      <label>Swap Short (in Punkten/Pips pro Tag)
-        <input id="swapShortPts" type="text" inputmode="text" placeholder="z. B. -2.36">
-      </label>
-
-      <label class="row">
-        <input id="swapTripleDay" type="checkbox" checked>
-        Mittwoch 3× (FX-Standard)
-      </label>
-
-      <label class="row">
-        <input id="swapShowWeek" type="checkbox" checked>
-        Woche (Mo–Fr) anzeigen
-      </label>
-
-      <button id="swapCalcBtn" type="button">Swap berechnen</button>
-    </div>
-
-    <div id="swapResult" class="result-box" style="display:none;"></div>
-
-    <button id="closeSwapBtn" style="margin-top:10px; width:100%;">⬅️ Swap-Rechner schließen</button>
-  </div>
-
-  <!-- 🔙 Zurück zum Hauptmenü -->
-  <button onclick="switchPosMode('main')" style="margin-top:15px; width:100%;">🔁 Zurück</button>
-
-</div> <!-- ← Pip-Rechner sauber geschlossen -->
-</div>
-<!-- 🧩 Eingabe-Filter für Handy -->
-<script>
+ <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const allowNumeric = (el) => {
-    if (!el) return;
-    el.addEventListener("input", () => {
-      el.value = el.value
-        .replace(/[^0-9.,-]/g, "")
-        .replace(/,/g, ".")
-        .replace(/(?!^)-/g, "");
-    });
-  };
-  allowNumeric(document.getElementById("swapLongPts"));
-  allowNumeric(document.getElementById("swapShortPts"));
-});
 
-</script>
-
-
-
-
-
-<!-- 📋 Toggle-Box -->
-<div 
-  onclick="toggleRules()" 
-  style="
-    background: linear-gradient(135deg, #2a0b0b, #1a0000);
-    border: 1px solid #ff3333;
-    border-radius: 6px;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 16px 20px;
-    text-align: center;
-    box-shadow: 
-      0 0 12px rgba(255, 60, 60, 0.8),
-      inset 0 0 12px rgba(255, 0, 0, 0.6);
-    transition: all 0.2s ease-in-out;
-  "
-  onmouseover="this.style.borderColor='#ff5555'; this.style.boxShadow='0 0 20px rgba(255,80,80,1), inset 0 0 14px rgba(255,20,20,0.8)';"
-  onmouseout="this.style.borderColor='#ff3333'; this.style.boxShadow='0 0 12px rgba(255,60,60,0.8), inset 0 0 12px rgba(255,0,0,0.6)';"
-  onfocus="this.style.outline='3px solid #ff6666';"
-  onblur="this.style.outline='none';"
->
-  🚀 <strong style="color:#ff6666;">Setup-Regeln anzeigen / ausblenden</strong>
-</div>
-
-<!-- 🔥 Regeln -->
-<div class="rules-fire-wrapper">
-  <div id="rulesBox" class="stats-box" style="display:none; line-height: 1.6;">
-    <strong>📜 Rules of Rules – Deutsch</strong><br><br>
-
-    <!-- 🔘 Umschalter -->
-    <div style="text-align:right; margin-bottom:15px;">
-      <button id="switchModeBtn" onclick="switchMode()">🔄 Zu Day-Trading Regeln wechseln</button>
-    </div>
-
-    <!-- ========== SWING ========== -->
-    <div id="swingRules">
-       <!-- Seite 1 -->
-    <div id="rulePageSwing1">
-      <strong>Grundregeln für Entry & Struktur</strong><br><br>
-
-      <ul style="margin-left:20px;">
-        <strong>AOI-Zone wählen:</strong><br>
-          Ein Entry (Kauf/Verkauf) darf nur an einer Weekly- oder Daily-AOI stattfinden.<br>
-          → Alle Timeframes darunter (H4 und kleiner) dienen ausschließlich zur Entry-Bestätigung.
-        </li><br>
-
-        <strong>Kein Entry ohne Rejection von:</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Strukturpunkt</li>
-            <li>EMA</li>
-            <li>AOI</li>
-            <li>Runder psychologischer Level (00 / 50)</li>
-            <li>Weekly Rejection Candle (sichtbar im Weekly oder Daily)</li>
-          </ul>
-        <br>
-
-        <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Buy nur bei einem bestätigten Higher Low (HL) im 4H</li>
-            <li>Sell nur bei einem bestätigten Lower High (LH) im 4H</li>
-            <li>Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI (Support/Resistance)</li>
-          </ul>
-        <br>
-
-        <strong>Entry-Prozess nach HL/LH:</strong><br>
-          Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift (15M–1H) beobachtet und mit dem höheren TF abgeglichen werden.
-        <br>
-
-        <strong>Nach dem Struktur-Shift (15M, 30M, 1H):</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Suche nach einer Engulfing-Candle im 1H / 2H / 4H</li>
-            <li>Je höher der TF, desto stärker die Bestätigung</li>
-          </ul>
-        
-      </ul><br>
-
-      <strong>Stop-Loss & Take-Profit Regeln</strong><br><br>
-      <ul style="margin-left:20px; list-style:disc;">
-        <li><strong>Stop-Loss:</strong><br>
-          Der SL muss an dem Punkt gesetzt werden, an dem die Handelsidee vollständig ungültig wird.<br>
-          → Alternativ am Top/Bottom des Struktur-Shifts (15M, 30M, 1H), mit 5–7 Pips Sicherheitsabstand.
-        </li><br>
-
-        <li><strong>Take-Profit:</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Wenn Entry an Weekly AOI → TP1 am Strukturpunkt (Kerzenkörper des HH/LL)</li>
-            <li>Wenn Entry an Daily AOI → TP1 am Strukturpunkt (Kerzenkörper des HH/LL)</li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Seite 2 -->
-    <div id="rulePageSwing2" style="display:none;">
-      <strong>Confluence-Regeln für Long / Short</strong><br><br>
-
-      <ol style="margin-left:20px;">
-        <li><strong>Markt-Bias Bewertung:</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Weekly Bullish/Bearish: Wert 1–3</li>
-            <li>Daily Bullish/Bearish: Wert 1–3</li>
-            <li>4H Bullish/Bearish: Wert 1–3</li>
-          </ul>
-          Bewertungsstufen:
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>1 = Markt oben (weit weg von AOI)</li>
-            <li>2 = Auf dem Weg zur AOI</li>
-            <li>3 = In der AOI</li>
-          </ul>
-        </li><br>
-
-        <li><strong>Struktur-Retest (HTF):</strong><br>
-          Weekly retestet vorherigen Strukturpunkt
-        </li><br>
-
-        <li><strong>Daily Rejection:</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Rejection an AOI</li>
-            <li>Rejection an rundem psychologischen Level (00 / 50)</li>
-          </ul>
-        </li><br>
-
-        <li><strong>Strukturaufbau (LTF):</strong>
-          <ul style="margin-left:20px; list-style:disc;">
-            <li>Warten auf HL / LH</li>
-            <li>Struktur-Shift auf 15M / 30M / 1H</li>
-          </ul>
-        </li><br>
-
-        <li><strong>Entry-Signal:</strong><br>
-          Bestätigung durch bullisches oder bärisches Candle-Muster (1H / 2H / 4H)
-        </li><br>
-
-        <li><strong>Set and Forget:</strong><br>
-          Nach Entry nicht eingreifen – Setup vertrauen, kein Nachjustieren
-        </li>
-      </ol>
-    </div>
-	</div>
-
-    <!-- ========== DAY ========== -->
-<div id="dayRules" style="display:none;">
-
-  <!-- Seite 1 Day -->
-  <div id="rulePageDay1">
-    <strong>Grundregeln für Entry & Struktur (Day-Trading)</strong><br><br>
-
-    <ul style="margin-left:20px;">
-		<strong>AOI-Zone wählen:</strong><br>
-        Ein Entry darf nur an einer Daily- oder 4H-AOI stattfinden.<br>
-        → 1H/15M dienen ausschließlich zur Entry-Bestätigung.
-      <br>
-
-      <strong>Kein Entry ohne Rejection von:</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Strukturpunkt</li>
-          <li>EMA</li>
-          <li>AOI</li>
-          <li>Runder psychologischer Level (00 / 50)</li>
-          <li>Daily/4H Rejection Candle</li>
-        </ul>
-      <br>
-
-      <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Buy: bestätigtes HL im 1H oder 4H</li>
-          <li>Sell: bestätigtes LH im 1H oder 4H</li>
-          <li>Oder potenzielles HL/LH mit Engulfing an einer AOI</li>
-        </ul>
-      <br>
-
-      <strong>Entry-Prozess nach HL/LH:</strong><br>
-        Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift (15M–1H) beobachtet und mit dem höheren TF (4H/D1) abgeglichen werden.
-      <br>
-
-      <strong>Nach dem Struktur-Shift (15M/1H):</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Suche nach einer Engulfing-Candle im 1H oder 4H</li>
-        </ul>
-      
-    </ul><br>
-
-    <strong>Stop-Loss & Take-Profit Regeln</strong><br><br>
-    <ul style="margin-left:20px; list-style:disc;">
-      <li><strong>Stop-Loss:</strong><br>
-        SL am Punkt setzen, wo die Handelsidee ungültig wird.<br>
-        → Alternativ am Top/Bottom des Struktur-Shifts (15M/1H), mit 3–5 Pips Sicherheitsabstand.
-      </li><br>
-
-      <li><strong>Take-Profit:</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Wenn Entry an 4H AOI → TP1 am nächsten 1H/4H Strukturpunkt</li>
-          <li>Wenn Entry an Daily AOI → TP1 am Daily Strukturpunkt</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Seite 2 Day -->
-  <div id="rulePageDay2" style="display:none;">
-    <strong>Confluence-Regeln für Long / Short (Day-Trading)</strong><br><br>
-
-    <ol style="margin-left:20px;">
-      <li><strong>Markt-Bias Bewertung:</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Daily Bullish/Bearish: Wert 1–3</li>
-          <li>4H Bullish/Bearish: Wert 1–3</li>
-          <li>1H Bullish/Bearish: Wert 1–3</li>
-        </ul>
-        Bewertungsstufen:
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>1 = Markt oben (weit weg von AOI)</li>
-          <li>2 = Auf dem Weg zur AOI</li>
-          <li>3 = In der AOI</li>
-        </ul>
-      </li><br>
-
-      <li><strong>Struktur-Retest:</strong><br>
-        4H retestet vorherigen Strukturpunkt
-      </li><br>
-
-      <li><strong>Rejection:</strong><br>
-        Daily/4H Rejection an AOI oder psychologischem Level (00/50)
-      </li><br>
-
-      <li><strong>Strukturaufbau:</strong>
-        <ul style="margin-left:20px; list-style:disc;">
-          <li>Warten auf HL / LH</li>
-          <li>Struktur-Shift auf 15M oder 1H</li>
-        </ul>
-      </li><br>
-
-      <li><strong>Entry-Signal:</strong><br>
-        Bestätigung durch Candle-Muster (15M/1H)
-      </li><br>
-
-      <li><strong>Set and Forget:</strong><br>
-        Nach Entry nicht eingreifen – Setup vertrauen
-      </li>
-    </ol>
-  </div>
-</div>
-
-
-    <!-- Navigation -->
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-      <button onclick="showPage(1)" id="prevPageBtn" style="display:none;">⬅️ Zurück</button>
-      <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
-    </div>
-
-    <div class="fire-particles"></div>
-  </div>
-</div>
-
-<!-- 🧠 Theorie-Test Button -->
-<button id="btn-calc-quiz">🧠 Theorie-Test</button>
-
-<!-- === Quiz Popup === -->
-<div id="quizOverlay" class="quiz-overlay">
-  <div class="quiz-modal">
-    <button class="quiz-close" onclick="closeQuiz()">✖</button>
-    <h2>🧠 Theorie-Test</h2>
-    <div id="quizContent">
-      <!-- Hier rendert die JS-Engine die Fragen -->
-    </div>
-  </div>
-</div>
-
-
-<!-- 📜 DATENBANK -->
-<script src="scripts/pairProfileData.js"></script>
-<script src="scripts/pairsData.js"></script>
-
-
-<!-- 📜 Skript-Einbindungen -->
-<script src="scripts/session-popup.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="scripts/buttons.js"></script>
-<script src="scripts/crypto.js"></script>
-<script src="scripts/session.js"></script>
-<script src="scripts/screen.js"></script>
-<script src="scripts/background-session.js"></script>
-
-
-
-<!-- ✅ Dann die Rechner -->
-<script src="scripts/pairProfile.js"></script>
-<script src="scripts/posmax.js"></script>
-<script src="scripts/position.js"></script>
-<script src="scripts/Piprechner.js"></script>
-<script src="scripts/swapCalc.js"></script>
-<script src="scripts/checklist.js"></script>
-
-<!-- Rest -->
-<script src="scripts/dawn.js"></script>
-<script src="scripts/tax.js"></script>
-<script src="imageStorage.js"></script>
-<script src="scripts/bg-candles.js"></script>
-<script src="scripts/ticker.js"></script>
-<script src="scripts/jornal.js"></script>
-<script src="scripts/pwa.js"></script>
-<script src="scripts/rules.js"></script>
-<script type="module" src="pocketbase-init.js"></script>
-
-<script src="scripts/quiz.js"></script>
-<script src="scripts/quiz-db.js"></script>
-<script>
-// Auto-Mount ins Popup
-document.addEventListener("DOMContentLoaded", () => {
-  const content = document.getElementById("quizContent");
-  if (content) {
-    TradingQuiz.mount(content);
+  /* ==============================
+     🎯 Quiz initialisieren
+     ============================== */
+  const quizContent = document.getElementById("quizContent");
+  if (quizContent && window.TradingQuiz && typeof TradingQuiz.mount === "function") {
+    TradingQuiz.mount(quizContent);
   }
-});
+
 
 </script>
 
 </body>
-
-
-
-
-
-
-
-
-
 </html>
