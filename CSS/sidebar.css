@@ -1,0 +1,147 @@
+/* ============================
+   📌 SIDEBAR (TradeZella Style)
+   ============================ */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+
+  background: rgba(12,12,18,0.96);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255,255,255,0.05);
+
+  transform: translateX(-280px); /* ausgeblendet */
+  transition: transform 0.28s ease;
+  z-index: 9999;
+}
+
+/* sichtbar */
+#sidebar.sidebar-open {
+  transform: translateX(0);
+}
+
+/* ============================
+   ☰ Hamburger Toggle
+   ============================ */
+#sidebarToggle {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 10000;
+
+  padding: 10px 14px;
+  font-size: 22px;
+
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  cursor: pointer;
+
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+#sidebarToggle:hover {
+  background: rgba(0,0,0,0.55);
+  border-color: rgba(0,255,153,0.45);
+}
+/* ============================
+   SIDEBAR PUSH MODE (TradeZella Style)
+   ============================ */
+
+/* Hauptcontainer bewegt sich */
+#appContainer {
+  transition: margin-left 0.35s ease;
+  margin-left: 0;
+}
+
+/* Wenn Sidebar offen → Main Content rutscht rechts */
+.sidebar-open ~ #appContainer {
+  margin-left: 240px;
+}
+
+/* Sidebar geschlossen (Start) */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding-top: 70px;
+  transform: translateX(-260px);
+  transition: transform 0.35s ease;
+  z-index: 9999;
+}
+
+/* Toggle Button */
+#sidebarToggle {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 10000;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ============================
+   🎨 SIDEBAR BUTTONS
+   ============================ */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 80px 18px 20px;
+}
+
+.sidebar-nav button {
+  width: 100%;
+  padding: 12px 16px;
+
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  color: #e8e8e8;
+
+  background: linear-gradient(135deg, rgba(25,25,35,0.9), rgba(15,15,20,0.9));
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+
+  box-shadow:
+    0 3px 8px rgba(0,0,0,0.45),
+    inset 0 0 8px rgba(255,255,255,0.04);
+
+  backdrop-filter: blur(6px);
+  transition: all 0.18s ease;
+}
+
+/* Hover */
+.sidebar-nav button:hover {
+  background: linear-gradient(135deg, rgba(50,50,65,0.9), rgba(20,20,30,0.9));
+  border-color: rgba(0,255,153,0.4);
+  box-shadow: 0 0 12px rgba(0,255,153,0.3);
+}
+
+/* Klick */
+.sidebar-nav button:active {
+  transform: scale(0.97);
+}
+
+/* Aktives Modul */
+.sidebar-nav button.active {
+  background: linear-gradient(135deg, rgba(0,255,153,0.15), rgba(0,255,153,0.05));
+  border-color: rgba(0,255,153,0.6);
+  box-shadow:
+    0 0 14px rgba(0,255,153,0.45),
+    inset 0 0 12px rgba(0,255,153,0.2);
+}
+
+
