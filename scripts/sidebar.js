@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "calc-pairProfile",
     "panel-rules",
     "panel-quiz",
+	"panel-confluence",
   ]
     .map(id => document.getElementById(id))
     .filter(Boolean);
