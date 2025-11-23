@@ -1,134 +1,88 @@
 /* ============================================
-   🔥 OVERLAY (immer hinten, blockiert NICHTS)
-   NEON VAPOR FLUX – Futuristisch, Cyber-Glow
+   🧩 CONFLUENCE (Panel-Version, Velvet Luxe)
    ============================================ */
-.conf-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 255, 120, 0.04);
-  pointer-events: none;
-  z-index: 9998;
-  padding: 0;
+
+/* Panel-Container an Rechner-Look angleichen */
+#panel-confluence {
+  padding: 0 10px 30px;
 }
 
-/* ============================================
-   🔥 POPUP – Neon Vapor Flux Edition
-   ============================================ */
-.conf-popup {
-  --flux-bg: radial-gradient(circle at top left, #0c0f12 0%, #080a0c 45%, #040506 100%);
-  --flux-outline: rgba(0, 255, 150, 0.65);
-  --flux-glow: 0 0 26px rgba(0, 255, 160, 0.35);
-  --flux-glow-strong: 0 0 42px rgba(0, 255, 160, 0.55);
-  --flux-text: #cffff1;
-  --flux-accent: #00ff9a;
-  --flux-accent-soft: rgba(0, 255, 160, 0.12);
-
-  position: relative;
-  z-index: 10000 !important;
-  pointer-events: auto !important;
-
-  width: 94%;
-  max-width: 520px;
-  max-height: 92vh;
-
-  padding: 16px 16px 20px;
-  border-radius: 18px;
-  box-sizing: border-box;
-  overflow-y: auto;
-
-  background: var(--flux-bg);
-  border: 1px solid var(--flux-outline);
-  box-shadow: var(--flux-glow);
-
-  animation: popupFlux 0.25s ease;
-  -webkit-overflow-scrolling: touch;
+/* Header wie bei einer eigenen Rechner-Box */
+.conf-header {
+  max-width: 440px;
+  margin: 0 auto 10px;
+  padding: 8px 4px;
 }
 
-@keyframes popupFlux {
-  from {
-    transform: scale(0.92) translateY(8px);
-    opacity: 0;
-    box-shadow: 0 0 0 rgba(0, 255, 150, 0);
-  }
-  to {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    box-shadow: var(--flux-glow-strong);
-  }
+.conf-header h2 {
+  font-size: 20px;
+  margin: 0 0 2px 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .conf-popup {
-    animation: none;
-  }
-}
-
-/* ============================================
-   🔥 Header
-   ============================================ */
-.conf-popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.conf-popup-header h2 {
+.conf-header p {
   margin: 0;
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--flux-text);
-  text-shadow: 0 0 12px rgba(0, 255, 130, 0.5);
-}
-
-.conf-close-btn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: var(--flux-text);
-  cursor: pointer;
+  font-size: 13px;
   opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.conf-close-btn:hover {
-  opacity: 1;
-  transform: scale(1.1);
 }
 
-/* ============================================
-   🔥 Sticky Summary – Neon Grid Style
-   ============================================ */
+/* ===== Sticky Summary – im stats-box Stil ===== */
 .conf-summary {
   position: sticky;
   top: 0;
-  z-index: 120;
+  z-index: 20;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(4, 7, 10, 0.98),
-    rgba(4, 7, 10, 0.92)
-  );
-  backdrop-filter: blur(4px);
+  max-width: 440px;
+  margin: 0 auto 16px;
 
-  padding-bottom: 10px;
-  padding-top: 6px;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
 
-  border-bottom: 1px solid rgba(0, 255, 150, 0.25);
-  box-shadow: 0 6px 18px rgba(0, 255, 150, 0.08);
+  background:
+    radial-gradient(140% 120% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, #131116, #141219 55%, #0f0d12);
 
-  margin: -2px -4px 0 -4px;
-  padding-left: 4px;
-  padding-right: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(0, 255, 153, 0.14),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04);
+
+  box-sizing: border-box;
 }
 
+.conf-summary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.015) 0 1px,
+      transparent 1px 8px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.025) 0 1px,
+      transparent 1px 10px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+.conf-summary > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Summary Grid */
 .conf-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 @media (max-width: 430px) {
@@ -137,12 +91,12 @@
   }
 }
 
-/* BOXES */
+/* Summary Box */
 .conf-box {
   padding: 8px 10px;
   border-radius: 10px;
   background: rgba(0, 255, 110, 0.04);
-  border: 1px solid rgba(0, 255, 150, 0.2);
+  border: 1px solid rgba(0, 255, 150, 0.22);
   transition: 0.2s ease;
   box-shadow: 0 0 0 rgba(0, 255, 150, 0);
 }
@@ -150,58 +104,164 @@
 .conf-box span {
   font-size: 11px;
   opacity: 0.8;
-  color: var(--flux-text);
+  color: #cffff1;
 }
 .conf-box strong {
   display: block;
   margin-top: 3px;
   font-size: 14px;
-  color: var(--flux-text);
+  color: #cffff1;
   text-shadow: 0 0 8px rgba(0, 255, 150, 0.35);
 }
 
 .conf-box.active {
-  background: var(--flux-accent-soft);
-  border-color: var(--flux-outline);
+  background: rgba(0, 255, 160, 0.14);
+  border-color: rgba(0, 255, 150, 0.75);
   box-shadow:
     0 0 14px rgba(0, 255, 150, 0.35),
     0 0 4px rgba(0, 255, 150, 0.25);
-  color: var(--flux-accent) !important;
+  color: #00ff9a !important;
   transform: translateY(-1px);
 }
 
-/* TOTAL BOX */
+/* ===== Total Box (Glow-Version, Velvet-Basis) ===== */
 .conf-total-box {
   margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 150, 0.15),
-    rgba(0, 255, 120, 0.22)
-  );
-  border: 1px solid rgba(0, 255, 150, 0.55);
-  text-align: center;
-  box-shadow: 0 0 25px rgba(0, 255, 150, 0.25);
+  padding: 18px 20px;
+  border-radius: 16px;
+
+  background:
+    radial-gradient(circle at top left, #0b1e1a 0%, #071413 40%, #030607 100%);
+  border: 1px solid rgba(0, 255, 153, 0.18);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(0, 0, 0, 1);
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.18s ease;
 }
 
+.conf-total-box::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+
+  background:
+    radial-gradient(circle at 20% 0%, rgba(0, 255, 153, 0.16) 0%, transparent 58%),
+    radial-gradient(circle at 80% 90%, rgba(0, 255, 153, 0.12) 0%, transparent 60%);
+
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+
+  animation:
+    emeraldFluxPulse 4.2s ease-in-out infinite,
+    emeraldFlow 8.5s ease-in-out infinite;
+}
+
+.conf-total-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glow Levels */
+.conf-total-box.glow-low {
+  box-shadow:
+    0 0 8px rgba(0, 255, 153, 0.22),
+    0 16px 36px rgba(0, 0, 0, 0.95);
+  border-color: rgba(0, 255, 153, 0.24);
+}
+.conf-total-box.glow-low::before {
+  opacity: 0.18;
+}
+
+.conf-total-box.glow-moderate {
+  box-shadow:
+    0 0 14px rgba(0, 255, 153, 0.38),
+    0 0 36px rgba(0, 255, 153, 0.22),
+    0 18px 44px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.32);
+}
+.conf-total-box.glow-moderate::before {
+  opacity: 0.32;
+}
+
+.conf-total-box.glow-valid {
+  box-shadow:
+    0 0 20px rgba(0, 255, 153, 0.50),
+    0 0 60px rgba(0, 255, 153, 0.30),
+    0 22px 52px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.5);
+}
+.conf-total-box.glow-valid::before {
+  opacity: 0.50;
+}
+
+.conf-total-box.glow-strong {
+  box-shadow:
+    0 0 26px rgba(0, 255, 153, 0.70),
+    0 0 80px rgba(0, 255, 153, 0.40),
+    0 26px 60px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.68);
+}
+.conf-total-box.glow-strong::before {
+  opacity: 0.78;
+}
+
+/* Error State */
+.glow-error {
+  background: radial-gradient(circle at top, #3a0505 0%, #1a0000 55%, #080000 100%) !important;
+  border: 1px solid rgba(255, 60, 60, 0.75) !important;
+  box-shadow:
+    0 0 22px rgba(255, 60, 60, 0.45),
+    0 0 32px rgba(255, 30, 30, 0.35),
+    inset 0 0 12px rgba(255, 40, 40, 0.25);
+  color: #ffdada !important;
+  text-shadow: 0 0 10px rgba(255, 80, 80, 0.55);
+}
+
+/* Values */
 .conf-total-value {
   margin-top: 4px;
   font-size: 26px;
   font-weight: 700;
-  color: var(--flux-text);
-  text-shadow: 0 0 14px rgba(0, 255, 150, 0.55);
+  color: #cffff1;
 }
 .conf-total-text {
   margin-top: 2px;
   font-size: 12px;
   opacity: 0.88;
-  color: var(--flux-text);
+  color: #cffff1;
 }
 
-/* ============================================
-   🔥 Akkordeon – Neon Outline Grid
-   ============================================ */
+/* ===== BODY / Accordion-Container im stats-box Look ===== */
+.conf-body-content {
+  max-width: 440px;
+  margin: 0 auto 20px;
+  padding: 18px 20px 20px;
+  border-radius: 16px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(140% 120% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, #131116, #141219 55%, #0f0d12);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(0, 255, 153, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04);
+}
+
+/* ===== Accordion ===== */
 .conf-accordion {
   display: flex;
   flex-direction: column;
@@ -209,24 +269,23 @@
 }
 
 .conf-acc-item {
-  background: rgba(5, 10, 8, 0.35);
-  border: 1px solid rgba(0, 255, 150, 0.12);
+  background: rgba(5, 10, 8, 0.55);
+  border: 1px solid rgba(0, 255, 150, 0.16);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0 18px rgba(0, 255, 130, 0.1);
 }
 
-/* Header */
+/* Header-Zeile */
 .conf-acc-header {
   padding: 10px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
 
+  cursor: pointer;
   background: linear-gradient(
     135deg,
-    rgba(0, 255, 150, 0.06),
+    rgba(0, 255, 150, 0.10),
     rgba(5, 8, 10, 0.95)
   );
 
@@ -234,13 +293,17 @@
 }
 
 .conf-acc-header:hover {
-  background: rgba(0, 255, 150, 0.14);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 150, 0.18),
+    rgba(5, 8, 10, 0.98)
+  );
 }
 
 .acc-percent {
   font-size: 12px;
   opacity: 0.9;
-  color: var(--flux-accent);
+  color: #00ff9a;
 }
 
 /* Body */
@@ -249,8 +312,8 @@
   flex-wrap: wrap;
   gap: 10px 22px;
   padding: 12px 14px 16px;
-  border-top: 1px solid rgba(0, 255, 150, 0.15);
-  background: rgba(0, 255, 130, 0.04);
+  border-top: 1px solid rgba(0, 255, 150, 0.18);
+  background: rgba(0, 255, 130, 0.05);
 }
 
 .conf-acc-item.open .conf-acc-body {
@@ -263,259 +326,12 @@
   gap: 6px;
   cursor: pointer;
   white-space: nowrap;
-  color: var(--flux-text);
+  color: #cffff1;
   font-size: 13px;
 }
-/* ============================================
-   ❌ ERROR STATE – Neon Vapor Flux (rot/cyber)
-   ============================================ */
-.glow-error {
-  background: rgba(255, 40, 40, 0.08) !important;
-  border: 1px solid rgba(255, 60, 60, 0.60) !important;
 
-  box-shadow:
-    0 0 22px rgba(255, 60, 60, 0.45),
-    0 0 32px rgba(255, 30, 30, 0.35),
-    inset 0 0 12px rgba(255, 40, 40, 0.25);
-
-  color: #ffdada !important;
-  text-shadow: 0 0 10px rgba(255, 80, 80, 0.55);
-  transform: translateY(-1px);
-  transition: 0.25s ease;
-}
-
-
-
-/* ============================================
-   🧪 Confluence Total Box – Emerald Flux Aura
-   ============================================ */
-
-:root {
-  --flux-bg-deep: #030607;
-  --flux-bg-mid: #050b0c;
-  --flux-bg-soft: #071413;
-  --flux-emerald: 0, 255, 153;
-  --flux-border-soft: rgba(0, 255, 153, 0.18);
-  --flux-radius: 16px;
-}
-
-/* Basis */
-.conf-total-box {
-  position: relative;
-  border-radius: var(--flux-radius);
-  padding: 18px 20px;
-  box-sizing: border-box;
-  background:
-    radial-gradient(circle at top left, #0b1e1a 0%, var(--flux-bg-soft) 40%, var(--flux-bg-deep) 100%);
-  border: 1px solid var(--flux-border-soft);
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.95),
-    0 0 0 1px rgba(0, 0, 0, 1);
-
-  overflow: hidden;
-  isolation: isolate;
-
-  transition:
-    box-shadow 0.25s ease,
-    border-color 0.25s ease,
-    background 0.25s ease,
-    transform 0.18s ease;
-}
-
-/* Flüssige Emerald-Lichtschicht */
-.conf-total-box::before {
-  content: "";
-  position: absolute;
-  inset: -25%;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(0, 255, 153, 0.16) 0%, transparent 58%),
-    radial-gradient(circle at 80% 90%, rgba(0, 255, 153, 0.12) 0%, transparent 60%);
-  opacity: 0;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  transition: opacity 0.28s ease, transform 0.28s ease;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Hover: leichter Lift, ohne Aggro-Effekt */
-.conf-total-box:hover {
-  transform: translateY(-1px);
-}
-
-/* ============================================
-   Glow Levels – Emerald Flux
-   ============================================ */
-
-/* Low – zarter Flüssigrand */
-.conf-total-box.glow-low {
-  box-shadow:
-    0 0 8px rgba(0, 255, 153, 0.22),
-    0 16px 36px rgba(0, 0, 0, 0.95);
-  border-color: rgba(0, 255, 153, 0.24);
-}
-
-.conf-total-box.glow-low::before {
-  opacity: 0.18;
-  transform: translate3d(0, 1px, 0);
-}
-
-/* Moderate – klarer Emerald-Hof */
-.conf-total-box.glow-moderate {
-  box-shadow:
-    0 0 14px rgba(0, 255, 153, 0.38),
-    0 0 36px rgba(0, 255, 153, 0.22),
-    0 18px 44px rgba(0, 0, 0, 1);
-  border-color: rgba(0, 255, 153, 0.32);
-  background:
-    radial-gradient(circle at top left, #102822 0%, #071613 42%, var(--flux-bg-deep) 100%);
-}
-
-.conf-total-box.glow-moderate::before {
-  opacity: 0.32;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Valid – satte Flux-Aura */
-.conf-total-box.glow-valid {
-  box-shadow:
-    0 0 20px rgba(0, 255, 153, 0.50),
-    0 0 60px rgba(0, 255, 153, 0.30),
-    0 22px 52px rgba(0, 0, 0, 1);
-  border-color: rgba(0, 255, 153, 0.5);
-  background:
-    radial-gradient(circle at 12% 0%, #16372c 0%, #09211b 40%, #030607 100%);
-}
-
-.conf-total-box.glow-valid::before {
-  opacity: 0.50;
-  transform: translate3d(0, -1px, 0);
-}
-
-/* Strong – maximaler, aber noch edler Flux */
-.conf-total-box.glow-strong {
-  box-shadow:
-    0 0 26px rgba(0, 255, 153, 0.70),
-    0 0 80px rgba(0, 255, 153, 0.40),
-    0 26px 60px rgba(0, 0, 0, 1);
-  border-color: rgba(0, 255, 153, 0.68);
-  background:
-    radial-gradient(circle at 10% 0%, #1b4233 0%, #0c2a20 36%, #030507 100%);
-}
-
-.conf-total-box.glow-strong::before {
-  opacity: 0.78;
-  transform: translate3d(0, -2px, 0);
-}
-
-/* Hover-Verstärkung je Level (leicht, kontrolliert) */
-.conf-total-box.glow-low:hover {
-  box-shadow:
-    0 0 10px rgba(0, 255, 153, 0.26),
-    0 18px 40px rgba(0, 0, 0, 1);
-}
-
-.conf-total-box.glow-moderate:hover {
-  box-shadow:
-    0 0 18px rgba(0, 255, 153, 0.44),
-    0 0 70px rgba(0, 255, 153, 0.24),
-    0 24px 54px rgba(0, 0, 0, 1);
-}
-
-.conf-total-box.glow-valid:hover {
-  box-shadow:
-    0 0 26px rgba(0, 255, 153, 0.58),
-    0 0 80px rgba(0, 255, 153, 0.34),
-    0 26px 60px rgba(0, 0, 0, 1);
-}
-
-.conf-total-box.glow-strong:hover {
-  box-shadow:
-    0 0 32px rgba(0, 255, 153, 0.78),
-    0 0 96px rgba(0, 255, 153, 0.48),
-    0 30px 70px rgba(0, 0, 0, 1);
-}
-
-/* ============================================
-   Motion-Safety
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  .conf-total-box,
-  .conf-total-box::before {
-    transition: none !important;
-  }
-  .conf-total-box:hover {
-    transform: none !important;
-  }
-}
-
-/* ============================================
-   🌊 Emerald Flux – Living Aura Animation
-   ============================================ */
-
-/* Pulsierender Emerald-Glow */
-@keyframes emeraldFluxPulse {
-  0% {
-    opacity: 0.10;
-    transform: scale(1);
-  }
-  30% {
-    opacity: 0.22;
-    transform: scale(1.02);
-  }
-  55% {
-    opacity: 0.32;
-    transform: scale(0.99);
-  }
-  85% {
-    opacity: 0.18;
-    transform: scale(1.015);
-  }
-  100% {
-    opacity: 0.10;
-    transform: scale(1);
-  }
-}
-
-/* Flüssiger Lichtstrom – langsame Bewegung */
-@keyframes emeraldFlow {
-  0% {
-    transform: translate3d(-2%, -1%, 0);
-  }
-  50% {
-    transform: translate3d(2%, 1%, 0);
-  }
-  100% {
-    transform: translate3d(-2%, -1%, 0);
-  }
-}
-
-/* Anwenden der Animation auf das Before-Layer */
-.conf-total-box::before {
-  animation:
-    emeraldFluxPulse 4.2s ease-in-out infinite,
-    emeraldFlow 8.5s ease-in-out infinite;
-}
-
-/* Optional: Glow-Intensität bei Hover verstärken */
-.conf-total-box:hover::before {
-  animation-play-state: paused; /* ruhiger, edler Effekt */
-  opacity: 0.45 !important;
-}
-
-/* Motion-Safety */
-@media (prefers-reduced-motion: reduce) {
-  .conf-total-box::before {
-    animation: none !important;
-  }
-}
-
-
-
-/* ============================================
-   🔥 Scrollbars verstecken
-   ============================================ */
-.conf-popup::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+/* Checkboxen etwas hervorheben */
+.conf-acc-body input[type="checkbox"],
+.conf-acc-body input[type="radio"] {
+  accent-color: #00ff9a;
 }
