@@ -49,15 +49,17 @@ function berechneSteuern() {
   else if (gesamtEinkommen <= 277000) estSatz = 0.42;
   else estSatz = 0.45;
 
-  // 👉 Steuerberechnung
+  // 👉 Steuerberechnung (Einkommensteuer als Basis)
   let est = tradingGewinn * estSatz;
   const kirche = mitKirche ? est * 0.09 : 0;
   const soli = mitSoli ? est * 0.055 : 0;
   let steuerlast = est + kirche + soli;
 
-  // 👉 Vorauszahlung (komplett statt 1 Quartal)
+  // 👉 Vorauszahlung NUR auf Einkommensteuer (nicht auf Kirche + Soli)
   let reserve = 0;
-  if (mitReserve) reserve = steuerlast;  
+  if (mitReserve) {
+    reserve = est; // nur die ESt als Vorauszahlung fürs nächste Jahr
+  }
 
   const gesamtZuruecklegen = steuerlast + reserve;
   const netto = tradingGewinn - gesamtZuruecklegen;
@@ -75,14 +77,14 @@ function berechneSteuern() {
     💼 <strong>Jahreseinkommen (Job):</strong> ${jahresEinkommen.toFixed(2)} €<br>
     ⚖️ <strong>Gesamteinkommen:</strong> ${gesamtEinkommen.toFixed(2)} €<br>
     ➡️ <strong>Steuersatz:</strong> ${(estSatz * 100).toFixed(1)} %<br><br>
-    💸 <strong>Steuer:</strong> ${est.toFixed(2)} €<br>
+    💸 <strong>Einkommensteuer:</strong> ${est.toFixed(2)} €<br>
     ${mitKirche ? `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>` : ""}
     ${mitSoli ? `💣 Soli: ${soli.toFixed(2)} €<br>` : ""}
-    ${mitReserve ? `💥 Vorauszahlung (komplett): ${reserve.toFixed(2)} €<br>` : ""}
+    ${mitReserve ? `💥 Vorauszahlung (nur ESt): ${reserve.toFixed(2)} €<br>` : ""}
 
     <hr>
-    📦 <strong>Gesamt zurücklegen:</strong> ${gesamtZuruecklegen.toFixed(2)} €<br>
-    💰 <strong>Verfügbarer Netto-Gewinn:</strong> ${netto.toFixed(2)} €<br><br>
+    📦 <strong>Gesamt zurücklegen (Steuer + ggf. Vorauszahlung):</strong> ${gesamtZuruecklegen.toFixed(2)} €<br>
+    💰 <strong>Verfügbarer Netto-Gewinn (nach Steuer + Vorauszahlung):</strong> ${netto.toFixed(2)} €<br><br>
 
     <button onclick='speichereTrade(${tradingGewinn}, ${steuerlast}, ${reserve}, ${netto})' 
       style="padding:10px 15px; border:none; border-radius:8px; background:#00aa44; color:#fff; font-weight:bold; cursor:pointer;">
@@ -198,13 +200,7 @@ function berechneNettoPlan() {
   const netto = brutto - steuer - reserve;
   const differenz = entnommen - netto;
 
-  let output = `
-    📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
-    💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
-    🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
-  `;
-
-   if (differenz > 0) {
+  if (differenz > 0) {
     ausgabe.innerHTML = `
       📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
       💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
@@ -223,15 +219,12 @@ function berechneNettoPlan() {
     ausgabe.classList.add("risk-low");
   }
 
-  ausgabe.innerHTML = output;
-
   // 💾 Netto-Auswertung speichern
   localStorage.setItem("nettoPlanMemory", JSON.stringify({
     brutto, steuer, reserve, entnommen, differenz,
     timestamp: new Date().toISOString()
   }));
 }
-
 
 // 🧹 Beim Laden: Nettofelder leeren
 window.addEventListener("DOMContentLoaded", () => {
