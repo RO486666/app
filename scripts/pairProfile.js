@@ -1,40 +1,45 @@
 /* =====================================================
-   🧠 PAIR PROFILE MODULE — FINAL VERSION (SAFE BUILD)
+   🧠 PAIR PROFILE MODULE — AUTO-INIT VERSION
    ===================================================== */
 
-// Schutz: Falls eine Variable nicht existiert → leere Objekte
 window.livePrices = window.livePrices || {};
 window.pipValues = window.pipValues || {};
 window.contractSizes = window.contractSizes || {};
 
 /* -----------------------------------------------------
-   TAB ÖFFNEN
+   AUTO-INIT: Wird ausgelöst sobald das Panel geöffnet wird
 ----------------------------------------------------- */
-function openPairProfile() {
-    document.querySelectorAll(".calc-box").forEach(box => box.style.display = "none");
-    document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
+document.addEventListener("DOMContentLoaded", () => {
+    const observer = new MutationObserver(() => {
+        const panel = document.getElementById("calc-pairProfile");
+        if (panel && panel.style.display !== "none") {
+            loadPairProfileDropdown();
+        }
+    });
 
-    document.getElementById("calc-pairProfile").style.display = "block";
-    document.getElementById("btn-calc-pairprofile").classList.add("active");
-
-    loadPairProfileDropdown();
-}
+    observer.observe(document.body, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ["style"]
+    });
+});
 
 /* -----------------------------------------------------
-   DROPDOWN LADEN
+   DROPDOWN LADEN (nur 1×)
 ----------------------------------------------------- */
 function loadPairProfileDropdown() {
     const select = document.getElementById("pairProfileSymbol");
     if (!select) return;
     if (select.dataset.loaded === "true") return;
 
+    // Reset & Placeholder
     select.innerHTML = "";
-
     const placeholder = document.createElement("option");
     placeholder.value = "";
     placeholder.textContent = "– Bitte Paar wählen –";
     select.appendChild(placeholder);
 
+    // Paare laden
     Object.keys(pairProfileDB).forEach(symbol => {
         const opt = document.createElement("option");
         opt.value = symbol;
@@ -43,6 +48,7 @@ function loadPairProfileDropdown() {
     });
 
     select.dataset.loaded = "true";
+
     select.addEventListener("change", () => showPairProfile(select.value));
 }
 
@@ -50,7 +56,6 @@ function loadPairProfileDropdown() {
    PROFIL ANZEIGEN
 ----------------------------------------------------- */
 function showPairProfile(symbol) {
-
     const data = pairProfileDB[symbol];
 
     if (!data) {
@@ -58,19 +63,19 @@ function showPairProfile(symbol) {
         return;
     }
 
-    // === BASISDATEN ===
     document.getElementById("pairProfileSymbolLabel").textContent = symbol;
     document.getElementById("pairProfilePrice").textContent = livePrices[symbol] ?? "-";
     document.getElementById("pairProfilePip").textContent = pipValues[symbol] ?? "-";
     document.getElementById("pairProfileContract").textContent = contractSizes[symbol] ?? "-";
 
-    // === Verhalten / Charakteristik ===
-    document.getElementById("pairProfileText").textContent = data.behavior ?? "Keine Beschreibung vorhanden.";
+    document.getElementById("pairProfileText").textContent =
+        data.behavior ?? "Keine Beschreibung vorhanden.";
 
-    // === Extra Infos ===
+    // Zusatzinfos entfernen
     const basicsBox = document.getElementById("pairProfileBasics");
     basicsBox.querySelector(".extraInfo")?.remove();
 
+    // Neue Zusatzinfos
     const extra = document.createElement("div");
     extra.className = "extraInfo";
     extra.style.marginTop = "12px";
@@ -82,7 +87,6 @@ function showPairProfile(symbol) {
     `;
     basicsBox.appendChild(extra);
 
-    // === Notizen ===
     loadPairNotes(symbol);
 }
 
@@ -108,7 +112,7 @@ function loadPairNotes(symbol) {
 }
 
 /* -----------------------------------------------------
-   RESET
+   RESET-UI
 ----------------------------------------------------- */
 function resetPairProfileUI() {
     document.getElementById("pairProfileSymbolLabel").textContent = "–";
