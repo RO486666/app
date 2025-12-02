@@ -7,8 +7,10 @@ const confGroups = {
   h4: 0,
   intraday: 0,
   lower: 0,
-  entry: 0
+  entry: 0,
+  aoi: 0  // NEU
 };
+
 
 /* ============================================================
    🔥 Summary Glow – stabil
@@ -89,7 +91,7 @@ function updateConfluenceScore() {
        ---------------------------------------- */
 
     const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
-    const aoiTotal  = confGroups.intraday;
+    const aoiTotal = confGroups.aoi;
 
     // 1. BIAS Pflicht
     if (biasTotal === 0) {
