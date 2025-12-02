@@ -506,32 +506,78 @@
       </div>
 
 
-      <!-- 🎯 AOI (40%) -->
-      <div class="conf-acc-item">
-        <div class="conf-acc-header" data-target="acc_aoi">
-          <span>🎯 AOI (max 40%)</span>
-          <span id="acc_aoi_sum" class="acc-percent">0%</span>
-        </div>
+<!-- 🎯 AOI (40%) -->
+<div class="conf-acc-item">
+  <div class="conf-acc-header" data-target="acc_aoi">
+    <span>🎯 AOI (max 40%)</span>
+    <span id="acc_aoi_sum" class="acc-percent">0%</span>
+  </div>
+<div id="acc_aoi" class="conf-acc-body">
 
-        <div id="acc_aoi" class="conf-acc-body">
+    <!-- X = Weekly -->
+    <label>
+      <input type="checkbox" class="conf-check" 
+             data-group="aoi" 
+             data-group2="weekly"
+             data-points="10">
+      Weekly AOI
+    </label>
 
-          <label><input type="checkbox" class="conf-check" data-group="weekly" data-points="10">Weekly AOI</label>
-          <label><input type="checkbox" class="conf-check" data-group="daily" data-points="10">Daily AOI</label>
+    <!-- X = Daily -->
+    <label>
+      <input type="checkbox" class="conf-check" 
+             data-group="aoi" 
+             data-group2="daily"
+             data-points="10">
+      Daily AOI
+    </label>
 
-          <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="5">
-            Weekly/Daily Rejection Candle
-          </label>
+    <!-- Kein X = Weekly + Daily -->
+    <label>
+      <input type="checkbox" class="conf-check"  
+             data-group="weekly"   
+             data-points="5">
+      Weekly Rejection Candle
+    </label>
+	
+	   <!-- Kein X = Weekly + Daily -->
+    <label>
+      <input type="checkbox" class="conf-check"  
+             data-group="daily"
+             data-points="5">
+      Daily Rejection Candle
+    </label>
 
-          <label><input type="checkbox" class="conf-check" data-group="weekly" data-group2="daily" data-points="5">
-            Rejection Struktur
-          </label>
+    <!-- Kein X = Weekly + Daily -->
+    <label>
+      <input type="checkbox" class="conf-check"              
+             data-group="weekly" 
+             data-group1="daily"
+             data-points="5">
+      Rejection Struktur
+    </label>
 
-          <label><input type="checkbox" class="conf-check" data-group="weekly" data-points="5">Rejection AOI WEEKLY</label>
+    <!-- X = Weekly -->
+    <label>
+      <input type="checkbox" class="conf-check" 
+             data-group="aoi" 
+             data-group2="weekly"
+             data-points="5">
+      Rejection AOI WEEKLY
+    </label>
 
-          <label><input type="checkbox" class="conf-check" data-group="daily" data-points="5">Rejection AOI DAILY</label>
+    <!-- X = Daily -->
+    <label>
+      <input type="checkbox" class="conf-check" 
+             data-group="aoi" 
+             data-group2="daily"
+             data-points="5">
+      Rejection AOI DAILY
+    </label>
 
-        </div>
-      </div>
+</div>
+
+
 
 
       <!-- 📈 STRUKTUR (35%) -->
@@ -546,8 +592,8 @@
           <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="10">4H LH (Sell)</label>
           <label><input type="radio" name="entry_htf" class="conf-check" data-group="entry" data-points="10">HL/LH + Engulfing</label>
 
-          <label><input type="checkbox" class="conf-check" data-group="intraday" data-group2="lower" data-points="2">30M HL/LH</label>
-          <label><input type="checkbox" class="conf-check" data-group="lower" data-points="5">LTF Struktur-Shift</label>
+          <label><input type="checkbox"  data-group="intraday" data-group2="lower" data-points="2">30M HL/LH</label>
+          <label><input type="checkbox"  data-group="lower" data-points="5">LTF Struktur-Shift</label>
         </div>
       </div>
 
