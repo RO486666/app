@@ -372,24 +372,27 @@
     /*****************************************************
      * DRAWER (RIGHT SIDE, CONTENTS OF CATEGORY)
      *****************************************************/
-  /* DESKTOP DRAWER (Standard) */
+/* DESKTOP DRAWER – wird später für Mobile überschrieben */
 #drawer {
   position: fixed;
   top: 0;
   bottom: 0;
   left: 65px;
-  width: 260px;
 
+  width: 260px;
   background: #151515;
   border-right: 1px solid rgba(255,255,255,0.05);
 
-  transform: translateX(-260px); /* Desktop: von links rein */
-  transition: transform 0.28s ease;
+  /* Desktop: links versteckt */
+  transform: translateX(-260px);
 
+  transition: transform 0.28s ease;
   z-index: 200;
+
   padding: 20px;
   overflow-y: auto;
 }
+
 
 
     #drawer.open {
@@ -454,9 +457,9 @@
       color: var(--accent);
     }
 
-    /*****************************************************
-     * PANEL WRAPPER
-     *****************************************************/
+/*****************************************************
+ * PANEL WRAPPER
+ *****************************************************/
 
 .panel {
   background: transparent;
@@ -473,9 +476,10 @@
   text-align: center;
 }
 
-    .hidden {
-      display: none !important;
-    }
+.hidden {
+  display: none !important;
+}
+
 /* ============================
    📱 MOBILE VERSION (bis 900px)
    ============================ */
@@ -630,7 +634,8 @@
   }
 }
 
-}
+/* <-- FEHLERHAFTE KLAMMER WAR HIER, ENTFERNT */
+
 
 
   </style>
