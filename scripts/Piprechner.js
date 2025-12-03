@@ -1,17 +1,32 @@
 function switchPosMode(mode) {
-  // Alle Subboxen innerhalb calc-pos verstecken
-  document.querySelectorAll("#calc-pos .sub-box").forEach(box => {
-    box.style.display = "none";
+  const mainBox = document.getElementById("pos-mode-main");
+  const maxBox  = document.getElementById("pos-mode-max");
+  const pipBox  = document.getElementById("pos-mode-pips");
+
+  const all = [mainBox, maxBox, pipBox];
+
+  // alles ausblenden
+  all.forEach(el => {
+    if (!el) return;
+    el.style.display = "none";
+    el.classList.add("hidden");
   });
 
-  if (mode === "main") {
-    document.getElementById("pos-mode-main").style.display = "block";
-  } else if (mode === "max") {
-    document.getElementById("pos-mode-max").style.display = "block";
+  // Default = main
+  let target = mainBox;
+
+  if (mode === "max") {
+    target = maxBox;
   } else if (mode === "pips") {
-    document.getElementById("pos-mode-pips").style.display = "block";
+    target = pipBox;
+  }
+
+  if (target) {
+    target.style.display = "block";
+    target.classList.remove("hidden");
   }
 }
+
 
 
 function calculatePipsByLots() {
