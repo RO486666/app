@@ -248,6 +248,149 @@ const pairProfileDB = {
   ]
 },
 
+"GBP/CAD": {
+  behavior: "Sehr news-sensibel wegen CAD (Öl) + GBP (London). Viele Cross-Spikes.",
+  bestSessions: ["London", "NY"],
+  bestDays: ["Dienstag", "Donnerstag"],
+  volatility: "Mittel–Hoch",
+  riskLevel: "Hoch",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Reagiert extrem auf CAD-Ölpreisbewegungen",
+    "• GBP-Judas Move wirkt verstärkt (Liquidity Sweeps überall)",
+    "• Trendwechsel oft nach CAD News (CPI, WTI Öl-Reports)",
+    "• Sehr saubere MSS nach starken Sweeps",
+
+    "🕒 Tagesstruktur:",
+    "• 08:00–10:00 — London Engine Move",
+    "• 14:30 — US + CAD News → harte Spikes",
+    "• 15:30 — NY Open → riesige Sweeps",
+
+    "🌍 Sessions:",
+    "• London — Hauptvolumen + klare Trendrichtung",
+    "• NY — Ölabhängige CAD-Impulse",
+    "• Tokyo — tot",
+
+    "⚠️ Gefahrzonen:",
+    "• Ölpreisbewegungen (WTI)",
+    "• 10:30 UK News",
+    "• 14:30 CAD/US Daten",
+    "• Cross Spread hoch → Slippage",
+
+    "🎯 Ideal-Setups:",
+    "• London HL/LH → MSS → FVG Entry",
+    "• CAD News Sweep → Reversal Richtung Trend",
+    "• 1H OB Rejection in London"
+  ]
+},
+
+"AUD/NZD": {
+  behavior: "Extrem ruhiges Paar, perfekte Struktur. Wenig Fakeouts.",
+  bestSessions: ["Tokyo"],
+  bestDays: ["Dienstag", "Mittwoch"],
+  volatility: "Niedrig",
+  riskLevel: "Niedrig",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Sehr stabile Trendstruktur",
+    "• Premium/Discount reagiert sauber",
+    "• Ideal für HL/LH Setups",
+    "• Wenig Manipulation durch große Player",
+
+    "🕒 Tagesstruktur:",
+    "• 01:00–05:00 — saubere Asia-Trends",
+    "• 07:00–10:00 — kleine Sweeps",
+    "• 12:00+ — sehr ruhig",
+
+    "🌍 Sessions:",
+    "• Tokyo — klare Trendrichtung",
+    "• London — kaum relevant",
+    "• NY — tot",
+
+    "⚠️ Gefahrzonen:",
+    "• RBA News",
+    "• RBNZ News",
+    "• Sehr niedrige Liquidität",
+
+    "🎯 Ideal-Setups:",
+    "• Asia Sweep → Continuation",
+    "• LTF MSS + FVG",
+    "• Pullback Entries an Premium/Discount Levels"
+  ]
+},
+
+"GBP/AUD": {
+  behavior: "Sehr volatil wegen GBP + AUD News. Große Impulse, starke Sweeps.",
+  bestSessions: ["London", "NY Overlap"],
+  bestDays: ["Dienstag", "Donnerstag"],
+  volatility: "Hoch",
+  riskLevel: "Sehr hoch",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• News-getriebene Sweeps durch UK + AUS",
+    "• Sehr starke MSS Bewegungen im 5M/15M",
+    "• FVG Entries extrem effektiv",
+    "• Cross-Flow Chaos zwischen EUR/AUD, GBP/USD, AUD/USD",
+
+    "🕒 Tagesstruktur:",
+    "• 08:00–10:00 — London Trend Impuls",
+    "• 10:30 — UK News Risiko",
+    "• 14:30 — US News beeinflussen AUD indirekt",
+    "• 15:30 — NY Open Sweeps",
+
+    "🌍 Sessions:",
+    "• London — hauptsächlich",
+    "• NY — Extension oder Reversals",
+    "• Tokyo — unbrauchbar",
+
+    "⚠️ Gefahrzonen:",
+    "• UK News → harte Volatilität",
+    "• AUD News → starker Cross-Effekt",
+    "• Spread höher als Major-Paare",
+
+    "🎯 Ideal-Setups:",
+    "• London Sweep → MSS → Displacement",
+    "• Breaker Block Reentries",
+    "• Cross-Correlation mit AUD/USD + GBP/USD"
+  ]
+},
+
+"AUD/CHF": {
+  behavior: "Ruhiges Paar, aber reagiert stark auf Risk-Off/On.",
+  bestSessions: ["Tokyo", "London"],
+  bestDays: ["Mittwoch"],
+  volatility: "Niedrig–Mittel",
+  riskLevel: "Niedrig",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Sehr saubere HL/LH Struktur",
+    "• Wenig Manipulation",
+    "• CHF Safe-Haven Verhalten → klare Trendwechsel",
+    "• Reagiert stark auf AUD News und Risk Sentiment",
+
+    "🕒 Tagesstruktur:",
+    "• 01:00–05:00 — Asia Trendphase",
+    "• 08:00–11:00 — London leichte Manipulation",
+    "• 14:00+ — langsamer Markt",
+
+    "🌍 Sessions:",
+    "• Tokyo — beste Struktur",
+    "• London — leichte Volatilität",
+    "• NY — schwach",
+
+    "⚠️ Gefahrzonen:",
+    "• RBA News",
+    "• CHF Safe-Haven Spikes",
+    "• Risk-Off Events (Geopolitik)",
+
+    "🎯 Ideal-Setups:",
+    "• Asia HL/LH → Continuation",
+    "• Breaker Block Entries",
+    "• Trend-Einstieg nach MSS"
+  ]
+},
+
+
 
   /* ==========================================================
      🔥 CROSSES
@@ -1056,6 +1199,47 @@ const pairProfileDB = {
     "• Viele Fakeouts → SL muss clever sitzen"
   ]
 },
+
+  /* ==========================================================
+     🔥 Rohstoffe
+  ========================================================== */
+
+"BRENT": {
+  behavior: "Extrem news-driven. Starke Impulse, Trendmonster.",
+  bestSessions: ["NY", "London"],
+  bestDays: ["Mittwoch"],
+  volatility: "Sehr hoch",
+  riskLevel: "Extrem",
+  notes: [
+    "🔎 Verhalten:",
+    "• Ölpreis beeinflusst CAD enorm (USD/CAD & CAD-Pairs)",
+    "• Sehr saubere Orderflow-Reaktionen",
+    "• Liquidity Sweeps typisch bei DOE/EIA Reports",
+    "• Trendphasen können 200–500 Pips laufen",
+
+    "🕒 Tagesstruktur:",
+    "• 08:00–10:00 — London Setup Phase",
+    "• 14:30 — Öl-News (EIA/DOE) → Explosion",
+    "• 15:30 — NY Open → große Trendfolge",
+
+    "🌍 Sessions:",
+    "• London — Vorbereitung",
+    "• NY — Haupttrend",
+    "• Asia — schwach",
+
+    "⚠️ Gefahrzonen:",
+    "• DOE/EIA Reports (Mittwoch 16:30)",
+    "• OPEC News",
+    "• Risk-Off Ereignisse",
+    "• Geopolitik (Middle East)",
+
+    "🎯 Ideal-Setups:",
+    "• News Sweep → MSS → FVG Entry",
+    "• Trendfolge nach DOE/EIA",
+    "• Breaker Block Rejections"
+  ]
+},
+
 
 
 };
