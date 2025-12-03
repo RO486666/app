@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trade App Layout</title>
+  <title>Trade App – UI v0.2</title>
 
-  <!-- 🔗 External stylesheets (lassen wir wie im Original) -->
+  <!-- Existing Styles behalten -->
   <link rel="stylesheet" href="CSS/ticker.css" />
   <link rel="stylesheet" href="CSS/star.css" />
   <link rel="stylesheet" href="CSS/crypto.css">
@@ -16,11 +16,11 @@
   <link rel="stylesheet" href="CSS/jornal.css" />
   <link rel="stylesheet" href="CSS/quiz.css" />
   <link rel="stylesheet" href="CSS/checklist.css" />
-  <link rel="stylesheet" href="CSS/sidebar.css" />
-  <!-- PWA / Manifest -->
+
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00aa44" />
 
+  <!-- ============ v0.2 DESIGN KERNEL ============ -->
   <style>
     /* ==========================================
        🎯 GLOBAL BASICS + VARIABLES
@@ -54,6 +54,13 @@
       --crypto-gradient-duration: 6s;
       --crypto-pulse-duration: 2.8s;
       --coin-rotate-duration: 1.5s;
+
+      --radius: 12px;
+      --fast: 0.2s;
+      --accent: #9933ff;
+      --accent2: #ff00ff;
+      --panel: #141414;
+      --panel-glow: rgba(255, 255, 255, 0.04);
     }
 
     html,
@@ -238,38 +245,14 @@
     }
 
     /* SESSION-SPEZIFISCHE THEMES */
-    .session-glow-sydney {
-      --glow-color: #3388ff;
-      background: linear-gradient(145deg, #1e1e1e, #223044);
-    }
-    .session-glow-tokyo {
-      --glow-color: #00aaff;
-      background: linear-gradient(145deg, #1e1e1e, #1c2e36);
-    }
-    .session-glow-london {
-      --glow-color: #ffd700;
-      background: linear-gradient(145deg, #1e1e1e, #3c3c1a);
-    }
-    .session-glow-ny {
-      --glow-color: #ff4500;
-      background: linear-gradient(145deg, #1e1e1e, #3a1e1e);
-    }
-    .session-glow-lk {
-      --glow-color: #ccff00;
-      background: linear-gradient(145deg, #1e1e1e, #3c4a1c);
-    }
-    .session-glow-nyk {
-      --glow-color: #ff8800;
-      background: linear-gradient(145deg, #1e1e1e, #4b2a1c);
-    }
-    .session-glow-deadzone {
-      --glow-color: #333333;
-      background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
-    }
-    .session-glow-crypto {
-      --glow-color: #9900ff;
-      background: linear-gradient(145deg, #1e1e1e, #3e1e4e);
-    }
+    .session-glow-sydney { --glow-color: #3388ff; background: linear-gradient(145deg, #1e1e1e, #223044); }
+    .session-glow-tokyo  { --glow-color: #00aaff; background: linear-gradient(145deg, #1e1e1e, #1c2e36); }
+    .session-glow-london { --glow-color: #ffd700; background: linear-gradient(145deg, #1e1e1e, #3c3c1a); }
+    .session-glow-ny     { --glow-color: #ff4500; background: linear-gradient(145deg, #1e1e1e, #3a1e1e); }
+    .session-glow-lk     { --glow-color: #ccff00; background: linear-gradient(145deg, #1e1e1e, #3c4a1c); }
+    .session-glow-nyk    { --glow-color: #ff8800; background: linear-gradient(145deg, #1e1e1e, #4b2a1c); }
+    .session-glow-deadzone { --glow-color: #333333; background: linear-gradient(145deg, #1e1e1e, #2c2c2c); }
+    .session-glow-crypto { --glow-color: #9900ff; background: linear-gradient(145deg, #1e1e1e, #3e1e4e); }
 
     /* 🌈 CRYPTO LABEL */
     .crypto-animate {
@@ -309,24 +292,14 @@
     }
 
     @keyframes spinCoin {
-      0% {
-        transform: rotateY(0deg);
-      }
-      100% {
-        transform: rotateY(360deg);
-      }
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
     }
 
     @keyframes cryptoGradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     @keyframes cryptoGlowPulse {
@@ -355,34 +328,181 @@
     .main-panel {
       width: 100%;
     }
-	
 
+    /*****************************************************
+     * SIDEBAR (LEFT ICON BAR)
+     *****************************************************/
+    #sidebarLeft {
+      width: 65px;
+      background: #111;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 50;
+    }
+
+    #sidebarLeft button {
+      width: 48px;
+      height: 48px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 12px;
+      background: #1a1a1a;
+      color: var(--text);
+      font-size: 24px;
+      cursor: pointer;
+      transition: background var(--fast), transform var(--fast);
+    }
+
+    #sidebarLeft button.active {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+
+    #sidebarLeft button:hover {
+      background: #282828;
+    }
+
+    /*****************************************************
+     * DRAWER (RIGHT SIDE, CONTENTS OF CATEGORY)
+     *****************************************************/
+    #drawer {
+      position: fixed;
+      left: 65px;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #151515;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      transform: translateX(-260px);
+      transition: transform 0.28s ease;
+      z-index: 49;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #drawer.open {
+      transform: translateX(0);
+    }
+
+    #drawer h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .drawer-link {
+      width: 100%;
+      background: #1d1d1d;
+      padding: 12px 14px;
+      margin: 8px 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background var(--fast), color var(--fast);
+    }
+
+    .drawer-link:hover {
+      background: #292929;
+      color: var(--accent2);
+    }
+
+    /*****************************************************
+     * MAIN CONTENT (PUSH-MODE)
+     *****************************************************/
+/* Standard: kein linker Abstand */
+#mainWrapper {
+  margin-left: 65px;
+  flex-grow: 1;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+/* Wenn Drawer offen → Inhalt wird nach rechts geschoben */
+#mainWrapper.drawer-open {
+  margin-left: 325px;
+}
+
+
+
+    /*****************************************************
+     * TOP-BAR (Time + Session Info)
+     *****************************************************/
+    .topbar {
+      width: 100%;
+      padding: 12px 18px;
+      background: #121212;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    /*****************************************************
+     * PANEL WRAPPER
+     *****************************************************/
+
+.panel {
+  background: transparent;
+  margin: 20px;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+
+/* Alle Überschriften in Panels zentrieren */
+.panel h2,
+.panel p,
+.panel h3 {
+  text-align: center;
+}
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 
   <!-- 📱 Mobile Stylesheet -->
   <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 480px)" />
-
 </head>
 
 <body>
- <!-- ☰ Toggle MUSS außerhalb der Sidebar sein -->
-<div id="sidebarToggle" class="sidebar-toggle">☰</div>
 
-<aside id="sidebar">
-  <nav class="sidebar-nav">
-    <button data-panel="panel-dashboard">🏠 Dashboard</button>
-    <button data-panel="calc-pos">📐 Position Size</button>
-    <button data-panel="calc-taxpro">📄 Steuern / Netto</button>
-    <button data-panel="panel-confluence">🧠 Confluence</button>
-    <button data-panel="calc-pairProfile">📊 Pair Profil</button>
-    <button data-panel="panel-rules">📜 Regeln</button>
-    <button data-panel="panel-quiz">🧪 Theorie-Test</button>
-  </nav>
-</aside>
+<!-- =========================== -->
+<!-- LEFT ICON SIDEBAR -->
+<!-- =========================== -->
+<div id="sidebarLeft">
+  <button id="btnDash" class="side-icon" data-menu="dashboard">🏠</button>
+  <button id="btnTools" class="side-icon" data-menu="tools">🧮</button>
+  <button id="btnRules" class="side-icon" data-menu="rules">📜</button>
+</div>
 
+<!-- =========================== -->
+<!-- DRAWER -->
+<!-- =========================== -->
+<div id="drawer">
+  <div id="drawerHeader">
+    <span id="drawerTitle">Menü</span>
+    <button id="drawerCloseBtn">✖</button>
+  </div>
+  <div id="drawerLinks"></div>
+</div>
 
-<div id="appContainer">
-
+<!-- =========================== -->
+<!-- MAIN WRAPPER -->
+<!-- =========================== -->
+<div id="mainWrapper">
 
   <!-- 🎨 Session-Hintergrund -->
   <div id="sessionBackgroundOverlay"></div>
@@ -435,32 +555,29 @@
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-    <!-- Hauptinhalt -->
-    <main id="mainContent">
-      <!-- 🏠 Dashboard Panel -->
-      <section id="panel-dashboard" class="main-panel" style="margin-top: 15px;">
-        <div class="stats-box">
-          <h3 style="margin-top: 0;">🏠 Dashboard</h3>
-          <p>
-            Wähle links ein Modul in der Sidebar, um deine Tools zu öffnen
-            (Position Size, Steuern, Pair-Profil, Regeln, Quiz, Confluence).
-          </p>
-        </div>
-      </section>
-	  
-	  <!-- ======================================
-     🧠 CONFLUENCE CHECKLIST PANEL (FINAL)
-     ====================================== -->
- <section id="panel-confluence" class="main-panel" style="margin-top: 15px; display: none;">
+  <!-- ======================= -->
+  <!-- MAIN CONTENT -->
+  <!-- ======================= -->
+  <main id="mainContent">
 
+    <!-- DASHBOARD PANEL -->
+    <section id="panel-dashboard" class="panel" style="margin-top: 15px;">
+      <div class="stats-box">
+        <h3 style="margin-top: 0;">🏠 Dashboard</h3>
+        <p>
+          Wähle links ein Modul in der Sidebar, um deine Tools zu öffnen
+          (Position Size, Steuern, Pair-Profil, Regeln, Quiz, Confluence).
+        </p>
+      </div>
+    </section>
 
-  <!-- HEADER -->
-  <div class="conf-header" style="margin-bottom: 12px;">
-    <h2 style="margin:0; font-size:20px;">🧠 Confluence Checklist</h2>
-    <p style="margin-top:4px; opacity:0.8; font-size:13px;">
-      Wähle deine Bias-, Structure- und Entry-Kriterien.
-    </p>
-  </div>
+    <!-- ============================================================
+         🧠 CONFLUENCE CHECKLIST PANEL
+       ============================================================ -->
+    <section id="panel-confluence" class="panel hidden">
+
+      <h2>🧠 Confluence Checklist</h2>
+      <p>Wähle deine Bias-, Structure- und Entry-Kriterien.</p>
 
   <!-- ======================================
        🔥 STICKY SUMMARY
@@ -647,12 +764,10 @@
 
 </section>
 
-      <!-- 🧠 Pair-Profil Modul -->
-      <section
-        id="calc-pairProfile"
-        class="main-panel calc-box"
-        style="margin-top: 15px; display: none;"
-      >
+    <!-- ============================================================
+         📊 PAIR PROFILE PANEL
+       ============================================================ -->
+    <section id="calc-pairProfile" class="panel hidden">
         <div class="stats-box" id="pairProfileBox">
           <h3 style="margin-top: 0; margin-bottom: 10px;">
             📊 Pair-Profil
@@ -710,13 +825,11 @@
         </div>
       </section>
 
+    <!-- ============================================================
+         📄 STEUER/NETTO PLANER
+       ============================================================ -->
+    <section id="calc-taxpro" class="panel hidden">
 
-      <!-- 📄 Steuer-/Netto-Planer -->
-      <section
-        id="calc-taxpro"
-        class="main-panel calc-box"
-        style="margin-top: 15px; display: none;"
-      >
         <div class="stats-box">
           <label for="jahresEinkommen">💼 Jahresgehalt (9/5 Job, brutto €):</label>
           <input type="number" id="jahresEinkommen" placeholder="z. B. 42000" />
@@ -792,14 +905,16 @@
         </div>
       </section>
 
-      <!-- 📐 Positionstab -->
-      <section
-        id="calc-pos"
-        class="main-panel calc-box"
-        style="margin-top: 15px; display: none;"
-      >
-        <!-- Normaler Positionsgrößenrechner -->
-        <div id="pos-mode-main" class="stats-box sub-box" style="display: block;">
+    <!-- ============================================================
+         📐 POSITION SIZE RECHNER
+       ============================================================ -->
+    <section id="calc-pos" class="panel hidden">
+
+      <h3>📐 Position Size Rechner</h3>
+
+     <!-- Normaler Positionsgrößenrechner -->
+        <div id="pos-mode-main" class="stats-box sub-box">
+
           <label for="accountSize">📦 Kontogröße (€):</label>
           <input
             type="number"
@@ -845,9 +960,10 @@
           </button>
         </div>
 
-        <!-- Max Positions Rechner -->
-        <div id="pos-mode-max" class="stats-box sub-box" style="display: none;">
-          <label for="maxposAccountSize">📦 Kontogröße (€):</label>
+      <!-- MAX_POS_MODE -->
+      <div id="pos-mode-max" class="stats-box sub-box hidden">
+
+             <label for="maxposAccountSize">📦 Kontogröße (€):</label>
           <input
             type="number"
             id="maxposAccountSize"
@@ -894,118 +1010,92 @@
           <button onclick="calculateMaxPositions()">📏 Berechnen</button>
           <div id="maxposResults" class="result-box"></div>
 
-          <button
-            onclick="switchPosMode('main')"
-            style="margin-top: 15px; width: 100%;"
-          >
-            🔁 Zurück
-          </button>
-        </div>
+        <button onclick="switchPosMode('main')" style="margin-top: 15px;">
+          🔁 Zurück
+        </button>
+      </div>
 
-        <!-- 📐 Pip-Rechner -->
-        <div id="pos-mode-pips" class="stats-box sub-box" style="display: none;">
-          <label>💱 Symbol:</label>
-          <select id="pipSymbolSelector"></select>
+     <!-- PIP MODE -->
+<div id="pos-mode-pips" class="stats-box sub-box hidden">
 
-          <label>📦 Lots:</label>
-          <input type="number" id="lots" value="0.01" step="0.01" />
+  <label>💱 Symbol:</label>
+  <select id="pipSymbolSelector"></select>
 
-          <label>🛑 Stop-Loss (Pips):</label>
-          <input type="number" id="slPips" placeholder="z. B. 20" />
+  <label>📦 Lots:</label>
+  <input type="number" id="lots" value="0.01" step="0.01" />
 
-          <label>🎯 TP1 (Pips):</label>
-          <input type="number" id="tp1Pips" placeholder="z. B. 50" />
+  <label>🛑 Stop-Loss (Pips):</label>
+  <input type="number" id="slPips" placeholder="z. B. 20" />
 
-          <label>🎯 TP2 (Pips):</label>
-          <input type="number" id="tp2Pips" placeholder="z. B. 80" />
+  <label>🎯 TP1 (Pips):</label>
+  <input type="number" id="tp1Pips" placeholder="z. B. 50" />
 
-          <label>🎯 TP3 (Pips):</label>
-          <input type="number" id="tp3Pips" placeholder="z. B. 100" />
+  <label>🎯 TP2 (Pips):</label>
+  <input type="number" id="tp2Pips" placeholder="z. B. 80" />
 
-          <button onclick="calculatePipsByLots()">📏 Berechnen</button>
+  <label>🎯 TP3 (Pips):</label>
+  <input type="number" id="tp3Pips" placeholder="z. B. 100" />
 
-          <div id="pipResult" class="result-box"></div>
+  <button onclick="calculatePipsByLots()">📏 Berechnen</button>
 
-          <button id="openSwapBtn" style="margin-top: 10px; width: 100%;">
-            🔁 Swap-Rechner öffnen
-          </button>
+  <div id="pipResult" class="result-box"></div>
 
-          <div id="swap-calc" class="sub-box" style="display: none; margin-top: 10px;">
-            <h3>🔁 Optimaler Swap-Rechner</h3>
+  <!-- ========================== -->
+  <!-- 🔁 SWAP-RECHNER BUTTON -->
+  <!-- ========================== -->
+  <button id="openSwapBtn" style="margin-top: 15px; width: 100%;">
+    🔁 Optimaler Swap-Rechner
+  </button>
 
-            <div class="grid">
-              <label
-                >Swap Long (in Punkten/Pips pro Tag)
-                <input
-                  id="swapLongPts"
-                  type="text"
-                  inputmode="text"
-                  placeholder="z. B. -3.96"
-                />
-              </label>
+  <!-- ========================== -->
+  <!-- 🔁 SWAP-RECHNER BOX (HIDDEN) -->
+  <!-- ========================== -->
+  <div id="swapBox" class="stats-box sub-box hidden" style="margin-top: 15px;">
 
-              <label
-                >Swap Short (in Punkten/Pips pro Tag)
-                <input
-                  id="swapShortPts"
-                  type="text"
-                  inputmode="text"
-                  placeholder="z. B. -2.36"
-                />
-              </label>
+    <h3 style="text-align:center;">🔁 Optimaler Swap-Rechner</h3>
 
-              <label class="row">
-                <input id="swapTripleDay" type="checkbox" checked />
-                Mittwoch 3× (FX-Standard)
-              </label>
+    <div class="grid">
+      <label>
+        Swap Long (pro Tag in Pips/Punkten)
+        <input id="swapLongPts" type="text" placeholder="z. B. -3.96">
+      </label>
 
-              <label class="row">
-                <input id="swapShowWeek" type="checkbox" checked />
-                Woche (Mo–Fr) anzeigen
-              </label>
+      <label>
+        Swap Short (pro Tag in Pips/Punkten)
+        <input id="swapShortPts" type="text" placeholder="z. B. -2.36">
+      </label>
 
-              <button id="swapCalcBtn" type="button">Swap berechnen</button>
-            </div>
+      <label class="row">
+        <input id="swapTripleDay" type="checkbox" checked>
+        Mittwoch 3× (FX-Standard)
+      </label>
 
-            <div id="swapResult" class="result-box" style="display: none;"></div>
+      <label class="row">
+        <input id="swapShowWeek" type="checkbox" checked>
+        Woche (Mo–Fr) anzeigen
+      </label>
 
-            <button id="closeSwapBtn" style="margin-top: 10px; width: 100%;">
-              ⬅️ Swap-Rechner schließen
-            </button>
-          </div>
+      <button id="swapCalcBtn" type="button">Swap berechnen</button>
+    </div>
 
-          <button
-            onclick="switchPosMode('main')"
-            style="margin-top: 15px; width: 100%;"
-          >
-            🔁 Zurück
-          </button>
-        </div>
-      </section>
+    <div id="swapResult" class="result-box" style="display:none;"></div>
 
-      <!-- 🧩 Eingabe-Filter für Handy -->
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const allowNumeric = (el) => {
-            if (!el) return;
-            el.addEventListener("input", () => {
-              el.value = el.value
-                .replace(/[^0-9.,-]/g, "")
-                .replace(/,/g, ".")
-                .replace(/(?!^)-/g, "");
-            });
-          };
-          allowNumeric(document.getElementById("swapLongPts"));
-          allowNumeric(document.getElementById("swapShortPts"));
-        });
-      </script>
+    <button id="closeSwapBtn" style="margin-top: 10px; width: 100%;">
+      ⬅️ Swap-Rechner schließen
+    </button>
+  </div>
 
-      <!-- 📜 Regeln Panel -->
-      <section
-        id="panel-rules"
-        class="main-panel"
-        style="margin-top: 15px; display: none;"
-      >
+  <button onclick="switchPosMode('main')" style="margin-top: 15px; width: 100%;">
+    🔁 Zurück
+  </button>
+</div>
+
+
+    <!-- ============================================================
+         📜 REGELN PANEL
+       ============================================================ -->
+    <section id="panel-rules" class="panel hidden">
+     
         <!-- Toggle-Box -->
         <div
           onclick="toggleRules()"
@@ -1342,67 +1432,205 @@
         </div>
       </section>
 
-      <!-- 🧠 Theorie-Test Panel -->
-      <section
-        id="panel-quiz"
-        class="main-panel"
-        style="margin-top: 15px; display: none;"
-      >
-        <div class="stats-box">
-          <h3 style="margin-top: 0;">🧠 Theorie-Test</h3>
-          <p>Starte deinen Quiz, um dein Wissen zu testen.</p>
-          <button id="btn-calc-quiz">🧠 Theorie-Test starten</button>
+
+    <!-- ============================================================
+         🧠 THEORIE-TEST (QUIZ)
+       ============================================================ -->
+    <section id="panel-quiz" class="panel hidden">
+
+      <h3>🧠 Theorie-Test</h3>
+      <p>Starte deinen Quiz, um dein Wissen zu testen.</p>
+
+      <button id="btn-calc-quiz">🧠 Theorie-Test starten</button>
+
+      <div id="quizOverlay" class="quiz-overlay hidden">
+        <div class="quiz-modal">
+          <button class="quiz-close" onclick="closeQuiz()">✖</button>
+          <h2>🧠 Theorie-Test</h2>
+          <div id="quizContent"></div>
         </div>
+      </div>
 
-        <!-- Quiz Popup -->
-        <div id="quizOverlay" class="quiz-overlay">
-          <div class="quiz-modal">
-            <button class="quiz-close" onclick="closeQuiz()">✖</button>
-            <h2>🧠 Theorie-Test</h2>
-            <div id="quizContent">
-              <!-- JS rendert hier die Fragen -->
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+    </section>
 
-  <!-- 📜 DATENBANK -->
-  <script src="scripts/pairProfileData.js"></script>
-  <script src="scripts/pairsData.js"></script>
+  </main>
+</div> <!-- /#mainWrapper -->
 
-  <!-- 📜 Skript-Einbindungen -->
-   <script src="scripts/sidebar.js"></script>
-  <script src="scripts/session-popup.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="scripts/buttons.js"></script>
-  <script src="scripts/crypto.js"></script>
-  <script src="scripts/session.js"></script>
-  <script src="scripts/screen.js"></script>
-  <script src="scripts/background-session.js"></script>
+<!-- ============================================================
+     JS IMPORTS (alle deine originalen Scripts)
+   ============================================================ -->
+<script src="scripts/pairProfileData.js"></script>
+<script src="scripts/pairsData.js"></script>
 
-  <!-- ✅ Dann die Rechner -->
-  <script src="scripts/pairProfile.js"></script>
-  <script src="scripts/posmax.js"></script>
-  <script src="scripts/position.js"></script>
-  <script src="scripts/Piprechner.js"></script>
-  <script src="scripts/swapCalc.js"></script>
-  <script src="scripts/checklist.js"></script>
+<script src="scripts/session-popup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/buttons.js"></script>
+<script src="scripts/crypto.js"></script>
+<script src="scripts/session.js"></script>
+<script src="scripts/screen.js"></script>
+<script src="scripts/background-session.js"></script>
 
-  <!-- Rest -->
-  <script src="scripts/dawn.js"></script>
-  <script src="scripts/tax.js"></script>
-  <script src="imageStorage.js"></script>
-  <script src="scripts/bg-candles.js"></script>
-  <script src="scripts/ticker.js"></script>
-  <script src="scripts/jornal.js"></script>
-  <script src="scripts/pwa.js"></script>
-  <script src="scripts/rules.js"></script>
-  <script type="module" src="pocketbase-init.js"></script>
+<script src="scripts/pairProfile.js"></script>
+<script src="scripts/posmax.js"></script>
+<script src="scripts/position.js"></script>
+<script src="scripts/Piprechner.js"></script>
+<script src="scripts/swapCalc.js"></script>
+<script src="scripts/checklist.js"></script>
 
-  <script src="scripts/quiz.js"></script>
-  <script src="scripts/quiz-db.js"></script>
+<script src="scripts/dawn.js"></script>
+<script src="scripts/tax.js"></script>
+<script src="imageStorage.js"></script>
+<script src="scripts/bg-candles.js"></script>
+<script src="scripts/ticker.js"></script>
+<script src="scripts/jornal.js"></script>
+<script src="scripts/pwa.js"></script>
+<script src="scripts/rules.js"></script>
+<script type="module" src="pocketbase-init.js"></script>
+
+<script src="scripts/quiz.js"></script>
+<script src="scripts/quiz-db.js"></script>
+
+<!-- ============================================================
+     ⚡ NEW SIDEBAR v0.2 — HYBRID LOGIK
+     (Icons öffnen Drawer, Unterpunkte öffnen Panels)
+   ============================================================ -->
+<script>
+/* ======================
+   SIDEBAR v0.2 HYBRID
+   ====================== */
+
+const drawer = document.getElementById("drawer");
+const drawerTitle = document.getElementById("drawerTitle");
+const drawerLinks = document.getElementById("drawerLinks");
+const mainWrapper = document.getElementById("mainWrapper");
+
+// Nur Top-Level-Panels im <main>
+const panels = document.querySelectorAll("main > section.panel");
+
+// Buttons (Icons)
+const btnDash = document.getElementById("btnDash");
+const btnTools = document.getElementById("btnTools");
+const btnRules = document.getElementById("btnRules");
+
+// Kategorie → Untermenüs
+const MENU = {
+  dashboard: {
+    title: "Dashboard",
+    items: [
+      { label: "Dashboard", panel: "panel-dashboard" }
+    ]
+  },
+  tools: {
+    title: "Rechner",
+    items: [
+      { label: "Position Size", panel: "calc-pos" },
+      { label: "Steuern / Netto", panel: "calc-taxpro" },
+      { label: "Pair Profil", panel: "calc-pairProfile" }
+    ]
+  },
+  rules: {
+    title: "Regeln & Wissen",
+    items: [
+      { label: "Regeln", panel: "panel-rules" },
+      { label: "Theorie-Test", panel: "panel-quiz" },
+      { label: "Confluence", panel: "panel-confluence" }
+    ]
+  }
+};
+
+// Alle Panels verstecken
+function hideAllPanels() {
+  panels.forEach(p => p.classList.add("hidden"));
+}
+
+// Drawer wirklich schließen (einheitlich)
+function closeDrawer() {
+  drawer.classList.remove("open");
+  if (mainWrapper) mainWrapper.classList.remove("drawer-open");
+  resetActive();
+}
+
+// Drawer öffnen + Menü füllen
+function openDrawer(cat) {
+  const def = MENU[cat];
+  if (!def) return;
+
+  drawerTitle.textContent = def.title;
+  drawerLinks.innerHTML = "";
+
+  def.items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "drawer-link";
+    div.textContent = item.label;
+
+    div.onclick = () => {
+      // Panel umschalten
+      hideAllPanels();
+      const panel = document.getElementById(item.panel);
+      if (panel) panel.classList.remove("hidden");
+
+      // Drawer nach Klick auf Eintrag einklappen
+      closeDrawer();
+    };
+
+    drawerLinks.appendChild(div);
+  });
+
+  drawer.classList.add("open");
+  if (mainWrapper) mainWrapper.classList.add("drawer-open");
+}
+
+// Active-State resetten
+function resetActive() {
+  btnDash.classList.remove("active");
+  btnTools.classList.remove("active");
+  btnRules.classList.remove("active");
+}
+
+// Icon-Buttons
+btnDash.onclick = () => {
+  resetActive();
+  btnDash.classList.add("active");
+  openDrawer("dashboard");
+};
+
+btnTools.onclick = () => {
+  resetActive();
+  btnTools.classList.add("active");
+  openDrawer("tools");
+};
+
+btnRules.onclick = () => {
+  resetActive();
+  btnRules.classList.add("active");
+  openDrawer("rules");
+};
+
+// Drawer schließen über Close-Button
+const drawerCloseBtn = document.getElementById("drawerCloseBtn");
+if (drawerCloseBtn) {
+  drawerCloseBtn.onclick = () => {
+    closeDrawer();
+  };
+}
+
+// Drawer schließen bei Klick außerhalb
+document.addEventListener(
+  "click",
+  e => {
+    if (
+      !drawer.contains(e.target) &&
+      !document.getElementById("sidebarLeft").contains(e.target)
+    ) {
+      closeDrawer();
+    }
+  },
+  true
+);
+
+// Optional: beim Start Dashboard-Panels sichtbar lassen
+// (panel-dashboard ist ja standardmäßig NICHT hidden)
+</script>
 
 
 
