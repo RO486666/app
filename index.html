@@ -1653,7 +1653,7 @@
    ============================================================ -->
 <script>
 /* ======================
-   SIDEBAR v0.2 HYBRID
+   SIDEBAR v0.2 HYBRID LOGIK
    ====================== */
 
 const drawer = document.getElementById("drawer");
@@ -1669,7 +1669,10 @@ const btnDash = document.getElementById("btnDash");
 const btnTools = document.getElementById("btnTools");
 const btnRules = document.getElementById("btnRules");
 
-// Kategorie → Untermenüs
+
+// ===============================
+// MENU DEFINITIONEN
+// ===============================
 const MENU = {
   dashboard: {
     title: "Dashboard",
@@ -1695,19 +1698,33 @@ const MENU = {
   }
 };
 
-// Alle Panels verstecken
+
+// ===============================
+// PANELS AUSBLENDEN
+// ===============================
 function hideAllPanels() {
   panels.forEach(p => p.classList.add("hidden"));
 }
 
-// Drawer wirklich schließen (einheitlich)
+
+// ===============================
+// DRAWER SCHLIESSEN (universell)
+// ===============================
 function closeDrawer() {
   drawer.classList.remove("open");
-  if (mainWrapper) mainWrapper.classList.remove("drawer-open");
+
+  // Desktop → Push-Mode raus
+  if (window.innerWidth > 900) {
+    mainWrapper.classList.remove("drawer-open");
+  }
+
   resetActive();
 }
 
-// Drawer öffnen + Menü füllen
+
+// ===============================
+// DRAWER ÖFFNEN
+// ===============================
 function openDrawer(cat) {
   const def = MENU[cat];
   if (!def) return;
@@ -1715,36 +1732,47 @@ function openDrawer(cat) {
   drawerTitle.textContent = def.title;
   drawerLinks.innerHTML = "";
 
+
+  // --- Untermenü erzeugen ---
   def.items.forEach(item => {
     const div = document.createElement("div");
     div.className = "drawer-link";
     div.textContent = item.label;
 
     div.onclick = () => {
-      // Panel umschalten
       hideAllPanels();
       const panel = document.getElementById(item.panel);
       if (panel) panel.classList.remove("hidden");
 
-      // Drawer nach Klick auf Eintrag einklappen
       closeDrawer();
     };
 
     drawerLinks.appendChild(div);
   });
 
+  // Drawer öffnen
   drawer.classList.add("open");
-  if (mainWrapper) mainWrapper.classList.add("drawer-open");
+
+  // Desktop → Push-Mode
+  if (window.innerWidth > 900) {
+    mainWrapper.classList.add("drawer-open");
+  }
 }
 
-// Active-State resetten
+
+// ===============================
+// ACTIVE-ZUSTAND RESET
+// ===============================
 function resetActive() {
   btnDash.classList.remove("active");
   btnTools.classList.remove("active");
   btnRules.classList.remove("active");
 }
 
-// Icon-Buttons
+
+// ===============================
+// ICON BUTTON EVENTS
+// ===============================
 btnDash.onclick = () => {
   resetActive();
   btnDash.classList.add("active");
@@ -1763,30 +1791,28 @@ btnRules.onclick = () => {
   openDrawer("rules");
 };
 
-// Drawer schließen über Close-Button
+
+// ===============================
+// CLOSE BUTTON IM DRAWER
+// ===============================
 const drawerCloseBtn = document.getElementById("drawerCloseBtn");
 if (drawerCloseBtn) {
-  drawerCloseBtn.onclick = () => {
-    closeDrawer();
-  };
+  drawerCloseBtn.onclick = () => closeDrawer();
 }
 
-// Drawer schließen bei Klick außerhalb
-document.addEventListener(
-  "click",
-  e => {
-    if (
-      !drawer.contains(e.target) &&
-      !document.getElementById("sidebarLeft").contains(e.target)
-    ) {
-      closeDrawer();
-    }
-  },
-  true
-);
 
-// Optional: beim Start Dashboard-Panels sichtbar lassen
-// (panel-dashboard ist ja standardmäßig NICHT hidden)
+// ===============================
+// AUTO-SCHLIESSEN BEI KLICK AUSSERHALB
+// ===============================
+document.addEventListener("click", e => {
+  if (
+    !drawer.contains(e.target) &&
+    !document.getElementById("sidebarLeft").contains(e.target)
+  ) {
+    closeDrawer();
+  }
+}, true);
+
 </script>
 
 
