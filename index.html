@@ -670,9 +670,14 @@
           </h3>
 
           <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
-          <select id="pairProfileSymbol" style="width: 100%; margin-bottom: 10px;">
-            <option value="">– Bitte Paar wählen –</option>
-          </select>
+
+          <!-- 🔥 FIX: Wrapper hinzugefügt -->
+          <div class="pair-select-wrapper">
+            <select id="pairProfileSymbol">
+              <option value="">– Bitte Paar wählen –</option>
+            </select>
+          </div>
+          <!-- 🔥 FIX ENDE -->
 
           <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
             <strong>Basis-Daten:</strong>
@@ -704,6 +709,7 @@
           </div>
         </div>
       </section>
+
 
       <!-- 📄 Steuer-/Netto-Planer -->
       <section
