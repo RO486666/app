@@ -369,56 +369,53 @@
       background: #282828;
     }
 
-    /*****************************************************
-     * DRAWER (RIGHT SIDE, CONTENTS OF CATEGORY)
-     *****************************************************/
-/* DESKTOP DRAWER – wird später für Mobile überschrieben */
-#drawer {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 65px;
+/*****************************************************
+ * DRAWER – DESKTOP VERSION ONLY
+ *****************************************************/
+@media (min-width: 901px) {
 
-  width: 260px;
-  background: #151515;
-  border-right: 1px solid rgba(255,255,255,0.05);
+  #drawer {
+    position: fixed;
+    left: 65px;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    background: #151515;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    transform: translateX(-260px);
+    transition: transform 0.28s ease;
+    z-index: 49;
+    padding: 20px;
+    overflow-y: auto;
+  }
 
-  /* Desktop: links versteckt */
-  transform: translateX(-260px);
+  #drawer.open {
+    transform: translateX(0);
+  }
 
-  transition: transform 0.28s ease;
-  z-index: 200;
+  #drawer h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: var(--accent);
+  }
 
-  padding: 20px;
-  overflow-y: auto;
+  .drawer-link {
+    width: 100%;
+    background: #1d1d1d;
+    padding: 12px 14px;
+    margin: 8px 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--fast), color var(--fast);
+  }
+
+  .drawer-link:hover {
+    background: #292929;
+    color: var(--accent2);
+  }
+
 }
 
-
-
-    #drawer.open {
-      transform: translateX(0);
-    }
-
-    #drawer h3 {
-      margin-top: 0;
-      font-size: 18px;
-      color: var(--accent);
-    }
-
-    .drawer-link {
-      width: 100%;
-      background: #1d1d1d;
-      padding: 12px 14px;
-      margin: 8px 0;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background var(--fast), color var(--fast);
-    }
-
-    .drawer-link:hover {
-      background: #292929;
-      color: var(--accent2);
-    }
 
     /*****************************************************
      * MAIN CONTENT (PUSH-MODE)
@@ -457,9 +454,9 @@
       color: var(--accent);
     }
 
-/*****************************************************
- * PANEL WRAPPER
- *****************************************************/
+    /*****************************************************
+     * PANEL WRAPPER
+     *****************************************************/
 
 .panel {
   background: transparent;
@@ -476,10 +473,9 @@
   text-align: center;
 }
 
-.hidden {
-  display: none !important;
-}
-
+    .hidden {
+      display: none !important;
+    }
 /* ============================
    📱 MOBILE VERSION (bis 900px)
    ============================ */
@@ -520,33 +516,75 @@
      kommt smooth von unten hoch)
   ---------------------------------------- */
 
-  /* Drawer standardmäßig NICHT sichtbar */
+/*****************************************************
+ * DRAWER – DESKTOP VERSION
+ *****************************************************/
+@media (min-width: 901px) {
+
+  #drawer {
+    position: fixed;
+    left: 65px;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    background: #151515;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    transform: translateX(-260px);
+    transition: transform 0.28s ease;
+    z-index: 49;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  #drawer.open {
+    transform: translateX(0);
+  }
+
+  #mainWrapper.drawer-open {
+    margin-left: 325px;
+  }
+}
+
+/*****************************************************
+ * DRAWER – MOBILE VERSION (GLEICHE POSITION, aber hinter der Sidebar)
+ *****************************************************/
+@media (max-width: 900px) {
+
+  /* Bottom-Bar bleibt vorne */
+  #sidebarLeft {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 200; /* Sidebar ganz vorne */
+  }
+
+  /* Drawer startet wie vorher (70px über Boden) – aber HINTER der Sidebar */
   #drawer {
     position: fixed;
     left: 0;
-    bottom: 0;
+    bottom: 70px;        /* exakt gleiche Höhe wie du vorher wolltest */
     width: 100%;
-    max-height: 60vh;
+    max-height: 65vh;
 
     background: #151515;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
 
-    transform: translateY(100%); /* unten versteckt */
+    transform: translateY(100%);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 
-    transition: 
-      transform 0.30s ease,
-      opacity 0.25s ease;
+    transition: transform 0.30s ease, opacity 0.25s ease;
 
-    padding: 18px 20px;
+    padding: 20px;
     overflow-y: auto;
-    z-index: 250;
+
+    z-index: 150;       /* Drawer HINTER der Sidebar */
   }
 
-  /* Wenn geöffnet → sichtbar von unten hoch */
   #drawer.open {
     transform: translateY(0);
     opacity: 1;
@@ -554,42 +592,29 @@
     pointer-events: auto;
   }
 
-  /* Drag-Handle */
-  #drawer::before {
-    content: "";
-    width: 42px;
-    height: 5px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 3px;
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  /* Header */
-  #drawerHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    padding-bottom: 12px;
-  }
-
-  #drawerTitle {
-    font-size: 20px;
-    font-weight: 600;
-  }
-
+  #drawer::before,
+  #drawerHeader,
   #drawerCloseBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    border: none;
-    background: #222;
-    color: white;
-    font-size: 18px;
+    position: relative;
+    z-index: 160; /* immer noch hinter Sidebar */
   }
+
+  #mainWrapper.drawer-open {
+    margin-left: 0 !important;
+  }
+}
+
+
+/* ===============================================
+   HARD-OVERRIDE: Drawer immer über Bottom-Bar
+   =============================================== */
+
+
+#sidebarLeft,
+#sidebarLeft * {
+    z-index: 10 !important;
+}
+
 
 
   /* ----------------------------------------
@@ -634,7 +659,6 @@
   }
 }
 
-/* <-- FEHLERHAFTE KLAMMER WAR HIER, ENTFERNT */
 
 
 
