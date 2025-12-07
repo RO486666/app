@@ -112,22 +112,25 @@ function calculateSwapFromPip() {
   `;
 }
 
-
-// ---- Swap-Rechner Ein-/Ausblenden ----------------------------------------
+// 🔁 Swap-Rechner Öffnen/Schließen
 document.addEventListener("DOMContentLoaded", () => {
-  const openBtn = document.getElementById("openSwapBtn");
-  const closeBtn = document.getElementById("closeSwapBtn");
-  const swapBox = document.getElementById("swap-calc");
 
-  if (!openBtn || !closeBtn || !swapBox) return;
+  const openSwapBtn = document.getElementById("openSwapBtn");
+  const closeSwapBtn = document.getElementById("closeSwapBtn");
+  const swapBox = document.getElementById("swapBox");
 
-  openBtn.addEventListener("click", () => {
-    swapBox.style.display = "block";
-    openBtn.style.display = "none";
-  });
+  if (openSwapBtn) {
+    openSwapBtn.onclick = () => {
+      swapBox.classList.remove("hidden");
+      openSwapBtn.style.display = "none";
+    };
+  }
 
-  closeBtn.addEventListener("click", () => {
-    swapBox.style.display = "none";
-    openBtn.style.display = "block";
-  });
+  if (closeSwapBtn) {
+    closeSwapBtn.onclick = () => {
+      swapBox.classList.add("hidden");
+      openSwapBtn.style.display = "block";
+    };
+  }
 });
+
