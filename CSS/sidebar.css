@@ -1,147 +1,376 @@
-/* ============================
-   📌 SIDEBAR (TradeZella Style)
-   ============================ */
-#sidebar {
+/* ============================================================
+   1. GLOBAL VARIABLES & BASE
+   ============================================================ */
+:root {
+  --sidebar-width: 70px; /* Etwas breiter für modernere Optik */
+  --drawer-width: 280px;
+  --mobile-nav-height: 70px;
+  --bg-dark: #111;
+  --bg-glass: rgba(17, 17, 17, 0.85); /* Für Glassmorphismus */
+  --accent: #007bff; /* Beispiel Accent Farbe */
+  --text: #ffffff;
+  --radius: 16px;
+  --fast: 0.2s ease;
+  --smooth: cubic-bezier(0.4, 0, 0.2, 1); /* Professionelle Animation */
+}
+
+/* ============================================================
+   2. SIDEBAR (Navigation) - GLOBAL STYLES
+   ============================================================ */
+#sidebarLeft {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100vh;
-
-  background: rgba(12,12,18,0.96);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(255,255,255,0.05);
-
-  transform: translateX(-280px); /* ausgeblendet */
-  transition: transform 0.28s ease;
-  z-index: 9999;
-}
-
-/* sichtbar */
-#sidebar.sidebar-open {
-  transform: translateX(0);
-}
-
-/* ============================
-   ☰ Hamburger Toggle
-   ============================ */
-#sidebarToggle {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 10000;
-
-  padding: 10px 14px;
-  font-size: 22px;
-
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 6px;
-  cursor: pointer;
-
-  backdrop-filter: blur(6px);
-  transition: all 0.2s ease;
-}
-
-#sidebarToggle:hover {
-  background: rgba(0,0,0,0.55);
-  border-color: rgba(0,255,153,0.45);
-}
-/* ============================
-   SIDEBAR PUSH MODE (TradeZella Style)
-   ============================ */
-
-/* Hauptcontainer bewegt sich */
-#appContainer {
-  transition: margin-left 0.35s ease;
-  margin-left: 0;
-}
-
-/* Wenn Sidebar offen → Main Content rutscht rechts */
-.sidebar-open ~ #appContainer {
-  margin-left: 240px;
-}
-
-/* Sidebar geschlossen (Start) */
-#sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 240px;
-  height: 100vh;
-  background: rgba(10,10,15,0.85);
-  backdrop-filter: blur(8px);
-  border-right: 1px solid rgba(255,255,255,0.1);
-  padding-top: 70px;
-  transform: translateX(-260px);
-  transition: transform 0.35s ease;
-  z-index: 9999;
-}
-
-/* Toggle Button */
-#sidebarToggle {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 10000;
-  padding: 6px 12px;
-  background: rgba(0,0,0,0.45);
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-/* ============================
-   🎨 SIDEBAR BUTTONS
-   ============================ */
-.sidebar-nav {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px); /* Der "Milchglas"-Effekt */
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100; /* Immer oben */
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 80px 18px 20px;
+  align-items: center;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
-.sidebar-nav button {
-  width: 100%;
-  padding: 12px 16px;
+#sidebarLeft button {
+  width: 48px;
+  height: 48px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.25s var(--smooth);
+  position: relative;
+}
 
+/* Hover Effekt */
+#sidebarLeft button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Active State mit Glow */
+#sidebarLeft button.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 15px var(--accent); /* Leucht-Effekt */
+  transform: scale(1.05);
+}
+/* ============================================================
+   3. DRAWER – CLEAN SESSION STYLE (Dynamic Session Colors)
+   ============================================================ */
+
+#drawer {
+  /* Dynamische Session-Farbe (wird von JS gesetzt) */
+  --drawer-accent: var(--session-accent, #888);
+  --drawer-bg: #0f0f12;
+  --drawer-text-muted: rgba(255, 255, 255, 0.55);
+  --drawer-text-strong: #f5f5f5;
+  --drawer-radius: 16px;
+
+  position: fixed;
+  background: var(--drawer-bg);
+  z-index: 90;
+  overflow-y: auto;
+
+  transition: transform 0.35s var(--smooth), opacity 0.25s ease;
+
+  padding: 22px 20px;
+  box-sizing: border-box;
+
+  border-radius: 0 var(--drawer-radius) var(--drawer-radius) 0;
+  border-left: 1px solid var(--drawer-accent);
+  border-right: 1px solid #1a1a1a;
+}
+
+#drawer::before {
+  /* komplettes Neon-/Glow-Overlay entfernt */
+  content: none;
+}
+
+/* ============================================================
+   DRAWER HEADER (Titel + X)
+   ============================================================ */
+#drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--drawer-accent);
+}
+
+#drawerTitle {
   font-size: 15px;
   font-weight: 600;
-  text-align: left;
-  color: #e8e8e8;
+  color: var(--drawer-accent);
+  letter-spacing: 0.05em;
+  padding-left: 6px;
+}
 
-  background: linear-gradient(135deg, rgba(25,25,35,0.9), rgba(15,15,20,0.9));
-  border: 1px solid rgba(255,255,255,0.05);
+#drawerTitle::before {
+  /* Neon-Bar entfernt */
+  content: none;
+}
+
+#drawerCloseBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #161616;
+  border: 1px solid var(--drawer-accent);
   border-radius: 10px;
+  color: var(--drawer-accent);
+  font-size: 18px;
 
-  box-shadow:
-    0 3px 8px rgba(0,0,0,0.45),
-    inset 0 0 8px rgba(255,255,255,0.04);
-
-  backdrop-filter: blur(6px);
-  transition: all 0.18s ease;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-/* Hover */
-.sidebar-nav button:hover {
-  background: linear-gradient(135deg, rgba(50,50,65,0.9), rgba(20,20,30,0.9));
-  border-color: rgba(0,255,153,0.4);
-  box-shadow: 0 0 12px rgba(0,255,153,0.3);
-}
-
-/* Klick */
-.sidebar-nav button:active {
-  transform: scale(0.97);
-}
-
-/* Aktives Modul */
-.sidebar-nav button.active {
-  background: linear-gradient(135deg, rgba(0,255,153,0.15), rgba(0,255,153,0.05));
-  border-color: rgba(0,255,153,0.6);
-  box-shadow:
-    0 0 14px rgba(0,255,153,0.45),
-    inset 0 0 12px rgba(0,255,153,0.2);
+#drawerCloseBtn:hover {
+  background: #1e1e1e;
+  border-color: var(--drawer-accent);
+  color: var(--drawer-accent);
 }
 
 
+/* ============================================================
+   Drawer Section Titles
+   ============================================================ */
+#drawer h3 {
+  margin-top: 0;
+  margin-bottom: 14px;
+
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--drawer-text-muted);
+
+  padding-left: 6px;
+}
+
+#drawer h3::before {
+  content: none; /* Neon-Bar entfernt */
+}
+
+
+/* ============================================================
+   Drawer Links – CLEAN & SESSION CONTROLLED
+   ============================================================ */
+.drawer-link {
+  display: block;
+  width: 100%;
+
+  padding: 12px 14px;
+  margin-bottom: 10px;
+
+  background: #141418;
+  border-radius: 12px;
+
+  color: var(--drawer-text-strong);
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+
+  border: 1px solid #222;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.drawer-link::before {
+  /* Neon edge removed komplett */
+  content: none;
+}
+
+.drawer-link:hover {
+  background: #1b1b20;
+  border-color: var(--drawer-accent);
+  color: var(--drawer-accent);
+  transform: translateX(4px);
+}
+
+.drawer-link.active {
+  background: #1c1c22;
+  border-color: var(--drawer-accent);
+  color: var(--drawer-accent);
+}
+
+
+/* ============================================================
+   Motion Reduction
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  #drawer,
+  .drawer-link {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* ============================================================
+   4. MAIN WRAPPER (Content)
+   ============================================================ */
+#mainWrapper {
+  width: 100%;
+  min-height: 100vh;
+  transition: margin-left 0.4s var(--smooth), width 0.4s var(--smooth);
+  box-sizing: border-box;
+}
+
+.panel {
+  background: #1a1a1a;
+  border-radius: var(--radius);
+  padding: 25px;
+  margin: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================================
+   DESKTOP VERSION (min-width: 901px)
+   ============================================================ */
+@media (min-width: 901px) {
+  
+  /* Sidebar Links vertikal */
+  #sidebarLeft {
+    width: var(--sidebar-width);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+    padding-top: 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+  }
+
+  /* Drawer fährt von links raus */
+  #drawer {
+    left: var(--sidebar-width);
+    top: 0;
+    bottom: 0;
+    width: var(--drawer-width);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    /* Startposition: Versteckt nach links */
+    transform: translateX(-100%); 
+    opacity: 0;
+  }
+
+  #drawer.open {
+    transform: translateX(0);
+    opacity: 1;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5); /* Schatten nach rechts */
+  }
+
+  /* Main Content schiebt sich nach rechts */
+  #mainWrapper {
+    padding-left: calc(var(--sidebar-width) + 2px); /* Basis Abstand */
+  }
+
+  #mainWrapper.drawer-open {
+    padding-left: calc(var(--sidebar-width) + var(--drawer-width) + 5px);
+  }
+}
+
+/* ============================================================
+   MOBILE VERSION (max-width: 900px)
+   ============================================================ */
+@media (max-width: 900px) {
+
+  /* Sidebar wird zur Bottom-Bar */
+  #sidebarLeft {
+    width: 100%;
+    height: var(--mobile-nav-height);
+    bottom: 0;
+    left: 0;
+    top: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0; /* Oben abgerundet */
+  }
+  
+  #sidebarLeft button {
+    margin: 0;
+    width: 60px; /* Größere Touch-Targets */
+  }
+
+  /* Drawer wird zum Bottom-Sheet */
+  #drawer {
+    left: 0;
+    right: 0;
+    bottom: var(--mobile-nav-height); /* Sitzt genau auf der Nav */
+    width: 100%;
+    max-height: 70vh;
+    border-radius: 24px 24px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    
+    /* Startposition: Nach unten verschoben */
+    transform: translateY(110%);
+    opacity: 0;
+    visibility: hidden;
+    
+    /* Schatten nach oben */
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  #drawer.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Griff-Indikator für Mobile Drawer (visuelles Detail) */
+  #drawer::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 auto 20px auto;
+    border-radius: 4px;
+  }
+
+  /* Main Wrapper Anpassung */
+  #mainWrapper {
+    padding-left: 0 !important; /* Reset Desktop padding */
+    padding-bottom: calc(var(--mobile-nav-height) + 20px); /* Platz für BottomBar */
+    margin-left: 0 !important;
+  }
+  
+  /* Auf Mobile schieben wir den Content NICHT zur Seite, 
+     der Drawer legt sich einfach drüber (bzw. drunter) */
+  #mainWrapper.drawer-open {
+    margin-left: 0;
+    transform: scale(0.95); /* Netter Effekt: Content geht etwas zurück */
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================
+   5. UTILITIES (Damit das Umschalten funktioniert)
+   ============================================================ */
+
+/* Klasse zum kompletten Ausblenden */
+.hidden {
+  display: none !important;
+}
+
+/* Eine schicke Fade-In Animation beim Wechseln */
+.fade-in {
+  animation: fadeInEffect 0.4s var(--smooth);
+}
+
+@keyframes fadeInEffect {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
