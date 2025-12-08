@@ -1,0 +1,337 @@
+/* ============================================
+   🧩 CONFLUENCE (Panel-Version, Velvet Luxe)
+   ============================================ */
+
+/* Panel-Container an Rechner-Look angleichen */
+#panel-confluence {
+  padding: 0 10px 30px;
+}
+
+/* Header wie bei einer eigenen Rechner-Box */
+.conf-header {
+  max-width: 440px;
+  margin: 0 auto 10px;
+  padding: 8px 4px;
+}
+
+.conf-header h2 {
+  font-size: 20px;
+  margin: 0 0 2px 0;
+}
+
+.conf-header p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* ===== Sticky Summary – im stats-box Stil ===== */
+.conf-summary {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  max-width: 440px;
+  margin: 0 auto 16px;
+
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+
+  background:
+    radial-gradient(140% 120% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, #131116, #141219 55%, #0f0d12);
+
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(0, 255, 153, 0.14),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04);
+
+  box-sizing: border-box;
+}
+
+.conf-summary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.015) 0 1px,
+      transparent 1px 8px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.025) 0 1px,
+      transparent 1px 10px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+.conf-summary > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Summary Grid */
+.conf-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+@media (max-width: 430px) {
+  .conf-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Summary Box */
+.conf-box {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0, 255, 110, 0.04);
+  border: 1px solid rgba(0, 255, 150, 0.22);
+  transition: 0.2s ease;
+  box-shadow: 0 0 0 rgba(0, 255, 150, 0);
+}
+
+.conf-box span {
+  font-size: 11px;
+  opacity: 0.8;
+  color: #cffff1;
+}
+.conf-box strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+  color: #cffff1;
+  text-shadow: 0 0 8px rgba(0, 255, 150, 0.35);
+}
+
+.conf-box.active {
+  background: rgba(0, 255, 160, 0.14);
+  border-color: rgba(0, 255, 150, 0.75);
+  box-shadow:
+    0 0 14px rgba(0, 255, 150, 0.35),
+    0 0 4px rgba(0, 255, 150, 0.25);
+  color: #00ff9a !important;
+  transform: translateY(-1px);
+}
+
+/* ===== Total Box (Glow-Version, Velvet-Basis) ===== */
+.conf-total-box {
+  margin-top: 12px;
+  padding: 18px 20px;
+  border-radius: 16px;
+
+  background:
+    radial-gradient(circle at top left, #0b1e1a 0%, #071413 40%, #030607 100%);
+  border: 1px solid rgba(0, 255, 153, 0.18);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(0, 0, 0, 1);
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.18s ease;
+}
+
+.conf-total-box::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+
+  background:
+    radial-gradient(circle at 20% 0%, rgba(0, 255, 153, 0.16) 0%, transparent 58%),
+    radial-gradient(circle at 80% 90%, rgba(0, 255, 153, 0.12) 0%, transparent 60%);
+
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+
+  animation:
+    emeraldFluxPulse 4.2s ease-in-out infinite,
+    emeraldFlow 8.5s ease-in-out infinite;
+}
+
+.conf-total-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glow Levels */
+.conf-total-box.glow-low {
+  box-shadow:
+    0 0 8px rgba(0, 255, 153, 0.22),
+    0 16px 36px rgba(0, 0, 0, 0.95);
+  border-color: rgba(0, 255, 153, 0.24);
+}
+.conf-total-box.glow-low::before {
+  opacity: 0.18;
+}
+
+.conf-total-box.glow-moderate {
+  box-shadow:
+    0 0 14px rgba(0, 255, 153, 0.38),
+    0 0 36px rgba(0, 255, 153, 0.22),
+    0 18px 44px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.32);
+}
+.conf-total-box.glow-moderate::before {
+  opacity: 0.32;
+}
+
+.conf-total-box.glow-valid {
+  box-shadow:
+    0 0 20px rgba(0, 255, 153, 0.50),
+    0 0 60px rgba(0, 255, 153, 0.30),
+    0 22px 52px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.5);
+}
+.conf-total-box.glow-valid::before {
+  opacity: 0.50;
+}
+
+.conf-total-box.glow-strong {
+  box-shadow:
+    0 0 26px rgba(0, 255, 153, 0.70),
+    0 0 80px rgba(0, 255, 153, 0.40),
+    0 26px 60px rgba(0, 0, 0, 1);
+  border-color: rgba(0, 255, 153, 0.68);
+}
+.conf-total-box.glow-strong::before {
+  opacity: 0.78;
+}
+
+/* Error State */
+.glow-error {
+  background: radial-gradient(circle at top, #3a0505 0%, #1a0000 55%, #080000 100%) !important;
+  border: 1px solid rgba(255, 60, 60, 0.75) !important;
+  box-shadow:
+    0 0 22px rgba(255, 60, 60, 0.45),
+    0 0 32px rgba(255, 30, 30, 0.35),
+    inset 0 0 12px rgba(255, 40, 40, 0.25);
+  color: #ffdada !important;
+  text-shadow: 0 0 10px rgba(255, 80, 80, 0.55);
+}
+
+/* Values */
+.conf-total-value {
+  margin-top: 4px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #cffff1;
+}
+.conf-total-text {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.88;
+  color: #cffff1;
+}
+
+/* ===== BODY / Accordion-Container im stats-box Look ===== */
+.conf-body-content {
+  max-width: 440px;
+  margin: 0 auto 20px;
+  padding: 18px 20px 20px;
+  border-radius: 16px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(140% 120% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, #131116, #141219 55%, #0f0d12);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(0, 255, 153, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04);
+}
+
+/* ===== Accordion ===== */
+.conf-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.conf-acc-item {
+  background: rgba(5, 10, 8, 0.55);
+  border: 1px solid rgba(0, 255, 150, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header-Zeile */
+.conf-acc-header {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 150, 0.10),
+    rgba(5, 8, 10, 0.95)
+  );
+
+  transition: 0.25s ease;
+}
+
+.conf-acc-header:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 150, 0.18),
+    rgba(5, 8, 10, 0.98)
+  );
+}
+
+.acc-percent {
+  font-size: 12px;
+  opacity: 0.9;
+  color: #00ff9a;
+}
+
+/* Body */
+.conf-acc-body {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  padding: 12px 14px 16px;
+  border-top: 1px solid rgba(0, 255, 150, 0.18);
+  background: rgba(0, 255, 130, 0.05);
+}
+
+.conf-acc-item.open .conf-acc-body {
+  display: flex;
+}
+
+.conf-acc-body label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #cffff1;
+  font-size: 13px;
+}
+
+/* Checkboxen etwas hervorheben */
+.conf-acc-body input[type="checkbox"],
+.conf-acc-body input[type="radio"] {
+  accent-color: #00ff9a;
+}
