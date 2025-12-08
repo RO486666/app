@@ -1,218 +1,6 @@
 
-
 /* =========================================================
-   📦 Main-Container & Buttons
-   ========================================================= */
-
-
-
-.main {
-  padding: 20px;
-  padding-bottom: 120px; /* Platz für Positionsleiste */
-  text-align: center;
-}
-
-.big-btn {
-  padding: 20px 30px;
-  font-size: 22px;
-  font-weight: bold;
-  border-radius: 15px;
-  border: none;
-  background-color: #00aa44;
-  color: white;
-  margin: 20px auto;
-  width: 80%;
-  max-width: 300px;
-}
-
-    .position-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #1c1c1c;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      box-sizing: border-box;
-      z-index: 10000; /* über anderen Elementen */
-	  touch-action: pan-y; /* Erlaubt vertikales Scrollen, verhindert horizontale Interferenzen */
-    }
-    
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-      z-index: 1000;
-      width: 90%;
-      max-width: 300px;
-      color: white;
-    }
-    label {
-      cursor: pointer;
-      user-select: none;
-      margin-right: 15px;
-      display: inline-block;
-    }
-    #pairMultiSelect {
-      max-height: 150px;
-      overflow-y: auto;
-      background: #222;
-      padding: 5px;
-      border-radius: 6px;
-      color: white;
-      margin-bottom: 10px;
-      text-align: left;
-    }
-    select, input {
-      padding: 8px;
-      margin-top: 10px;
-      width: 100%;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-    .popup button {
-      margin-top: 10px;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      cursor: pointer;
-    }
- 
-
-/* =========================================================
-   🔘 Tab-Buttons — Carbon Fiber Glow
-   (Selektoren unverändert)
-   ========================================================= */
-.tab-buttons {
-  text-align: center;
-  margin-top: 20px;
-}
-
-/* Base Button */
-.tab-buttons button {
-  /* Theme hooks */
-  --cf-d1: #0f1011;
-  --cf-d2: #17191b;
-  --cf-d3: #1e2124;
-  --txt: #f4f7fb;
-  --edge: color-mix(in srgb, var(--glow-color, #00ffd5) 75%, #ffffff 0%);
-
-  position: relative;
-  display: inline-block;
-  margin: 6px;
-  padding: 12px 18px;
-  border: 2px solid var(--edge);
-  border-radius: 10px;
-  font: 700 15px/1.2 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  letter-spacing: .4px;
-  color: var(--txt);
-  cursor: pointer;
-  user-select: none;
-  transform: translateZ(0); /* promote layer */
-  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, border-color 160ms ease;
-  will-change: transform, opacity;
-
-  /* Carbon fiber texture */
-  background:
-    repeating-linear-gradient(45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px),
-    repeating-linear-gradient(-45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px);
-  background-color: var(--cf-d3);
-
-  /* Neon ring (subtle by default) */
-  box-shadow:
-    0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 30%, transparent),
-    inset 0 0 10px rgba(255,255,255,0.04);
-  text-shadow:
-    0 0 2px rgba(255,255,255,0.25),
-    0 0 6px color-mix(in srgb, var(--glow-color, #00ffd5) 25%, transparent);
-
-  /* keep existing pulse but refine via opacity/box-shadow */
-  animation: pulseGlow 2.5s ease-in-out infinite;
-}
-
-/* Carbon fiber sheen layer */
-.tab-buttons button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%),
-    radial-gradient(100% 60% at 50% -20%, rgba(255,255,255,0.10), transparent 60%);
-  opacity: .7;
-  transition: opacity 160ms ease;
-}
-
-/* Hover / Focus */
-.tab-buttons button:hover,
-.tab-buttons button:focus-visible {
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 16px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent),
-    inset 0 0 12px rgba(255,255,255,0.06);
-  outline: 2px solid var(--edge);
-  outline-offset: 3px;
-}
-.tab-buttons button:hover::before,
-.tab-buttons button:focus-visible::before { opacity: .9; }
-
-/* Active state: stronger neon edge + inner glow */
-.tab-buttons .active {
-  background:
-    repeating-linear-gradient(45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px),
-    repeating-linear-gradient(-45deg, var(--cf-d1) 0 6px, var(--cf-d2) 6px 12px);
-  border-color: color-mix(in srgb, var(--glow-color, #00ffd5) 100%, #ffffff 0%);
-  box-shadow:
-    0 0 22px color-mix(in srgb, var(--glow-color, #00ffd5) 60%, transparent),
-    0 0 36px color-mix(in srgb, var(--glow-color, #00ffd5) 35%, transparent),
-    inset 0 0 14px color-mix(in srgb, var(--glow-color, #00ffd5) 35%, transparent);
-  text-shadow:
-    0 0 3px rgba(255,255,255,0.35),
-    0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent);
-}
-
-/* Gentle glow pulse (GPU‑friendly: opacity + shadow only) */
-@keyframes pulseGlow {
-  0% {
-    box-shadow:
-      0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 28%, transparent),
-      inset 0 0 10px rgba(255,255,255,0.04);
-    opacity: 0.98;
-  }
-  50% {
-    box-shadow:
-      0 0 16px color-mix(in srgb, var(--glow-color, #00ffd5) 45%, transparent),
-      inset 0 0 12px rgba(255,255,255,0.06);
-    opacity: 1;
-  }
-  100% {
-    box-shadow:
-      0 0 10px color-mix(in srgb, var(--glow-color, #00ffd5) 28%, transparent),
-      inset 0 0 10px rgba(255,255,255,0.04);
-    opacity: 0.98;
-  }
-}
-
-/* Motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .tab-buttons button { animation: none !important; transition: none !important; }
-}
-
-
-
-
-/* =========================================================
-   🕒 Session-Text Anzeige (Carbon Fiber Glow)
+   🕒 Session-Text Anzeige (Carbon Fiber Glow - Refined)
    ======================================================== */
 #sessionText {
   --cf-dark: #111;
@@ -225,49 +13,77 @@
   text-align: center;
   font-size: clamp(16px, 5vw, 20px);
   font-weight: 700;
+  /* System-Fonts sind okay, aber wir glätten sie für 'High-End' Look */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased; 
+  -moz-osx-font-smoothing: grayscale;
+
   color: var(--session-text-color, #fff);
-  letter-spacing: 0.6px;
+  letter-spacing: 1px; /* Etwas breiter wirkt technischer */
   user-select: none;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 14px; /* Leicht runder */
+  
+  /* Deine Variable bleibt erhalten */
   border: 2px solid var(--session-border, #00ffcc);
   z-index: 5;
 
-  /* Carbon-Fiber Textur */
-  background:
+  /* OPTIK UPDATE: 
+     Wir legen einen "Glanz" (erster Gradient) über deine Carbon-Textur.
+     Dadurch wirkt es wie Carbon unter Glas/Lack.
+  */
+  background: 
+    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%),
     repeating-linear-gradient(45deg,
       var(--cf-dark) 0 6px,
       var(--cf-mid) 6px 12px),
     repeating-linear-gradient(-45deg,
       var(--cf-dark) 0 6px,
       var(--cf-mid) 6px 12px);
-  background-blend-mode: multiply;
+      
+  background-blend-mode: overlay, multiply, normal;
   background-color: var(--cf-light);
+  
+  /* Falls der Hintergrund darunter liegt, wirkt das Blur modern */
+  backdrop-filter: blur(4px);
 
-  /* Glow & Tiefe */
+  /* Deine Variablen bleiben exakt erhalten + kleiner Inset für 3D-Kante */
   box-shadow:
     0 0 12px var(--session-box-shadow1, rgba(255,255,255,0.08)),
+    inset 0 1px 1px rgba(255,255,255,0.15), /* Lichtkante oben */
     inset 0 0 10px var(--session-box-shadow2, rgba(255,255,255,0.05)),
     0 0 18px var(--session-box-shadow3, rgba(255,255,255,0.07));
+
   text-shadow:
     0 0 2px var(--session-text-shadow1, rgba(255,255,255,0.3)),
     0 0 6px var(--session-text-shadow2, rgba(255,255,255,0.15));
 
-  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
-  will-change: transform, opacity;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              box-shadow 0.25s ease, 
+              border-color 0.25s ease;
+  will-change: transform, box-shadow;
 }
 
 #sessionText:hover,
 #sessionText:focus-visible {
-  transform: scale(1.02);
-  opacity: 0.95;
+  transform: scale(1.02) translateY(-1px); /* Leichtes Anheben */
+  opacity: 1; /* Volle Sichtbarkeit statt 0.95 */
+  
+  /* Deine Variablen intensiviert */
   box-shadow:
-    0 0 20px var(--session-box-shadow1, rgba(255,255,255,0.15)),
+    0 4px 20px var(--session-box-shadow1, rgba(255,255,255,0.15)),
     inset 0 0 14px var(--session-box-shadow2, rgba(255,255,255,0.07)),
     0 0 32px var(--session-box-shadow3, rgba(255,255,255,0.12));
-  outline: 2px solid var(--session-border, #00ffcc);
-  outline-offset: 3px;
+    
+  /* Outline ersetzen wir durch Border-Color Helligkeit (edler) 
+     oder behalten deine Logik bei, falls Outline zwingend ist.
+     Hier: Deine Border-Logik aber etwas heller. */
+  border-color: var(--session-border, #00ffcc); 
+  
+  /* Text glüht etwas stärker beim Hover */
+  text-shadow:
+    0 0 4px var(--session-text-shadow1, rgba(255,255,255,0.5)),
+    0 0 12px var(--session-text-shadow2, rgba(255,255,255,0.3));
 }
 
 /* ♿ Bewegung reduzieren */
@@ -277,7 +93,6 @@
     transform: none !important;
   }
 }
-
 
 /* =========================================================
    📋 Session-Details Box
