@@ -1,4 +1,10 @@
+// ===============================================
+// NEUE BUTTON MAP – Sidebar Icons bleiben dunkel
+// Drawer-Links leuchten farbig
+// ===============================================
+
 function updateTabButtonColors(activeSessionNames) {
+
   const sessionColors = {
     "Sydney": "#3388ff",
     "Tokyo": "#00aaff",
@@ -10,44 +16,45 @@ function updateTabButtonColors(activeSessionNames) {
     "Crypto": "#9900ff"
   };
 
-  // Alle alten Top-Buttons (falls noch existieren)
-  const topBtns = [
-    document.getElementById("btn-calc-pos"),
-    document.getElementById("btn-calc-taxpro"),
-    document.getElementById("btn-calc-pairprofile"),
-    document.getElementById("btn-calc-confluence")
-  ];
+  if (!activeSessionNames || activeSessionNames.length === 0) return;
 
-  // NEU: Alle Sidebar-Buttons automatisch einsammeln
-  const sidebarBtns = Array.from(
-    document.querySelectorAll(".sidebar-nav button")
-  );
+  // Farbe(n) sammeln
+  const colors = activeSessionNames
+    .filter(s => sessionColors[s])
+    .map(s => sessionColors[s]);
 
-  // Zusammenführen
-  const btns = [...topBtns, ...sidebarBtns].filter(Boolean);
+  if (colors.length === 0) return;
 
-  const colorQueue = activeSessionNames
-    .filter(name => sessionColors[name])
-    .map(name => sessionColors[name]);
-
-  if (colorQueue.length === 0) return;
-
-  btns.forEach((btn, i) => {
-    const color = colorQueue[i % colorQueue.length];
-    if (!btn) return;
-
-    btn.style.transition = "all 0.4s ease";
-    btn.style.background = color;
-    btn.style.setProperty('--glow-color', color);
-    btn.style.color = (["#ffd700", "#ccff00"].includes(color)) ? "#111" : "#fff";
-    btn.style.animation = "glowPulse 2s ease-in-out infinite";
+  // -----------------------------------------
+  // 1. Sidebar Icons → sollen NICHT leuchten
+  // -----------------------------------------
+  // Wir resetten sie sogar explizit!
+  const sidebarIcons = document.querySelectorAll("#sidebarLeft button");
+  sidebarIcons.forEach(btn => {
+    btn.style.background = "#1a1a1a";
+    btn.style.boxShadow = "none";
+    btn.style.color = "#fff";
+    btn.style.animation = "none";
   });
 
-  // Glow für .stats-box anwenden
-  if (activeSessionNames.length > 0) {
-    applyStatsBoxGlow(activeSessionNames[0]);
-  }
+  // -----------------------------------------
+  // 2. Drawer Buttons → sollen leuchten
+  // -----------------------------------------
+  const drawerLinks = document.querySelectorAll(".drawer-link");
+
+  drawerLinks.forEach((btn, i) => {
+    const c = colors[i % colors.length];
+
+    btn.style.transition = "all 0.35s ease";
+    btn.style.background = c;
+    btn.style.color = ["#ffd700", "#ccff00"].includes(c) ? "#111" : "#fff";
+    btn.style.boxShadow = `0 0 12px ${c}, 0 0 22px ${c}`;
+    btn.style.setProperty("--glow-color", c);
+    btn.style.animation = "glowPulse 2s ease-in-out infinite";
+  });
 }
+
+
 
 
 function applyStatsBoxGlow(sessionName) {
