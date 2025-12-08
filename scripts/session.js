@@ -360,6 +360,8 @@ if (sessionColors[name]) {
   sessionInfoEl.style.boxShadow = "none";
 }
 updateSessionTextStyle(name);
+applySidebarDrawerSessionColor(name);
+
 }
 
 
