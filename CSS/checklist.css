@@ -1,3 +1,73 @@
+@media (max-width: 600px) {
+
+  .conf-summary {
+    padding: 18px 16px 24px;
+    margin: 16px auto 26px;
+  }
+
+  .conf-summary h3 {
+    font-size: 18px !important;
+  }
+
+  .conf-summary-grid {
+    gap: 12px;
+  }
+
+  .conf-summary-grid .conf-box {
+    flex: 1 1 100%;
+    min-width: 100%;
+    padding: 14px 10px;
+    border-radius: 14px;
+  }
+
+  .conf-total-value {
+    font-size: 44px !important;
+  }
+
+  .conf-total-box {
+    padding: 28px 16px 32px;
+  }
+
+  .tf-card {
+    padding: 18px 14px 20px;
+    margin-bottom: 18px;
+  }
+
+  .tf-header {
+    padding-bottom: 6px;
+  }
+
+  .tf-title {
+    font-size: 15px;
+  }
+
+  .tf-card label {
+    padding: 10px 0;
+  }
+
+  .tf-card label span:first-child {
+    font-size: 14px;
+    max-width: 70%;
+  }
+
+  /* SWITCH kleiner */
+  .tf-card input[type="checkbox"] {
+    width: 38px;
+    height: 22px;
+  }
+
+  .tf-card input[type="checkbox"]::after {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tf-card input[type="checkbox"]:checked::after {
+    transform: translateX(16px);
+  }
+}
+
+
+
 /* ============================================================
    SUMMARY BOARD – based on YOUR HTML (ThePerfectTrade Style)
    ============================================================ */
