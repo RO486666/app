@@ -222,7 +222,7 @@
 }
 
 .panel {
-  background: #1a1a1a;
+  background: var(--drawer-bg);
   border-radius: var(--radius);
   padding: 25px;
   margin: 20px;
