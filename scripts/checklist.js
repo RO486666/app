@@ -8,148 +8,155 @@ const confGroups = {
   intraday: 0,
   lower: 0,
   entry: 0,
-  aoi: 0  // NEU
+  aoi: 0
 };
 
 
 /* ============================================================
-   🔥 Summary Glow – stabil
+   Hilfsfunktion
    ============================================================ */
-function toggleActiveBox(id, value) {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    let box = el.parentElement;
-    while (box && !box.classList.contains("conf-box")) {
-        box = box.parentElement;
-    }
-    if (!box) return;
-
-    if (value > 0) box.classList.add("active");
-    else box.classList.remove("active");
+function setAll(id, text) {
+  document.querySelectorAll(`#${id}`).forEach(el => el.textContent = text);
 }
 
+
 /* ============================================================
-   🔥 Hauptberechnung + Pflichtlogik integriert
+   ACTIVE STATE BOXES
+   ============================================================ */
+function toggleActiveBox(id, value) {
+  document.querySelectorAll(`#${id}`).forEach(el => {
+    let box = el.closest(".conf-box");
+    if (!box) return;
+    if (value > 0) box.classList.add("active");
+    else box.classList.remove("active");
+  });
+}
+
+
+/* ============================================================
+   7-LEVEL LOGIK (0–178 %)
+   ============================================================ */
+function getLevelData(total) {
+
+  if (total < 45) {
+    return { label: "❌ No Trade",   class: "lvl0", color: "#ff3333" };
+  }
+  if (total < 90) {
+    return { label: "⚠️ Weak",       class: "lvl1", color: "#ff884d" };
+  }
+  if (total < 135) {
+    return { label: "🟡 Moderate",   class: "lvl2", color: "#ffdd55" };
+  }
+  if (total < 150) {
+    return { label: "🟢 Good",        class: "lvl3", color: "#44ff88" };
+  }
+  if (total < 165) {
+    return { label: "🔵 Strong",      class: "lvl4", color: "#33bbff" };
+  }
+  if (total < 178) {
+    return { label: "🟣 High Prob.",  class: "lvl5", color: "#bb55ff" };
+  }
+
+  return { label: "💎 Premium",       class: "lvl6", color: "#00ffe0" };
+}
+
+
+/* ============================================================
+   🔥 SCORE BERECHNUNG
    ============================================================ */
 function updateConfluenceScore() {
 
-    // Reset
-    Object.keys(confGroups).forEach(g => confGroups[g] = 0);
+  // RESET
+  Object.keys(confGroups).forEach(key => confGroups[key] = 0);
 
-    // Checkboxen einsammeln
-    document.querySelectorAll(".conf-check").forEach(box => {
-        if (box.checked) {
-            const pts = Number(box.dataset.points || 0);
-            const g1 = (box.dataset.group || "").trim();
-            const g2 = (box.dataset.group2 || "").trim();
+  // PUNKTE SAMMELN
+  document.querySelectorAll(".conf-check").forEach(box => {
+    if (!box.checked) return;
 
-            if (g1 && confGroups[g1] !== undefined) confGroups[g1] += pts;
-            if (g2 && confGroups[g2] !== undefined) confGroups[g2] += pts;
-        }
-    });
+    const pts = Number(box.dataset.points || 0);
+    const g1 = box.dataset.group;
+    const g2 = box.dataset.group2;
 
-    // Summary Update
-    document.getElementById("sum_weekly").textContent   = confGroups.weekly + "%";
-    document.getElementById("sum_daily").textContent    = confGroups.daily + "%";
-    document.getElementById("sum_h4").textContent       = confGroups.h4 + "%";
-    document.getElementById("sum_intraday").textContent = confGroups.intraday + "%";
-    document.getElementById("sum_lower").textContent    = confGroups.lower + "%";
-    document.getElementById("sum_entry").textContent    = confGroups.entry + "%";
+    if (g1 && confGroups[g1] !== undefined) confGroups[g1] += pts;
+    if (g2 && confGroups[g2] !== undefined) confGroups[g2] += pts;
+  });
 
-    toggleActiveBox("sum_weekly",   confGroups.weekly);
-    toggleActiveBox("sum_daily",    confGroups.daily);
-    toggleActiveBox("sum_h4",       confGroups.h4);
-    toggleActiveBox("sum_intraday", confGroups.intraday);
-    toggleActiveBox("sum_lower",    confGroups.lower);
-    toggleActiveBox("sum_entry",    confGroups.entry);
+  // SUMMARY OBEN
+  setAll("sum_weekly",    confGroups.weekly + "%");
+  setAll("sum_daily",     confGroups.daily + "%");
+  setAll("sum_h4",        confGroups.h4 + "%");
+  setAll("sum_intraday",  confGroups.intraday + "%");
+  setAll("sum_lower",     confGroups.lower + "%");
+  setAll("sum_entry",     confGroups.entry + "%");
 
-    // Untergruppen-Summe
-    document.querySelectorAll(".conf-acc-item").forEach(item => {
-        const accId = item.querySelector(".conf-acc-header").dataset.target;
-        const body = document.getElementById(accId);
-        const sumEl = document.getElementById(accId + "_sum");
-        if (!body || !sumEl) return;
+  toggleActiveBox("sum_weekly",   confGroups.weekly);
+  toggleActiveBox("sum_daily",    confGroups.daily);
+  toggleActiveBox("sum_h4",       confGroups.h4);
+  toggleActiveBox("sum_intraday", confGroups.intraday);
+  toggleActiveBox("sum_lower",    confGroups.lower);
+  toggleActiveBox("sum_entry",    confGroups.entry);
 
-        let sum = 0;
-        body.querySelectorAll(".conf-check").forEach(box => {
-            if (box.checked) sum += Number(box.dataset.points || 0);
-        });
+  // Pflichtbedingungen
+  const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
+  const aoiTotal  = confGroups.aoi;
 
-        sumEl.textContent = sum + "%";
-    });
+  const scoreBox   = document.getElementById("confTotalBox");
+  const totalValue = document.getElementById("confTotalValue");
+  const totalText  = document.getElementById("confTotalText");
 
-    // Score Elemente
-    const scoreBox   = document.getElementById("confTotalBox");
-    const totalValue = document.getElementById("confTotalValue");
-    const totalText  = document.getElementById("confTotalText");
+  scoreBox.classList.remove("lvl0","lvl1","lvl2","lvl3","lvl4","lvl5","lvl6","glow-error");
 
-    scoreBox.classList.remove("glow-low", "glow-moderate", "glow-valid", "glow-strong", "glow-error");
+  // BIAS Pflicht
+  if (biasTotal === 0) {
+    totalValue.textContent = "❌";
+    totalText.textContent  = "Missing Bias";
+    totalValue.style.color = "#ff5050";
+    scoreBox.classList.add("glow-error");
+    return;
+  }
 
-    /* ----------------------------------------
-       🔥 Pflichtlogik – Bias → AOI
-       ---------------------------------------- */
+  // AOI Pflicht
+  if (aoiTotal === 0) {
+    totalValue.textContent = "❌";
+    totalText.textContent  = "Missing AOI";
+    totalValue.style.color = "#ff5050";
+    scoreBox.classList.add("glow-error");
+    return;
+  }
 
-    const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
-    const aoiTotal = confGroups.aoi;
+  /* ============================================================
+     TOTAL SCORE (AOI zählt NICHT zum Score!)
+     ============================================================ */
+  let total =
+    confGroups.weekly +
+    confGroups.daily +
+    confGroups.h4 +
+    confGroups.intraday +
+    confGroups.lower +
+    confGroups.entry;
 
-    // 1. BIAS Pflicht
-    if (biasTotal === 0) {
-        scoreBox.classList.add("glow-error");
-        totalValue.textContent = "❌";
-        totalText.textContent  = "Missing Bias";
-        return;
-    }
+  // Unser echtes Maximum ist ~178 % (deine Kriterien)
+  if (total > 178) total = 178;
 
-    // 2. AOI Pflicht
-    if (aoiTotal === 0) {
-        scoreBox.classList.add("glow-error");
-        totalValue.textContent = "❌";
-        totalText.textContent  = "Missing AOI";
-        return;
-    }
+  totalValue.textContent = total + "%";
 
-    // Normaler Score
-    let total = Object.values(confGroups).reduce((a, b) => a + b, 0);
-    if (total > 135) total = 135;
+  // Level bestimmen
+  const L = getLevelData(total);
 
-    totalValue.textContent = total + "%";
-
-    if (total < 40) {
-        totalText.textContent = "Low Confluence";
-        scoreBox.classList.add("glow-low");
-    }
-    else if (total < 80) {
-        totalText.textContent = "Moderate Confluence";
-        scoreBox.classList.add("glow-moderate");
-    }
-    else if (total < 110) {
-        totalText.textContent = "Valid Confluence";
-        scoreBox.classList.add("glow-valid");
-    }
-    else {
-        totalText.textContent = "Strong Confluence";
-        scoreBox.classList.add("glow-strong");
-    }
+  scoreBox.classList.add(L.class);
+  totalValue.style.color = L.color;
+  totalText.textContent = L.label;
 }
 
+
+
+
 /* ============================================================
-   🔥 INIT (Final)
+   INIT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
-
-    // Alle Checkboxen/Radios triggern Score
-    document.querySelectorAll(".conf-check").forEach(b => {
-        b.addEventListener("change", updateConfluenceScore);
-    });
-
-    // Accordion öffnen/schließen
-    document.querySelectorAll(".conf-acc-header").forEach(header => {
-        header.addEventListener("click", () => {
-            header.parentElement.classList.toggle("open");
-        });
-    });
-
-    // Erste Berechnung nach Laden
-    updateConfluenceScore();
+  document.querySelectorAll(".conf-check").forEach(b =>
+    b.addEventListener("change", updateConfluenceScore)
+  );
+  updateConfluenceScore();
 });
