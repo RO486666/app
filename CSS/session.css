@@ -1,144 +1,309 @@
+/* =========================================================
+   🧱 Session Details Panel – Obsidian Carbon 2.0
+   Clean • Nuclear Glow • High Readability
+   ========================================================= */
+
+/* GLOBAL ROOT COLORS */
+:root {
+  --carbon-bg: #060608;
+  --carbon-panel: #0a0a0c;
+  --carbon-border: #212126;
+  --carbon-light: rgba(255,255,255,0.06);
+  --carbon-text: #ccc;
+  --carbon-sub: #888;
+  --carbon-fade: rgba(255,255,255,0.03);
+
+  /* Session Farbe kommt per JS als --> --box-color */
+}
+
+/* ---------------------------------------------------------
+   1) Header – Matte Carbon Plate mit Laser Cut Border
+   --------------------------------------------------------- */
+.session-details-header {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: #fff;
+
+  padding: 16px 20px;
+  margin-bottom: 18px;
+
+  background-color: var(--carbon-panel);
+  background-image: repeating-linear-gradient(
+      45deg,
+      #0f0f12 0 2px,
+      #141419 2px 4px
+  );
+
+  border-bottom: 1px solid var(--carbon-border);
+  box-shadow:
+      inset 0 -2px 4px rgba(0,0,0,0.4),
+      0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* ---------------------------------------------------------
+   2) Session Box – Deep Recessed Slot • Soft Glow
+   --------------------------------------------------------- */
+.session-box-clean {
+  position: relative;
+  margin: 0 0 15px 0;
+  padding: 18px 16px;
+
+  border-radius: 18px;
+  background: var(--carbon-bg);
+
+  border-left: 3px solid var(--box-color);
+
+  /* Mehrdimensionale Tiefe */
+  box-shadow:
+      inset 2px 2px 6px rgba(0,0,0,0.85),
+      inset -2px -2px 4px rgba(255,255,255,0.06),
+      0 4px 10px rgba(0,0,0,0.45);
+
+  /* Subtiler Glow */
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--box-color), transparent 93%) 0%,
+      transparent 100%
+  );
+
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.session-box-clean:hover {
+  transform: translateX(1px);
+  box-shadow:
+      inset 2px 2px 6px rgba(0,0,0,0.95),
+      inset 0 0 25px color-mix(in srgb, var(--box-color), transparent 90%),
+      0 4px 12px rgba(0,0,0,0.55);
+}
+
+/* ---------------------------------------------------------
+   3) Titel – Glowing Engraved Label
+   --------------------------------------------------------- */
+.session-title {
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+
+  margin-bottom: 12px;
+
+  color: var(--box-color);
+  text-shadow:
+      0 0 6px color-mix(in srgb, var(--box-color), transparent 50%),
+      0 0 12px color-mix(in srgb, var(--box-color), transparent 70%);
+}
+
+/* ---------------------------------------------------------
+   4) Meta Grid – Terminal Style (Consolas)
+   --------------------------------------------------------- */
+.session-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+
+  margin-bottom: 10px;
+
+  font-family: Consolas, monospace;
+  font-size: 15px;
+  color: var(--carbon-sub);
+}
+
+.session-row strong {
+  color: var(--carbon-text);
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------
+   5) Info Text – Clean Divider
+   --------------------------------------------------------- */
+.session-info-text {
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.55;
+
+  padding-top: 10px;
+  margin-top: 8px;
+
+  border-top: 1px solid var(--carbon-light);
+}
+
+/* ---------------------------------------------------------
+   6) Wochentage
+   --------------------------------------------------------- */
+.session-weekdays {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--carbon-light);
+}
+
+.session-weekday-row {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 15px;
+  margin-bottom: 5px;
+
+  color: var(--carbon-sub);
+}
+
+.session-weekday-row strong {
+  color: var(--box-color);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   7) Leerer Zustand
+   --------------------------------------------------------- */
+.session-empty {
+  text-align: center;
+  padding: 20px 16px;
+
+  color: #666;
+  font-style: italic;
+
+  background: var(--carbon-fade);
+  border: 1px dashed var(--carbon-border);
+  border-radius: 10px;
+}
+
+/* ---------------------------------------------------------
+   8) Nächste Session
+   --------------------------------------------------------- */
+.session-next {
+  margin: 20px 15px 10px 15px;
+  padding: 12px;
+
+  background: rgba(0,0,0,0.35);
+  border-radius: 6px;
+  text-align: center;
+
+  color: var(--carbon-sub);
+  border: 1px solid #1d1d1f;
+
+  font-size: 18px;
+}
+
+.next-name {
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 
 /* =========================================================
-   🕒 Session-Text Anzeige (Carbon Fiber Glow - Refined)
-   ======================================================== */
+   🕒 Session-Text Anzeige (Mit "Core Glow" Animation)
+   ========================================================= */
 #sessionText {
-  --cf-dark: #111;
-  --cf-mid: #1a1a1a;
-  --cf-light: #222;
+  /* HIER FARBE ANPASSEN (Dein Gelb aus dem Screenshot oder Cyan) */
+  --glow-color: var(--session-accent, #00f3ff); 
+  --cf-dark: #0a0a0c;
+  --cf-mid: #141418;
 
   position: relative;
   margin: 16px 0;
   padding: 18px 24px;
   text-align: center;
-  font-size: clamp(16px, 5vw, 20px);
-  font-weight: 700;
-  /* System-Fonts sind okay, aber wir glätten sie für 'High-End' Look */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  -webkit-font-smoothing: antialiased; 
-  -moz-osx-font-smoothing: grayscale;
-
+  
+  /* Typo */
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: clamp(14px, 4vw, 16px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  
   color: var(--session-text-color, #fff);
-  letter-spacing: 1px; /* Etwas breiter wirkt technischer */
   user-select: none;
   cursor: pointer;
-  border-radius: 14px; /* Leicht runder */
-  
-  /* Deine Variable bleibt erhalten */
-  border: 2px solid var(--session-border, #00ffcc);
-  z-index: 5;
+  border-radius: 8px;
+  border: none;
 
-  /* OPTIK UPDATE: 
-     Wir legen einen "Glanz" (erster Gradient) über deine Carbon-Textur.
-     Dadurch wirkt es wie Carbon unter Glas/Lack.
-  */
+  /* HINTERGRUND-MAGIE */
   background: 
-    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%),
-    repeating-linear-gradient(45deg,
-      var(--cf-dark) 0 6px,
-      var(--cf-mid) 6px 12px),
-    repeating-linear-gradient(-45deg,
-      var(--cf-dark) 0 6px,
-      var(--cf-mid) 6px 12px);
-      
-  background-blend-mode: overlay, multiply, normal;
-  background-color: var(--cf-light);
-  
-  /* Falls der Hintergrund darunter liegt, wirkt das Blur modern */
-  backdrop-filter: blur(4px);
-
-  /* Deine Variablen bleiben exakt erhalten + kleiner Inset für 3D-Kante */
-  box-shadow:
-    0 0 12px var(--session-box-shadow1, rgba(255,255,255,0.08)),
-    inset 0 1px 1px rgba(255,255,255,0.15), /* Lichtkante oben */
-    inset 0 0 10px var(--session-box-shadow2, rgba(255,255,255,0.05)),
-    0 0 18px var(--session-box-shadow3, rgba(255,255,255,0.07));
-
-  text-shadow:
-    0 0 2px var(--session-text-shadow1, rgba(255,255,255,0.3)),
-    0 0 6px var(--session-text-shadow2, rgba(255,255,255,0.15));
-
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              box-shadow 0.25s ease, 
-              border-color 0.25s ease;
-  will-change: transform, box-shadow;
-}
-
-#sessionText:hover,
-#sessionText:focus-visible {
-  transform: scale(1.02) translateY(-1px); /* Leichtes Anheben */
-  opacity: 1; /* Volle Sichtbarkeit statt 0.95 */
-  
-  /* Deine Variablen intensiviert */
-  box-shadow:
-    0 4px 20px var(--session-box-shadow1, rgba(255,255,255,0.15)),
-    inset 0 0 14px var(--session-box-shadow2, rgba(255,255,255,0.07)),
-    0 0 32px var(--session-box-shadow3, rgba(255,255,255,0.12));
+    /* 1. Das Carbon-Muster (Overlay) */
+    repeating-linear-gradient(45deg, var(--cf-dark) 0 4px, var(--cf-mid) 4px 8px),
+    repeating-linear-gradient(-45deg, var(--cf-dark) 0 4px, var(--cf-mid) 4px 8px),
+    /* 2. Der GLOW von UNTEN (Radial Gradient) */
+    radial-gradient(circle at center, rgba(0, 243, 255, 0.15) 0%, transparent 70%);
     
-  /* Outline ersetzen wir durch Border-Color Helligkeit (edler) 
-     oder behalten deine Logik bei, falls Outline zwingend ist.
-     Hier: Deine Border-Logik aber etwas heller. */
-  border-color: var(--session-border, #00ffcc); 
+  background-blend-mode: multiply, multiply, normal; /* Wichtig für die Mischung */
+  background-color: var(--cf-dark);
+
+  /* Schatten & Glow-Animation starten */
+  box-shadow: 
+    inset 3px 3px 8px rgba(0,0,0, 0.9), 
+    inset 0px 0px 2px rgba(255,255,255, 0.1),
+    0 2px 4px rgba(0,0,0,0.5);
+
+  /* Die Animation hinzufügen */
+  animation: obsidianPulse 4s infinite ease-in-out;
   
-  /* Text glüht etwas stärker beim Hover */
-  text-shadow:
-    0 0 4px var(--session-text-shadow1, rgba(255,255,255,0.5)),
-    0 0 12px var(--session-text-shadow2, rgba(255,255,255,0.3));
+  text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* ♿ Bewegung reduzieren */
-@media (prefers-reduced-motion: reduce) {
-  #sessionText {
-    transition: none !important;
-    transform: none !important;
+/* HOVER: Energie-Level erhöhen */
+#sessionText:hover {
+  color: #fff;
+  background-color: #0f0f12; /* Hintergrund leicht aufhellen */
+  
+  /* Stärkerer Inner Glow */
+  box-shadow: 
+    inset 2px 2px 5px rgba(0,0,0, 1), 
+    inset 0 0 5px var(--glow-color), /* HIER ist der starke Box-Glow */
+    0 0 15px var(--glow-color);       /* Leichter Schein nach außen */
+    
+  text-shadow: 
+    0 0 10px var(--glow-color),
+    0 0 20px var(--glow-color);
+    
+  transform: translateY(1px);
+  animation: none; /* Beim Hover statischer High-Energy State */
+}
+
+/* ACTIVE */
+#sessionText:active {
+  box-shadow: inset 4px 4px 15px rgba(0,0,0, 1);
+  transform: translateY(2px);
+  opacity: 0.9;
+}
+
+/* ANIMATION: Subtil & Smooth (Deine Werte, technisch korrigiert) */
+@keyframes obsidianPulse {
+  0% {
+    box-shadow: 
+      /* Tiefe (Bleibt gleich) */
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* Deine Start-Werte: Weicher Glow */
+      inset 0 0 2px var(--glow-color), 
+      0 0 15px var(--glow-color);
+  }
+  50% {
+    box-shadow: 
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* HIER REPARIERT: Statt -1px nutzen wir 2px. 
+         Der Glow zieht sich etwas zusammen (fokussiert sich), 
+         wird aber nicht ungültig. */
+      inset 0 0 2px var(--glow-color), 
+      
+      /* Außen etwas weiter, wie von dir gewünscht */
+      0 0 20px var(--glow-color);
+  }
+  100% {
+    box-shadow: 
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* Zurück zum weichen Start */
+      inset 0 0 2px var(--glow-color), 
+      0 0 15px var(--glow-color);
   }
 }
 
-/* =========================================================
-   📋 Session-Details Box
-   ========================================================= */
-.session-details-box {
-  display: none;
-  background: rgba(10, 10, 10, 0.85);
-  padding: 20px;
-  margin: 15px 20px;
-  border-radius: 14px;
-  font-size: 15px;
-  color: #eee;
-  text-align: left;
-  line-height: 1.7;
-  border-left: 4px solid #00ffcc;
-  box-shadow:
-    0 0 12px rgba(0, 255, 255, 0.2),
-    0 4px 20px rgba(0, 0, 0, 0.6),
-    inset 0 0 12px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(4px);
-  transition: all 0.3s ease-in-out;
-}
-
-.session-details-box strong {
-  color: #0ff;
-  text-shadow: 0 0 5px #0ff;
-  font-size: 17px;
-}
-
-.session-details-box ul {
-  padding-left: 20px;
-  margin: 8px 0;
-  list-style-type: disc;
-}
-
-.session-details-box li {
-  margin-bottom: 4px;
-}
-
-/* Dynamische Farben pro Session */
-.session-sydney { box-shadow: 0 0 10px #3388ff66; border-color: #3388ff55; }
-.session-tokyo  { box-shadow: 0 0 10px #00aaff66; border-color: #00aaff55; }
-.session-london { box-shadow: 0 0 10px #ffd70066; border-color: #ffd70055; }
-.session-ny     { box-shadow: 0 0 10px #ff450066; border-color: #ff450055; }
-.session-killzone { box-shadow: 0 0 10px #ccff0066; border-color: #ccff0055; }
-.session-crypto { box-shadow: 0 0 10px #9900ff66; border-color: #9900ff55; }
 
 /* =========================================================
    📈 Progress Bar – Dark "Glass & Carbon" (rechteckig)
@@ -280,137 +445,105 @@
 }
 
 /* =========================================================
-   📅 Tageszusammenfassung & Details
+   📅 Tageszusammenfassung & Details (OBSIDIAN VAULT STYLE)
    ========================================================= */
 
-   /*🌑 Vars (industrial gold)*/
- 
-:root{
-  --bg: #111214;           /* dunkler Body */
-  --fg: #f6da7a;           /* lesbares Gold */
-  --accent: #d4af37;       /* Industrial Gold */
-  --shraff-alpha: 0.08;    /* Linien-Deckkraft */
-  --gap: 8px;              /* Abstand Crosshatch */
-  --border: #b8901f;       /* Rahmenfarbe */
-  --panel: #151618;        /* Paneel-Grund */
-  --panel2:#121315;        /* Paneel-2 */
+/* Wir nutzen deine bestehenden Variablen oder Fallbacks */
+:root {
+  --obsidian-bg: #08080a;
+  --obsidian-slot: #050505;
+  --neon-default: #00ffcc; /* Fallback Neon */
 }
 
-/* Page baseline */
-html,body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  line-height:1.65;
-}
-
-/* ================
-   ✨ Crosshatch
-   ================ */
-.day-summary,
-.day-details{
+/* 1. Die Zusammenfassung (Der "Button") */
+.day-summary {
   position: relative;
-  border: 1px solid var(--border);
-  background: linear-gradient(135deg, var(--panel), var(--panel2));
-  color: var(--fg);
-  border-radius: 0 !important; /* harte Kanten */
-  overflow: hidden; /* für ::before */
-  isolation: isolate; /* sauberer Layer-Stack */
-}
-
-/* Schraffur-Layer */
-.day-summary::before,
-.day-details::before{
-  content:"";
-  position:absolute; inset:0;
-  pointer-events:none;
- 
-  transform: translate3d(0,0,0);
-  transition: opacity 160ms ease, transform 160ms ease;
-  z-index:0;
-}
-
-/* Goldene Oberkante als Industrial-Detail */
-.day-summary{
-  border-top: 2px solid var(--accent);
-  color: var(--fg);
-  font-size: clamp(12px, 3.2vw, 16px);
   cursor: pointer;
-  padding: 14px 18px;
-  text-align: center;
-  text-shadow: 0 0 1px rgba(0,0,0,0.35);
-  will-change: transform; /* nur das Element selbst */
-  transition: transform 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
-  box-shadow: 0 0 0 0 transparent;
-}
-
-/* Hover/Focus: dezenter Lift + drift der Schraffur */
-.day-summary:hover,
-.day-summary:focus-visible{
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-  outline: 2px solid #ffdf66; /* klare Focus-Outline */
-  outline-offset: 3px;
-}
-.day-summary:hover::before,
-.day-summary:focus-visible::before{
-  transform: translate3d(3px,-3px,0); /* subtiler Drift */
-  opacity: 1;
-}
-
-/* Details: flächiger, mit Innenrahmen */
-.day-details{
-  margin: 12px 16px;
-  padding: 14px 16px;
-  font-size: clamp(12px, 2.8vw, 15px);
-  text-align: left;
-  user-select: none;
-  border-left: 3px solid var(--accent);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.03),
-    0 0 32px rgba(0,0,0,0.35);
-  transition: box-shadow 160ms ease, outline-color 160ms ease;
-}
-.day-details:hover{
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.06),
-    0 0 36px rgba(0,0,0,0.4);
-}
-.day-details:focus-visible{
-  outline: 2px solid #ffdf66;
-  outline-offset: 3px;
-}
-
-/* A11y: starke Kontraste auf Links/Strong */
-.day-details a{ color:#ffe08b; text-underline-offset: 3px; }
-.day-details strong{ color:#ffe08b; }
-
-/* Motion-Preferences */
-@media (prefers-reduced-motion: reduce){
-  .day-summary, .day-details { transition: none !important; }
-  .day-summary::before, .day-details::before { transition: none !important; }
-}
-
-/* Small layout helper for demo */
-.wrapper{
-  max-width: 720px;
-  margin: 28px auto;
-  padding: 0 14px 40px;
-}
-h1{
-  font-size: clamp(18px, 4.5vw, 24px);
-  margin: 10px 0 14px;
-  color: #ffe08b;
-  letter-spacing: .3px;
+  padding: 16px 20px;
+  margin-bottom: 5px; /* Kleiner Abstand zum Detail */
+  
+  /* OBSIDIAN BASIS: Carbon Dark */
+  background-color: var(--obsidian-bg);
+  background-image: repeating-linear-gradient(45deg, #0f0f12 0 2px, #16161a 2px 4px);
+  
+  /* TYPO: Tech Look */
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
   font-weight: 700;
-}
-.sub{
-  color:#c9b06a; opacity:.9; margin: 0 0 14px;
-  font-size: clamp(12px, 2.6vw, 14px);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #e0e0e0;
+  text-align: center;
+  
+  /* SLOT OPTIK: Eingelassen */
+  border: none;
+  border-left: 3px solid var(--box-color, var(--neon-default)); /* Neon Indikator links */
+  
+  box-shadow: 
+    inset 0 0 15px rgba(0,0,0, 0.8),         /* Tiefe */
+    inset 1px 1px 0 rgba(255,255,255, 0.05), /* Lichtkante oben */
+    0 4px 10px rgba(0,0,0, 0.5);             /* Schatten außen */
+
+  transition: all 0.2s ease;
 }
 
+/* Hover: Neon wird aktiv */
+.day-summary:hover {
+  color: #fff;
+  background-color: #0f0f12;
+  
+  /* Glow verstärken */
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0, 0.9),
+    inset 0 0 10px color-mix(in srgb, var(--box-color, var(--neon-default)), transparent 90%),
+    0 0 15px color-mix(in srgb, var(--box-color, var(--neon-default)), transparent 80%);
+    
+  text-shadow: 0 0 8px var(--box-color, var(--neon-default));
+}
 
+/* 2. Die Details (Der "Inhalt" der aufklappt) */
+.day-details {
+  position: relative;
+  margin: 0 10px 15px 10px; /* Leicht eingerückt */
+  padding: 20px;
+  
+  /* TIEFES SCHWARZ (Recessed) */
+  background: var(--obsidian-slot);
+  
+  /* Slot-Schatten (Stark nach innen) */
+  box-shadow: 
+    inset 3px 3px 8px rgba(0,0,0, 0.95),
+    inset -1px -1px 2px rgba(255,255,255, 0.05);
+    
+  border-radius: 0 0 6px 6px;
+  border-left: 1px solid rgba(255,255,255,0.05); /* Feine Linie links */
+  
+  /* Typo im Content */
+  font-size: 13px;
+  line-height: 1.6;
+  color: #aaa;
+}
+
+/* Starke Elemente im Text (Hervorhebung) */
+.day-details strong {
+  color: var(--box-color, var(--neon-default));
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Links im Text */
+.day-details a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--box-color, var(--neon-default));
+  transition: color 0.2s;
+}
+
+.day-details a:hover {
+  color: var(--box-color, var(--neon-default));
+  text-shadow: 0 0 5px var(--box-color, var(--neon-default));
+}
 
 /* =========================================================
    📅 Crypto Session – Optimiert
