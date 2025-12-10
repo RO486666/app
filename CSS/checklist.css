@@ -67,6 +67,145 @@
 }
 
 
+/* ============================================================
+   7-LEVEL DISPLAY STYLES FOR getLevelData() 
+   ============================================================ */
+
+/* Basis: verhindert Style-Konflikte */
+.conf-total-box.lvl0,
+.conf-total-box.lvl1,
+.conf-total-box.lvl2,
+.conf-total-box.lvl3,
+.conf-total-box.lvl4,
+.conf-total-box.lvl5,
+.conf-total-box.lvl6 {
+  transition: all 0.35s ease, box-shadow 0.4s ease;
+}
+
+/* ============================================================
+   LEVEL 0 – ❌ NO TRADE
+   ============================================================ */
+.conf-total-box.lvl0 {
+  border-color: rgba(255, 60, 60, 0.35);
+  background: linear-gradient(180deg, rgba(255,0,0,0.06), rgba(255,0,0,0.12));
+  box-shadow: 0 0 18px rgba(255,0,0,0.22);
+}
+.conf-total-box.lvl0 .conf-total-value {
+  color: #ff3b3b;
+  text-shadow: 0 0 14px rgba(255,0,0,0.5);
+}
+.conf-total-box.lvl0 .conf-total-text {
+  color: #ff9999;
+}
+
+
+/* ============================================================
+   LEVEL 1 – ⚠️ WACKLIG
+   ============================================================ */
+.conf-total-box.lvl1 {
+  border-color: rgba(255, 155, 60, 0.35);
+  background: linear-gradient(180deg, rgba(255,150,0,0.08), rgba(255,150,0,0.14));
+  box-shadow: 0 0 18px rgba(255,150,0,0.22);
+}
+.conf-total-box.lvl1 .conf-total-value {
+  color: #ffae42;
+  text-shadow: 0 0 14px rgba(255,150,0,0.5);
+}
+.conf-total-box.lvl1 .conf-total-text {
+  color: #ffd8a8;
+}
+
+
+/* ============================================================
+   LEVEL 2 – 🟡 VALID
+   ============================================================ */
+.conf-total-box.lvl2 {
+  border-color: rgba(255, 220, 80, 0.35);
+  background: linear-gradient(180deg, rgba(255,220,0,0.08), rgba(255,220,0,0.16));
+  box-shadow: 0 0 18px rgba(255,220,0,0.22);
+}
+.conf-total-box.lvl2 .conf-total-value {
+  color: #ffe066;
+  text-shadow: 0 0 14px rgba(255,220,0,0.5);
+}
+.conf-total-box.lvl2 .conf-total-text {
+  color: #fff3bf;
+}
+
+
+/* ============================================================
+   LEVEL 3 – 🟢 GUTER TRADE
+   ============================================================ */
+.conf-total-box.lvl3 {
+  border-color: rgba(0,255,150,0.35);
+  background: linear-gradient(180deg, rgba(0,255,153,0.09), rgba(0,255,153,0.16));
+  box-shadow: 0 0 22px rgba(0,255,153,0.28);
+}
+.conf-total-box.lvl3 .conf-total-value {
+  color: #00ff9a;
+  text-shadow: 0 0 14px rgba(0,255,150,0.5);
+}
+.conf-total-box.lvl3 .conf-total-text {
+  color: #b5ffe4;
+}
+
+
+/* ============================================================
+   LEVEL 4 – 🔵 SEHR GUT
+   ============================================================ */
+.conf-total-box.lvl4 {
+  border-color: rgba(60,170,255,0.45);
+  background: linear-gradient(180deg, rgba(60,170,255,0.10), rgba(60,170,255,0.18));
+  box-shadow: 0 0 24px rgba(60,170,255,0.32);
+}
+.conf-total-box.lvl4 .conf-total-value {
+  color: #33bbff;
+  text-shadow: 0 0 15px rgba(60,170,255,0.55);
+}
+.conf-total-box.lvl4 .conf-total-text {
+  color: #cde9ff;
+}
+
+
+/* ============================================================
+   LEVEL 5 – 🟣 HIGH PROBABILITY
+   ============================================================ */
+.conf-total-box.lvl5 {
+  border-color: rgba(170, 80, 255, 0.45);
+  background: linear-gradient(180deg, rgba(170,80,255,0.10), rgba(170,80,255,0.20));
+  box-shadow: 0 0 26px rgba(170,80,255,0.35);
+}
+.conf-total-box.lvl5 .conf-total-value {
+  color: #bb55ff;
+  text-shadow: 0 0 16px rgba(170,80,255,0.55);
+}
+.conf-total-box.lvl5 .conf-total-text {
+  color: #e9d1ff;
+}
+
+
+/* ============================================================
+   LEVEL 6 – 💎 PERFECT TRADE (170%)
+   ============================================================ */
+.conf-total-box.lvl6 {
+  border-color: rgba(0, 255, 224, 0.55);
+  background:
+    linear-gradient(180deg, rgba(0,255,224,0.14), rgba(0,255,224,0.22)),
+    radial-gradient(circle at 50% 0%, rgba(0,255,224,0.25), transparent 70%);
+  box-shadow:
+    0 0 34px rgba(0,255,224,0.38),
+    0 0 18px rgba(0,255,224,0.48);
+}
+.conf-total-box.lvl6 .conf-total-value {
+  color: #00ffe0;
+  text-shadow: 0 0 22px rgba(0,255,224,0.8);
+}
+.conf-total-box.lvl6 .conf-total-text {
+  color: #c8fffa;
+}
+
+
+
 
 /* ============================================================
    SUMMARY BOARD – based on YOUR HTML (ThePerfectTrade Style)
@@ -407,3 +546,91 @@
   }
 }
 
+/* ============================================================
+   💎 FLOATING SCORE – STATIC HUD (Feste Größe)
+   ============================================================ */
+.floating-score {
+  /* --- Positionierung --- */
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%); /* Exakte Mitte */
+  z-index: 9999;
+
+  /* --- 🛑 STATISCHE GRÖSSE (Wichtig!) --- */
+  width: 140px;   /* Feste Breite - wächst nicht */
+  height: 60px;   /* Feste Höhe - wächst nicht */
+  box-sizing: border-box; /* Garantiert, dass Padding die Größe nicht ändert */
+
+  /* --- Inhalt zentrieren --- */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertikal mittig */
+  align-items: center;     /* Horizontal mittig */
+  
+  /* --- Der NEON-Look (Box passt sich der Farbe an) --- */
+  background: rgba(10, 14, 18, 0.9); /* Fast schwarzer Hintergrund für Kontrast */
+  backdrop-filter: blur(8px);
+  
+  /* Die gesamte Box leuchtet in der Farbe */
+  border: 1px solid rgba(0, 255, 160, 0.5); /* Harte Kante */
+  box-shadow: 
+    0 0 15px rgba(0, 255, 160, 0.25), /* Weicher Glow außen */
+    inset 0 0 15px rgba(0, 255, 160, 0.05); /* Innerer Schein */
+
+  /* Animationen */
+  opacity: 1;
+  transition: all 0.3s ease;
+  overflow: hidden; /* Schneidet alles ab, was über die Box hinausgeht */
+}
+
+/* Versteckter Zustand */
+.floating-score.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(20px);
+}
+
+/* ===========================
+   TEXT STYLING
+   =========================== */
+#floatingScoreValue {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  
+  /* Damit lange Zahlen nicht umbrechen */
+  white-space: nowrap; 
+  text-overflow: ellipsis; /* ... falls die Zahl gigantisch wird */
+  max-width: 100%;
+  
+  /* Text Glow passend zur Box */
+  text-shadow: 0 0 10px rgba(0, 255, 160, 0.8);
+}
+
+#floatingScoreLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(0, 255, 160, 0.8); /* Farbe passend zur Box */
+  margin-top: 2px;
+}
+
+/* ============================================================
+   🔥 MOBILE ANPASSUNG
+   ============================================================ */
+@media (max-width: 900px) {
+  .floating-score {
+    bottom: calc(70px + 16px); /* Über der Navi */
+    
+    /* Optional: Mobil etwas kleiner machen, aber immer noch statisch */
+    width: 120px;
+    height: 54px;
+  }
+  
+  #floatingScoreValue {
+    font-size: 20px;
+  }
+}
