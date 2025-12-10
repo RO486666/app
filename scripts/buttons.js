@@ -88,16 +88,10 @@ function buildSessionDetails() {
   const minutes = getMinutesNow();
   const activeSessions = getCurrentSessions(minutes);
 
+  // Header-Bereich
   let fullInfo = `
-    <div style="
-      font-size: 18px;
-      font-weight: bold;
-      padding: 10px 15px;
-      background: linear-gradient(to right, #222, #111);
-      border-bottom: 1px solid #333;
-      margin-bottom: 10px;
-      letter-spacing: 1px;">
-      🔹 Aktive Sessions
+    <div class="session-details-header">
+      🔹 AKTIVE SESSIONS
     </div>
   `;
 
@@ -105,11 +99,14 @@ function buildSessionDetails() {
     activeSessions.forEach((s) => {
       let start = s.start;
       let end = s.end;
+
       if (start > end) end += 1440;
       let nowMins = minutes;
       if (nowMins < start) nowMins += 1440;
+
       const timeLeft = end - nowMins;
 
+      // Icons zuweisen
       const label = s.name.includes("Killzone") ? "🔥" :
                     s.name.includes("New York") ? "🇺🇸" :
                     s.name.includes("London") ? "💷" :
@@ -117,50 +114,50 @@ function buildSessionDetails() {
                     s.name.includes("Sydney") ? "🌙" :
                     s.name.includes("Crypto") ? "🪙" : "🟡";
 
-      const color = sessionColors[s.name] || "#0cf";
-      const glow = `0 0 5px ${color}, 0 0 12px ${hexToRgba(color, 0.5)}`;
+      // 🎨 Farbe holen (Wichtig für das CSS Design!)
+      // Falls 'sessionColors' nicht existiert, nutzen wir Türkis als Fallback
+      const sColor = (typeof sessionColors !== 'undefined' && sessionColors[s.name]) 
+                     ? sessionColors[s.name] 
+                     : "#00ffcc";
 
+      // Wochentage aufbauen
       let weekDaysHtml = "";
       if (s.weekDaysInfo) {
-        weekDaysHtml = "<div style='margin-top:8px;'>";
-        s.weekDaysInfo.forEach(({ day, text }) => {
-          weekDaysHtml += `
-            <div style="margin-bottom:4px;">
-              <strong style="color:${color}; text-shadow:${glow};">${day}:</strong>
-              <span style="color:#ccc;"> ${text}</span>
-            </div>
-          `;
-        });
-        weekDaysHtml += "</div>";
+        weekDaysHtml = `
+          <div class="session-weekdays">
+            ${s.weekDaysInfo.map(({ day, text }) => `
+              <div class="session-weekday-row">
+                <strong>${day}:</strong> <span>${text}</span>
+              </div>
+            `).join("")}
+          </div>
+        `;
       }
 
+      // HTML generieren (Hier wird die Farbe als Variable übergeben)
       fullInfo += `
-        <div style="
-          border-left: 4px solid ${color};
-          padding: 12px 16px;
-          margin: 12px 15px;
-          background: rgba(255,255,255,0.02);
-          border-radius: 10px;
-          box-shadow: inset 0 0 6px ${hexToRgba(color, 0.3)};
-          font-size: 14px;
-          line-height: 1.6;
-        ">
-          <div style="font-size: 16px; font-weight: bold; color: ${color}; text-shadow: ${glow};">
+        <div class="session-box-clean" style="--box-color: ${sColor}">
+          <div class="session-title">
             ${label} ${s.name}
           </div>
-          ⏱️ Noch <strong style="color:${color}; text-shadow:${glow};">${formatHM(timeLeft)}</strong><br>
-          📅 Start: <strong style="color:${color}; text-shadow:${glow};">${formatHM(s.start)} Uhr</strong><br>
-          🕓 Ende: <strong style="color:${color}; text-shadow:${glow};">${formatHM(s.end)} Uhr</strong><br>
-          ℹ️ <span style="color:${color}; text-shadow:${glow};">${s.info}</span>
+
+          <div class="session-meta-grid">
+             <div class="session-row">⏱️ Noch <strong>${formatHM(timeLeft)}</strong></div>
+             <div class="session-row">📅 Start: <strong>${formatHM(s.start)} Uhr</strong></div>
+             <div class="session-row">🕓 Ende: <strong>${formatHM(s.end)} Uhr</strong></div>
+          </div>
+          
+          <div class="session-info-text">ℹ️ ${s.info}</div>
+
           ${weekDaysHtml}
         </div>
       `;
     });
   } else {
-    fullInfo += `<div style="padding:10px 15px;">⏱️ Aktuell <strong>keine Session aktiv</strong></div>`;
+    fullInfo += `<div class="session-empty">⏱️ Aktuell keine Session aktiv</div>`;
   }
 
-  // 🔜 Nächste Session
+  // Nächste Session Logik
   const futureSessions = sessions
     .map(s => ({
       ...s,
@@ -168,25 +165,16 @@ function buildSessionDetails() {
     }))
     .sort((a, b) => a.startMins - b.startMins);
 
-  const next = futureSessions[0];
-  const minsToNext = next.startMins - minutes;
-  const nextColor = sessionColors[next.name] || "#999";
-  const nextGlow = `0 0 5px ${nextColor}, 0 0 10px ${hexToRgba(nextColor, 0.4)}`;
-
-  fullInfo += `
-    <div style="
-      font-size: 15px;
-      margin: 18px 15px 10px 15px;
-      color: ${nextColor};
-      text-shadow: ${nextGlow};
-    ">
-      🔜 <strong>Nächste:</strong> ${next.name} in <strong>${formatHM(minsToNext)}</strong>
-    </div>
-  `;
-if (activeSessions.length > 0) {
-  applyStatsBoxGlow(activeSessions[0].name);
-}
+  if (futureSessions.length > 0) {
+      const next = futureSessions[0];
+      const minsToNext = next.startMins - minutes;
+    
+      fullInfo += `
+        <div class="session-next">
+          🔜 <strong>Nächste:</strong> <span class="next-name">${next.name}</span> in ${formatHM(minsToNext)}
+        </div>
+      `;
+  }
 
   sessionDetailsBox.innerHTML = fullInfo;
-  
 }
