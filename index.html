@@ -641,28 +641,30 @@
 
   </div>
   
-  <div class="conf-summary">
-    <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
+<div class="conf-summary">
+  <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
 
-    <div class="conf-summary-grid">
-      <div class="conf-box"><span>Weekly</span><strong id="sum_weekly">0%</strong></div>
-      <div class="conf-box"><span>Daily</span><strong id="sum_daily">0%</strong></div>
-      <div class="conf-box"><span>4H</span><strong id="sum_h4">0%</strong></div>
-      <div class="conf-box"><span>2H / 1H / 30m</span><strong id="sum_intraday">0%</strong></div>
-      <div class="conf-box"><span>Lower TF</span><strong id="sum_lower">0%</strong></div>
-      <div class="conf-box"><span>Entry</span><strong id="sum_entry">0%</strong></div>
-    </div>
-
-    <div id="confTotalBox" class="conf-total-box">
-      <div>Total Overall Score</div>
-      <div id="confTotalValue" class="conf-total-value">0%</div>
-      <div id="confTotalText" class="conf-total-text">Low Confluence</div>
-    </div>
+  <div class="conf-summary-grid">
+    <div class="conf-box"><span>Weekly</span><strong id="sum_weekly">0%</strong></div>
+    <div class="conf-box"><span>Daily</span><strong id="sum_daily">0%</strong></div>
+    <div class="conf-box"><span>4H</span><strong id="sum_h4">0%</strong></div>
+    <div class="conf-box"><span>2H / 1H / 30m</span><strong id="sum_intraday">0%</strong></div>
+    <div class="conf-box"><span>Entry</span><strong id="sum_entry">0%</strong></div>
   </div>
- 
 
-
+  <div id="confTotalBox" class="conf-total-box">
+    <div>Total Overall Score</div>
+    <div id="confTotalValue" class="conf-total-value">0%</div>
+    <div id="confTotalText" class="conf-total-text">Low Confluence</div>
+  </div>
 </div>
+
+<!-- FLOATING SCORE PANEL -->
+<div id="floatingScore" class="floating-score hidden">
+  <span id="floatingScoreValue">0%</span>
+  <span id="floatingScoreLabel">No Trade</span>
+</div>
+
 
 
 
@@ -993,54 +995,29 @@
     🔁 Zurück
   </button>
 </div>
+</section>
 
 
     <!-- ============================================================
          📜 REGELN PANEL
        ============================================================ -->
-    <section id="panel-rules" class="panel hidden">
-     
-        <!-- Toggle-Box -->
-        <div
-          onclick="toggleRules()"
-          style="
-            background: linear-gradient(135deg, #2a0b0b, #1a0000);
-            border: 1px solid #ff3333;
-            border-radius: 6px;
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 16px 20px;
-            text-align: center;
-            box-shadow:
-              0 0 12px rgba(255, 60, 60, 0.8),
-              inset 0 0 12px rgba(255, 0, 0, 0.6);
-            transition: all 0.2s ease-in-out;
-          "
-          onmouseover="this.style.borderColor='#ff5555'; this.style.boxShadow='0 0 20px rgba(255,80,80,1), inset 0 0 14px rgba(255,20,20,0.8)';"
-          onmouseout="this.style.borderColor='#ff3333'; this.style.boxShadow='0 0 12px rgba(255,60,60,0.8), inset 0 0 12px rgba(255,0,0,0.6)';"
-          onfocus="this.style.outline='3px solid #ff6666';"
-          onblur="this.style.outline='none';"
-        >
-          🚀
-          <strong style="color: #ff6666;"
-            >Setup-Regeln anzeigen / ausblenden</strong
-          >
-        </div>
+  <section id="panel-rules" class="panel hidden">
 
-        <div class="rules-fire-wrapper">
-          <div
-            id="rulesBox"
-            class="stats-box"
-            style="display: none; line-height: 1.6;"
-          >
-            <strong>📜 Rules of Rules – Deutsch</strong><br /><br />
+  <!-- Toggle-Box -->
+  <div class="rules-toggle" onclick="toggleRules()">
+    🚀 <strong>Setup-Regeln anzeigen / ausblenden</strong>
+  </div>
 
-            <div style="text-align: right; margin-bottom: 15px;">
-              <button id="switchModeBtn" onclick="switchMode()">
-                🔄 Zu Day-Trading Regeln wechseln
-              </button>
-            </div>
+  <div class="rules-fire-wrapper">
+    <div id="rulesBox" class="stats-box rules-box" style="display:none;">
+      
+      <strong class="rules-title">📜 Rules of Rules – Deutsch</strong><br><br>
+
+      <div class="rules-mode-switch">
+        <button id="switchModeBtn" onclick="switchMode()">
+          🔄 Zu Day-Trading Regeln wechseln
+        </button>
+      </div>
 
             <!-- ========== SWING ========== -->
             <div id="swingRules">
@@ -1358,7 +1335,6 @@
     </section>
 
   </main>
-</div> <!-- /#mainWrapper -->
 
 <!-- ============================================================
      JS IMPORTS (alle deine originalen Scripts)
