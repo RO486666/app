@@ -34,30 +34,30 @@ function toggleActiveBox(id, value) {
 
 
 /* ============================================================
-   7-LEVEL LOGIK (0–178 %)
+   7 LEVEL – DEINE SKALA (0–178)
    ============================================================ */
 function getLevelData(total) {
 
-  if (total < 45) {
-    return { label: "❌ No Trade",   class: "lvl0", color: "#ff3333" };
+  if (total < 33) {
+    return { label: "❌ No Trade", class: "lvl0", color: "#ff3333" };
   }
-  if (total < 90) {
-    return { label: "⚠️ Weak",       class: "lvl1", color: "#ff884d" };
+  if (total < 78) {
+    return { label: "⚠️ Wacklig", class: "lvl1", color: "#ff884d" };
   }
-  if (total < 135) {
-    return { label: "🟡 Moderate",   class: "lvl2", color: "#ffdd55" };
+  if (total < 101) {
+    return { label: "🟡 Valider Entry", class: "lvl2", color: "#ffdd55" };
   }
-  if (total < 150) {
-    return { label: "🟢 Good",        class: "lvl3", color: "#44ff88" };
+  if (total < 127) {
+    return { label: "🟢 Guter Trade", class: "lvl3", color: "#44ff88" };
   }
-  if (total < 165) {
-    return { label: "🔵 Strong",      class: "lvl4", color: "#33bbff" };
+  if (total < 149) {
+    return { label: "🔵 Sehr gut", class: "lvl4", color: "#33bbff" };
   }
-  if (total < 178) {
-    return { label: "🟣 High Prob.",  class: "lvl5", color: "#bb55ff" };
+  if (total < 170) {
+    return { label: "🟣 High Prob.", class: "lvl5", color: "#bb55ff" };
   }
 
-  return { label: "💎 Premium",       class: "lvl6", color: "#00ffe0" };
+  return { label: "💎 Perfect Trade", class: "lvl6", color: "#00ffe0" };
 }
 
 
@@ -69,7 +69,7 @@ function updateConfluenceScore() {
   // RESET
   Object.keys(confGroups).forEach(key => confGroups[key] = 0);
 
-  // PUNKTE SAMMELN
+  // CHECKBOXES AUSLESEN
   document.querySelectorAll(".conf-check").forEach(box => {
     if (!box.checked) return;
 
@@ -96,7 +96,7 @@ function updateConfluenceScore() {
   toggleActiveBox("sum_lower",    confGroups.lower);
   toggleActiveBox("sum_entry",    confGroups.entry);
 
-  // Pflichtbedingungen
+  // PFLICHTEN
   const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
   const aoiTotal  = confGroups.aoi;
 
@@ -104,28 +104,31 @@ function updateConfluenceScore() {
   const totalValue = document.getElementById("confTotalValue");
   const totalText  = document.getElementById("confTotalText");
 
-  scoreBox.classList.remove("lvl0","lvl1","lvl2","lvl3","lvl4","lvl5","lvl6","glow-error");
+  // Alle Klassen resetten
+  scoreBox.className = "conf-total-box";
 
-  // BIAS Pflicht
+  // Pflichtfehler – BIAS
   if (biasTotal === 0) {
     totalValue.textContent = "❌";
     totalText.textContent  = "Missing Bias";
     totalValue.style.color = "#ff5050";
-    scoreBox.classList.add("glow-error");
+
+    syncFloatingScore("❌", "Missing Bias", "#ff5050");
     return;
   }
 
-  // AOI Pflicht
+  // Pflichtfehler – AOI
   if (aoiTotal === 0) {
     totalValue.textContent = "❌";
     totalText.textContent  = "Missing AOI";
     totalValue.style.color = "#ff5050";
-    scoreBox.classList.add("glow-error");
+
+    syncFloatingScore("❌", "Missing AOI", "#ff5050");
     return;
   }
 
   /* ============================================================
-     TOTAL SCORE (AOI zählt NICHT zum Score!)
+     TOTAL SCORE berechnen
      ============================================================ */
   let total =
     confGroups.weekly +
@@ -135,28 +138,68 @@ function updateConfluenceScore() {
     confGroups.lower +
     confGroups.entry;
 
-  // Unser echtes Maximum ist ~178 % (deine Kriterien)
   if (total > 178) total = 178;
 
   totalValue.textContent = total + "%";
 
-  // Level bestimmen
   const L = getLevelData(total);
 
-  scoreBox.classList.add(L.class);
+  // Level Klasse setzen
+  scoreBox.className = "conf-total-box " + L.class;
+
+  // Text + Farbe
   totalValue.style.color = L.color;
-  totalText.textContent = L.label;
+  totalText.innerHTML = L.label;
+
+  // Mini-Score updaten
+  syncFloatingScore(total + "%", L.label, L.color);
 }
 
 
+/* ============================================================
+   🔥 MINI-FLOATING SCORE – SYNC
+   ============================================================ */
+function syncFloatingScore(value, label, color) {
+  const fv = document.getElementById("floatingScoreValue");
+  const fl = document.getElementById("floatingScoreLabel");
+
+  fv.textContent = value;
+  fv.style.color = color;
+
+  fl.textContent = label;
+  fl.style.color = color;
+}
+
+
+/* ============================================================
+   🔥 FLOATING SCORE VISIBILITY (SIDEBAR-MODE)
+   ============================================================ */
+function handleFloatingScore() {
+  const bigBox = document.getElementById("confTotalBox");
+  const floatBox = document.getElementById("floatingScore");
+
+  const rect = bigBox.getBoundingClientRect();
+
+  // ist die große Box aus dem View?
+  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+    floatBox.classList.remove("hidden");
+  } else {
+    floatBox.classList.add("hidden");
+  }
+}
+
+window.addEventListener("scroll", handleFloatingScore);
 
 
 /* ============================================================
    INIT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
+
   document.querySelectorAll(".conf-check").forEach(b =>
     b.addEventListener("change", updateConfluenceScore)
   );
+
   updateConfluenceScore();
+  handleFloatingScore();
 });
