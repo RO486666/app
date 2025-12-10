@@ -309,13 +309,29 @@ updateBodyBackground(name);
                     
 
       fullInfo += `
-        <strong>${label} ${s.name}</strong><br>
-        📅 Start: ${formatHM(s.start)} Uhr<br>
-        🕓 Ende: ${formatHM(s.end)} Uhr<br>
-        ℹ️ ${s.info}
-        ${weekDaysHtml}
-        <hr style="border: none; border-top: 1px solid #444; margin: 10px 0;">
-      `;
+  <div class="session-box">
+
+    <div class="session-box-title">
+      ${label} ${s.name}
+    </div>
+
+    <div class="session-box-row">📅 Start: ${formatHM(s.start)} Uhr</div>
+    <div class="session-box-row">🕓 Ende: ${formatHM(s.end)} Uhr</div>
+    <div class="session-box-row">ℹ️ ${s.info}</div>
+
+    ${s.weekDaysInfo ? `
+      <ul class="session-box-days">
+        ${s.weekDaysInfo.map(d => `
+          <li><strong>${d.day}:</strong> ${d.text}</li>
+        `).join("")}
+      </ul>
+    ` : ""}
+
+    <hr class="session-box-divider">
+
+  </div>
+`;
+
     });
 
     sessionDetailsBox.innerHTML = fullInfo;
@@ -930,10 +946,6 @@ Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
 `
 };
 
-
-
-
-  updateDaySummary();
 });
 
 function updateBodyBackground(sessionName) {
