@@ -148,6 +148,8 @@ const sessions = [
 
 let lastAlertSession = null;
 
+
+
 function getMinutesNow() {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
@@ -381,301 +383,447 @@ applySidebarDrawerSessionColor(name);
 }
 
 
-
-// === Master: Day Details Map (Mo–So) – Swing & Day getrennt, einheitliche Sektionen ===
 const dayDetailsMap = {
-  "Montag": `
+
+"Montag": `
 🟦 <strong>Montag</strong><br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Wochenstart – häufiges Setzen von Wochenhoch/-tief, unreife Struktur, Liquidity-Traps typisch.<br><br>
+Wochenstart: Markt baut erst Struktur. Liquidity-Traps häufig, HL/LH oft unklar, Trend noch unreif.<br><br>
+
+<strong>🎯 Regel- & Checklist-Relevanz:</strong><br>
+• AOI-Pflicht (Weekly/D1).<br>
+• Rejection MUSS da sein (Struktur/EMA/psych Level).<br>
+• HL/LH meist noch nicht bestätigt → Entries nur bei klarer MSS/CHOCH.<br>
+• Engulfing im H1/H4 selten → Bestätigung streng prüfen.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Kein aggressiver Einstieg. Max. kleine Probe-Position nach London-Open (09:00–10:00), Hauptfokus: Level-Mapping (Vorwochen-H/L, Weekly/D1/H4 POIs).<br><br>
+Kein aktiver Trading-Tag → Fokus auf Mapping & Bias-Building.<br>
+Probe-Position nur bei kompletter Regel-Konformität.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Volumen niedrig, Fakeouts über Asia-H/L, viele warten auf Dienstag.<br><br>
+Niedriges Volumen, Sweeps über Asia-H/L typisch. Markt testet Wochenbereiche an.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
 <ul>
-  <li>🇪🇺 EU-Sentiment/Handelsdaten</li>
-  <li>🇺🇸 selten starke US-Daten → NY träge</li>
+  <li>🗓️ Tagesrelevanz abhängig vom aktuellen Kalender</li>
+  <li>🔍 Frühe EU/US-Daten prüfen → können Trendbrokern auslösen</li>
 </ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Geduld. Heute Analyst > Trader. Keine FOMO.<br><br>
+Geduld. Montag = Analyse. Nicht erzwingen.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🗺️ Wochen-H/L & Vorwochen-H/L markieren</li>
-  <li>📈 Weekly/D1/H4 Bias festhalten</li>
-  <li>💧 Liquidity-Pools/FVG/Breaker notieren</li>
+  <li>🗺️ Wochen-H/L & Vorwochenlevels markieren</li>
+  <li>📈 Weekly/D1/H4 Bias festlegen (Checklist Weekly/Daily)</li>
+  <li>💧 Liquidity-Pools, Breaker, FVGs notieren</li>
+  <li>📉 HL/LH-Potenzial dokumentieren</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-BTC/ETH oft lethargisch bis Abend; Range & erste Reaktionszonen beobachten.
+BTC/ETH häufig träge – Range & Strukturaufbau dominieren.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Range-Bildung; Sweeps über Asia-High/Low sehr häufig.<br><br>
+Range Day. Asia sweeps → London reagiert. Montag produziert viele Fakeouts.<br><br>
+
+<strong>🎯 Regel-Integration:</strong><br>
+• AOI (Daily/4H) MUSS bestätigt sein.<br>
+• Rejection = Pflicht (OB/EMA/SR).<br>
+• Struktur-Shift (M5–M15) muss zuerst kommen, dann Engulfing.<br>
+• RR 1.5–2.0 gemäß Entry-Regel.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Nur saubere Reversals nach Liquidity-Grab (M1–M5); enge SL, kleine Size, keine Swing-Halts.<br><br>
+Nur Reversal-Confluence handeln nach Liquidity-Grab.<br>
+Keine Breakouts → Montag 80% Fake-Breakouts.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-London bringt ersten Impuls, NY oft flach/fehlausbruchsanfällig.<br><br>
+London-Impuls solide, NY oft korrektiv und schwer strukturiert.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-Kaum US-Katalysatoren → technisch/getragen von Liquidity.<br><br>
+<ul>
+  <li>🔍 Kalender checken – Montag kann ruhig oder hochvolatil sein</li>
+</ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Dokumentieren statt forcieren. Qualität > Anzahl.<br><br>
+Dokumentieren & beobachten. Qualität > Anzahl.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🕘 Asia-H/L & London-Open Reaktion loggen</li>
-  <li>🎯 Intraday POIs (IB, FVG, Orderblocks) markieren</li>
+  <li>Asia-H/L & London-Reaktion loggen</li>
+  <li>Intraday POIs (IB, OB, FVG, Shift-Zonen) markieren</li>
+  <li>Checklist prüfen: AOI + Shift + Rejection</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-Scalps möglich, aber mean-reverting; Altcoins meist später dran.
+Mean-reversion aktiv – Alts erwachen spät.
 `,
 
-  "Dienstag": `
+
+"Dienstag": `
 🟩 <strong>Dienstag</strong><br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Montag-Level wird angetestet/gebrochen → erste echte Wochenrichtung formt sich.<br><br>
+Erste echte Wochenrichtung entsteht. Montag-Levels werden validiert oder gebrochen.<br><br>
+
+<strong>🎯 Regeln & Checklist:</strong><br>
+• H1/H4 MSS/CHOCH = Haupttrigger.<br>
+• AOI-Test + Rejection = Pflicht.<br>
+• HL/LH bestätigt? Dann permission für Swing-Entry.<br>
+• Engulfing validiert den Retest.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Haupt-Einstiegstag: Confirmation auf H1/H4 (MSS/CHOCH + Retest) handeln; Pyramiding erlaubt, wenn Struktur sauber.<br><br>
+Heute ist Execution-Day: Trendfortsetzung oder Reversal klarer.<br>
+Pyramiding möglich bei sauberer Struktur.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Volumen steigt deutlich; Expansion beginnt.<br><br>
+Höheres Volumen, Expansion beginnt.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇺🇸 Frühindikatoren/Reden möglich</li>
-  <li>🇬🇧/🇪🇺 Daten-Cluster nicht selten</li>
-</ul><br>
+<ul><li>Kalender prüfen – Dienstag bietet oft moderate EU/US-Daten</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Konsequent, aber nicht gierig. Plan handeln, nicht raten.<br><br>
+Plan + Regeln handeln. Keine Gier, kein Raten.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🧭 Entry-Zonen vom Montag priorisieren</li>
-  <li>📐 SL/TP aus Struktur (swing points, FVG) ableiten</li>
+  <li>Montagsthese validieren/invalidieren</li>
+  <li>Entry-Zonen priorisieren</li>
+  <li>SL/TP aus reiner Struktur ableiten</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-BTC/ETH häufig „Wake-up“-Move; Alts beginnen mitzuziehen.
+BTC/ETH zeigen oft ersten impulsiven Wochenmove.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Klarere Marktstruktur; Breakout→Retest & Trend-Pullbacks wirken besser.<br><br>
+Struktur viel sauberer als Montag. Breakout→Retest funktioniert wieder.<br><br>
+
+<strong>🎯 Regel-Integration:</strong><br>
+• Daily/4H AOI wichtigste Variable.<br>
+• HL/LH + M15 Shift liefern High-Probability Entries.<br>
+• Engulfing im 1H bestätigt Stärke.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-London & NY Killzones aktiv handeln; 1–3 A-Setups genügen.<br><br>
+London + NY Killzones aktiv nutzen.<br>
+2–3 A-Setups reichen völlig.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Saubere Impulse, weniger Fakeouts als Montag.<br><br>
+Klares Intraday-Trending, weniger Fakeouts.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-News können Moves beschleunigen – Uhrzeiten respektieren.<br><br>
+<ul><li>Daten können Trendbeschleuniger sein – Uhrzeiten prüfen</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Keine Overtrades – nach 2–3 Qualitäts-Trades Schluss.<br><br>
+Keine Overtrades → Dienstag ist profitabler, wenn man nicht übertreibt.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🧪 Montagsthese validieren/invalidieren</li>
-  <li>📊 Teilgewinnregeln festsetzen</li>
+  <li>Bias-Abgleich mit Swing-Struktur</li>
+  <li>Teilgewinnstrategie vorbereiten</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-FVG/Breaker-Einstiege mit Momentum solide.
+FVG/Breaker-Entries besonders sauber.
 `,
 
-  "Mittwoch": `
+
+"Mittwoch": `
 🟨 <strong>Mittwoch</strong><br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Midweek High/Low; Liquidity-Runs gefolgt von Reversal oder Expansion 2.<br><br>
+Midweek High/Low → Liquidity Run → Reversal oder zweite Trend-Expansion.<br><br>
+
+<strong>🎯 Regeln & Checklist:</strong><br>
+• Der wichtigste HL/LH-Tag.<br>
+• AOI-Test meist entscheidend für Wochenrichtung.<br>
+• Rejection + MSS nach Sweep = A+-Setup.<br>
+• Engulfing in H1/H4 besonders relevant.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Nach Sweep gegen Trendkante Entry auf Bestätigung; bestehende Swings managen/aufstocken.<br><br>
+Positionen managen, skalieren oder drehen – aber nur regelkonform.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Volatilität hoch; Richtungswechsel möglich (bes. bei FOMC-Wochen).<br><br>
+Hohe Volatilität. Midweek Reversals häufig.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🏦 FOMC/Fed Minutes/Inflation oft mittwochs</li>
-  <li>🛢️ Öl-Lagerbestände</li>
-</ul><br>
+<ul><li>Mittwoch oft News-lastig → Timeslots zwingend prüfen</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Flexibel bleiben; Bias darf kippen, Regeln bleiben.<br><br>
+Flexibel, aber regelgetreu.  
+Bias darf kippen – Regeln nicht.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🔁 Midweek-Review: bin ich im Hauptmove?</li>
-  <li>🧮 Risiko neu kalibrieren</li>
+  <li>Midweek-Review: liege ich im Hauptmove?</li>
+  <li>Risikokalibrierung aktualisieren</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-„Decision Day“: Nach Sweep entscheidet sich oft die Wochenrichtung.
+BTC entscheidet oft hier die Wochenrichtung.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Reversal- und Continuation-Setups gleichermaßen präsent.<br><br>
-<strong>✅ Strategie:</strong><br>
-Erst Reaktion abwarten; nach News nur strukturierte Pullbacks handeln.<br><br>
+Reversal & Continuation gleichzeitig möglich – der trickreichste Tag.<br><br>
+
+<strong>🎯 Regel-Integration:</strong><br>
+• Erst Reaktion abwarten → dann Shift → dann Entry.<br>
+• HL/LH + MSS = Pflicht für Trendcatch.<br>
+• Spread & Slippage wegen News beachten.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Starke Spikes möglich; Spread/Slippage beachten.<br><br>
+Viele Spikes, Liquiditäts-Jagden, Stop-Hunts.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-News-zentriert – Uhrzeiten zwingend im Plan.<br><br>
+<ul><li>News-Cluster möglich – nach Kalender handeln</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Keine Egoscalps gegen den ersten bestätigten Shift.<br><br>
+Keine Ego-Entries. Kein Kampf gegen ersten klaren Shift.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🧷 SL breiter planen oder Positionsgröße anpassen</li>
-  <li>🗂️ News-Plan visuell parat</li>
+  <li>SL etwas breiter oder Size kleiner</li>
+  <li>News-Zeiten visuell markieren</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-Nachmittags-/Abend-Impulse häufig richtungsweisend.
+Nachmittags/Abend-Moves richtungsstark.
 `,
 
-  "Donnerstag": `
+
+"Donnerstag": `
 🟧 <strong>Donnerstag</strong><br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Continuation-Tag; letzte saubere Entries für Wochenmove.<br><br>
+Continuation-Day. Die letzten stabilen Wochen-Entries.<br><br>
+
+<strong>🎯 Regeln & Checklist:</strong><br>
+• Kein Gegentrend-Start mehr.<br>
+• AOI + Rejection + HL/LH = perfekte Swing-Confluence.<br>
+• TP-Logik aktiv: Teilgewinne sichern.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Nur mit bestätigter Richtung addieren; keine neuen Gegentrend-Ideen starten.<br><br>
+Trend mitnehmen oder bestehende Trades managen.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Stark, teils „messy“ wegen Gewinnsicherungen vor Freitag.<br><br>
+Oft starke Moves, aber „messy“ wegen Gewinnmitnahmen.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇺🇸 GDP/PCE/CPI/Claims-Cluster möglich</li>
-</ul><br>
+<ul><li>Donnerstag häufig datenintensiv – Kalender prüfen</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Pragmatismus: Gewinne sichern schlägt „perfekten Exit jagen“.<br><br>
+Pragmatisch: Gewinne sichern > perfekten Exit jagen.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>💼 Teilverkäufe/Trail-Logik aktivieren</li>
-  <li>📝 Plan für Freitag (falls flat nötig) anlegen</li>
+  <li>Teilgewinne & Trailing aktivieren</li>
+  <li>Plan für Freitag vorbereiten (Drawdown-Schutz)</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-Alts „catch-up“ häufig; Dominance-Shifts beobachten.
+Alts holen oft auf – Struktur prüfen.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Trendtage mit kräftigen Pullbacks; News-Spikes häufig.<br><br>
-<strong>✅ Strategie:</strong><br>
-NY-Killzone bevorzugt; nach Spike → strukturierter Retest statt Market-Chase.<br><br>
+Donnerstag = Momentum-Tag. Trend-Pullbacks extrem stark.<br><br>
+
+<strong>🎯 Regeln integriert:</strong><br>
+• News-Spikes nur mit Retest handeln.<br>
+• Shift + Engulfing Pflicht vor Entry.<br>
+• AOI/OB Rejection sehr zuverlässig.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Volatil & ergiebig, aber Fehler werden teuer.<br><br>
+Hohe Volatilität, aber gut handelbar für strukturierte Trader.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-News-Filter zwingend – 15–30 Min. Pre/Post-News-Regel.<br><br>
+<ul><li>Vor & nach News 15–30 Min. Regel anwenden</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Execution diszipliniert; weniger Trades, bessere Qualität.<br><br>
+Weniger Trades, dafür A+ Qualität.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🎯 Nur A-/A+ Setups</li>
-  <li>⏱️ Time-in-Trade begrenzen</li>
+  <li>Nur A-/A+ Setups handeln</li>
+  <li>Time-in-Trade begrenzen</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-NY-Overlap oft beste Dynamik der Woche.
+NY-Overlap mit hoher Dynamik.
 `,
 
-  "Freitag": `
+
+"Freitag": `
 🟥 <strong>Freitag</strong><br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Profit-Taking, Wochenrange nahezu vollendet; neue Swings riskant.<br><br>
+Profit-Taking-Day. Neue Swings meist unvorteilhaft.<br><br>
+
+<strong>🎯 Regeln & Checklist:</strong><br>
+• Nur Management bestehender Trades.<br>
+• Kein neuer Swing ohne extrem starke Confluence.<br>
+• AOI/HL/LH müssen absolut klar sein – selten am Freitag.<br><br>
+
 <strong>✅ Strategie:</strong><br>
-Bestehende Positionen managen/abbauen; neue Swings nur bei außergewöhnlich klarem Setup.<br><br>
+PnL schützen. Nicht versuchen, „die Woche zu retten“.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Vormittag brauchbar, ab Nachmittag Liquidität dünn; Stop-Runs vor Close.<br><br>
+Vormittag brauchbar, Nachmittag illiquide.<br>
+Stop-Runs vor Close häufig.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>📈 Arbeitsmarktdaten/NFP (14:30) – selektiv</li>
-</ul><br>
+<ul><li>Freitag = hoher News-Faktor (z. B. 14:30 Timeslot) – Kalender prüfen</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Schutz des Wochen-PnL vor Hero-Trades.<br><br>
+Risiko rausnehmen, Gewinne sichern.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>📊 Wochenstatistik & Screens sichern</li>
-  <li>🧮 Equity-Update & Learnings notieren</li>
+  <li>Wochenstatistik & Markups sichern</li>
+  <li>Equity-Update machen</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-Pre-Weekend-Positionierung beginnt; Vorsicht vor späten Sweeps.
+Pre-Weekend Positioning – mögliche Sweeps am Abend.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Scalp-/Intraday-Fokus; Trendläufe seltener.<br><br>
-<strong>✅ Strategie:</strong><br>
-Nur glasklare Liquidity-Jagden; keine Blind-Breakouts; früher Feierabend erlaubt.<br><br>
+Scalping Day. Große Moves selten, Liquidity Grabs häufig.<br><br>
+
+<strong>🎯 Regelintegration:</strong><br>
+• Nur Rejection- & Liquidity-Trades.<br>
+• Kein Blind-Breakout.<br>
+• RR konservativ (1.0–2.0).<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Nach 13–15 Uhr abnehmend; US-Close ruhig/erratisch.<br><br>
+NY früh stark → dann abfallend.<br><br>
+
 <strong>📊 Wirtschaftsdaten:</strong><br>
-NFP & Co. nur mit klaren Regeln.<br><br>
+<ul><li>News-Zeiten ernst nehmen – Freitag ist unberechenbar</li></ul><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-PnL schützen, nicht maximieren.<br><br>
+Disziplin. Kein Revenge. Früh Schluss möglich.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🗂️ Journal abschließen, Montag vorbereiten</li>
+  <li>Journal abschließen & Montag planen</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-BTC oft Pre-Move für Samstagabend/Sonntag.
+BTC oft Pre-Move fürs Wochenende.
 `,
 
-  "Samstag": `
-⬛ <strong>Samstag</strong> (Forex geschlossen • Krypto offen)<br><br>
+
+"Samstag": `
+⬛ <strong>Samstag</strong> – Forex geschlossen, Krypto aktiv<br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Illiquide; größere Swings unzuverlässig.<br><br>
-<strong>✅ Strategie:</strong><br>
-Kein Swing-Einstieg; nur Vorbereitung & Backtesting.<br><br>
+Illiquide. Keine Swing-Entries.<br><br>
+
+<strong>🎯 Regeln:</strong><br>
+• Kein Trading – nur Vorbereitung & Backtesting.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>📚 Markups pflegen, Monats-/Wochenreview</li>
-  <li>🧭 Setup-Library aktualisieren</li>
+  <li>Markups & Review</li>
+  <li>Setup-Bibliothek pflegen</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-Mean-reversion/Range dominiert; geringe Size, klare Grenzen.
+Mean-Reversion / Range. Kleine Size, klarer SL.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Kleine Ranges; Algos dominieren.<br><br>
-<strong>✅ Strategie:</strong><br>
-Nur saubere Range-Edges; hartes Risk-Management.<br><br>
-<strong>🕓 Marktverhalten:</strong><br>
-Dünn & sprunghaft; Slippage möglich.<br><br>
+Kleine, algorithmische Ranges.<br><br>
+
+<strong>🎯 Strategie:</strong><br>
+Nur Range-Edges traden. Kein Overtrading.<br><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
-Wenn unsicher: Pause > Zocken.<br><br>
+Wenn unsicher → pause.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🗒️ Watchlist & Alarme für Sonntag/Montag setzen</li>
+  <li>Alarme für Sonntag/Montag setzen</li>
 </ul>
 `,
 
-  "Sonntag": `
-⬛ <strong>Sonntag</strong> (Forex vor Weekly Open • Krypto aktiv)<br><br>
+
+"Sonntag": `
+⬛ <strong>Sonntag</strong> – Weekly Open Vorbereitung<br><br>
 
 🌀 <strong>Swing</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Weekly-Open-Pegel entsteht; Pre-Move definiert erste Liquidität.<br><br>
-<strong>✅ Strategie:</strong><br>
-Keine Swings vor stabiler Montag-Struktur; nur Levelplanung.<br><br>
+Pre-Open Struktur: Weekly Levels formen sich.<br><br>
+
+<strong>🎯 Regeln:</strong><br>
+• Keine Swings ohne Montag-Struktur.<br>
+• Heute nur Vorbereitung.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>📅 Wochenziele, Risikolimits, News-Kalender setzen</li>
-  <li>🗺️ Key-Levels für Mo/Di finalisieren</li>
+  <li>Wochenziele, Risikolimits, Kalender setzen</li>
+  <li>Key-Levels für Mo/Di finalisieren</li>
 </ul><br>
+
 <strong>🪙 Krypto-Notiz:</strong><br>
-BTC/ETH zeigen oft Richtung für Wochenstart; Dominance beobachten.
+BTC/ETH zeigen oft ersten Wochen-Richtungsimpuls.<br>
+
 <hr style="opacity:.15;">
 
 ⚡ <strong>Daytrading</strong><br>
+
 <strong>📌 Setup:</strong><br>
-Sehr dünn bis US-Abend; Pre-Open Moves sind häufig trügerisch.<br><br>
-<strong>✅ Strategie:</strong><br>
-Nur dokumentieren/alarme; Handel optional & klein.<br><br>
+Dünne Liquidität. Pre-Open Moves oft trügerisch.<br><br>
+
+<strong>🎯 Strategie:</strong><br>
+Optional traden, sehr kleine Größe.<br>
+Fokus auf Dokumentation & Vorbereitung.<br><br>
+
 <strong>🕓 Marktverhalten:</strong><br>
-Späte Impulse können Montag-Asia/London prägen.<br><br>
+US-Abend kann Montag-Asia beeinflussen.<br><br>
+
 <strong>🧠 Mentaler Fokus:</strong><br>
 Vorbereitung > Execution.<br><br>
+
 <strong>🧾 To-do:</strong><br>
 <ul>
-  <li>🛠️ Plattform-Checks, Alarme, Templates laden</li>
+  <li>Alarme, Templates & Charts vorbereiten</li>
 </ul>
 `
 };
+
 
 
 function hexToRgba(hex, opacity) {
@@ -733,39 +881,27 @@ function updateDaySummary() {
     el.style.textShadow = `0 0 3px ${sessionColor}`;
     el.style.cursor = "pointer";
 
-    el.onclick = () => {
-      const dayDetailsEl = document.getElementById("dayDetails");
-      if (!dayDetailsEl) return;
+      el.onclick = () => {
+    const dayDetailsEl = document.getElementById("dayDetails");
+    if (!dayDetailsEl) return;
 
-      const raw = dayDetailsMap[dayName] || "📆 Keine Details verfügbar.";
-      const glow = `0 0 5px ${sessionColor}, 0 0 12px ${hexToRgba(sessionColor, 0.5)}`;
+    const raw = dayDetailsMap[dayName] || "📆 Keine Details verfügbar.";
 
-      const wrapped = `
-        <div style="
-          padding: 16px;
-          margin: 15px;
-          border-left: 4px solid ${sessionColor};
-          border-radius: 10px;
-          background: rgba(255,255,255,0.02);
-          box-shadow: inset 0 0 8px ${hexToRgba(sessionColor, 0.3)};
-          color: #ccc;
-          line-height: 1.6;
-          font-size: 14px;
-        ">
-          <div style="font-size: 17px; font-weight: bold; color: ${sessionColor}; text-shadow: ${glow}; margin-bottom: 8px;">
-            📅 ${dayName}
-          </div>
-          <div style="color:#ccc;">
-            ${raw.replaceAll("<strong>", `<strong style=\"color:${sessionColor}; text-shadow:${glow};\">`)}
-          </div>
+    // Sauberer HTML-Block
+    const wrapped = `
+      <div class="day-details-wrapper" style="--day-color:${sessionColor}">
+        <div class="day-details-title">📅 ${dayName}</div>
+        <div class="day-details-content">
+          ${raw.replaceAll("<strong>", `<strong class="day-strong">`)}
         </div>
-      `;
+      </div>
+    `;
 
-      const isVisible = dayDetailsEl.style.display === "block";
-      dayDetailsEl.style.display = isVisible ? "none" : "block";
-      if (!isVisible) dayDetailsEl.innerHTML = wrapped;
-    };
-  }
+    const isVisible = dayDetailsEl.style.display === "block";
+    dayDetailsEl.style.display = isVisible ? "none" : "block";
+    if (!isVisible) dayDetailsEl.innerHTML = wrapped;
+  };
+}
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -776,175 +912,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const daySummaryEl = document.getElementById("daySummary");
   const dayDetailsEl = document.getElementById("dayDetails");
-const dayDetailsMap = {
-  "Montag": `
-🔵 <strong>Montag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Wochenstart – noch keine klare Richtung. Fokus auf erste Liquiditätsreaktionen.<br><br>
 
-<strong>✅ Strategie:</strong><br>
-Vorsichtiger Einstieg nach London-Open (09:00–10:00 Uhr)<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Volumen steigt langsam an – viele Trader warten auf Dienstag.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇪🇺 EU-Handelsdaten, Sentiment-Indikatoren</li>
-  <li>💬 Kaum US-Daten – NY-Session eher träge</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Geduldig bleiben – erste Impulse beobachten.<br><br>
-
-<strong>🧾 To-do am Montag:</strong><br>
-<ul>
-  <li>📅 Wochenziele notieren</li>
-  <li>📈 H1/H4 Bias eintragen</li>
-</ul><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-BTC reagiert oft träge nach dem Wochenende – Strukturaufbau bis Montagabend.<br>
-ETH/BTC-Paare zeigen erste Signale für Volatilität der Woche.
-`,
-
-  "Dienstag": `
-🟢 <strong>Dienstag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Intraday-Trading meist am klarsten – oft Trendfortsetzung oder Retest.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Nutze saubere Marktstruktur → Breakouts + Retest möglich.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Konstant – London & NY liefern gute Bewegungen.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇪🇺 EZB oder UK Reden möglich</li>
-  <li>🇺🇸 US-Einstiegsdaten</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Keine Hektik – Struktur traden.<br><br>
-
-<strong>🧾 To-do am Dienstag:</strong><br>
-<ul>
-  <li>⚙️ Trade-Log abgleichen</li>
-  <li>📓 Swing-Kandidaten markieren</li>
-</ul><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-BTC/ETH ziehen meist am Dienstag an – viele Altcoins folgen.<br>
-Guter Tag für FVG/Breaker-Entry in Krypto.
-`,
-
-  "Mittwoch": `
-🟡 <strong>Mittwoch</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Midweek-Reversal – viele Fehlausbrüche möglich.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Reversal-Potenziale beachten, Killzones gezielt handeln.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Volatilität steigt – Intraday-Highs/Lows werden geholt.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🏦 FOMC/Fed Minutes</li>
-  <li>🇪🇺 EU/UK Inflationsdaten</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Flexibel bleiben – Bias kann kippen.<br><br>
-
-<strong>🧾 To-do am Mittwoch:</strong><br>
-<ul>
-  <li>📈 Midweek-Revue</li>
-</ul><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-BTC macht oft genau am Mittwoch seine Wochenrichtung klar oder Fake-Move – Fokus auf Liquiditätszonen.
-`,
-
-  "Donnerstag": `
-🟠 <strong>Donnerstag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Momentum-Tag – viele Impulse durch News.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-NY-Killzone aktiv handeln – Fokus auf USD, Gold, NAS100.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-London & NY klar – guter Trend-Tag.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>🇺🇸 GDP, PCE, CPI</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Mutig, aber sauber – Reaktionen abwarten.<br><br>
-
-<strong>🧾 To-do am Donnerstag:</strong><br>
-<ul>
-  <li>🧠 Gewinne sichern</li>
-</ul><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-Donnerstag ist oft der „Catch-up-Tag“ für Altcoins – hohe Dynamik bei Krypto-Volumen im NY-Overlap.
-`,
-
-  "Freitag": `
-🔴 <strong>Freitag</strong><br><br>
-<strong>📌 Setup:</strong><br>
-Scalping & Intraday – große Bewegungen meist vorbei.<br><br>
-
-<strong>✅ Strategie:</strong><br>
-Nur Liquiditätsjagden handeln – keine blind Breakouts.<br><br>
-
-<strong>🕓 Marktverhalten:</strong><br>
-Ruhiger ab 13:00 Uhr – Positionsschließung dominiert.<br><br>
-
-<strong>📊 Wirtschaftsdaten:</strong><br>
-<ul>
-  <li>📈 US-Arbeitsmarktdaten (oft 14:30 Uhr)</li>
-</ul><br>
-
-<strong>🧠 Mentaler Fokus:</strong><br>
-Kein FOMO, kein Revenge-Trading.<br><br>
-
-<strong>🧾 To-do am Freitag:</strong><br>
-<ul>
-  <li>📊 Wochenstatistik eintragen</li>
-</ul><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-Ab 18:00 Uhr: BTC beginnt Pre-Move für Wochenende.<br>
-BTC/ETH brechen oft vor dem „Krypto-Samstag“ aus – Watchlist ready machen.
-`,
-
-  "Samstag": `
-📴 <strong>Samstag</strong><br><br>
-Kein Handel in Forex – aber Krypto läuft.<br><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-• Wenig Volumen – ideal für Struktur-Analyse<br>
-• Range-Trading auf BTC/ETH sehr effektiv<br>
-• Vorbereitung auf Sonntag → Pre-Move beachten
-`,
-
-  "Sonntag": `
-📴 <strong>Sonntag</strong><br><br>
-Noch kein Handel in Forex – aber wichtigster Vorbereitungstag.<br><br>
-
-<strong>🪙 Krypto-Notiz:</strong><br>
-• Ab 18:00 Uhr: BTC/ETH zeigen oft erste Richtung<br>
-• Pre-Move für die Woche sichtbar<br>
-• Setups validieren & Einstiegslevel berechnen
-`
-};
 
 });
 
@@ -988,6 +956,12 @@ function updateBodyBackground(sessionName) {
   document.body.style.setProperty("--session-glow", glowMap[sessionName] || "radial-gradient(ellipse at bottom, rgba(255,255,255,0.1) 0%, transparent 70%)");
   document.body.style.setProperty("--session-bg-color", baseColor[sessionName] || "#111");
 }
+
+function applySidebarDrawerSessionColor(sessionName) {
+  const color = sessionColors[sessionName] || "#ffffff";
+  document.documentElement.style.setProperty("--session-color", color);
+}
+
 
 
 
