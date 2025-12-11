@@ -168,56 +168,115 @@
 }
 
 /* ============================================================
-   DRAWER LINKS – "SLOT" STYLE
+   🧬 DRAWER LINKS – LIQUID NEON (Dynamic Session Colors)
    ============================================================ */
+
 .drawer-link {
-  display: block;
+  /* Diese CSS-Variable wird von JS gesetzt: var(--session-color) */
+  --session-color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 8px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
 
-  /* Look: Eingelassener Slot */
-  background: linear-gradient(145deg, #131318, #0c0c10);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  background: linear-gradient(
+    145deg, 
+    rgba(20, 20, 24, 0.9),
+    rgba(10, 10, 12, 0.95)
+  );
 
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
   font-size: 13px;
+
   cursor: pointer;
   position: relative;
   overflow: hidden;
 
-  /* Tiefe Schatten für den Slot-Look */
-  box-shadow: 
-    inset 0 2px 4px rgba(0,0,0,0.5), /* Schatten innen oben */
-    0 1px 0 rgba(255,255,255,0.05);   /* Lichtkante außen unten */
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.05);
 
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Hover Effekt: Button kommt "raus" und leuchtet */
+/* ============================================================
+   Ambient Glow – nutzt immer die Session-Farbe!
+   ============================================================ */
+.drawer-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at left center,
+    color-mix(in srgb, var(--session-color) 40%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  z-index: -1;
+  transform: translateX(-100%);
+  transition: all 0.4s ease;
+}
+
+/* ============================================================
+   HOVER STATE – Button färbt sich je nach Session ein
+   ============================================================ */
 .drawer-link:hover {
-  background: #1a1a20;
+  transform: translateY(-2px);
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(4px) translateY(-1px);
-  
-  /* Session Glow */
-  box-shadow: 
-    -2px 0 0 var(--drawer-accent), /* Linker Rand leuchtet */
-    0 4px 12px rgba(0,0,0,0.5);
+
+  border-left-color: var(--session-color);
+  border-top-color: rgba(255, 255, 255, 0.3);
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.6),
+    0 0 15px color-mix(in srgb, var(--session-color) 20%, transparent);
 }
 
-/* Active Effekt: Voll beleuchtet */
+.drawer-link:hover::before {
+  opacity: 0.45;
+  transform: translateX(0);
+}
+
+/* ============================================================
+   ACTIVE STATE – komplette Session-Färbung
+   ============================================================ */
 .drawer-link.active {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--drawer-accent);
-  border-color: var(--drawer-accent);
-  
-  box-shadow: 
-    inset 0 0 15px rgba(0,0,0,0.8), /* Tief drinnen */
-    0 0 10px var(--drawer-accent);  /* Außen leuchten */
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--session-color) 20%, transparent),
+    rgba(15, 15, 20, 0.95)
+  );
+
+  border-color: color-mix(in srgb, var(--session-color) 50%, transparent);
+  border-left-color: var(--session-color);
+
+  color: var(--session-color);
+  box-shadow:
+    inset 0 0 20px color-mix(in srgb, var(--session-color) 25%, transparent),
+    0 0 15px var(--session-color);
+}
+
+.drawer-link.active::after {
+  content: '●';
+  font-size: 10px;
+  color: var(--session-color);
+  animation: pulseDot 2s infinite;
+}
+
+/* Pulse Animation */
+@keyframes pulseDot {
+  0%   { opacity: .4; text-shadow: 0 0 0 var(--session-color); }
+  50%  { opacity: 1;  text-shadow: 0 0 10px var(--session-color); }
+  100% { opacity: .4; text-shadow: 0 0 0 var(--session-color); }
 }
 
 
