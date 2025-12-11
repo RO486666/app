@@ -6,7 +6,6 @@ const confGroups = {
   daily: 0,
   h4: 0,
   intraday: 0,
-  lower: 0,
   entry: 0,
   aoi: 0
 };
@@ -34,42 +33,75 @@ function toggleActiveBox(id, value) {
 
 
 /* ============================================================
-   7 LEVEL – DEINE SKALA (0–178)
+   LEVEL SCALE (0–200) – Professional Version with subtext
    ============================================================ */
 function getLevelData(total) {
 
-  if (total < 33) {
-    return { label: "❌ No Trade", class: "lvl0", color: "#ff3333" };
-  }
-  if (total < 78) {
-    return { label: "⚠️ Wacklig", class: "lvl1", color: "#ff884d" };
-  }
-  if (total < 101) {
-    return { label: "🟡 Valider Entry", class: "lvl2", color: "#ffdd55" };
-  }
-  if (total < 127) {
-    return { label: "🟢 Guter Trade", class: "lvl3", color: "#44ff88" };
-  }
-  if (total < 149) {
-    return { label: "🔵 Sehr gut", class: "lvl4", color: "#33bbff" };
-  }
-  if (total < 170) {
-    return { label: "🟣 High Prob.", class: "lvl5", color: "#bb55ff" };
-  }
+  if (total < 30)
+    return { 
+      label: "❌ No Trade",
+      sub: "Setup unzureichend – keine verwertbare Struktur.",
+      class: "lvl0",
+      color: "#ff3333"
+    };
 
-  return { label: "💎 Perfect Trade", class: "lvl6", color: "#00ffe0" };
+  if (total < 70)
+    return { 
+      label: "⚠️ Low Quality",
+      sub: "Zu wenig Konfluenz – Risiko nicht gerechtfertigt.",
+      class: "lvl1",
+      color: "#ff884d"
+    };
+
+  if (total < 90)
+    return { 
+      label: "🟡 Moderate Setup",
+      sub: "Handelbar, aber mit erhöhter Unsicherheit.",
+      class: "lvl2",
+      color: "#ffdd55"
+    };
+
+  if (total < 110)
+    return { 
+      label: "🟢 Valid Setup",
+      sub: "Solide Grundlage – mehrere Faktoren greifen.",
+      class: "lvl3",
+      color: "#44ff88"
+    };
+
+  if (total < 135)
+    return { 
+      label: "🔵 Strong Setup",
+      sub: "Technisch sauber – klare Struktur & gute Wahrscheinlichkeit.",
+      class: "lvl4",
+      color: "#33bbff"
+    };
+
+  if (total < 150)
+    return { 
+      label: "🟣 High Probability",
+      sub: "Überdurchschnittlich stark – geringe Fehlerrate.",
+      class: "lvl5",
+      color: "#bb55ff"
+    };
+
+  return { 
+    label: "💎 Premium / Optimal",
+    sub: "Maximaler Konfluenzgrad – statistisch sehr hohe Qualität.",
+    class: "lvl6",
+    color: "#00ffe0"
+  };
 }
 
 
+
 /* ============================================================
-   🔥 SCORE BERECHNUNG
+   🔥 SCORE CALCULATION
    ============================================================ */
 function updateConfluenceScore() {
 
-  // RESET
-  Object.keys(confGroups).forEach(key => confGroups[key] = 0);
+  Object.keys(confGroups).forEach(k => confGroups[k] = 0);
 
-  // CHECKBOXES AUSLESEN
   document.querySelectorAll(".conf-check").forEach(box => {
     if (!box.checked) return;
 
@@ -77,26 +109,24 @@ function updateConfluenceScore() {
     const g1 = box.dataset.group;
     const g2 = box.dataset.group2;
 
-    if (g1 && confGroups[g1] !== undefined) confGroups[g1] += pts;
-    if (g2 && confGroups[g2] !== undefined) confGroups[g2] += pts;
+    if (g1) confGroups[g1] += pts;
+    if (g2) confGroups[g2] += pts;
   });
 
-  // SUMMARY OBEN
+  // SUMMARY UPDATE
   setAll("sum_weekly",    confGroups.weekly + "%");
   setAll("sum_daily",     confGroups.daily + "%");
   setAll("sum_h4",        confGroups.h4 + "%");
   setAll("sum_intraday",  confGroups.intraday + "%");
-  setAll("sum_lower",     confGroups.lower + "%");
   setAll("sum_entry",     confGroups.entry + "%");
 
-  toggleActiveBox("sum_weekly",   confGroups.weekly);
-  toggleActiveBox("sum_daily",    confGroups.daily);
-  toggleActiveBox("sum_h4",       confGroups.h4);
-  toggleActiveBox("sum_intraday", confGroups.intraday);
-  toggleActiveBox("sum_lower",    confGroups.lower);
-  toggleActiveBox("sum_entry",    confGroups.entry);
+  toggleActiveBox("sum_weekly",    confGroups.weekly);
+  toggleActiveBox("sum_daily",     confGroups.daily);
+  toggleActiveBox("sum_h4",        confGroups.h4);
+  toggleActiveBox("sum_intraday",  confGroups.intraday);
+  toggleActiveBox("sum_entry",     confGroups.entry);
 
-  // PFLICHTEN
+  // REQUIRED: Bias + AOI
   const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
   const aoiTotal  = confGroups.aoi;
 
@@ -104,56 +134,50 @@ function updateConfluenceScore() {
   const totalValue = document.getElementById("confTotalValue");
   const totalText  = document.getElementById("confTotalText");
 
-  // Alle Klassen resetten
   scoreBox.className = "conf-total-box";
 
-  // Pflichtfehler – BIAS
   if (biasTotal === 0) {
     totalValue.textContent = "❌";
-    totalText.textContent  = "Missing Bias";
+    totalText.innerHTML = `<div>Missing Bias</div>`;
     totalValue.style.color = "#ff5050";
-
     syncFloatingScore("❌", "Missing Bias", "#ff5050");
     return;
   }
 
-  // Pflichtfehler – AOI
   if (aoiTotal === 0) {
     totalValue.textContent = "❌";
-    totalText.textContent  = "Missing AOI";
+    totalText.innerHTML = `<div>Missing AOI</div>`;
     totalValue.style.color = "#ff5050";
-
     syncFloatingScore("❌", "Missing AOI", "#ff5050");
     return;
   }
 
-  /* ============================================================
-     TOTAL SCORE berechnen
-     ============================================================ */
+  // TOTAL
   let total =
     confGroups.weekly +
     confGroups.daily +
     confGroups.h4 +
     confGroups.intraday +
-    confGroups.lower +
     confGroups.entry;
 
-  if (total > 178) total = 178;
+  if (total > 200) total = 200;
 
   totalValue.textContent = total + "%";
 
   const L = getLevelData(total);
 
-  // Level Klasse setzen
   scoreBox.className = "conf-total-box " + L.class;
-
-  // Text + Farbe
   totalValue.style.color = L.color;
-  totalText.innerHTML = L.label;
 
-  // Mini-Score updaten
+  // Label + Subtext
+  totalText.innerHTML = `
+    <div>${L.label}</div>
+    <small style="opacity:0.75; font-size:12px;">${L.sub}</small>
+  `;
+
   syncFloatingScore(total + "%", L.label, L.color);
 }
+
 
 
 /* ============================================================
@@ -171,8 +195,9 @@ function syncFloatingScore(value, label, color) {
 }
 
 
+
 /* ============================================================
-   🔥 FLOATING SCORE VISIBILITY (SIDEBAR-MODE)
+   🔥 FLOATING SCORE VISIBILITY
    ============================================================ */
 function handleFloatingScore() {
   const bigBox = document.getElementById("confTotalBox");
@@ -180,15 +205,30 @@ function handleFloatingScore() {
 
   const rect = bigBox.getBoundingClientRect();
 
-  // ist die große Box aus dem View?
-  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+  if (rect.bottom < 0 || rect.top > window.innerHeight)
     floatBox.classList.remove("hidden");
-  } else {
+  else
     floatBox.classList.add("hidden");
-  }
 }
 
 window.addEventListener("scroll", handleFloatingScore);
+
+
+
+/* ============================================================
+   RADIO UNCHECK FIX
+   ============================================================ */
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.addEventListener('click', function () {
+
+    if (this.previousChecked) {
+      this.checked = false;
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    this.previousChecked = this.checked;
+  });
+});
 
 
 /* ============================================================
