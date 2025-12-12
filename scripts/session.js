@@ -1,17 +1,30 @@
+/* =========================================================
+   📌 DOM-REFERENZEN (zentrale UI-Elemente)
+   Zweck: Einmal selektieren → überall wiederverwenden
+   ========================================================= */
 
-const sessionText = document.getElementById("sessionText");
-const sessionProgressEl = document.getElementById("sessionProgressDisplay");
-const sessionInfoEl = document.getElementById("sessionInfo");
-const sessionDetailsBox = document.getElementById("sessionDetailsBox");
-const alertBox = document.getElementById("alertBox");
-const progressBar = document.getElementById("progressBar");
-const progressContainer = document.querySelector(".progress-container");
+const sessionText = document.getElementById("sessionText");                 // Obere Session-Zeitanzeige
+const sessionProgressEl = document.getElementById("sessionProgressDisplay"); // Fortschrittsanzeige je Session
+const sessionInfoEl = document.getElementById("sessionInfo");               // Kurzinfo zur aktiven Session
+const sessionDetailsBox = document.getElementById("sessionDetailsBox");     // Ausklappbare Detailansicht
+const alertBox = document.getElementById("alertBox");                       // Alert-/Hinweisbox
+const progressBar = document.getElementById("progressBar");                 // Tagesfortschrittsbalken
+const progressContainer = document.querySelector(".progress-container");    // Container für Progress-Bar
+
+
+
+/* =========================================================
+   📌 Session-Details Toggle (Click auf Uhrzeit)
+   Zweck: Details nur bei Bedarf rendern (Performance)
+   ========================================================= */
 
 sessionText.addEventListener("click", () => {
   const visible = sessionDetailsBox.style.display === "block";
+
+  // Toggle Anzeige
   sessionDetailsBox.style.display = visible ? "none" : "block";
 
-  // 💡 Nur wenn es aufgeklappt wird → Inhalt erzeugen
+  // Details nur neu bauen, wenn geöffnet wird
   if (!visible) {
     buildSessionDetails();
   }
@@ -19,13 +32,72 @@ sessionText.addEventListener("click", () => {
 
 
 
+/* =========================================================
+   🌍 DST / ZEITMODUS (AUTO | WINTER | SOMMER)
+   ========================================================= */
 
-//Obere INFO Sessions
+/**
+ * Prüft, ob aktuell europäische Sommerzeit (MESZ) aktiv ist
+ * Logik: letzter Sonntag im März bis letzter Sonntag im Oktober
+ */
+function isSummerTimeEU(date = new Date()) {
+  const year = date.getFullYear();
+
+  // Letzter Sonntag im März
+  const march = new Date(year, 2, 31);
+  march.setDate(march.getDate() - march.getDay());
+
+  // Letzter Sonntag im Oktober
+  const october = new Date(year, 9, 31);
+  october.setDate(october.getDate() - october.getDay());
+
+  return date >= march && date < october;
+}
+
+/**
+ * Ermittelt den Zeit-Offset in Minuten basierend auf:
+ * - Manuellem User-Override (localStorage)
+ * - Automatischer Sommerzeit-Erkennung
+ */
+function getDSTOffsetMinutes() {
+  const mode = localStorage.getItem("dstMode"); // null | winter | summer
+
+  if (mode === "summer") return 60; // MESZ erzwingen
+  if (mode === "winter") return 0;  // MEZ erzwingen
+
+  // AUTO-Modus
+  return isSummerTimeEU() ? 60 : 0;
+}
+
+/**
+ * Gibt alle Sessions mit angewendetem DST-Offset zurück
+ * Basisdaten bleiben unverändert → saubere Trennung
+ */
+function getShiftedSessions() {
+  const offset = getDSTOffsetMinutes();
+
+  return sessions.map(s => {
+    let start = s.start + offset;
+    let end   = s.end + offset;
+
+    // Tagesüberlauf korrigieren
+    if (start >= 1440) start -= 1440;
+    if (end >= 1440) end -= 1440;
+
+    return { ...s, start, end };
+  });
+}
+
+
+
+/* =========================================================
+   🎨 Session-Text Styling (Glow / Farbe)
+   Zweck: Aktive Session visuell hervorheben
+   ========================================================= */
 
 function updateSessionTextStyle(activeSessionName) {
   const el = document.getElementById("sessionText");
   const color = sessionColors[activeSessionName] || "#ffffff";
-
   if (!el) return;
 
   el.style.setProperty("--session-text-color", color);
@@ -37,13 +109,24 @@ function updateSessionTextStyle(activeSessionName) {
   el.style.setProperty("--session-text-shadow2", `${color}33`);
 }
 
-//Über den blaken 
+
+
+/* =========================================================
+   🕓 Zeitformatierung
+   Zweck: Minuten → HH:MM Anzeige
+   ========================================================= */
 
 function formatHM(mins) {
   const h = Math.floor(mins / 60) % 24;
   const m = mins % 60;
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 }
+
+
+
+/* =========================================================
+   🎨 Session-Farben (zentrale Definition)
+   ========================================================= */
 
 const sessionColors = {
   "Sydney": "#3388ff",
@@ -57,7 +140,10 @@ const sessionColors = {
 
 
 
-//Alle Sessions
+/* =========================================================
+   🧠 SESSION-DEFINITIONEN (Basisdaten, DST-frei)
+   start/end = Minuten ab 00:00 MEZ
+   ========================================================= */
 
 const sessions = [
   {
@@ -142,30 +228,41 @@ const sessions = [
   },
 ];
 
-
-
-
-
 let lastAlertSession = null;
 
 
 
+/* =========================================================
+   ⏱️ Zeit-Hilfsfunktionen
+   ========================================================= */
+
+/**
+ * Aktuelle Uhrzeit in Minuten seit Tagesbeginn
+ */
 function getMinutesNow() {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
 }
 
+/**
+ * Liefert alle aktuell aktiven Sessions
+ * Berücksichtigt Sessions über Mitternacht
+ */
 function getCurrentSessions(minNow) {
-  return sessions.filter((s) => {
-    const start = s.start;
-    const end = s.end;
-    if (start > end) {
-      return minNow >= start || minNow < end;
+  const shifted = getShiftedSessions();
+
+  return shifted.filter(s => {
+    if (s.start > s.end) {
+      return minNow >= s.start || minNow < s.end;
     } else {
-      return minNow >= start && minNow < end;
+      return minNow >= s.start && minNow < s.end;
     }
   });
 }
+
+/* =========================================================
+   📊 Progress-Bar (Tages- & Sessionfarben)
+   ========================================================= */
 
 function updateGradientBar(colors) {
   if (colors.length === 0) {
@@ -173,6 +270,9 @@ function updateGradientBar(colors) {
     progressBar.style.backgroundImage = "";
     return;
   }
+  
+  
+  // SVG-Gradient für saubere Übergänge
   const svg = `
     <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
       <defs>
@@ -195,10 +295,15 @@ function hexToRgba(hex, alpha) {
 }
 
 function getMinutesToNextSession(minNow) {
-  const futureStarts = sessions.map((s) => s.start).filter((start) => start > minNow);
-  if (futureStarts.length === 0) return sessions[0].start + 1440 - minNow;
+  const shifted = getShiftedSessions();
+  const futureStarts = shifted.map(s => s.start).filter(start => start > minNow);
+
+  if (futureStarts.length === 0)
+    return shifted[0].start + 1440 - minNow;
+
   return Math.min(...futureStarts) - minNow;
 }
+
 
 const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
@@ -240,8 +345,9 @@ if (names.length > 0) {
   applyStatsBoxGlow(names[0]); // Nur erste aktive Session verwenden
 }
   const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
-  sessionText.textContent = `🕒 ${hours}:${mins} ${activeNames}`;
+  sessionText.textContent = `🕒 ${hours}:${mins} (${getDSTLabel()}) ${activeNames}`;
 
+	
   const colors = names.map(n => sessionColors[n] || "#666");
   updateGradientBar(colors);
   if (document.getElementById("sessionProgressDisplay")) {
@@ -856,13 +962,9 @@ function updateDaySummary() {
 
   const now = new Date();
   const minutesNow = now.getHours() * 60 + now.getMinutes();
-  const activeSessions = sessions.filter(s => {
-    const start = s.start;
-    const end = s.end;
-    return start > end
-      ? minutesNow >= start || minutesNow < end
-      : minutesNow >= start && minutesNow < end;
-  });
+const activeSessions = getCurrentSessions(minutesNow);
+
+
 
   const dominantSession = activeSessions.find(s => s.name !== "Crypto") || activeSessions[0];
   const sessionColor = sessionColors[dominantSession?.name] || "#00ffcc";
@@ -960,6 +1062,79 @@ function updateBodyBackground(sessionName) {
 function applySidebarDrawerSessionColor(sessionName) {
   const color = sessionColors[sessionName] || "#ffffff";
   document.documentElement.style.setProperty("--session-color", color);
+}
+
+
+function setDSTMode(mode) {
+  if (mode === "auto") {
+    localStorage.removeItem("dstMode");
+  } else {
+    localStorage.setItem("dstMode", mode);
+  }
+  location.reload();
+}
+
+function getDSTLabel() {
+  const mode = localStorage.getItem("dstMode");
+  if (mode === "summer") return "Sommer";
+  if (mode === "winter") return "Winter";
+  return isSummerTimeEU() ? "auto" : "auto";
+}
+
+/* =========================================================
+   🌍 DST POPUP UI (Open/Close + Active-State)
+   ========================================================= */
+
+const dstPanel = document.getElementById("panel-settings-dst");
+const dstButtons = document.querySelectorAll("#panel-settings-dst .dst-switch button");
+const dstInfo = document.getElementById("dstInfo");
+const dstClose = document.querySelector("#panel-settings-dst .dst-close");
+
+// Öffnen (z. B. über dein Sidebar Settings-Menü)
+function openDSTSettings() {
+  if (!dstPanel) return;
+  dstPanel.classList.remove("hidden");
+  syncDSTUI();
+}
+
+// Schließen
+function closeDSTSettings() {
+  if (!dstPanel) return;
+  dstPanel.classList.add("hidden");
+}
+
+// UI Sync
+function syncDSTUI() {
+  const mode = localStorage.getItem("dstMode") || "auto";
+
+  dstButtons.forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.dst === mode);
+  });
+
+  if (dstInfo) {
+    dstInfo.textContent =
+      mode === "summer" ? "🌞 Sommerzeit (MESZ) manuell aktiv" :
+      mode === "winter" ? "❄️ Winterzeit (MEZ) manuell aktiv" :
+      "🧠 Automatische Umstellung aktiv (empfohlen)";
+  }
+}
+
+// Buttons → setDSTMode + UI Sync
+dstButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    setDSTMode(btn.dataset.dst);
+    syncDSTUI();
+  });
+});
+
+// Close Button
+if (dstClose) dstClose.addEventListener("click", closeDSTSettings);
+
+// Klick auf Overlay (außerhalb Popup) → Close
+if (dstPanel) {
+  dstPanel.addEventListener("click", e => {
+    if (e.target === dstPanel) closeDSTSettings();
+  });
 }
 
 
