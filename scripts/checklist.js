@@ -211,17 +211,54 @@ function syncFloatingScore(value, label, color) {
 function handleFloatingScore() {
   const bigBox = document.getElementById("confTotalBox");
   const floatBox = document.getElementById("floatingScore");
+  if (!bigBox || !floatBox) return;
 
   const rect = bigBox.getBoundingClientRect();
 
-  if (rect.bottom < 0 || rect.top > window.innerHeight)
-    floatBox.classList.remove("hidden");
-  else
-    floatBox.classList.add("hidden");
+  const isOutOfView =
+    rect.bottom < 0 || rect.top > window.innerHeight;
+
+  floatBox.classList.toggle("hidden", !isOutOfView);
 }
 
 window.addEventListener("scroll", handleFloatingScore);
 
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // 1. Die Elemente holen
+    const targetElement = document.querySelector('.conf-total-box'); // Die große Box im Content
+    const floatingBar = document.querySelector('.floating-score');   // Die neue Bottom-Bar
+    
+    // Sicherheitscheck
+    if (!targetElement || !floatingBar) return;
+
+    // 2. Observer Optionen definieren
+    const observerOptions = {
+        root: null,   // Viewport
+        threshold: 0, // Sobald 0% vom Element sichtbar sind -> Trigger
+        rootMargin: "-100px 0px 0px 0px" // Optional: Trigger etwas früher/später justieren
+    };
+
+    // 3. Der Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Logik: 
+            // Wenn target NICHT im Bild ist (!isIntersecting) -> Bar hochfahren (.slide-up)
+            // Wenn target im Bild IST (isIntersecting) -> Bar einfahren (Klasse weg)
+            
+            if (!entry.isIntersecting) {
+                // Target ist weggescrollt -> Zeige Bar
+                floatingBar.classList.add('slide-up');
+            } else {
+                // Target ist sichtbar -> Verstecke Bar
+                floatingBar.classList.remove('slide-up');
+            }
+        });
+    }, observerOptions);
+
+    // 4. Start Monitoring
+    observer.observe(targetElement);
+});
 
 
 /* ============================================================
