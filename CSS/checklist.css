@@ -68,280 +68,487 @@
 
 
 /* ============================================================
-   7-LEVEL DISPLAY STYLES FOR getLevelData() 
+   🌈 7-LEVEL ENERGY CORES (REMASTERED)
    ============================================================ */
 
-/* Basis: verhindert Style-Konflikte */
-.conf-total-box.lvl0,
-.conf-total-box.lvl1,
-.conf-total-box.lvl2,
-.conf-total-box.lvl3,
-.conf-total-box.lvl4,
-.conf-total-box.lvl5,
-.conf-total-box.lvl6 {
-  transition: all 0.35s ease, box-shadow 0.4s ease;
+/* Basis-Transition für smoothe Farbwechsel */
+.conf-total-box {
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: box-shadow, border-color, background;
+  position: relative;
+  overflow: hidden;
 }
 
 /* ============================================================
-   LEVEL 0 – ❌ NO TRADE
+   🚫 LEVEL 0 – CORE MELTDOWN (Critical)
    ============================================================ */
 .conf-total-box.lvl0 {
-  border-color: rgba(255, 60, 60, 0.35);
-  background: linear-gradient(180deg, rgba(255,0,0,0.06), rgba(255,0,0,0.12));
-  box-shadow: 0 0 18px rgba(255,0,0,0.22);
+  border-color: rgba(255, 40, 40, 0.6);
+  background: radial-gradient(circle at center, rgba(50, 0, 0, 0.9), rgba(20, 0, 0, 0.98));
+  
+  /* Instabiles, rotes Flackern */
+  box-shadow: 
+    0 0 30px rgba(255, 0, 0, 0.25),
+    inset 0 0 20px rgba(255, 0, 0, 0.1);
+  animation: pulseCritical 0.8s infinite;
 }
+
 .conf-total-box.lvl0 .conf-total-value {
   color: #ff3b3b;
-  text-shadow: 0 0 14px rgba(255,0,0,0.5);
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
 }
-.conf-total-box.lvl0 .conf-total-text {
-  color: #ff9999;
-}
+.conf-total-box.lvl0 .conf-total-text { color: #ff8080; }
 
+@keyframes pulseCritical {
+  0%, 100% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.25), inset 0 0 20px rgba(255, 0, 0, 0.1); }
+  50% { box-shadow: 0 0 50px rgba(255, 0, 0, 0.4), inset 0 0 40px rgba(255, 0, 0, 0.2); }
+}
 
 /* ============================================================
-   LEVEL 1 – ⚠️ WACKLIG
+   ⚠️ LEVEL 1 – UNSTABLE (Warning)
    ============================================================ */
 .conf-total-box.lvl1 {
-  border-color: rgba(255, 155, 60, 0.35);
-  background: linear-gradient(180deg, rgba(255,150,0,0.08), rgba(255,150,0,0.14));
-  box-shadow: 0 0 18px rgba(255,150,0,0.22);
+  border-color: rgba(255, 140, 0, 0.5);
+  background: radial-gradient(circle at center, rgba(60, 30, 0, 0.8), rgba(20, 10, 0, 0.95));
+  box-shadow: 0 0 25px rgba(255, 140, 0, 0.2);
 }
+
 .conf-total-box.lvl1 .conf-total-value {
   color: #ffae42;
-  text-shadow: 0 0 14px rgba(255,150,0,0.5);
+  text-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
 }
-.conf-total-box.lvl1 .conf-total-text {
-  color: #ffd8a8;
-}
-
+.conf-total-box.lvl1 .conf-total-text { color: #ffe0b2; }
 
 /* ============================================================
-   LEVEL 2 – 🟡 VALID
+   🟡 LEVEL 2 – WARMING UP (Valid)
    ============================================================ */
 .conf-total-box.lvl2 {
-  border-color: rgba(255, 220, 80, 0.35);
-  background: linear-gradient(180deg, rgba(255,220,0,0.08), rgba(255,220,0,0.16));
-  box-shadow: 0 0 18px rgba(255,220,0,0.22);
-}
-.conf-total-box.lvl2 .conf-total-value {
-  color: #ffe066;
-  text-shadow: 0 0 14px rgba(255,220,0,0.5);
-}
-.conf-total-box.lvl2 .conf-total-text {
-  color: #fff3bf;
+  border-color: rgba(255, 215, 0, 0.5);
+  background: radial-gradient(circle at center, rgba(60, 50, 0, 0.8), rgba(20, 18, 0, 0.95));
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25), inset 0 0 10px rgba(255, 215, 0, 0.1);
 }
 
+.conf-total-box.lvl2 .conf-total-value {
+  color: #ffd700; /* Gold */
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+.conf-total-box.lvl2 .conf-total-text { color: #fff9c4; }
 
 /* ============================================================
-   LEVEL 3 – 🟢 GUTER TRADE
+   🟢 LEVEL 3 – STABLE REACTOR (Good)
    ============================================================ */
 .conf-total-box.lvl3 {
-  border-color: rgba(0,255,150,0.35);
-  background: linear-gradient(180deg, rgba(0,255,153,0.09), rgba(0,255,153,0.16));
-  box-shadow: 0 0 22px rgba(0,255,153,0.28);
+  border-color: rgba(0, 255, 154, 0.5);
+  background: radial-gradient(circle at center, rgba(0, 50, 30, 0.8), rgba(0, 15, 10, 0.95));
+  box-shadow: 0 0 35px rgba(0, 255, 154, 0.25), inset 0 0 15px rgba(0, 255, 154, 0.1);
 }
+
 .conf-total-box.lvl3 .conf-total-value {
   color: #00ff9a;
-  text-shadow: 0 0 14px rgba(0,255,150,0.5);
+  text-shadow: 0 0 20px rgba(0, 255, 154, 0.7);
 }
-.conf-total-box.lvl3 .conf-total-text {
-  color: #b5ffe4;
-}
-
+.conf-total-box.lvl3 .conf-total-text { color: #b9f6ca; }
 
 /* ============================================================
-   LEVEL 4 – 🔵 SEHR GUT
+   🔵 LEVEL 4 – HIGH ENERGY (Very Good)
    ============================================================ */
 .conf-total-box.lvl4 {
-  border-color: rgba(60,170,255,0.45);
-  background: linear-gradient(180deg, rgba(60,170,255,0.10), rgba(60,170,255,0.18));
-  box-shadow: 0 0 24px rgba(60,170,255,0.32);
-}
-.conf-total-box.lvl4 .conf-total-value {
-  color: #33bbff;
-  text-shadow: 0 0 15px rgba(60,170,255,0.55);
-}
-.conf-total-box.lvl4 .conf-total-text {
-  color: #cde9ff;
+  border-color: rgba(0, 191, 255, 0.6);
+  background: radial-gradient(circle at center, rgba(0, 40, 80, 0.8), rgba(0, 10, 25, 0.95));
+  
+  /* Blauer Plasma-Glow */
+  box-shadow: 
+    0 0 40px rgba(0, 191, 255, 0.3), 
+    inset 0 0 20px rgba(0, 191, 255, 0.15);
 }
 
+.conf-total-box.lvl4 .conf-total-value {
+  color: #00bfff; /* Deep Sky Blue */
+  text-shadow: 0 0 25px rgba(0, 191, 255, 0.8);
+}
+.conf-total-box.lvl4 .conf-total-text { color: #e1f5fe; }
 
 /* ============================================================
-   LEVEL 5 – 🟣 HIGH PROBABILITY
+   🟣 LEVEL 5 – FUSION STATE (High Probability)
    ============================================================ */
 .conf-total-box.lvl5 {
-  border-color: rgba(170, 80, 255, 0.45);
-  background: linear-gradient(180deg, rgba(170,80,255,0.10), rgba(170,80,255,0.20));
-  box-shadow: 0 0 26px rgba(170,80,255,0.35);
-}
-.conf-total-box.lvl5 .conf-total-value {
-  color: #bb55ff;
-  text-shadow: 0 0 16px rgba(170,80,255,0.55);
-}
-.conf-total-box.lvl5 .conf-total-text {
-  color: #e9d1ff;
+  border-color: rgba(180, 80, 255, 0.7);
+  background: radial-gradient(circle at center, rgba(60, 20, 90, 0.8), rgba(20, 5, 30, 0.95));
+  
+  /* Violetter Nebel */
+  box-shadow: 
+    0 0 50px rgba(180, 80, 255, 0.35), 
+    inset 0 0 25px rgba(180, 80, 255, 0.2);
 }
 
+.conf-total-box.lvl5 .conf-total-value {
+  color: #d580ff;
+  text-shadow: 0 0 30px rgba(180, 80, 255, 0.8), 0 0 10px #fff;
+}
+.conf-total-box.lvl5 .conf-total-text { color: #f3e5f5; }
 
 /* ============================================================
-   LEVEL 6 – 💎 PERFECT TRADE (170%)
+   💎 LEVEL 6 – GOD MODE (STABILIZED & CLEAN)
    ============================================================ */
 .conf-total-box.lvl6 {
-  border-color: rgba(0, 255, 224, 0.55);
-  background:
-    linear-gradient(180deg, rgba(0,255,224,0.14), rgba(0,255,224,0.22)),
-    radial-gradient(circle at 50% 0%, rgba(0,255,224,0.25), transparent 70%);
-  box-shadow:
-    0 0 34px rgba(0,255,224,0.38),
-    0 0 18px rgba(0,255,224,0.48);
-}
-.conf-total-box.lvl6 .conf-total-value {
-  color: #00ffe0;
-  text-shadow: 0 0 22px rgba(0,255,224,0.8);
-}
-.conf-total-box.lvl6 .conf-total-text {
-  color: #c8fffa;
+  /* 1. Stabile Basis (Kein Flackern des Randes) */
+  border: 1px solid #00fff2; 
+  
+  /* 2. Deep Crystal Background */
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.15), transparent 70%),
+    linear-gradient(180deg, rgba(0, 20, 25, 0.95), rgba(0, 5, 10, 1));
+
+  /* 3. Statischer "Holy" Glow (Performance-freundlich) */
+  box-shadow: 
+    0 0 30px rgba(0, 255, 242, 0.25),
+    inset 0 0 20px rgba(0, 255, 242, 0.1);
+
+  position: relative;
+  overflow: hidden; /* Wichtig für den Glanz-Effekt */
+  z-index: 1;
 }
 
+/* 4. Der "Diamant-Glanz" (Lichtreflexion läuft durchs Bild) */
+.conf-total-box.lvl6::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; /* Startet links außerhalb */
+  width: 50%;
+  height: 100%;
+  
+  /* Der Lichtstrahl */
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.4), 
+    transparent
+  );
+  transform: skewX(-25deg); /* Schräg gestellt */
+  
+  /* Die Animation: Läuft alle 4 Sekunden einmal durch */
+  animation: shineSwipe 4s infinite ease-in-out;
+  pointer-events: none;
+  z-index: -1; /* Hinter dem Text */
+}
+
+/* 5. Text Styles - Kristallklar */
+.conf-total-box.lvl6 .conf-total-value {
+  color: #e0ffff;
+  text-shadow: 
+    0 0 15px rgba(0, 255, 242, 0.8),
+    0 0 30px rgba(0, 255, 242, 0.4);
+  /* Leichtes "Atmen" des Textes statt der ganzen Box */
+  animation: textBreathe 3s infinite ease-in-out;
+}
+
+.conf-total-box.lvl6 .conf-total-text { 
+  color: #fff; 
+  font-weight: 700; 
+  letter-spacing: 2px;
+  opacity: 0.9;
+}
+
+/* ============================================================
+   ANIMATIONEN (GPU optimiert)
+   ============================================================ */
+
+/* Der Lichtstrahl */
+@keyframes shineSwipe {
+  0% { left: -100%; opacity: 0; }
+  20% { opacity: 1; }
+  50% { left: 200%; opacity: 0; } /* Schneller Durchlauf */
+  100% { left: 200%; opacity: 0; } /* Pause */
+}
+
+/* Text Pulsieren */
+@keyframes textBreathe {
+  0%, 100% { filter: brightness(1); transform: scale(1); }
+  50% { filter: brightness(1.3); transform: scale(1.02); }
+}
 
 
 
 /* ============================================================
-   SUMMARY BOARD – based on YOUR HTML (ThePerfectTrade Style)
+   💎 SUMMARY BOARD – COMMAND CENTER
    ============================================================ */
 
 .conf-summary {
   position: relative;
   z-index: 10;
-
+  
   max-width: 650px;
   margin: 20px auto 32px;
-  padding: 28px 28px 32px;
+  padding: 30px 30px 40px; /* Mehr Platz unten */
 
-  border-radius: 22px;
-  background:
-    radial-gradient(140% 120% at 50% -10%, rgba(255,255,255,0.05), transparent 55%),
-    linear-gradient(145deg, #0d1117, #0b0f14 60%, #07090d);
+  /* Shape & Glass */
+  border-radius: 24px;
+  backdrop-filter: blur(12px); /* Stärkerer Blur für Tiefe */
+  
+  /* Der "Deep Core" Hintergrund */
+  background: 
+    /* Top Spotlight (Licht von oben) */
+    radial-gradient(circle at 50% 0%, rgba(0, 255, 154, 0.15), transparent 60%),
+    /* Base Dark Glass */
+    linear-gradient(160deg, rgba(15, 20, 18, 0.90) 0%, rgba(3, 5, 4, 0.98) 100%);
 
-  border: 1px solid rgba(0,255,153,0.14);
-  box-shadow:
-    0 8px 28px rgba(0,0,0,0.65),
-    0 0 24px rgba(0,255,153,0.10);
-  backdrop-filter: blur(8px);
+  /* Tech Borders (Mehrschichtig) */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 255, 154, 0.3); /* Grüne Lichtkante oben */
+  
+  /* Massive Schatten für "Schwebe"-Effekt */
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.7),     /* Tiefe */
+    0 0 0 1px rgba(0, 0, 0, 0.3),       /* Outline Definition */
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), /* Inner Highlight */
+    0 0 40px rgba(0, 255, 154, 0.05);   /* Ambient Green Glow */
 
-  text-align: center;
   isolation: isolate;
+  overflow: hidden; /* Wichtig für Licht-Effekte */
 }
 
-.conf-summary h3 {
-  font-size: 22px !important;
-  font-weight: 700;
-  margin-bottom: 22px !important;
-  text-shadow: 0 0 10px rgba(0,255,150,0.25);
-  color: #eafff6;
+/* Optional: Ein feines Grid-Muster im Hintergrund für Tech-Feel */
+.conf-summary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* ============================================================
-   TOP GRID
+   🏷️ SUMMARY TITLE – HUD HEADER
+   ============================================================ */
+
+.conf-summary h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px !important; /* Kleiner, aber technischer */
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 800;
+  
+  margin: 0 0 25px 0 !important;
+  padding-bottom: 15px;
+  
+  color: #ffffff;
+  text-shadow: 0 0 15px rgba(0, 255, 154, 0.4);
+  
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Die Linie unter dem Titel (Glow Line) */
+.conf-summary h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  
+  /* Linie verblasst zu den Seiten */
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    rgba(0, 255, 154, 0.5) 50%, 
+    transparent 100%
+  );
+  
+  box-shadow: 0 0 10px rgba(0, 255, 154, 0.8);
+}
+/* ============================================================
+   🟢 GRID SYSTEM (The Energy Cells)
    ============================================================ */
 
 .conf-summary-grid {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 30px;
-
   padding: 0 4px;
 }
 
 .conf-summary-grid .conf-box {
-  flex: 1 1 calc(33% - 16px);
-  min-width: 150px;
+  flex: 1 1 calc(33% - 12px);
+  min-width: 140px;
 
-  padding: 16px 12px;
-  border-radius: 16px;
+  /* Dark Glass Container */
+  background: linear-gradient(
+    145deg, 
+    rgba(20, 30, 25, 0.8), 
+    rgba(5, 10, 8, 0.95)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 255, 154, 0.15); /* Top Light Highlight */
+  border-radius: 12px;
 
-  background: rgba(0,255,130,0.06);
-  border: 1px solid rgba(0,255,150,0.18);
-
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.45),
-    0 0 14px rgba(0,255,150,0.10);
-
+  padding: 20px 10px;
   text-align: center;
-  transition: 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.conf-box span {
-  display: block;
-  font-size: 13px;
-  opacity: 0.7;
-  color: #cffff1;
-  margin-bottom: 4px;
-}
-
-.conf-box strong {
-  display: block;
-  font-size: 22px;
-  font-weight: 700;
-  color: #00ffbf;
-  text-shadow: 0 0 10px rgba(0,255,150,0.45);
-}
-
-/* ACTIVE GLOW */
-.conf-box.active {
-  background: rgba(0,255,160,0.12);
-  border-color: rgba(0,255,150,0.55);
-  box-shadow:
-    0 0 16px rgba(0,255,150,0.35),
-    0 0 6px rgba(0,255,150,0.25);
+/* Hover State - Lift & Light */
+.conf-summary-grid .conf-box:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(
+    145deg, 
+    rgba(30, 45, 35, 0.9), 
+    rgba(10, 20, 15, 1)
+  );
+  border-color: rgba(0, 255, 154, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================================
-   MAIN TOTAL BOX
+   ⚡ ACTIVE CELL (Glowing State)
+   ============================================================ */
+
+.conf-box.active {
+  /* Green Energy Fill */
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 154, 0.08) 0%,
+    rgba(5, 20, 15, 0.95) 100%
+  );
+  border-color: #00ff9a;
+  
+  /* Neon Outer Glow */
+  box-shadow: 
+    0 0 20px rgba(0, 255, 154, 0.15),
+    inset 0 0 15px rgba(0, 255, 154, 0.05);
+}
+
+/* Title Text */
+.conf-box span {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+  transition: color 0.3s;
+}
+
+.conf-box:hover span,
+.conf-box.active span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Value Text */
+.conf-box strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  
+  /* Idle Text Shadow */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.conf-box.active strong {
+  color: #00ff9a;
+  /* Hard Neon Glow Text */
+  text-shadow: 
+    0 0 10px rgba(0, 255, 154, 0.6),
+    0 0 20px rgba(0, 255, 154, 0.3);
+}
+
+/* ============================================================
+   ☢️ MAIN TOTAL BOX (The Core Display)
    ============================================================ */
 
 .conf-total-box {
-  margin-top: 10px;
-  padding: 40px 20px 42px;
-  border-radius: 20px;
+  margin-top: 20px;
+  padding: 30px 20px 35px;
+  border-radius: 24px;
+  position: relative;
 
-  background:
-    linear-gradient(180deg, rgba(0,255,153,0.05), rgba(0,255,153,0.10));
-  border: 1px solid rgba(0,255,153,0.20);
-
-  box-shadow:
-    0 0 18px rgba(0,255,150,0.14),
-    inset 0 1px 2px rgba(255,255,255,0.05);
-
+  /* Deep Reactor Background */
+  background: linear-gradient(
+    180deg, 
+    rgba(10, 25, 20, 0.8) 0%, 
+    rgba(0, 10, 5, 0.95) 100%
+  );
+  
+  /* Complex Tech Border */
+  border: 1px solid rgba(0, 255, 154, 0.1);
+  box-shadow: 
+    inset 0 0 40px rgba(0, 0, 0, 0.8), /* Depth */
+    0 20px 50px rgba(0, 0, 0, 0.6);   /* Lift */
+    
   text-align: center;
+  overflow: hidden;
 }
 
+/* Top High-Tech Light Line */
+.conf-total-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00ff9a, transparent);
+  opacity: 0.5;
+}
+
+/* Label "Total Score" */
 .conf-total-box > div:first-child {
-  font-size: 15px;
-  letter-spacing: 1px;
-  color: #d0fff3;
-  margin-bottom: 10px;
-  opacity: 0.8;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: rgba(0, 255, 154, 0.6);
+  margin-bottom: 4px;
 }
 
+/* THE NUMBER */
 .conf-total-value {
-  font-size: 72px !important;
+  font-family: 'Inter', sans-serif; /* Oder deine Font */
+  font-size: 82px !important;
   font-weight: 900;
-  margin: 0;
-  color: #ff3b3b;
-  text-shadow: 0 0 14px rgba(255,50,50,0.45);
+  line-height: 1;
+  margin: 10px 0;
+  
+  /* Standard: Green Reactor Glow */
+  color: #ffffff;
+  text-shadow: 
+    0 0 20px rgba(0, 255, 154, 0.5),
+    0 0 40px rgba(0, 255, 154, 0.2);
+    
+  /* Falls du rot willst, überschreibt JS das meistens inline, 
+     aber hier ist der Basis-Style für "Maximum Power" */
+  background: -webkit-linear-gradient(#fff, #00ff9a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Leichte Schwebe-Animation */
+  animation: floatScore 4s ease-in-out infinite;
 }
 
+@keyframes floatScore {
+  0%, 100% { transform: translateY(0); filter: brightness(1); }
+  50% { transform: translateY(-3px); filter: brightness(1.2); }
+}
+
+/* Subtext */
 .conf-total-text {
-  margin-top: 8px;
-  font-size: 15px;
-  opacity: 0.75;
-  color: #e0e0e0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
-
 
 
 /* ============================================================
@@ -361,167 +568,338 @@
 
 
 /* ============================================================
-   PERFECT TRADE – CARD LAYOUT (Main Container)
+   🟢 SYSTEM ANIMATION – STABLE ENERGY FLOW
    ============================================================ */
-
-
-/* Die einzelnen Timeframe-Karten (Weekly, Daily...) */
-.tf-card {
-  padding: 24px 24px 28px;
-  margin-bottom: 24px;
-
-  background: rgba(20, 20, 25, 0.4);
-  border: 1px solid rgba(0,255,150,0.12);
-  border-radius: 18px;
-
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  position: relative;
-  overflow: hidden;
+@keyframes greenSystemPulse {
+  0% {
+    box-shadow: 
+      inset 4px 0 0 #00ff9a,
+      inset 0 0 15px rgba(0, 255, 154, 0.05);
+  }
+  50% {
+    box-shadow: 
+      inset 4px 0 0 #00ff9a,
+      inset 0 0 30px rgba(0, 255, 154, 0.2);
+  }
+  100% {
+    box-shadow: 
+      inset 4px 0 0 #00ff9a,
+      inset 0 0 15px rgba(0, 255, 154, 0.05);
+  }
 }
 
-/* Header innerhalb der Card (WEEKLY .... 0%) */
+/* ============================================================
+   🟢 CARD CONTAINER – THE REACTOR HOUSING
+   ============================================================ */
+
+.tf-card {
+  /* Dark Tech Glass Background */
+  background: linear-gradient(
+    170deg, 
+    rgba(20, 25, 23, 0.95) 0%, 
+    rgba(5, 10, 8, 0.98) 100%
+  );
+  
+  /* Subtiler, permanenter System-Glow */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 255, 154, 0.2);
+  border-radius: 16px;
+  
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.6), 
+    0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(0, 255, 154, 0.02); /* Ambient Energy */
+    
+  padding: 24px;
+  color: #e0e0e0;
+  font-family: 'Inter', system-ui, sans-serif; /* Fallback */
+  overflow: hidden;
+  position: relative;
+}
+
+/* ============================================================
+   🟢 HEADER & SCORE – HUD DISPLAY
+   ============================================================ */
+
 .tf-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tf-title {
-  font-size: 19px;
-  font-weight: 700;
-  color: #d9fff3;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 10px rgba(0,255,150,0.2);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .tf-score {
+  font-family: 'Roboto Mono', monospace; /* Tech Monospace if available */
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   color: #00ff9a;
-  text-shadow: 0 0 12px rgba(0,255,150,0.5);
-}
-
-/* Subtext unter dem Titel (z.B. "0% confluence") */
-.tf-sub {
-  display: block;
-  margin-top: -4px;
-  margin-bottom: 16px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.4);
-}
-
-/* Section Titles (TREND, AOI...) */
-.tf-section-title {
-  margin: 18px 0 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(0, 255, 154, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  
+  /* Digital Readout Glow */
+  text-shadow: 
+    0 0 10px rgba(0, 255, 154, 0.4),
+    0 0 20px rgba(0, 255, 154, 0.2);
+    
+  background: rgba(0, 255, 154, 0.1);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 154, 0.2);
 }
 
 /* ============================================================
-   ROW LAYOUT (Labels & Switches)
+   🟢 SECTIONS – SYSTEMATIC MARKERS
+   ============================================================ */
+
+.tf-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 24px 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Decorative Line next to title */
+.tf-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+}
+
+/* ============================================================
+   🟢 ROWS (LABELS) – THE ENERGY CELLS
    ============================================================ */
 
 .tf-card label {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   
-  padding: 14px 6px; 
+  padding: 12px 8px;
+  margin-bottom: 2px;
   cursor: pointer;
   
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  transition: all 0.2s ease;
+  /* Default: Idle Glass State */
+  background: transparent;
+  border-left: 2px solid transparent; /* Platzhalter für Aktivierung */
+  border-radius: 6px;
+  
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* Hover: System Pre-Check */
 .tf-card label:hover {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  margin: 0 -6px;
-  padding: 14px 12px;
+  padding-left: 12px; /* Slight movement */
+  border-left-color: rgba(0, 255, 154, 0.3);
 }
 
-.tf-card label:last-child {
-  border-bottom: none;
-}
-
-/* Text links */
-.tf-card label span:first-child {
-  font-size: 15px;
-  font-weight: 500;
-  color: #eafff6;
-  opacity: 0.9;
-}
-
-/* Die Punkte (+10%) */
-.pts {
-  margin-right: 16px; 
-  margin-left: auto; /* Push to right */
+/* Checked: Power Activation */
+.tf-card label:has(input:checked) {
+  background: linear-gradient(
+    90deg, 
+    rgba(0, 255, 154, 0.08) 0%, 
+    rgba(0, 20, 10, 0.05) 100%
+  );
   
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.3);
-  transition: 0.3s;
+  /* Der "System Pulse" */
+  animation: greenSystemPulse 4s infinite ease-in-out;
+  padding-left: 12px;
 }
 
-.tf-card label:has(input:checked) .pts {
-  color: #00ff9a;
-  text-shadow: 0 0 8px rgba(0, 255, 154, 0.4);
-  opacity: 1;
+/* Label Text */
+.tf-card label span:first-child {
+  color: #a0a0a0;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.tf-card label:hover span:first-child {
+  color: #e0e0e0;
+}
+
+.tf-card label:has(input:checked) span:first-child {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(0, 255, 154, 0.25);
 }
 
 /* ============================================================
-   CUSTOM TOGGLE SWITCH (iOS / Perfect Trade Style)
+   🟢 POINTS (.pts) – STATUS INDICATOR
    ============================================================ */
 
-.tf-card input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
+.pts {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.2);
+  margin-left: auto;
+  transition: all 0.4s ease;
   
-  width: 42px;
-  height: 24px;
-  position: relative;
-  border-radius: 50px;
-  
-  /* Inaktiv */
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  /* Status Dot Base */
+  display: flex;
+  align-items: center;
 }
 
-/* Der Knob (Kreis) */
-.tf-card input[type="checkbox"]::after {
+/* Active Points: The "Light" turns on */
+.tf-card label:has(input:checked) .pts {
+  color: #00ff9a;
+  text-shadow: 0 0 8px rgba(0, 255, 154, 0.6);
+  transform: translateX(-4px); /* Einrasten */
+}
+
+/* ============================================================
+   🎚️ TOGGLE SLIDER (Wiederherstellung)
+   ============================================================ */
+
+/* 1. Die Basis (Die "Bahn" des Sliders) */
+.tf-card label input[type="checkbox"] {
+  /* Standard-Checkbox verstecken */
+  appearance: none;
+  -webkit-appearance: none; 
+  
+  /* Größe des Schalters */
+  width: 40px;
+  height: 22px;
+  
+  /* Inaktiver Zustand (Dunkel) */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px; /* Pillen-Form */
+  
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0; /* Verhindert, dass er zerquetscht wird */
+  margin-left: 12px;
+  
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* 2. Der Knob (Der Kreis innen) */
+.tf-card label input[type="checkbox"]::after {
   content: '';
   position: absolute;
   top: 2px;
   left: 2px;
+  width: 16px;
+  height: 16px;
   
-  width: 18px;
-  height: 18px;
-  background: #bbbbbb;
+  /* Inaktive Farbe */
+  background: #888;
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy Effekt */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* AKTIV */
-.tf-card input[type="checkbox"]:checked {
-  background: #00ff9a;
+/* ============================================================
+   🟢 AKTIV ZUSTAND (Der "An"-Effekt)
+   ============================================================ */
+
+/* Hintergrund wird Grün und leuchtet */
+.tf-card label input[type="checkbox"]:checked {
+  background: #008f56; /* Dunkleres Grün für Basis */
   border-color: #00ff9a;
-  box-shadow: 0 0 15px rgba(0, 255, 154, 0.25);
+  
+  /* Glow um den Switch */
+  box-shadow: 
+    0 0 10px rgba(0, 255, 154, 0.4), 
+    inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.tf-card input[type="checkbox"]:checked::after {
-  transform: translateX(18px);
+/* Knob bewegt sich nach rechts und wird Weiß */
+.tf-card label input[type="checkbox"]:checked::after {
+  transform: translateX(18px); /* Verschiebung */
   background: #ffffff;
+  
+  /* Knob Glow */
+  box-shadow: 
+    0 0 8px rgba(255, 255, 255, 0.6),
+    0 0 4px rgba(0, 255, 154, 1);
+}
+
+/* Hover Effekt für den Slider */
+.tf-card label input[type="checkbox"]:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   🔴 SPECIAL OVERRIDE: MAJOR NEWS (RED FIRE MODE)
+   ============================================================ */
+
+/* 1. Der Slider Hintergrund in ROT */
+.tf-card.tf-news label input[type="checkbox"]:checked {
+  background: #7a0000; /* Tiefes Dunkelrot */
+  border-color: #ff3b3b;
+  
+  /* Roter Gefahren-Glow */
+  box-shadow: 
+    0 0 15px rgba(255, 0, 0, 0.6), 
+    inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* 2. Der Slider Knob (Kreis) in der News Box */
+.tf-card.tf-news label input[type="checkbox"]:checked::after {
+  background: #fff;
+  
+  /* Weißer Kern mit roter Aura */
+  box-shadow: 
+    0 0 8px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 0, 0, 1);
+}
+
+/* 3. Die ganze Zeile (Row) leuchtet ROT statt Grün */
+.tf-card.tf-news label:has(input:checked) {
+  /* Roter Energie-Verlauf */
+  background: linear-gradient(
+    90deg, 
+    rgba(255, 0, 0, 0.15) 0%, 
+    rgba(50, 0, 0, 0.1) 100%
+  );
+  border-left-color: #ff3b3b;
+  
+  /* Rote Puls-Animation überschreiben */
+  animation: none; /* Oder eine rote Animation definieren, falls gewünscht */
+  box-shadow: inset 15px 0 20px -10px rgba(255, 0, 0, 0.2);
+}
+
+/* 4. Text und Punkte (.pts) werden ROT/ORANGE */
+.tf-card.tf-news label:has(input:checked) span:first-child {
+  text-shadow: 0 0 10px rgba(255, 50, 50, 0.5);
+}
+
+.tf-card.tf-news label:has(input:checked) .pts {
+  color: #ff4500; /* Orange-Rot */
+  text-shadow: 0 0 12px rgba(255, 69, 0, 0.8);
+}
+
+/* ============================================================
+   ⚙️ ACCESSIBILITY & PERFORMANCE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .tf-card label:has(input:checked) {
+    animation: none;
+    box-shadow: inset 4px 0 0 #00ff9a; /* Static Indicator */
+  }
+  .tf-card label, .pts {
+    transition: none;
+  }
 }
 
 /* ============================================================
@@ -619,6 +997,172 @@
 }
 
 /* ============================================================
+   🔥 ANIMATION DEFINITION (Das Herzschlag-Pulsieren)
+   ============================================================ */
+@keyframes redPulse {
+  0% {
+    box-shadow: 
+      0 0 10px rgba(255, 0, 0, 0.3),
+      inset 0 0 10px rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 60, 60, 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 0 25px rgba(255, 20, 20, 0.6),    /* Äußerer Glow */
+      0 0 50px rgba(255, 0, 0, 0.3),      /* Weiter Streuung */
+      inset 0 0 20px rgba(255, 0, 0, 0.2); /* Innerer Glow */
+    border-color: rgba(255, 100, 100, 1.0);
+  }
+  100% {
+    box-shadow: 
+      0 0 10px rgba(255, 0, 0, 0.3),
+      inset 0 0 10px rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 60, 60, 0.5);
+  }
+}
+/* ============================================================
+   🔴 CORE REACTOR ANIMATION
+   ============================================================ */
+@keyframes corePulse {
+  0% {
+    box-shadow: 
+      0 0 20px rgba(255, 30, 0, 0.15),
+      inset 0 0 15px rgba(255, 0, 0, 0.05);
+    border-color: rgba(255, 60, 60, 0.4);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px rgba(255, 60, 0, 0.4),
+      0 0 80px rgba(255, 20, 0, 0.2),
+      inset 0 0 50px rgba(255, 50, 0, 0.15);
+    border-color: rgba(255, 140, 80, 0.9);
+  }
+  100% {
+    box-shadow: 
+      0 0 20px rgba(255, 30, 0, 0.15),
+      inset 0 0 15px rgba(255, 0, 0, 0.05);
+    border-color: rgba(255, 60, 60, 0.4);
+  }
+}
+
+/* Reduzierte Bewegung für A11y */
+@media (prefers-reduced-motion: reduce) {
+  .tf-card.tf-news,
+  .tf-card.tf-news:has(input:checked) {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ============================================================
+   🔴 MAJOR NEWS – DORMANT STATE (Base)
+   ============================================================ */
+
+.tf-card.tf-news {
+  /* Grundzustand: Kaltes, dunkles Glas, lauernde Gefahr */
+  background: linear-gradient(
+    160deg, 
+    rgba(30, 5, 5, 0.9) 0%, 
+    rgba(15, 0, 0, 0.95) 100%
+  );
+  border: 1px solid rgba(139, 0, 0, 0.4);
+  border-radius: 12px;
+  
+  /* Dezent bedrohlicher Schatten im Ruhezustand */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  
+  /* Vorbereitung für Statuswechsel */
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: box-shadow, border-color, background;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   🔥 ACTIVE STATE – REACTOR MELTDOWN (Parent Selector)
+   ============================================================ */
+
+/* Wenn Checkbox aktiv -> Die ganze Karte brennt */
+.tf-card.tf-news:has(input:checked) {
+  /* Hintergrund wird zum glühenden Kern */
+  background: radial-gradient(
+    circle at center, 
+    rgba(80, 10, 0, 0.85) 0%, 
+    rgba(30, 0, 0, 0.98) 90%
+  );
+  
+  /* Der Pulsierende "Aura"-Effekt */
+  animation: corePulse 2.5s infinite ease-in-out;
+  
+  /* Verstärkter Kontrast zum Lesen */
+  color: #fff; 
+}
+
+/* Subtle Heat Haze Overlay im aktiven Zustand */
+.tf-card.tf-news:has(input:checked)::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  box-shadow: inset 0 0 30px rgba(255, 69, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   🔴 IGNITION TOGGLE – THE TRIGGER
+   ============================================================ */
+
+.tf-card.tf-news input[type="checkbox"] {
+  appearance: none;
+  width: 44px;
+  height: 24px;
+  background: rgba(30, 0, 0, 0.8);
+  border: 1px solid rgba(100, 20, 20, 0.6);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.4s ease;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+/* Knob (Schalter) Basis */
+.tf-card.tf-news input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #551a1a;
+  border-radius: 50%;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+   🔥 TOGGLE ACTIVE – FIRE ON
+   ============================================================ */
+
+.tf-card.tf-news input[type="checkbox"]:checked {
+  background: #4a0505;
+  border-color: #ff4500;
+  box-shadow: 
+    0 0 15px rgba(255, 69, 0, 0.6), 
+    inset 0 1px 5px rgba(0,0,0,0.5);
+}
+
+/* Der Knob wird zum Brennstab */
+.tf-card.tf-news input[type="checkbox"]:checked::after {
+  transform: translateX(20px);
+  background: #ffffff;
+  box-shadow: 
+    0 0 10px #ff4500,    /* Orange Glow */
+    0 0 4px #ff0000;     /* Red Core */
+}
+
+
+/* ============================================================
    🔥 MOBILE ANPASSUNG
    ============================================================ */
 @media (max-width: 900px) {
@@ -632,5 +1176,66 @@
   
   #floatingScoreValue {
     font-size: 20px;
+  }
+}
+
+/* ============================================================
+   🚀 PERFORMANCE BOOSTER (LEISTUNGS-HELFER)
+   Fügt dies ganz am Ende ein, um das Ruckeln zu stoppen.
+   ============================================================ */
+
+/* 1. GPU-Beschleunigung erzwingen (Hardware Acceleration) */
+.tf-card, 
+.conf-box, 
+.conf-total-box,
+.floating-score {
+  transform: translate3d(0, 0, 0); /* Schiebt Arbeit auf die Grafikkarte */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity; /* Warnt den Browser vor Änderungen */
+}
+
+/* 2. "Smart Pause" – Deine Idee! 
+   Wenn die Maus NICHT auf der Karte ist, friert die Animation ein.
+   Der Glow bleibt sichtbar, aber berechnet sich nicht neu. */
+.tf-card:not(:hover) label:has(input:checked),
+.tf-card:not(:hover).tf-news:has(input:checked),
+.tf-card:not(:hover) .pts {
+  animation-play-state: paused;
+  transition: none; /* Stoppt auch langsame Farbwechsel */
+}
+
+/* Die Confluence Boxen auch beruhigen, wenn man nicht drüber ist */
+.conf-summary:not(:hover) .conf-box.active {
+   box-shadow: 
+    0 0 10px rgba(0, 255, 154, 0.15),
+    inset 0 0 5px rgba(0, 255, 154, 0.05); /* Reduzierter Schatten */
+   transition: none;
+}
+
+/* 3. Off-Screen Rendering (Content Visibility)
+   Elemente, die nicht im Bild sind, werden vom Browser ignoriert 
+   bis man hinscrollt. Massiver FPS-Boost beim Scrollen! */
+.tf-card, .conf-summary {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 300px; /* Verhindert Scrollbar-Springen */
+}
+
+/* 4. Blur-Reduzierung (Milchglas ist der größte Performance-Killer) */
+@media screen and (min-width: 1px) {
+    /* Optional: Falls es immer noch ruckelt, entferne die nächste Zeile */
+    .floating-score, .conf-summary {
+        backdrop-filter: blur(5px); /* Reduziert von 8px auf 5px */
+    }
+}
+
+/* 5. Low-End Modus (Falls der PC Stromsparmodus an hat) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    backdrop-filter: none !important;
   }
 }
