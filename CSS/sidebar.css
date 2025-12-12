@@ -464,3 +464,174 @@
     transform: translateY(0); 
   }
 }
+
+/* =========================================================
+   🌍 DST SETTINGS – SESSION POPUP
+   ========================================================= */
+
+#panel-settings-dst {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+#panel-settings-dst.hidden {
+  display: none;
+}
+
+/* ===============================
+   🧊 POPUP BOX
+   =============================== */
+
+.dst-popup {
+  position: relative;
+  width: min(380px, 92%);
+  padding: 22px 20px 20px;
+
+  border-radius: 18px;
+
+  background:
+    radial-gradient(circle at top left,
+      var(--session-accent-soft, rgba(255,255,255,0.08)),
+      rgba(0,0,0,0.9) 60%),
+    linear-gradient(180deg, #0b0d12, #05060a);
+
+  border: 1px solid var(--session-accent-border, rgba(255,255,255,0.1));
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 25px 70px rgba(0,0,0,0.85),
+    0 0 35px var(--session-accent-soft, rgba(0,255,200,0.15));
+
+  animation: dstPopupIn 0.35s ease;
+}
+
+/* ===============================
+   ❌ CLOSE ICON
+   =============================== */
+
+.dst-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+
+  border: 1px solid var(--session-accent-border, rgba(255,255,255,0.2));
+  background: rgba(255,255,255,0.05);
+  color: var(--session-accent, #fff);
+
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.dst-close:hover {
+  background: var(--session-accent-soft, rgba(0,255,200,0.15));
+  transform: scale(1.1);
+}
+
+/* ===============================
+   🧠 TITLE
+   =============================== */
+
+#panel-settings-dst h3 {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #eafffb;
+}
+
+/* ===============================
+   🔘 DST BUTTONS
+   =============================== */
+
+.dst-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.dst-switch button {
+  padding: 12px 0;
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dst-switch button:hover {
+  background: var(--session-accent-soft, rgba(0,255,200,0.12));
+  color: #fff;
+}
+
+.dst-switch button.active {
+  background: linear-gradient(
+    135deg,
+    var(--session-accent, #00ffcc),
+    rgba(255,255,255,0.3)
+  );
+
+  color: #001b16;
+  box-shadow:
+    0 0 14px var(--session-accent-soft, rgba(0,255,200,0.6)),
+    inset 0 0 6px rgba(255,255,255,0.35);
+}
+
+/* ===============================
+   ℹ️ INFO
+   =============================== */
+
+#dstInfo {
+  margin-top: 14px;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.75;
+}
+
+/* ===============================
+   📱 MOBILE
+   =============================== */
+
+@media (max-width: 480px) {
+  .dst-popup {
+    border-radius: 16px;
+    padding: 20px 16px;
+  }
+}
+
+/* ===============================
+   🎞️ ANIMATION
+   =============================== */
+
+@keyframes dstPopupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
