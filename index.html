@@ -341,6 +341,9 @@
   <button id="btnDash" class="side-icon" data-menu="dashboard">🏠</button>
   <button id="btnTools" class="side-icon" data-menu="tools">🧮</button>
   <button id="btnRules" class="side-icon" data-menu="rules">📜</button>
+  <!-- ⚙️ SETTINGS -->
+  <button id="btnSettings" class="side-icon side-settings" data-menu="settings">⚙️</button>
+
 </div>
 
 <!-- =========================== -->
@@ -361,6 +364,10 @@
 
   <!-- 🎨 Session-Hintergrund -->
   <div id="sessionBackgroundOverlay"></div>
+  
+
+
+
 
   <!-- 🕒 Session-Zeit -->
   <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
@@ -425,6 +432,26 @@
         </p>
       </div>
     </section>
+
+<section id="panel-settings-dst" class="panel hidden">
+  <div class="dst-popup">
+    
+    <!-- ❌ CLOSE -->
+    <button class="dst-close" aria-label="Close">✕</button>
+
+    <h3>🌍 Zeitmodus</h3>
+
+    <div class="dst-switch">
+      <button data-dst="auto">AUTO</button>
+      <button data-dst="winter">MEZ</button>
+      <button data-dst="summer">MESZ</button>
+    </div>
+
+    <p id="dstInfo"></p>
+  </div>
+</section>
+
+
 
     <!-- ============================================================
          🧠 CONFLUENCE CHECKLIST PANEL
@@ -1386,6 +1413,8 @@ const panels = document.querySelectorAll("main > section.panel");
 const btnDash = document.getElementById("btnDash");
 const btnTools = document.getElementById("btnTools");
 const btnRules = document.getElementById("btnRules");
+const btnSettings = document.getElementById("btnSettings");
+
 
 
 // ===============================
@@ -1413,8 +1442,15 @@ const MENU = {
       { label: "Theorie-Test", panel: "panel-quiz" },
       { label: "Confluence", panel: "panel-confluence" }
     ]
+  },
+  settings: {
+    title: "Einstellungen",
+    items: [
+      { label: "Zeitmodus (DST)", panel: "panel-settings-dst" }
+    ]
   }
 };
+
 
 
 /* ============================================================
@@ -1540,6 +1576,7 @@ function resetActive() {
   btnDash.classList.remove("active");
   btnTools.classList.remove("active");
   btnRules.classList.remove("active");
+  btnSettings.classList.remove("active");
 }
 
 
@@ -1563,6 +1600,13 @@ btnRules.onclick = () => {
   btnRules.classList.add("active");
   openDrawer("rules");
 };
+
+btnSettings.onclick = () => {
+  resetActive();
+  btnSettings.classList.add("active");
+  openDrawer("settings");
+};
+
 
 
 // ===============================
