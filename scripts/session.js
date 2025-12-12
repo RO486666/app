@@ -150,81 +150,255 @@ const sessions = [
     name: "Sydney",
     start: 1380,
     end: 480,
-    info: "Ruhiger Start in den globalen Handel. Liquidity-Aufbau, Range-Bildung.",
-    weekDaysInfo: [
-      { day: "Montag", text: "🌏 Asia-Opening → AUD/NZD setzen die Wochenrange." },
-      { day: "Mittwoch", text: "🔄 Klare Struktur in AUD/JPY & AUD/USD (saubere HL/LH Bewegungen)." },
-      { day: "Freitag", text: "📌 Vorbereitungsphase für London – AUD/NZD bleiben technisch sauber." },
-    ],
+   info: `
+🟦 <strong>Sydney Session</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Übergangsphase aus der Deadzone. Markt erwacht langsam, Commitment fehlt. Sydney dient primär dem Aufbau von Liquidity und ersten Range-Grenzen – nicht der Trendsetzung.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Sehr geringe Volumen-Tiefe.<br>
+• Viele kleine Pushes ohne Follow-Through.<br>
+• Fake-Structure (Mini HL/LH) extrem häufig.<br>
+• Range-Highs/Lows entstehen, die später von Tokyo oder London geholt werden.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• Frühe Breakouts sind zu 90% Fake.<br>
+• Struktur wirkt „sauber“, ist aber unreif.<br>
+• Entries ohne höheres AOI fast immer Noise.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+Kein aktiver Trading-Fokus. Optimal für:<br>
+• Mapping (Asia-Range vorbereiten)<br>
+• Liquidity-Pools identifizieren<br>
+• Bias-Vorarbeit für Tokyo/London<br><br>
+
+<strong>✅ Erlaubte Aktionen:</strong><br>
+• Levels markieren (Range High / Low).<br>
+• HTF-AOI beobachten, aber nicht aggressiv handeln.<br>
+• Geduld. Sydney traden = statistischer Nachteil.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Nicht gierig werden. Sydney ist Vorbereitung, kein Spielfeld.
+`
+
   },
 
   {
     name: "Tokyo",
     start: 60,
     end: 600,
-    info: "Klare Struktur, häufig Trendbeginn für JPY-Paare. Ruhige, aber saubere Moves.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "📈 Tokyo setzt häufig den JPY-Wochentrend (USD/JPY, GBP/JPY)." },
-      { day: "Donnerstag", text: "🎯 JPY-Paare reagieren technisch stark (HL/LH sehr sauber)." },
-      { day: "Freitag", text: "⚡ Positionsglättung → frühe Volatilität in Yen-Paaren." },
-    ],
+    info: `
+🟦 <strong>Tokyo Session</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Strukturbildende Session. Tokyo formt das Asia-High/Low und etabliert oft die erste verwertbare Intraday-Struktur – besonders in JPY-Paaren.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Saubere HL/LH-Sequenzen auf LTF.<br>
+• Geringe, aber konstante Volatilität.<br>
+• Range-Erweiterung statt Explosion.<br>
+• Markt respektiert Levels sehr präzise.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• Späte Breakouts kurz vor London werden oft gesweept.<br>
+• „Zu perfekte“ Strukturen enden häufig als Liquidity für London.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Sehr gut für Struktur-Lesung & Bias-Building.<br>
+• Scalps möglich bei klarer AOI + Rejection.<br>
+• Ideale Vorbereitung für London Sweep & Expansion.<br><br>
+
+<strong>✅ Best Practice:</strong><br>
+• Asia-High/Low sauber definieren.<br>
+• Struktur dokumentieren, nicht überhandeln.<br>
+• Gewinne klein halten – Tokyo ist kein Expansion-Markt.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Diszipliniert, ruhig, technisch. Tokyo belohnt Geduld, nicht Aggression.
+`
+
   },
 
   {
     name: "London",
     start: 540,
     end: 1020,
-    info: "Stärkste Liquidität. Hauptsession des gesamten Forex-Marktes.",
-    weekDaysInfo: [
-      { day: "Montag", text: "📉 Wochenrange formt sich – EUR/GBP/JPY bewegen sich technisch." },
-      { day: "Dienstag", text: "📈 Trendaufbau – London definiert die Tagesrichtung sehr klar." },
-      { day: "Donnerstag", text: "⚡ Starke directional Moves → Positionsanpassungen vor Freitag." },
-      { day: "Freitag", text: "📅 Gewinnmitnahmen → schnelle Sweeps & Reversals möglich." },
-    ],
+    info: `
+🟦 <strong>London Session</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Primäre Trend- und Entscheidungs-Session. London entscheidet, ob Asia respektiert oder gebrochen wird. Hier entsteht Directional Bias für den gesamten Tag.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Liquidity-Grab über Asia-H/L fast immer vorhanden.<br>
+• Danach impulsive Expansion oder klare Reversals.<br>
+• Struktur-Shift (MSS/CHOCH) sehr sauber erkennbar.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• Direkt in den ersten Push springen = Stop-Hunt.<br>
+• Kein vorheriger Sweep → Setup statistisch schwach.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Beste Session für Daytrading & Intraday-Swings.<br>
+• Perfekt für ICT-Setups (Sweep → MSS → Entry).<br>
+• HTF-Bias MUSS alignen.<br><br>
+
+<strong>✅ Best Practice:</strong><br>
+• Erst Sweep abwarten, dann handeln.<br>
+• Entries nach Struktur-Shift, nicht im Impuls.<br>
+• RR 2R+ realistisch erreichbar.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Geduldig bleiben, dann entschlossen handeln. London verzeiht keine Ungeduld.
+`
+
   },
 
   {
     name: "New York",
     start: 870,
     end: 1380,
-    info: "Hohe Volatilität. US-Liquidität bestimmt die Gesamttrendstärke.",
-    weekDaysInfo: [
-      { day: "Montag", text: "🔄 Häufig träge oder fehlausbruchsanfällig – Vorsicht bei Gold & Indizes." },
-      { day: "Mittwoch", text: "⚡ Midweek Momentum – starke Moves in USD/JPY, XAU/USD & NAS100." },
-      { day: "Freitag", text: "🔥 Weekend-Pricing → Gold & NAS100 extrem volatil." },
-    ],
+   info: `
+🟦 <strong>New York Session</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Volumen- und Finalisierungsphase. New York entscheidet, ob London fortgesetzt oder komplett neutralisiert wird. Besonders aggressiv bei Gold & Indizes.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Sehr häufige Sweeps über London Highs/Lows.<br>
+• Erst Manipulation, dann echter Move.<br>
+• Starker Volumenwechsel nach NY-Open.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• London-Continuation blind handeln = Todesurteil.<br>
+• Market Orders im News-Flow verbrennen Konten.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Sehr stark für Reversals & Deep Pullbacks.<br>
+• Gold & NAS100 extrem technisch bei AOI-Reaktion.<br>
+• News-Context zwingend erforderlich.<br><br>
+
+<strong>✅ Best Practice:</strong><br>
+• London-Struktur kritisch hinterfragen.<br>
+• Sweep + klare Rejection abwarten.<br>
+• Weniger Trades, höhere Qualität.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Respekt vor Volatilität. NY bestraft Overconfidence brutal.
+`
+
   },
 
   {
     name: "London Killzone",
     start: 420,
     end: 660,
-    info: "Liquidity-Grabs, Sweeps, Pre-London Manipulation. Optimal für ICT Entries.",
-    weekDaysInfo: [
-      { day: "Montag", text: "⚠️ Wochenstart-Liquidity wird gejagt – Sweeps auf GBP/USD & EUR/JPY." },
-      { day: "Mittwoch", text: "🔥 Midweek Sweep → perfekte MSS/FVG Setups, sehr saubere Entries." },
-    ],
+  info: `
+🟥 <strong>London Killzone</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Manipulationsphase vor der London-Expansion. Ziel dieser Zone ist es, Asia-Liquidity gezielt zu holen und schwache Marktteilnehmer aus dem Markt zu drücken, bevor die eigentliche Richtung startet.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Sehr häufige Sweeps über Asia-Highs/Lows.<br>
+• Fake-Breakouts auf M1–M5.<br>
+• Schnelle Pushes ohne Follow-Through.<br>
+• Danach klarer Strukturbruch (MSS/CHOCH) auf LTF.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• Breakout-Trades direkt nach Session-Open.<br>
+• Entries ohne vorherigen Liquidity-Grab.<br>
+• „Early Entries“ vor bestätigtem Shift.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Beste Zone für präzise ICT-Entries.<br>
+• Reversal-Setups nach Sweep + MSS extrem valide.<br>
+• Expansion startet meist NACH der Killzone.<br><br>
+
+<strong>✅ Best Practice:</strong><br>
+• Sweep → Pause → Struktur-Shift abwarten.<br>
+• Entry nur an klarer AOI (OB / FVG / EQ).<br>
+• Kleine Stops, saubere RR-Struktur (2R+).<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Nicht der Erste sein. Der Markt zeigt dir hier bewusst falsche Richtungen.
+`
+
   },
 
   {
     name: "New York Killzone",
     start: 810,
     end: 1020,
-    info: "Erster US-Impuls. Trendsetzung oder Reversal, starker Volume Shift.",
-    weekDaysInfo: [
-      { day: "Dienstag", text: "📈 Starke US-Liquidität → XAU/USD & NAS100 bewegen sauber." },
-      { day: "Donnerstag", text: "⚡ Häufig Trendwechsel → perfekte Pullback-Trades." },
-    ],
+   info: `
+🟥 <strong>New York Killzone</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Übergang von London zu US-Volumen. Diese Killzone entscheidet, ob London fortgesetzt oder komplett neutralisiert wird. Extrem aggressiv bei Gold & Indizes.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Sehr häufige Sweeps über London Highs/Lows.<br>
+• Volumenwechsel exakt zum NY-Open.<br>
+• Tiefe Pullbacks vor echter Expansion.<br>
+• News-Impulse verstärken Manipulation.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• London-Trend blind weiterhandeln.<br>
+• Market Orders während News.<br>
+• Zu enge Stops im Volumen-Shift.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Perfekt für Reversal oder Trend-Continuation NACH Sweep.<br>
+• Gold (XAUUSD) reagiert besonders technisch.<br>
+• Indizes zeigen saubere AOI-Reaktionen.<br><br>
+
+<strong>✅ Best Practice:</strong><br>
+• London-Struktur kritisch prüfen.<br>
+• Erst Liquidity-Grab, dann Entry.<br>
+• Weniger Trades, maximale Präzision.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Respekt vor Volumen. New York bestraft Ungeduld kompromisslos.
+`
+
   },
 
   {
     name: "Deadzone",
     start: 1380,
     end: 0,
-    info: "Niedrige Liquidität. Range, Mean-Reversion, kaum Trend.",
-    weekDaysInfo: [
-      { day: "Täglich", text: "😴 Seitwärts → Scalping vermeiden, Markt pausiert." },
-    ],
+    info: `
+⬛ <strong>Deadzone</strong><br><br>
+
+<strong>📌 Charakter & Zweck:</strong><br>
+Niedrigste Liquiditätsphase des Tages. Markt pausiert, Algo-gesteuerte Mean-Reversion dominiert. Kein institutionelles Commitment.<br><br>
+
+<strong>🧠 Typisches Marktverhalten:</strong><br>
+• Extrem enge Ranges.<br>
+• Zufällige Spikes ohne Struktur.<br>
+• Keine Follow-Through-Moves.<br>
+• Stops werden technisch „abgeholt“, nicht aus Versehen.<br><br>
+
+<strong>⚠️ Typische Fallen:</strong><br>
+• Scalping aus Langeweile.<br>
+• Breakouts handeln.<br>
+• Struktur interpretieren, wo keine existiert.<br><br>
+
+<strong>🎯 Trading-Relevanz:</strong><br>
+• Kein Trading empfohlen.<br>
+• Nur Mapping & Vorbereitung für Asia/Sydney.<br>
+• Algo-Noise, keine Edge.<br><br>
+
+<strong>✅ Erlaubte Aktionen:</strong><br>
+• Levels markieren.<br>
+• Vorherige Session auswerten.<br>
+• Bias-Notizen vorbereiten.<br><br>
+
+<strong>🧠 Mentales Playbook:</strong><br>
+Deadzone ist Schlafzeit. Wer hier tradet, zahlt Lerngebühren.
+`
+
   },
 ];
 
@@ -364,33 +538,63 @@ if (names.length > 0) {
   
 
 if (name === "Sydney") {
-  infoText = minutes >= 1380 ? "🌙 Sydney startet – ruhiger Handelsbeginn, Fokus auf AUD/NZD." :
-              minutes < 180 ? "🦘 Sydney aktiv – geringe Volatilität, Setups oft technisch." :
-              "🌅 Späte Sydney-Phase – Übergang zu Tokyo beginnt.";
-} else if (name === "Tokyo") {
-    infoText = minutes < 180 ? "🌏 Tokyo eröffnet – erste Bewegungen durch asiatische Händler." :
-                minutes < 360 ? "🇯🇵 Asiatische Volatilität aktiv – mögliche Bewegungen bei JPY." :
-                "🛑 Tokyo flacht ab – Fokus wechselt langsam nach Europa.";
-  } else if (name === "London Killzone") {
-    infoText = "⚠️ London Killzone – hohe Volatilität & starke Bewegungen möglich.";
-	
-  } else if (name === "London") {
-    infoText = minutes < 720 ? "💷 London Session – Markt in Bewegung, europäische Daten entscheidend." :
-                minutes < 840 ? "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries." :
-                "📈 London-Teilnehmer bleiben aktiv – Vorbereitung auf NY.";
-  } else if (name === "New York Killzone") {
-    infoText = "🔥 New York Killzone – starke Reaktionen auf US-News & Breakouts möglich.";
-  } else if (name === "New York") {
-    infoText = minutes < 1080 ? "🇺🇸 New York Session – starker US-Einfluss, Trendfortsetzungen möglich." :
-                minutes < 1200 ? "📉 New York flacht ab – Markt beruhigt sich langsam." :
-                "🌃 New York Session endet – geringe Bewegung, Vorsicht bei Entries.";
-  }  else if (minutes >= 720 && minutes < 840) {
-    infoText = "😴 Mittagliche Deadzone – Markt konsolidiert häufig, Vorsicht bei Entries.";
- } else if (minutes >= 1380 || minutes < 60) {
+  infoText =
+    minutes >= 1380
+      ? "🌙 Sydney startet – Übergang aus der Deadzone, Liquidity-Aufbau, kein Trend-Commitment."
+      : minutes < 180
+      ? "🦘 Sydney aktiv – enge Ranges, Fake-Struktur häufig, Mapping statt Trading."
+      : "🌅 Späte Sydney – Range steht, Vorbereitung für Tokyo-Sweeps.";
+}
+
+else if (name === "Tokyo") {
+  infoText =
+    minutes < 180
+      ? "🌏 Tokyo eröffnet – Asia-High/Low formt sich, erste saubere Struktur."
+      : minutes < 360
+      ? "🇯🇵 Tokyo aktiv – HL/LH möglich, Expansion begrenzt, Liquidity für London."
+      : "🛑 Späte Tokyo – Bewegungen oft nur Liquidity vor London.";
+}
+
+else if (name === "London Killzone") {
+  infoText =
+    "⚠️ London Killzone – Asia-Liquidity wird geholt, Fake-Breakouts vor echter Direction.";
+}
+
+else if (name === "London") {
+  infoText =
+    minutes < 720
+      ? "💷 London aktiv – nach Sweep folgt Direction, beste Phase für strukturierte Entries."
+      : minutes < 840
+      ? "😴 London Mittag – Volumen raus, Chop & Pullbacks dominieren."
+      : "📈 Späte London – Positionierung vor NY, Breakouts kritisch prüfen.";
+}
+
+else if (name === "New York Killzone") {
+  infoText =
+    "🔥 NY Killzone – London-Liquidity wird gesweept, Manipulation vor echtem Move.";
+}
+
+else if (name === "New York") {
+  infoText =
+    minutes < 1080
+      ? "🇺🇸 NY aktiv – Volumenwechsel, Reversal oder Continuation nach London-Sweep."
+      : minutes < 1200
+      ? "⚠️ Post-NY-Open – Struktur läuft, keine späten Breakouts jagen."
+      : "🌃 Späte NY – Gewinnmitnahmen, Struktur wird instabil.";
+}
+
+else if (minutes >= 720 && minutes < 840) {
+  infoText =
+    "😴 Mittagliche Deadzone – geringes Volumen, Chop, statistisch schlechter Entry-Bereich.";
+}
+
+else if (minutes >= 1380 || minutes < 60) {
   if (activeSessions.length === 0) {
-    infoText = "🌙 Nacht-Deadzone – Markt ist extrem ruhig, keine relevanten Bewegungen.";
+    infoText =
+      "🌙 Nacht-Deadzone – extrem niedrige Liquidität, Algo-Noise, kein Trading empfohlen.";
   }
 }
+
 
 updateBodyBackground(name);
   sessionInfoEl.textContent = infoText;
@@ -941,55 +1145,85 @@ function hexToRgba(hex, opacity) {
 }
 
 function updateDaySummary() {
-	   const wd = new Date().getDay();
+  const now = new Date();
+  const wd = now.getDay();
 
+  // Wochenende ausblenden
   if (wd === 0 || wd === 6) {
     console.log("⏹️ DaySummary deaktiviert (Wochenende).");
     return;
   }
 
   const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const infos = {
-    "Montag": `🚀 Start in die Woche – neue Impulse, frische Trends möglich.\n🪙 Krypto oft ruhig nach Sonntag – Fokus auf BTC-Reaktion.`,
-    "Dienstag": `📈 Trend-Fortsetzung oder technische Korrekturen im Forex.\n🪙 BTC & Altcoins reagieren oft auf Marktstimmung.`,
-    "Mittwoch": `⚠️ Midweek-Reversal möglich – Vorsicht bei Trendwechseln.\n🪙 BTC häufig impulsiv – Fakeouts nicht selten.`,
-    "Donnerstag": `📊 News-Donnerstag – viele Wirtschaftsreleases.\n🪙 Volatile Altcoins – gute Chancen für Breakouts.`,
-    "Freitag": `📅 Wochenabschluss – Gewinne sichern, keine Paniktrades.\n🪙 Abends oft BTC-Volatilität vor dem Krypto-Wochenende.`,
-    
-  };
+  const dayName = days[wd];
+
+  const minutes = now.getHours() * 60 + now.getMinutes();
+
+  // 🔹 Tagesphasen (Zeitlogik, keine Asset-Wiederholungen)
+const infos = {
+  "Montag": [
+    { end: 600,  text: "🧭 Wochenstart – Markt tastet sich ab, Strukturaufbau dominiert." },      // 00:00–10:00
+    { end: 960,  text: "📉 Vormittag – frühe Ranges & Liquidity-Sweeps, Trend noch unreif." },   // 10:00–16:00
+    { end: 1440, text: "📊 Später Montag – Commitment gering, keine erzwungenen Trends." }       // 16:00–24:00
+  ],
+
+  "Dienstag": [
+    { end: 600,  text: "📈 Früher Dienstag – Wochenbias wird aktiviert." },                      // 00:00–10:00
+    { end: 960,  text: "🚀 Hauptphase – saubere Expansion & Trendfortsetzung." },               // 10:00–16:00
+    { end: 1440, text: "⚖️ Spätphase – Struktur steht, Pullbacks dominieren." }                 // 16:00–24:00
+  ],
+
+  "Mittwoch": [
+    { end: 600,  text: "⚠️ Midweek – Markt prüft bestehende Strukturen." },                      // 00:00–10:00
+    { end: 960,  text: "🔥 Entscheidungsphase – Reversal oder Beschleunigung sehr typisch." },  // 10:00–16:00
+    { end: 1440, text: "📉 Später Mittwoch – Richtung meist bestätigt, Volumen sinkt." }        // 16:00–24:00
+  ],
+
+  "Donnerstag": [
+    { end: 600,  text: "🔥 Vorbereitung – Markt positioniert sich für Expansion." },            // 00:00–10:00
+    { end: 960,  text: "🚀 Haupttrend-Phase – stärkste Moves der Woche." },                     // 10:00–16:00
+    { end: 1440, text: "⚖️ Spätphase – Trends laufen, neue Entries selektiv." }                // 16:00–24:00
+  ],
+
+  "Freitag": [
+    { end: 600,  text: "📅 Wochenfinale – Fokus auf saubere Abschlüsse." },                      // 00:00–10:00
+    { end: 960,  text: "⚠️ Hauptphase – Gewinnmitnahmen & schnelle Reversals." },               // 10:00–16:00
+    { end: 1440, text: "🛑 Später Freitag – Struktur zerfällt, Risiko stark erhöht." }           // 16:00–24:00
+  ]
+};
 
 
+  const phases = infos[dayName];
+  if (!phases) return;
 
-  const now = new Date();
-  const minutesNow = now.getHours() * 60 + now.getMinutes();
-const activeSessions = getCurrentSessions(minutesNow);
+  const phase = phases.find(p => minutes < p.end);
+  const dayText = phase ? phase.text : "";
 
-
-
-  const dominantSession = activeSessions.find(s => s.name !== "Crypto") || activeSessions[0];
+  // 🔹 Session-Farbe bestimmen
+  const activeSessions = getCurrentSessions(minutes);
+  const dominantSession =
+    activeSessions.find(s => s.name !== "Crypto") || activeSessions[0];
   const sessionColor = sessionColors[dominantSession?.name] || "#00ffcc";
 
-  const dayIndex = now.getDay();
-  const dayName = days[dayIndex];
-  const info = infos[dayName] || "📆 Trading-Tag";
-
+  // 🔹 UI setzen
   const el = document.getElementById("daySummary");
-  if (el) {
-    el.textContent = `🗓️ ${dayName} – ${info}`;
-    el.style.background = sessionColor + "22";
-    el.style.color = sessionColor;
-    el.style.border = `1px solid ${sessionColor}88`;
-    el.style.boxShadow = `0 0 8px ${sessionColor}`;
-    el.style.textShadow = `0 0 3px ${sessionColor}`;
-    el.style.cursor = "pointer";
+  if (!el) return;
 
-      el.onclick = () => {
+  el.textContent = `🗓️ ${dayName} – ${dayText}`;
+  el.style.background = sessionColor + "22";
+  el.style.color = sessionColor;
+  el.style.border = `1px solid ${sessionColor}88`;
+  el.style.boxShadow = `0 0 8px ${sessionColor}`;
+  el.style.textShadow = `0 0 3px ${sessionColor}`;
+  el.style.cursor = "pointer";
+
+  // 🔹 Klick → Detailansicht
+  el.onclick = () => {
     const dayDetailsEl = document.getElementById("dayDetails");
     if (!dayDetailsEl) return;
 
-    const raw = dayDetailsMap[dayName] || "📆 Keine Details verfügbar.";
+    const raw = dayDetailsMap?.[dayName] || "📆 Keine Details verfügbar.";
 
-    // Sauberer HTML-Block
     const wrapped = `
       <div class="day-details-wrapper" style="--day-color:${sessionColor}">
         <div class="day-details-title">📅 ${dayName}</div>
@@ -1004,19 +1238,13 @@ const activeSessions = getCurrentSessions(minutesNow);
     if (!isVisible) dayDetailsEl.innerHTML = wrapped;
   };
 }
-}
 
+// 🔹 Initialisierung
 document.addEventListener("DOMContentLoaded", () => {
   updateDaySummary();
+  setInterval(updateDaySummary, 60000); // jede Minute aktualisieren
 });
 
-
-document.addEventListener("DOMContentLoaded", () => {
-  const daySummaryEl = document.getElementById("daySummary");
-  const dayDetailsEl = document.getElementById("dayDetails");
-
-
-});
 
 function updateBodyBackground(sessionName) {
   const glowMap = {
