@@ -923,79 +923,171 @@
     max-width: 65%; /* Damit Text nicht in Switch läuft */
   }
 }
-
 /* ============================================================
-   💎 FLOATING SCORE – STATIC HUD (Feste Größe)
+   💎 FLOATING SCORE – ULTIMATE EDITION (HUD STYLE)
    ============================================================ */
+
 .floating-score {
-  /* --- Positionierung --- */
+  /* --- 1. Grundeinstellung --- */
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%); /* Exakte Mitte */
-  z-index: 9999;
-
-  /* --- 🛑 STATISCHE GRÖSSE (Wichtig!) --- */
-  width: 140px;   /* Feste Breite - wächst nicht */
-  height: 60px;   /* Feste Höhe - wächst nicht */
-  box-sizing: border-box; /* Garantiert, dass Padding die Größe nicht ändert */
-
-  /* --- Inhalt zentrieren --- */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Vertikal mittig */
-  align-items: center;     /* Horizontal mittig */
+  bottom: 0;
+  z-index: 95; /* Layering: Unter Sidebar */
   
-  /* --- Der NEON-Look (Box passt sich der Farbe an) --- */
-  background: rgba(10, 14, 18, 0.9); /* Fast schwarzer Hintergrund für Kontrast */
-  backdrop-filter: blur(8px);
+  /* --- 2. Desktop Position --- */
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  height: 64px; /* Ein klein wenig höher für mehr Presence */
   
-  /* Die gesamte Box leuchtet in der Farbe */
-  border: 1px solid rgba(0, 255, 160, 0.5); /* Harte Kante */
+  /* --- 3. PREMIUM VISUALS --- */
+  /* Mehrschichtiger Hintergrund für Tiefe */
+  background: 
+    /* Ein feines Tech-Grid Muster (kaum sichtbar, aber edel) */
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    /* Der Spotlight-Effekt in der Mitte */
+    radial-gradient(circle at 50% 0%, rgba(20, 30, 25, 0.95), rgba(5, 8, 10, 0.98));
+    
+  background-size: 20px 20px, 20px 20px, 100% 100%; /* Grid Größe */
+  
+  backdrop-filter: blur(16px); /* Stärkerer Blur = Hochwertiger */
+  -webkit-backdrop-filter: blur(16px);
+  
+  /* Die "Laser-Kante" Oben */
+  border-top: 1px solid rgba(0, 255, 154, 0.3);
   box-shadow: 
-    0 0 15px rgba(0, 255, 160, 0.25), /* Weicher Glow außen */
-    inset 0 0 15px rgba(0, 255, 160, 0.05); /* Innerer Schein */
+    0 -1px 0 rgba(0, 255, 154, 0.1) inset, /* Inneres Highlight */
+    0 -20px 40px rgba(0, 0, 0, 0.6);       /* Tiefer Schatten */
 
-  /* Animationen */
-  opacity: 1;
-  transition: all 0.3s ease;
-  overflow: hidden; /* Schneidet alles ab, was über die Box hinausgeht */
-}
-
-/* Versteckter Zustand */
-.floating-score.hidden {
+  /* --- 4. STARTZUSTAND --- */
+  transform: translateY(100%);
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%) translateY(20px);
+
+  /* Smooth Transition */
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* "Exponential Out" Kurve */
+  will-change: transform, opacity;
+
+  /* Layout */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container für Inhalt */
+.score-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  
+  /* Ein subtiles "Gehäuse" um den Text */
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- ACTIVE STATE (Slide Up) --- */
+.floating-score.slide-up {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+  
+  /* Wenn aktiv: Grüner Ambient Glow nach oben */
+  box-shadow: 
+    0 -1px 0 rgba(0, 255, 154, 0.4) inset,
+    0 -10px 50px rgba(0, 0, 0, 0.8),
+    0 -20px 60px rgba(0, 255, 154, 0.08); /* Der "Nebel" */
+}
+
+/* ============================================================
+   📱 MOBILE REFINEMENT
+   ============================================================ */
+@media (max-width: 900px) {
+  .floating-score {
+    left: 0 !important;
+    width: 100% !important;
+    bottom: 0 !important;
+    top: auto !important;
+    z-index: 90 !important;
+    
+    transform: translateY(0) !important;
+    opacity: 0;
+
+    border-radius: 24px 24px 0 0; /* Runder */
+    padding: 0 20px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    
+    /* Mobil: Grid entfernen, cleaneres Glas */
+    background: rgba(10, 12, 16, 0.95);
+  }
+
+  /* Mobil kein Rahmen um den Text, Platz sparen */
+  .score-content {
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .floating-score.slide-up {
+    /* Perfektes Docking an die Mobile Nav */
+    transform: translateY(calc((var(--mobile-nav-height) * -1) + 4px)) !important;
+    opacity: 1;
+    
+    border-top-color: rgba(0, 255, 154, 0.5); /* Hellere Kante */
+    box-shadow: 0 -5px 25px rgba(0, 255, 154, 0.15); /* Mehr Glow mobil */
+  }
 }
 
 /* ===========================
-   TEXT STYLING
+   TEXT & TYPOGRAPHY
    =========================== */
 #floatingScoreValue {
-  font-size: 24px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 26px;
   font-weight: 800;
-  line-height: 1;
   color: #fff;
+  line-height: 1;
+  letter-spacing: -0.5px;
   
-  /* Damit lange Zahlen nicht umbrechen */
-  white-space: nowrap; 
-  text-overflow: ellipsis; /* ... falls die Zahl gigantisch wird */
-  max-width: 100%;
-  
-  /* Text Glow passend zur Box */
-  text-shadow: 0 0 10px rgba(0, 255, 160, 0.8);
+  /* Harter Neon Glow */
+  text-shadow: 
+    0 0 10px rgba(0, 255, 154, 0.7),
+    0 0 20px rgba(0, 255, 154, 0.3);
 }
 
 #floatingScoreLabel {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
+  letter-spacing: 2px;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: rgba(0, 255, 160, 0.8); /* Farbe passend zur Box */
-  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.6); /* Etwas heller */
+  
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
+/* Der pulsierende Punkt */
+#floatingScoreLabel::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #00ff9a;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff9a;
+  
+  /* Lebendige Animation */
+  animation: livePulse 2s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 5px #00ff9a; }
+  50% { transform: scale(1.3); opacity: 0.7; box-shadow: 0 0 15px #00ff9a; }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 5px #00ff9a; }
+}
 /* ============================================================
    🔥 ANIMATION DEFINITION (Das Herzschlag-Pulsieren)
    ============================================================ */
