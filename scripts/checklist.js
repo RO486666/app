@@ -152,7 +152,7 @@ function updateConfluenceScore() {
     return;
   }
 
-  // TOTAL
+  // TOTAL (Base Score)
   let total =
     confGroups.weekly +
     confGroups.daily +
@@ -160,7 +160,16 @@ function updateConfluenceScore() {
     confGroups.intraday +
     confGroups.entry;
 
+  // 🔴 MAJOR NEWS RISK MULTIPLIER
+  const majorNews = document.getElementById("majorNews");
+  if (majorNews && majorNews.checked) {
+    total = total - 40; // −40 % brutal cut
+  }
+
   if (total > 200) total = 200;
+
+
+
 
   totalValue.textContent = total + "%";
 
