@@ -45,53 +45,123 @@
   ];
 
 // ---- Day-Details nur für Wochenende ----
-const dayDetailsMap = {
-  "Samstag": `
-🪙 <strong>Krypto (Samstag)</strong><br>
-• Sehr geringe Liquidität – Institutionelle sind raus.<br>
-• Markt bewegt sich oft in engen Ranges → Range-Trading ideal.<br>
-• BTC/ETH reagieren meist nur auf Retail-Struktur (Range-Edges, Liquidity Sweeps).<br>
-• Daytrading-Setup: <br>
-&nbsp;&nbsp;– Fokus auf Range-High/Low, Mean-Reversion, kleine Scalps.<br>
-&nbsp;&nbsp;– Kein aggressives Trendtrading – Breakouts scheitern oft.<br>
-• Zusatz: Samstag eignet sich gut für <em>Backtesting, Journal & Watchlist-Updates</em>.<br>
+const dayDetailsMap = { 
+"Samstag":` 
+⬛ <strong>Samstag</strong> – Forex geschlossen, Krypto aktiv<br><br>
+
+🌀 <strong>Swing</strong><br>
+
+<strong>📌 Setup:</strong><br>
+Illiquide. Keine Swing-Entries.<br><br>
+
+<strong>🎯 Regeln:</strong><br>
+• Kein Trading – nur Vorbereitung & Backtesting.<br><br>
+
+<strong>🧾 To-do:</strong><br>
+<ul>
+  <li>Markups & Review</li>
+  <li>Setup-Bibliothek pflegen</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+Mean-Reversion / Range. Kleine Size, klarer SL.<br>
+
+<hr style="opacity:.15;">
+
+⚡ <strong>Daytrading</strong><br>
+
+<strong>📌 Setup:</strong><br>
+Kleine, algorithmische Ranges.<br><br>
+
+<strong>🎯 Strategie:</strong><br>
+Nur Range-Edges traden. Kein Overtrading.<br><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Wenn unsicher → pause.<br><br>
+
+<strong>🧾 To-do:</strong><br>
+<ul>
+  <li>Alarme für Sonntag/Montag setzen</li>
+</ul>
 `,
 
-  "Sonntag": `
-🪙 <strong>Krypto (Sonntag)</strong><br>
-• Vormittag: Sehr ruhiger Markt, kaum Volumen.<br>
-• Nachmittag/Abend (ab 18–20 Uhr): „Pre-Move“ der neuen Woche setzt oft ein.<br>
-• Smart Money positioniert sich → häufig Fakeouts oder Liquidity Sweeps vor dem Montag.<br>
-• Daytrading-Setup: <br>
-&nbsp;&nbsp;– Fokus auf BTC/ETH an wichtigen Levels kurz vor Forex-Open.<br>
-&nbsp;&nbsp;– Typisch: schnelle Moves Sonntagabend → oft Richtungsanzeige für Montag.<br>
-• Zusatz: Keine Overnights ohne Plan – am Montag kann alles kippen.<br>
+
+"Sonntag": `
+⬛ <strong>Sonntag</strong> – Weekly Open Vorbereitung<br><br>
+
+🌀 <strong>Swing</strong><br>
+
+<strong>📌 Setup:</strong><br>
+Pre-Open Struktur: Weekly Levels formen sich.<br><br>
+
+<strong>🎯 Regeln:</strong><br>
+• Keine Swings ohne Montag-Struktur.<br>
+• Heute nur Vorbereitung.<br><br>
+
+<strong>🧾 To-do:</strong><br>
+<ul>
+  <li>Wochenziele, Risikolimits, Kalender setzen</li>
+  <li>Key-Levels für Mo/Di finalisieren</li>
+</ul><br>
+
+<strong>🪙 Krypto-Notiz:</strong><br>
+BTC/ETH zeigen oft ersten Wochen-Richtungsimpuls.<br>
+
+<hr style="opacity:.15;">
+
+⚡ <strong>Daytrading</strong><br>
+
+<strong>📌 Setup:</strong><br>
+Dünne Liquidität. Pre-Open Moves oft trügerisch.<br><br>
+
+<strong>🎯 Strategie:</strong><br>
+Optional traden, sehr kleine Größe.<br>
+Fokus auf Dokumentation & Vorbereitung.<br><br>
+
+<strong>🕓 Marktverhalten:</strong><br>
+US-Abend kann Montag-Asia beeinflussen.<br><br>
+
+<strong>🧠 Mentaler Fokus:</strong><br>
+Vorbereitung > Execution.<br><br>
+
+<strong>🧾 To-do:</strong><br>
+<ul>
+  <li>Alarme, Templates & Charts vorbereiten</li>
+</ul>
+
 `
 };
 
 
-  // ---- UI: Day-Summary + klickbare Details ----
-  function updateDaySummaryWeekend() {
-    if (!daySummaryEl) return;
-    const days = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
-    const now = new Date(); 
-    const dayName = days[now.getDay()];
+// ---- UI: Day-Summary + klickbare Details ----
+function updateDaySummaryWeekend() {
+  if (!daySummaryEl || !dayDetailsEl) return;
 
-    daySummaryEl.textContent = `🗓️ ${dayName} – Krypto 24/7 aktiv (Forex geschlossen)`;
+  const days = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+  const now = new Date(); 
+  const dayName = days[now.getDay()];
 
-    daySummaryEl.onclick = () => {
-      if (!dayDetailsEl) return;
-      const raw = dayDetailsMap[dayName] || "📘 Krypto aktiv. Dokumentation & Vorbereitung.";
-      const wrap = `
-        <div class="crypto-details-card">
-          <div class="crypto-details-title">📅 ${dayName}</div>
-          <div>${raw}</div>
-        </div>`;
-      const vis = dayDetailsEl.style.display === "block";
-      dayDetailsEl.style.display = vis ? "none" : "block";
-      if (!vis) dayDetailsEl.innerHTML = wrap;
-    };
-  }
+  daySummaryEl.textContent =
+    `🗓️ ${dayName} – Krypto 24/7 aktiv (Forex geschlossen)`;
+
+  daySummaryEl.onclick = () => {
+    const raw =
+      dayDetailsMap[dayName] ||
+      "📘 Krypto aktiv. Dokumentation & Vorbereitung.";
+
+    const isOpen = dayDetailsEl.style.display === "block";
+
+    dayDetailsEl.style.display = isOpen ? "none" : "block";
+
+    if (!isOpen) {
+      dayDetailsEl.innerHTML = `
+        📅 <strong>${dayName}</strong><br><br>
+        ${raw}
+      `;
+    }
+  };
+}
+
 
   // ---- UI: Header/Info/Details/Progress (ohne Inline-Styles) ----
   function renderCrypto() {
@@ -115,21 +185,6 @@ const dayDetailsMap = {
     // Info (nur Text)
     if (sessionInfoEl) {
       sessionInfoEl.textContent = "Krypto-Wochenende: dünnere Liquidität, Range/Mean-Reversion bevorzugt. Vorsicht mit Slippage/Spreads.";
-    }
-
-    // Detailbox (Markup ohne Inline-Styles)
-    if (sessionDetailsBox) {
-      let weekDaysHtml = "<ul>";
-      s.weekDaysInfo?.forEach(({day, text}) => { weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`; });
-      weekDaysHtml += "</ul>";
-
-      sessionDetailsBox.innerHTML = `
-        <strong>🪙 ${s.name}</strong><br>
-        📅 Start: ${formatHM(s.start)} Uhr<br>
-        🕓 Ende: ${formatHM(s.end)} Uhr<br>
-        ℹ️ ${s.info}
-        ${weekDaysHtml}
-      `;
     }
   }
 
