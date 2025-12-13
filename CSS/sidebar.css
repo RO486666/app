@@ -598,6 +598,19 @@
     inset 0 0 6px rgba(255,255,255,0.35);
 }
 
+
+/* =========================================================
+   💜 CRYPTO WEEKEND — SIDEBAR SESSION ACCENT OVERRIDE
+   ========================================================= */
+
+.is-crypto-weekend {
+  /* Sidebar & Drawer nutzen diese Variable */
+  --session-accent: var(--crypto-color);
+  --session-accent-soft: rgba(179, 77, 255, 0.35);
+  --session-accent-border: rgba(179, 77, 255, 0.45);
+}
+
+
 /* ===============================
    ℹ️ INFO
    =============================== */
