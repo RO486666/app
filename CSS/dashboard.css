@@ -779,6 +779,36 @@ button.finish-btn {
   transform: translateY(-1px);
 }
 
+/* ============================================================
+   🧨 CLEAR ALL BUTTON
+   ============================================================ */
+
+.clear-all-btn {
+  margin-top: 10px;
+  width: 100%;
+  height: 38px;
+
+  background: rgba(255, 60, 60, 0.12);
+  border: 1px solid rgba(255, 60, 60, 0.45);
+  color: #ff6b6b;
+
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-all-btn:hover {
+  background: rgba(255, 60, 60, 0.25);
+  box-shadow: 0 0 14px rgba(255, 60, 60, 0.35);
+  color: #fff;
+}
+
+
 /* =========================================================
    🔥 EDIT MODE – PLUS WIRD ZU "ACTIVE"
    ========================================================= */
