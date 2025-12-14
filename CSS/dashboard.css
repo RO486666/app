@@ -1,3 +1,21 @@
+
+
+/* =========================================================
+   📐 ABSTAND ZUR SESSION BAR (Positionierung)
+   ========================================================= */
+
+#panel-dashboard .dashboard-tactical-box {
+  /* Schiebt die Box 60px nach unten weg von der Session Bar */
+  margin-top: 30px !important; 
+}
+
+/* Optional: Anpassung für Handy, falls es da zu viel/wenig ist */
+@media screen and (max-width: 768px) {
+  #panel-dashboard .dashboard-tactical-box {
+     margin-top: 40px !important; /* Auf dem Handy etwas weniger Abstand */
+  }
+}
+
 /* =========================================================
    📱 MOBILE RESPONSIVENESS
    (Füge das ganz unten in deine CSS Datei ein)
@@ -242,8 +260,45 @@
   font-weight: 500;
 }
 
+
 /* =========================================================
-   🔥 PRIORITY INDICATOR (ICONS)
+   ✨ ANIMATIONS (Nur für die Boxen / Prio 5)
+   ========================================================= */
+
+/* Prio 5 Animation LONG (Grün) */
+@keyframes box-pulse-long {
+  0% {
+    box-shadow: 0 0 15px rgba(0, 255, 188, 0.3);
+    border-color: rgba(0, 255, 188, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 255, 188, 0.8), inset 0 0 15px rgba(0, 255, 188, 0.2);
+    border-color: rgba(0, 255, 188, 1);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(0, 255, 188, 0.3);
+    border-color: rgba(0, 255, 188, 0.5);
+  }
+}
+
+/* Prio 5 Animation SHORT (Rot) */
+@keyframes box-pulse-short {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+    border-color: rgba(255, 82, 82, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 82, 82, 0.8), inset 0 0 15px rgba(255, 82, 82, 0.2);
+    border-color: rgba(255, 82, 82, 1);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+    border-color: rgba(255, 82, 82, 0.5);
+  }
+}
+
+/* =========================================================
+   🔥 PRIORITY INDICATOR (ICONS SETUP)
    ========================================================= */
 
 .pair-priority {
@@ -258,28 +313,29 @@
   line-height: 1;
   opacity: 0.9;
   transition: transform 0.3s ease;
+  /* Standard Schatten (wird unten überschrieben) */
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
 }
 
-/* Leichter Zoom des Feuers beim Hover */
+/* Zoom beim Hover */
 .weekly-pair-item:hover .pair-priority::before {
   transform: scale(1.2);
-  opacity: 1;
 }
+
+/* --- FLAMMEN DEFINITIONEN (Statisch, nur Schatten ändert sich) --- */
 
 /* 🔥 PRIO 1 */
 .weekly-pair-item.prio-1 .pair-priority::before {
   content: "🔥";
   font-size: 14px;
-  filter: drop-shadow(0 0 5px rgba(255, 140, 60, 0.5));
-  opacity: 0.7; /* Etwas dezenter */
+  opacity: 0.7;
 }
 
 /* 🔥🔥 PRIO 2 */
 .weekly-pair-item.prio-2 .pair-priority::before {
   content: "🔥🔥";
   font-size: 14px;
-  letter-spacing: -2px; /* Feuer näher zusammen */
-  filter: drop-shadow(0 0 8px rgba(255, 100, 40, 0.7));
+  letter-spacing: -2px;
 }
 
 /* 🔥🔥🔥 PRIO 3 */
@@ -287,145 +343,115 @@
   content: "🔥🔥🔥";
   font-size: 14px;
   letter-spacing: -3px;
-  filter: drop-shadow(0 0 12px rgba(255, 50, 20, 1));
 }
 
-/* =========================================================
-   ✨ ANIMATIONS
-   ========================================================= */
-/* --- Animation: Standard (Orange - falls keine Richtung) --- */
-@keyframes pulse-border {
-  0% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(255, 60, 20, 0.4); }
-  50% { box-shadow: 0 4px 20px rgba(255, 60, 20, 0.25); border-color: rgba(255, 60, 20, 0.8); }
-  100% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(255, 60, 20, 0.4); }
+/* 🔥🔥🔥🔥 PRIO 4 */
+.weekly-pair-item.prio-4 .pair-priority::before {
+  content: "🔥🔥🔥🔥";
+  font-size: 14px;
+  letter-spacing: -5px; /* Eng */
 }
 
-/* --- Animation: LONG (Grün/Cyan) --- */
-@keyframes pulse-long {
-  0% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(0, 255, 188, 0.3); }
-  50% { box-shadow: 0 4px 25px rgba(0, 255, 188, 0.3); border-color: rgba(0, 255, 188, 0.9); }
-  100% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(0, 255, 188, 0.3); }
+/* 🔥🔥🔥🔥🔥 PRIO 5 (Maximales Feuer, eng zusammen) */
+.weekly-pair-item.prio-5 .pair-priority::before {
+  content: "🔥🔥🔥🔥🔥";
+  font-size: 14px; 
+  letter-spacing: -6px; /* Sehr eng */
+  right: 6px; 
+  /* Keine Animation am Icon selbst! */
 }
 
-/* --- Animation: SHORT (Rot) --- */
-@keyframes pulse-short {
-  0% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(255, 82, 82, 0.3); }
-  50% { box-shadow: 0 4px 25px rgba(255, 82, 82, 0.35); border-color: rgba(255, 82, 82, 0.9); }
-  100% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border-color: rgba(255, 82, 82, 0.3); }
-}
-
-/* =========================================================
-   🎯 BIAS COLORS
-   ========================================================= */
 
 /* =========================================================
    🟢 LONG CONFIGURATION (Green/Cyan Theme)
    ========================================================= */
 
-/* --- LONG Basis Text --- */
-.weekly-pair-item.long {
-  color: #00ffbc;
-}
+/* --- Basis --- */
+.weekly-pair-item.long { color: #00ffbc; }
 
-/* --- LONG PRIO 1 --- */
+/* 🟢 PRIO 1: Box leuchtet leicht (Statisch) */
 .weekly-pair-item.long.prio-1 {
   border-color: rgba(0, 255, 188, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 255, 188, 0.05); /* Sehr dezent */
 }
 
-.weekly-pair-item.long.prio-1:hover {
-  box-shadow: 0 12px 25px rgba(0, 255, 188, 0.15);
-  border-color: rgba(0, 255, 188, 0.6);
-}
-
-/* --- LONG PRIO 2 (Stärker) --- */
+/* 🟢 PRIO 2: Etwas mehr */
 .weekly-pair-item.long.prio-2 {
   border-color: rgba(0, 255, 188, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 255, 188, 0.15);
   background: linear-gradient(145deg, rgba(10, 30, 25, 0.7), rgba(5, 15, 12, 0.9));
 }
 
-.weekly-pair-item.long.prio-2:hover {
-  box-shadow: 0 12px 30px rgba(0, 255, 188, 0.25);
-  border-color: #00ffbc;
-}
-
-/* --- LONG PRIO 3 (Maximal + Pulse) --- */
-.weekly-pair-item.long.prio-3 {
+/* 🟢 PRIO 3 & 4: Box leuchtet STARK (Statisch) */
+.weekly-pair-item.long.prio-3,
+.weekly-pair-item.long.prio-4 {
   border-color: rgba(0, 255, 188, 0.8);
+  box-shadow: 0 4px 25px rgba(0, 255, 188, 0.3); /* Starker Glow */
   background: linear-gradient(145deg, rgba(0, 40, 30, 0.8), rgba(0, 20, 15, 0.95));
-  animation: pulse-long 3s infinite ease-in-out;
 }
 
-.weekly-pair-item.long.prio-3:hover {
-  box-shadow: 0 15px 40px rgba(0, 255, 188, 0.4), inset 0 0 20px rgba(0, 255, 188, 0.1);
-  border-color: #00ffbc;
+/* 🟢 PRIO 5: Box PULSIERT (Animation) */
+.weekly-pair-item.long.prio-5 {
+  background: linear-gradient(145deg, rgba(0, 50, 40, 0.9), rgba(0, 30, 25, 1));
+  animation: box-pulse-long 2s infinite ease-in-out;
 }
 
-/* --- 🔥 FEUER ANPASSUNG FÜR LONG --- 
-   Wir drehen den Farbton (Hue-Rotate), damit das Feuer grünlich/cyan wirkt */
+/* --- 🔥 FEUER SCHATTEN FÜR LONG --- */
+/* Wir färben den Schatten der Flammen grünlich */
 .weekly-pair-item.long .pair-priority::before {
-  filter: hue-rotate(140deg) drop-shadow(0 0 5px rgba(0, 255, 188, 0.6)) !important;
+  filter: hue-rotate(140deg) drop-shadow(0 0 3px rgba(0, 255, 188, 0.5)) !important;
 }
 
-/* Stärkeres Glühen bei Prio 3 Long */
-.weekly-pair-item.long.prio-3 .pair-priority::before {
-  filter: hue-rotate(140deg) drop-shadow(0 0 12px rgba(0, 255, 188, 1)) !important;
+/* Prio 5: Extremer Schatten am Feuer (passend zur Box) */
+.weekly-pair-item.long.prio-5 .pair-priority::before {
+  filter: hue-rotate(140deg) drop-shadow(0 0 15px rgba(0, 255, 188, 1)) !important;
 }
+
 
 /* =========================================================
    🔴 SHORT CONFIGURATION (Red Theme)
    ========================================================= */
 
-/* --- SHORT Basis Text --- */
-.weekly-pair-item.short {
-  color: #ff5252;
-}
+/* --- Basis --- */
+.weekly-pair-item.short { color: #ff5252; }
 
-/* --- SHORT PRIO 1 --- */
+/* 🔴 PRIO 1: Box leuchtet leicht (Statisch) */
 .weekly-pair-item.short.prio-1 {
   border-color: rgba(255, 82, 82, 0.3);
+  box-shadow: 0 4px 10px rgba(255, 82, 82, 0.05);
 }
 
-.weekly-pair-item.short.prio-1:hover {
-  box-shadow: 0 12px 25px rgba(255, 82, 82, 0.15);
-  border-color: rgba(255, 82, 82, 0.6);
-}
-
-/* --- SHORT PRIO 2 --- */
+/* 🔴 PRIO 2: Etwas mehr */
 .weekly-pair-item.short.prio-2 {
   border-color: rgba(255, 82, 82, 0.5);
+  box-shadow: 0 4px 15px rgba(255, 82, 82, 0.15);
   background: linear-gradient(145deg, rgba(40, 15, 15, 0.7), rgba(20, 8, 8, 0.9));
 }
 
-.weekly-pair-item.short.prio-2:hover {
-  box-shadow: 0 12px 30px rgba(255, 82, 82, 0.25);
-  border-color: #ff5252;
-}
-
-/* --- SHORT PRIO 3 (Maximal + Pulse) --- */
-.weekly-pair-item.short.prio-3 {
+/* 🔴 PRIO 3 & 4: Box leuchtet STARK (Statisch) */
+.weekly-pair-item.short.prio-3,
+.weekly-pair-item.short.prio-4 {
   border-color: rgba(255, 82, 82, 0.8);
+  box-shadow: 0 4px 25px rgba(255, 82, 82, 0.3);
   background: linear-gradient(145deg, rgba(50, 10, 10, 0.8), rgba(25, 5, 5, 0.95));
-  animation: pulse-short 3s infinite ease-in-out;
 }
 
-.weekly-pair-item.short.prio-3:hover {
-  box-shadow: 0 15px 40px rgba(255, 82, 82, 0.4), inset 0 0 20px rgba(255, 82, 82, 0.1);
-  border-color: #ff5252;
+/* 🔴 PRIO 5: Box PULSIERT (Animation) */
+.weekly-pair-item.short.prio-5 {
+  background: linear-gradient(145deg, rgba(60, 10, 10, 0.9), rgba(30, 5, 5, 1));
+  animation: box-pulse-short 2s infinite ease-in-out;
 }
 
-/* --- 🔥 FEUER ANPASSUNG FÜR SHORT --- 
-   Standard Feuer ist schon orange, wir schieben es etwas mehr ins Rote und passen den Schatten an */
+/* --- 🔥 FEUER SCHATTEN FÜR SHORT --- */
+/* Wir färben den Schatten der Flammen rötlich */
 .weekly-pair-item.short .pair-priority::before {
-  filter: hue-rotate(-10deg) drop-shadow(0 0 5px rgba(255, 82, 82, 0.6)) !important;
+  filter: hue-rotate(-10deg) drop-shadow(0 0 3px rgba(255, 82, 82, 0.5)) !important;
 }
 
-.weekly-pair-item.short.prio-3 .pair-priority::before {
-  filter: hue-rotate(-10deg) drop-shadow(0 0 12px rgba(255, 82, 82, 1)) !important;
+/* Prio 5: Extremer Schatten am Feuer */
+.weekly-pair-item.short.prio-5 .pair-priority::before {
+  filter: hue-rotate(-10deg) drop-shadow(0 0 15px rgba(255, 82, 82, 1)) !important;
 }
-
-
-
-
 /* =========================================================
    🎛️ WEEKLY PAIR EDITOR ROW (INPUTS + PLUS)
    ========================================================= */
@@ -821,9 +847,178 @@ button.finish-btn {
   );
   box-shadow: 0 0 25px rgba(0, 255, 188, 0.45);
 }
+  /* ... (Hier war der Code abgeschnitten) ... */
 
-/* Optional: Plus leic*
+/* Optional: Plus leicht drehen im Edit Mode (wird zum X oder leuchtet) */
+#weeklyPairPlan.edit-mode .weekly-edit-toggle {
+  transform: rotate(90deg); /* Dreht das Plus */
+  border-color: #00ffbc;
+  box-shadow: 0 0 15px rgba(0, 255, 188, 0.4);
+}
 
+/* =========================================================
+   🔘 EDITOR BUTTONS (FERTIG & LÖSCHEN)
+   Damit die Buttons unten im Editor gut aussehen
+   ========================================================= */
 
+/* Container für die beiden Buttons unten */
+.weekly-pair-editor-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
 
+/* Der "FERTIG" Button */
+button.finish-btn {
+  flex: 1; /* Nimmt den meisten Platz */
+  height: 40px;
+  background: linear-gradient(135deg, rgba(0, 255, 188, 0.1), rgba(0, 255, 188, 0.2));
+  border: 1px solid rgba(0, 255, 188, 0.5);
+  color: #00ffbc;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
 
+button.finish-btn:hover {
+  background: rgba(0, 255, 188, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 188, 0.25);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Der "ALLES LÖSCHEN" Button */
+button.clear-btn {
+  flex: 0.4; /* Kleiner als Fertig */
+  height: 40px;
+  background: rgba(255, 60, 60, 0.1);
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  color: #ff6b6b;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button.clear-btn:hover {
+  background: rgba(255, 60, 60, 0.25);
+  box-shadow: 0 0 15px rgba(255, 60, 60, 0.3);
+  color: #fff;
+}
+
+/* =========================================================
+   ✏️ EDIT & DELETE ICONS (In der Liste)
+   ========================================================= */
+
+.weekly-pair-actions button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weekly-pair-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Löschen-Icon rot beim Hover */
+.weekly-pair-actions button.delete-action:hover {
+  background: rgba(255, 60, 60, 0.2);
+  border-color: #ff5252;
+  color: #ff5252;
+}
+
+/* Edit-Icon grün beim Hover */
+.weekly-pair-actions button.edit-action:hover {
+  background: rgba(0, 255, 188, 0.2);
+  border-color: #00ffbc;
+  color: #00ffbc;
+}
+
+/* =========================================================
+   🛠️ EDIT MODE: BOX STYLE (Kacheln beibehalten)
+   ========================================================= */
+
+/* Wir erzwingen, dass die Boxen Quadrate bleiben */
+#weeklyPairPlan.edit-mode .weekly-pair-item {
+  width: 110px !important;
+  height: 110px !important;
+  flex-direction: column !important; /* Stapeln: Text oben, Buttons unten */
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Damit wir die Buttons positionieren können */
+  margin: 0 10px 10px 0; /* Abstände wie im Dashboard */
+}
+
+/* Im Edit-Mode verstecken wir das große Feuer-Icon, 
+   damit Platz für die Buttons ist */
+#weeklyPairPlan.edit-mode .weekly-pair-item .pair-priority {
+  display: none;
+}
+
+/* Container für die Buttons (unten in der Box) */
+.weekly-pair-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px; /* Abstand zum Text */
+  z-index: 5;
+}
+
+/* Style für die kleinen runden Buttons (Stift & Mülleimer) */
+.weekly-pair-actions button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%; /* Kreisrund */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+/* Hover Effekte für die Buttons */
+
+/* ✏️ Edit Button Hover */
+.weekly-pair-actions button.edit-action:hover {
+  background: #00ffbc;
+  border-color: #00ffbc;
+  color: #000; /* Icon wird schwarz */
+  box-shadow: 0 0 10px rgba(0, 255, 188, 0.6);
+  transform: scale(1.1);
+}
+
+/* 🗑️ Delete Button Hover */
+.weekly-pair-actions button.delete-action:hover {
+  background: #ff5252;
+  border-color: #ff5252;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 82, 82, 0.6);
+  transform: scale(1.1);
+}
+
+/* Text im Edit Mode etwas anpassen, damit er nicht im Weg ist */
+#weeklyPairPlan.edit-mode .weekly-pair-item span:first-child {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
