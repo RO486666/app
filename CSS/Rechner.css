@@ -343,60 +343,192 @@
   text-shadow: none;
 }
 
+
 /* ===========================
-   🎨 RISK COLORS (Neon Status)
+   🎨 RISK STEP BASE
    =========================== */
-.result-box .low { color: #00ff9d; text-shadow: 0 0 8px rgba(0, 255, 157, 0.4); }
-.result-box .mid { color: #ffcc00; text-shadow: 0 0 8px rgba(255, 204, 0, 0.4); }
-.result-box .high { color: #ff6600; text-shadow: 0 0 8px rgba(255, 102, 0, 0.4); }
-.result-box .extreme { color: #ff3333; text-shadow: 0 0 10px rgba(255, 51, 51, 0.6); }
+.result-box .risk-step {
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
 
 .result-box span {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
-/* Animation Definition */
+
+/* ===========================
+   🎨 RISK COLORS – FULL SET
+   (passend zu low1 / low2 / mid1 / mid2 / high / extreme)
+   =========================== */
+
+/* ✅ Empfohlen */
+.result-box .low1 {
+  color: #00ff9d;
+  text-shadow: 0 0 8px rgba(0,255,157,0.45);
+}
+
+/* 🟡 Riskant – Stufe 1 */
+.result-box .low2 {
+  color: #66ffd0;
+  text-shadow: 0 0 8px rgba(102,255,208,0.45);
+}
+
+/* 🟡 Riskant – Stufe 2 */
+.result-box .mid1 {
+  color: #ffcc00;
+  text-shadow: 0 0 8px rgba(255,204,0,0.45);
+}
+
+/* 🔥 Hoch */
+.result-box .mid2 {
+  color: #ff8800;
+  text-shadow: 0 0 9px rgba(255,136,0,0.5);
+}
+
+/* 🧮 Sehr hoch */
+.result-box .high {
+  color: #ff6600;
+  text-shadow: 0 0 9px rgba(255,102,0,0.55);
+}
+
+/* ⚠️ Extrem */
+.result-box .extreme {
+  color: #ff3333;
+  text-shadow: 0 0 10px rgba(255,51,51,0.65);
+}
+
+
+/* ===========================
+   ✨ OPTIONAL: Subtiler Glow-Hintergrund
+   (wirkt hochwertig, kein Billo-Neon)
+   =========================== */
+.result-box .risk-step {
+  position: relative;
+  overflow: hidden;
+}
+
+.result-box .risk-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0.06;
+  filter: blur(14px);
+  z-index: 0;
+}
+
+.result-box .risk-step * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===========================
+   🎯 PIP CALC – STOP & TP (CSS ONLY)
+   =========================== */
+
+/* ===========================
+   ⛔ STOP-LOSS (Warning Green → leicht gelblich)
+   =========================== */
+.pip-box > .risk-box:nth-of-type(1) {
+  border-left: 4px solid #7cff7c;
+  color: #caffca;
+
+  background: linear-gradient(
+    135deg,
+    rgba(124, 255, 124, 0.08),
+    rgba(0, 0, 0, 0.45)
+  );
+
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(124, 255, 124, 0.15);
+
+  text-shadow: 0 0 6px rgba(124, 255, 124, 0.35);
+}
+
+/* ===========================
+   🎯 TP1 – Safe Green
+   =========================== */
+.pip-box > .risk-box:nth-of-type(2) {
+  border-left: 4px solid #00ff9d;
+  color: #00ff9d;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 157, 0.12),
+    rgba(0, 0, 0, 0.45)
+  );
+
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(0, 255, 157, 0.25);
+
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.55);
+}
+
+/* ===========================
+   🎯 TP2 – Strong Neon Green
+   =========================== */
+.pip-box > .risk-box:nth-of-type(3) {
+  border-left: 4px solid #3dffb3;
+  color: #3dffb3;
+
+  background: linear-gradient(
+    135deg,
+    rgba(61, 255, 179, 0.14),
+    rgba(0, 0, 0, 0.45)
+  );
+
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 0 18px rgba(61, 255, 179, 0.35);
+
+  text-shadow: 0 0 9px rgba(61, 255, 179, 0.65);
+}
+
+/* ===========================
+   🎯 TP3 – MAX PROFIT (Neon Mint Glow)
+   =========================== */
+.pip-box > .risk-box:nth-of-type(4) {
+  border-left: 4px solid #00ffff;
+  color: #00ffff;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.16),
+    rgba(0, 0, 0, 0.45)
+  );
+
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 0 22px rgba(0, 255, 255, 0.45);
+
+  text-shadow: 0 0 12px rgba(0, 255, 255, 0.75);
+}
+
+
+
+/* ===========================
+   🎞️ ENTRY ANIMATION
+   =========================== */
 @keyframes hologramPop {
-  from { 
-    opacity: 0; 
-    transform: translateY(15px) scale(0.95); 
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
     filter: blur(5px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0) scale(1); 
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
 
-/* ===========================
-   🎨 RISK COLORS (Neon Status)
-   =========================== */
-.result-box .low { 
-  color: #00ff9d; /* Neon Mint */
-  text-shadow: 0 0 8px rgba(0, 255, 157, 0.4);
-}
 
-.result-box .mid { 
-  color: #ffcc00; /* Neon Gelb/Gold */
-  text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
-}
 
-.result-box .high { 
-  color: #ff6600; /* Neon Orange */
-  text-shadow: 0 0 8px rgba(255, 102, 0, 0.4);
-}
 
-.result-box .extreme { 
-  color: #ff3333; /* Neon Rot */
-  text-shadow: 0 0 10px rgba(255, 51, 51, 0.6);
-}
-
-.result-box span {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
 
 /* ===========================
    ANIMATIONS
