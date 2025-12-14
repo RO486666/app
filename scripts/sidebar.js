@@ -31,7 +31,7 @@ const MENU = {
   tools: {
     title: "Rechner",
     items: [
-      { label: "Position Size", panel: "calc-pos" },
+      { label: "Rechner", panel: "calc-pos" },
       { label: "Steuern / Netto", panel: "calc-taxpro" },
       { label: "Pair Profil", panel: "calc-pairProfile" }
     ]
