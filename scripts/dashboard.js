@@ -67,20 +67,24 @@ function renderWeeklyPairPlan() {
       ${[...weeklyPairPlan]
         .sort((a, b) => b.priority - a.priority)
         .map((p, i) => `
-          <div class="weekly-pair-item ${p.bias} prio-${p.priority}">
-            <span>${p.symbol}</span>
-            <span>${p.bias.toUpperCase()}</span>
+  <div class="weekly-pair-item ${p.bias} prio-${p.priority}">
+    <span>${p.symbol}</span>
+    <span>${p.bias.toUpperCase()}</span>
 
-            ${
-              p.confluence
-                ? `<div class="pair-confluence ${p.confluence.class}"
-                        style="color:${p.confluence.color}">
-                     ${p.confluence.score}%
-                   </div>`
-                : ""
-            }
-          </div>
-        `)
+    <!-- 🔥 PRIORITY INDICATOR -->
+    <span class="pair-priority"></span>
+
+    ${
+      p.confluence
+        ? `<div class="pair-confluence ${p.confluence.class}"
+                style="color:${p.confluence.color}">
+             ${p.confluence.score}%
+           </div>`
+        : ""
+    }
+  </div>
+`)
+
         .join("")}
     </div>
   `;
@@ -220,16 +224,15 @@ function clearAllWeeklyPairs() {
    🔗 CONFLUENCE BRIDGE (Checklist → Dashboard)
    ============================================================ */
 window.assignConfluenceToTrade = function ({ tradeIndex, confluence }) {
+  if (tradeIndex == null) return;
   if (!weeklyPairPlan[tradeIndex]) return;
 
-  weeklyPairPlan[tradeIndex].confluence = {
-    ...confluence,
-    timestamp: Date.now()
-  };
+  weeklyPairPlan[tradeIndex].confluence = confluence;
 
   saveWeeklyPairPlan();
   renderWeeklyPairPlan();
 };
+
 
 
 
