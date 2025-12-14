@@ -11,7 +11,10 @@ let weeklyPairPlan = [];
 
 function saveWeeklyPairPlan() {
   try {
-    localStorage.setItem(WEEKLY_PAIR_STORAGE_KEY, JSON.stringify(weeklyPairPlan));
+    localStorage.setItem(
+      WEEKLY_PAIR_STORAGE_KEY,
+      JSON.stringify(weeklyPairPlan)
+    );
   } catch (e) {
     console.error("WeeklyPairPlan konnte nicht gespeichert werden", e);
   }
@@ -33,6 +36,7 @@ function loadWeeklyPairPlan() {
 /* ============================================================
    🖥️ RENDER – DASHBOARD
    ============================================================ */
+
 function renderWeeklyPairPlan() {
   const container = document.getElementById("weeklyPairPlan");
   if (!container) return;
@@ -43,11 +47,9 @@ function renderWeeklyPairPlan() {
     container.innerHTML = `
       <div class="weekly-pair-header">
         <p class="weekly-pair-empty">Keine Paare für diese Woche geplant</p>
-        <button
-          class="weekly-edit-toggle"
-          onclick="openWeeklyPairEditor()"
-          aria-label="Open Tactical Mode"
-        ></button>
+        <button class="weekly-edit-toggle"
+                onclick="openWeeklyPairEditor()"
+                aria-label="Add Trade"></button>
       </div>
     `;
     return;
@@ -56,21 +58,27 @@ function renderWeeklyPairPlan() {
   container.innerHTML = `
     <div class="weekly-pair-header">
       <h4>Weekly Pair Plan</h4>
-      <button
-        class="weekly-edit-toggle"
-        onclick="openWeeklyPairEditor()"
-        aria-label="Open Tactical Mode"
-      ></button>
+      <button class="weekly-edit-toggle"
+              onclick="openWeeklyPairEditor()"
+              aria-label="Add Trade"></button>
     </div>
 
     <div class="weekly-pair-list">
       ${[...weeklyPairPlan]
         .sort((a, b) => b.priority - a.priority)
-        .map(p => `
+        .map((p, i) => `
           <div class="weekly-pair-item ${p.bias} prio-${p.priority}">
             <span>${p.symbol}</span>
             <span>${p.bias.toUpperCase()}</span>
-            <span class="pair-priority">${p.priority}</span>
+
+            ${
+              p.confluence
+                ? `<div class="pair-confluence ${p.confluence.class}"
+                        style="color:${p.confluence.color}">
+                     ${p.confluence.score}%
+                   </div>`
+                : ""
+            }
           </div>
         `)
         .join("")}
@@ -78,28 +86,27 @@ function renderWeeklyPairPlan() {
   `;
 }
 
-
-
 /* ============================================================
-   🧩 OPTIONS (Dropdown wie im Rechner – via pairsData.js categories)
-   Voraussetzung: categories + pipValues existieren global (aus pairsData.js)
+   🧩 OPTIONS
    ============================================================ */
 
 function buildWeeklyPairOptions() {
   if (typeof categories === "undefined" || typeof pipValues === "undefined") {
-    console.warn("categories/pipValues fehlen – pairsData.js nicht geladen?");
+    console.warn("pairsData.js fehlt");
     return "";
   }
 
   return Object.entries(categories)
-    .map(([groupName, syms]) => `
+    .map(
+      ([groupName, syms]) => `
       <optgroup label="${groupName}">
         ${syms
           .filter(sym => pipValues[sym] !== undefined)
           .map(sym => `<option value="${sym}">${sym}</option>`)
           .join("")}
       </optgroup>
-    `)
+    `
+    )
     .join("");
 }
 
@@ -139,57 +146,92 @@ function openWeeklyPairEditor() {
     </div>
 
     <div class="weekly-pair-list">
-      ${[...weeklyPairPlan]
-        .sort((a, b) => b.priority - a.priority)
-        .map(p => `
-          <div 
-            class="weekly-pair-item ${p.bias} prio-${p.priority}"
-            onclick="removeWeeklyPairBySymbol('${p.symbol}')"
-            title="Click to remove"
-          >
-            <span>${p.symbol}</span>
-            <span>${p.bias.toUpperCase()}</span>
-            <span class="pair-priority">${p.priority}</span>
-          </div>
-        `)
+      ${weeklyPairPlan
+        .map(
+          p => `
+        <div class="weekly-pair-item ${p.bias} prio-${p.priority}"
+             onclick="removeWeeklyPairBySymbol('${p.symbol}')">
+          <span>${p.symbol}</span>
+          <span>${p.bias.toUpperCase()}</span>
+        </div>
+      `
+        )
         .join("")}
     </div>
 
-    <button class="finish-btn" onclick="renderWeeklyPairPlan()">
-      DONE
-    </button>
+    <button class="finish-btn" onclick="renderWeeklyPairPlan()">DONE</button>
   `;
 }
 
-
 /* ============================================================
-   ➕➖ ADD / REMOVE (AUTO SAVE)
+   ➕➖ ADD / REMOVE
    ============================================================ */
 
 function addWeeklyPair() {
   const symbol = document.getElementById("wpSymbol").value;
   const bias = document.getElementById("wpBias").value;
-  const priority = parseInt(document.getElementById("wpPriority").value, 10);
+  const priority = parseInt(
+    document.getElementById("wpPriority").value,
+    10
+  );
 
   if (!symbol || !bias || !priority) return;
-  if (!pipValues?.[symbol]) return;
   if (weeklyPairPlan.some(p => p.symbol === symbol)) return;
 
-  weeklyPairPlan.push({ symbol, bias, priority });
+  weeklyPairPlan.push({
+    symbol,
+    bias,
+    priority,
+    confluence: null // ⬅️ WICHTIG
+  });
 
   saveWeeklyPairPlan();
   openWeeklyPairEditor();
 }
 
 function removeWeeklyPairBySymbol(symbol) {
-  const ok = confirm(`Pair ${symbol} wirklich löschen?`);
-  if (!ok) return;
+  if (!confirm(`Pair ${symbol} wirklich löschen?`)) return;
 
   weeklyPairPlan = weeklyPairPlan.filter(p => p.symbol !== symbol);
-
   saveWeeklyPairPlan();
   renderWeeklyPairPlan();
 }
+
+/* ============================================================
+   🧹 CLEAR ALL TRADES
+   ============================================================ */
+
+function clearAllWeeklyPairs() {
+  if (!weeklyPairPlan.length) return;
+
+  const ok = confirm(
+    "Alle Trades wirklich löschen?\n\nDieser Schritt kann nicht rückgängig gemacht werden."
+  );
+  if (!ok) return;
+
+  weeklyPairPlan = [];
+  localStorage.removeItem(WEEKLY_PAIR_STORAGE_KEY);
+
+  renderWeeklyPairPlan();
+}
+
+
+/* ============================================================
+   🔗 CONFLUENCE BRIDGE (Checklist → Dashboard)
+   ============================================================ */
+window.assignConfluenceToTrade = function ({ tradeIndex, confluence }) {
+  if (!weeklyPairPlan[tradeIndex]) return;
+
+  weeklyPairPlan[tradeIndex].confluence = {
+    ...confluence,
+    timestamp: Date.now()
+  };
+
+  saveWeeklyPairPlan();
+  renderWeeklyPairPlan();
+};
+
+
 
 /* ============================================================
    🚀 INIT
