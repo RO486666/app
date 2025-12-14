@@ -33,39 +33,52 @@ function loadWeeklyPairPlan() {
 /* ============================================================
    🖥️ RENDER – DASHBOARD
    ============================================================ */
-
 function renderWeeklyPairPlan() {
   const container = document.getElementById("weeklyPairPlan");
   if (!container) return;
 
+  container.classList.remove("edit-mode");
+
   if (!weeklyPairPlan.length) {
     container.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <p style="opacity:.6">📭 Keine Paare für diese Woche geplant.</p>
-        <button onclick="openWeeklyPairEditor()">✏️</button>
+      <div class="weekly-pair-header">
+        <p class="weekly-pair-empty">Keine Paare für diese Woche geplant</p>
+        <button
+          class="weekly-edit-toggle"
+          onclick="openWeeklyPairEditor()"
+          aria-label="Open Tactical Mode"
+        ></button>
       </div>
     `;
     return;
   }
 
   container.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h4 style="margin-bottom:10px;">📌 Weekly Pair Plan</h4>
-      <button onclick="openWeeklyPairEditor()">✏️</button>
+    <div class="weekly-pair-header">
+      <h4>Weekly Pair Plan</h4>
+      <button
+        class="weekly-edit-toggle"
+        onclick="openWeeklyPairEditor()"
+        aria-label="Open Tactical Mode"
+      ></button>
     </div>
 
-    ${[...weeklyPairPlan]
-      .sort((a, b) => b.priority - a.priority)
-      .map(p => `
-        <div class="weekly-pair-item ${p.bias} prio-${p.priority}">
-          <span>${p.symbol}</span>
-          <span>${p.bias.toUpperCase()}</span>
-          <span>${"🔥".repeat(p.priority)}</span>
-        </div>
-      `)
-      .join("")}
+    <div class="weekly-pair-list">
+      ${[...weeklyPairPlan]
+        .sort((a, b) => b.priority - a.priority)
+        .map(p => `
+          <div class="weekly-pair-item ${p.bias} prio-${p.priority}">
+            <span>${p.symbol}</span>
+            <span>${p.bias.toUpperCase()}</span>
+            <span class="pair-priority">${p.priority}</span>
+          </div>
+        `)
+        .join("")}
+    </div>
   `;
 }
+
+
 
 /* ============================================================
    🧩 OPTIONS (Dropdown wie im Rechner – via pairsData.js categories)
@@ -98,10 +111,12 @@ function openWeeklyPairEditor() {
   const container = document.getElementById("weeklyPairPlan");
   if (!container) return;
 
-  container.innerHTML = `
-    <h4>🛠️ Weekly Pair Setup</h4>
+  container.classList.add("edit-mode");
 
-    <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;">
+  container.innerHTML = `
+    <h4>Weekly Pair Setup</h4>
+
+    <div class="weekly-pair-editor-row">
       <select id="wpSymbol">
         <option value="">Pair wählen…</option>
         ${buildWeeklyPairOptions()}
@@ -120,31 +135,32 @@ function openWeeklyPairEditor() {
         <option value="3">High</option>
       </select>
 
-      <button onclick="addWeeklyPair()">➕</button>
+      <button class="add-pair-btn" onclick="addWeeklyPair()">+</button>
     </div>
 
-    <div style="margin-top:14px;">
+    <div class="weekly-pair-list">
       ${[...weeklyPairPlan]
         .sort((a, b) => b.priority - a.priority)
         .map(p => `
           <div 
             class="weekly-pair-item ${p.bias} prio-${p.priority}"
             onclick="removeWeeklyPairBySymbol('${p.symbol}')"
-            title="Klicken zum Löschen"
+            title="Click to remove"
           >
             <span>${p.symbol}</span>
             <span>${p.bias.toUpperCase()}</span>
-            <span>${"🔥".repeat(p.priority)}</span>
+            <span class="pair-priority">${p.priority}</span>
           </div>
         `)
         .join("")}
     </div>
 
-    <button style="margin-top:16px;" onclick="renderWeeklyPairPlan()">
-      ✅ Fertig
+    <button class="finish-btn" onclick="renderWeeklyPairPlan()">
+      DONE
     </button>
   `;
 }
+
 
 /* ============================================================
    ➕➖ ADD / REMOVE (AUTO SAVE)
