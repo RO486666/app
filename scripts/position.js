@@ -87,13 +87,22 @@ function calculatePositionSize() {
     { mult: 5, label: "🧮 Sehr hoch", cls: "high" },
   ];
 
-  steps.forEach(s => {
-    const lot = (baseLot * s.mult).toFixed(2);
-    const risk = (risikoProzentEmpfohlen * s.mult).toFixed(1);
-    output += `<div class="risk-step ${s.cls}">
-                 ${s.label}: ${lot} Lots (Risiko ${risk}%)
-               </div>`;
-  });
+steps.forEach(s => {
+  const lot = baseLot * s.mult;
+  const pipValue = pipValueStandard * lot;
+  const riskEuro = stopLossPips * pipValue;
+  const riskPercent = (riskEuro / accountSize) * 100;
+
+  output += `
+    <div class="risk-step ${s.cls}">
+      ${s.label}: 
+      <strong>${lot.toFixed(2)} Lots</strong> – 
+      <span class="risk-eur">${riskEuro.toFixed(2)} €</span> 
+      (<span class="risk-pct">${riskPercent.toFixed(1)} %</span>)
+    </div>
+  `;
+});
+
 
   // ⚠️ Limit-Zeile dunkelrot
   const limitLots = (baseLot * steps[4].mult).toFixed(2);
