@@ -1558,3 +1558,60 @@
   box-shadow: none;
 }
 
+/* ============================================================
+   📂 LOAD CONFLUENCE BUTTON – SECONDARY ACTION
+   ============================================================ */
+
+.conf-load-btn {
+  min-width: 180px;
+  height: 44px;
+
+  padding: 0 26px;
+  border-radius: 14px;
+  border: 1px solid rgba(120,180,255,0.45);
+
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+
+  color: #cfe8ff;
+
+  background: linear-gradient(
+    135deg,
+    rgba(40,60,90,0.85) 0%,
+    rgba(20,30,50,0.95) 100%
+  );
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 26px rgba(80,140,255,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+
+  transition: all 0.22s ease;
+}
+
+/* Hover – ruhig, kontrolliert */
+.conf-load-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 36px rgba(80,140,255,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  border-color: rgba(120,180,255,0.8);
+}
+
+/* Active */
+.conf-load-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 16px rgba(80,140,255,0.35);
+}
+
+/* Disabled */
+.conf-load-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
