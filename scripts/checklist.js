@@ -277,6 +277,104 @@ document.querySelectorAll('input[type="radio"]').forEach(radio => {
 });
 
 
+function getCurrentConfluenceResult() {
+  const totalValue = document.getElementById("confTotalValue");
+  if (!totalValue) return null;
+
+  const raw = totalValue.textContent.replace("%", "");
+  const score = parseInt(raw, 10);
+
+  if (isNaN(score)) return null;
+
+  const level = getLevelData(score);
+
+  return {
+    score,              // z.B. 150
+    label: level.label, // "High Probability"
+    class: level.class, // lvl5
+    color: level.color  // Farbe
+  };
+}
+
+function saveConfluence() {
+  const result = getCurrentConfluenceResult();
+  if (!result) return;
+
+  const trades = getDashboardTrades();
+  if (!trades.length) {
+    alert("Keine Trades im Dashboard vorhanden.");
+    return;
+  }
+
+  openConfluenceAssignPopup(trades, result);
+}
+
+function getDashboardTrades() {
+  try {
+    const raw = localStorage.getItem("weeklyPairPlan_v1");
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+function openConfluenceAssignPopup(trades, result) {
+  const overlay = document.createElement("div");
+  overlay.className = "conf-assign-overlay";
+
+  overlay.innerHTML = `
+    <div class="conf-assign-modal">
+      <h3>Confluence speichern</h3>
+      <p><strong>${result.score}%</strong> – welchem Trade zuweisen?</p>
+
+      <div class="conf-assign-list">
+        ${trades.map((t, i) => `
+          <button onclick="assignConfluenceFromChecklist(${i})">
+            ${t.symbol} · ${t.bias.toUpperCase()} · Prio ${t.priority}
+          </button>
+        `).join("")}
+      </div>
+
+      <button class="cancel-btn" onclick="closeConfluenceAssignPopup()">Abbrechen</button>
+    </div>
+  `;
+
+  overlay.dataset.result = JSON.stringify(result);
+  document.body.appendChild(overlay);
+}
+
+function assignConfluenceFromChecklist(tradeIndex) {
+  const overlay = document.querySelector(".conf-assign-overlay");
+  if (!overlay) return;
+
+  const result = JSON.parse(overlay.dataset.result);
+
+  window.assignConfluenceToTrade?.({
+    tradeIndex,
+    confluence: result
+  });
+
+  closeConfluenceAssignPopup();
+  resetConfluenceChecklist();
+}
+
+function closeConfluenceAssignPopup() {
+  const overlay = document.querySelector(".conf-assign-overlay");
+  if (overlay) overlay.remove();
+}
+
+
+function resetConfluenceChecklist() {
+  document.querySelectorAll(".conf-check").forEach(c => {
+    c.checked = false;
+    c.previousChecked = false;
+  });
+
+  updateConfluenceScore();
+}
+
+
 /* ============================================================
    INIT
    ============================================================ */
