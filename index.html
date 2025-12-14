@@ -7,7 +7,7 @@
 
   <!-- Existing Styles behalten -->
     <link rel="stylesheet" href="CSS/sidebar.css" />
-  <link rel="stylesheet" href="CSS/ticker.css" />
+  <link rel="stylesheet" href="CSS/dashboard.css" />
   <link rel="stylesheet" href="CSS/star.css" />
   <link rel="stylesheet" href="CSS/crypto.css">
   <link rel="stylesheet" href="CSS/session.css" />
@@ -422,16 +422,19 @@
   <!-- ======================= -->
   <main id="mainContent">
 
-    <!-- DASHBOARD PANEL -->
-    <section id="panel-dashboard" class="panel" style="margin-top: 15px;">
-      <div class="stats-box">
-        <h3 style="margin-top: 0;">🏠 Dashboard</h3>
-        <p>
-          Wähle links ein Modul in der Sidebar, um deine Tools zu öffnen
-          (Position Size, Steuern, Pair-Profil, Regeln, Quiz, Confluence).
-        </p>
-      </div>
-    </section>
+   <!-- DASHBOARD PANEL -->
+<section id="panel-dashboard" class="panel" style="margin-top: 15px;">
+  
+  <div class="dashboard-tactical-box">
+    
+    <h3>🏠 Dashboard</h3>
+
+    <div id="weeklyPairPlan"></div>
+
+  </div>
+
+</section>
+
 
 <section id="panel-settings-dst" class="panel hidden">
   <div class="dst-popup">
@@ -1417,7 +1420,7 @@
 <script src="scripts/dawn.js"></script>
 <script src="scripts/tax.js"></script>
 <script src="imageStorage.js"></script>
-<script src="scripts/bg-candles.js"></script>
+<script src="scripts/dashboard.js"></script>
 <script src="scripts/ticker.js"></script>
 <script src="scripts/jornal.js"></script>
 <script src="scripts/pwa.js"></script>
