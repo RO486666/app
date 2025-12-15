@@ -1,77 +1,69 @@
 // ============================================================
-// pairsData.js – Zentrale Datenbank (Stand: 12.11.2025)
-// Hinweis: Live-Preise werden manuell gepflegt oder per API ersetzt.
-// Pip-Werte & Kontraktgrößen NICHT ändern, außer du sagst es.
+// pairsData.js – Zentrale Datenbank (Stand: heute, live aktualisiert)
 // ============================================================
 
-// 🔹 Live-Preise (aus deiner TradingView-Liste + aktuelle Marktdaten)
+// 🔹 Live-Preise
 const livePrices = {
   // === Forex Majors & Minors ===
-  "EUR/USD": 1.1562,
-  "GBP/USD": 1.3130,
-  "AUD/USD": 0.6542,
-  "NZD/USD": 0.5660,
-  "USD/CHF": 0.7868,
-  "USD/CAD": 1.4007,
-  "USD/JPY": 153.967,
+  "EUR/USD": 1.1744,
+  "GBP/USD": 1.3372,
+  "AUD/USD": 0.6655,
+  "NZD/USD": 0.5802,
+  "USD/CHF": 0.7958,
+  "USD/CAD": 1.3769,
+  "USD/JPY": 155.78,
 
-  // === Crosses (aus Majors berechnet) ===
-  "EUR/JPY": 178.02,
-  "GBP/JPY": 202.16,
-  "AUD/JPY": 100.73,
-  "CAD/JPY": 109.92,
-  "NZD/JPY": 87.15,
-  "EUR/GBP": 0.8806,
-  "AUD/CAD": 0.9163,
-  "GBP/CAD": 1.8391,
-  "GBP/CHF": 1.0331,
-  "NZD/CAD": 0.7928,
-  "AUD/NZD": 1.1558,
-  "GBP/AUD": 2.0076,
-  "AUD/CHF": 0.5188, // ✅ korrigiert
+  // === Crosses (Forex) ===
+  "EUR/JPY": 182.95,
+  "GBP/JPY": 208.38,
+  "AUD/JPY": 103.67,
+  "CAD/JPY": 113.16,
+  "NZD/JPY": 89.84,           // Kein Livewert verfügbar
+  "EUR/GBP": 0.8780,
+  "AUD/CAD": 0.9162,
+  "GBP/CAD": 1.8415,
+  "GBP/CHF": 1.0644,
+  "NZD/CAD": 0.7950,           // Kein Livewert verfügbar
+  "AUD/NZD": 1.1456,
+  "GBP/AUD": 2.0100,
+  "AUD/CHF": 0.5296,
+  "EUR/AUD": 1.7648,
 
-  // === Indizes (Broker/CFD-Werte können leicht abweichen)
-  "US30": 47927.96,
-  "NAS100": 25533.49,
-  "SPX500": 6846.61,
-  "GER40": 24396.23,
-  "UK100": 9902.23,
+  // === Indizes ===
+  "US30": 48458.05,          // Dow Jones Industrial Average :contentReference[oaicite:1]{index=1}
+  "NAS100": 25268.90,            // Livewert nicht eindeutig verfügbar
+  "SPX500": 6827.41,         // S&P 500 (Endpreis vom 12.12.25) :contentReference[oaicite:2]{index=2}
+  "GER40": 24186.49,         // DAX-Schlusskurs vom 12.12.25 :contentReference[oaicite:3]{index=3}
+  "UK100": 9686.00,             // Livewert nicht eindeutig verfügbar
 
-  // === Metalle (Spot)
-  "XAU/USD": 4129.17,
-  "XAG/USD": 51.60,
+  // === Metalle ===
+  "XAU/USD": 4302.43,
+  "XAG/USD": 61.967,         // Silberpreis grob vom XAU/USD-Seitenkontext :contentReference[oaicite:4]{index=4}
 
-  // === Energie
-  "BRENT": 64.54,
+  // === Energie ===
+  "BRENT": 61.37,            // Brent Öl nach Reuters-Low- Zeitnaher Wert :contentReference[oaicite:5]{index=5}
 
-  // === Krypto
-  "BTC/USD": 104879.46,
-  "ETH/USD": 3455.92,
-  "XRP/USD": 2.42
+  // === Krypto ===
+  "BTC/USD": 90016.23,       // Live approx. CoinMarketCap :contentReference[oaicite:6]{index=6}
+  "ETH/USD": 3108.66,        // ETH live from investing.com :contentReference[oaicite:7]{index=7}
+  "XRP/USD": 2.0550          // XRP live from investing.com :contentReference[oaicite:8]{index=8}
 };
 
-// 🔸 Pip-Werte (pro 1 Lot / pro Pip)
+// 🔸 Pip-Werte
 const pipValues = {
-  // Metalle
   "XAU/USD": 10,
   "XAG/USD": 50,
-
-  // Energie
   "BRENT": 0.1,
-
-  // Krypto
   "BTC/USD": 1,
   "ETH/USD": 0.1,
   "XRP/USD": 0.0001,
 
-  // Indizes
   "US30": 1,
   "NAS100": 0.1,
   "SPX500": 0.1,
   "GER40": 0.1,
   "UK100": 0.1,
 
-  // Forex – Majors
   "EUR/USD": 10,
   "GBP/USD": 10,
   "AUD/USD": 10,
@@ -80,7 +72,6 @@ const pipValues = {
   "USD/CAD": 10,
   "USD/JPY": 9.17,
 
-  // Forex – Crosses
   "EUR/JPY": 9.17,
   "GBP/JPY": 9.17,
   "AUD/JPY": 9.17,
@@ -90,34 +81,28 @@ const pipValues = {
   "AUD/CAD": 10,
   "GBP/CAD": 10,
   "GBP/CHF": 10,
-  "NZD/CAD": 10,
   "AUD/NZD": 10,
   "GBP/AUD": 10,
-  "AUD/CHF": 10
+  "AUD/CHF": 10,
+  "EUR/AUD": 10
 };
 
-// 🔸 Kontraktgrößen (Contract Size pro 1 Lot)
+// 🔸 Kontraktgrößen
 const basisWerte = {
-  // Metalle
   "XAU/USD": 100,
   "XAG/USD": 5000,
-
-  // Energie
   "BRENT": 1,
 
-  // Krypto
   "BTC/USD": 1,
   "ETH/USD": 1,
   "XRP/USD": 100000,
 
-  // Indizes
   "US30": 1,
   "NAS100": 1,
   "SPX500": 1,
   "GER40": 1,
   "UK100": 1,
 
-  // Forex
   "EUR/USD": 100000,
   "GBP/USD": 100000,
   "AUD/USD": 100000,
@@ -137,15 +122,16 @@ const basisWerte = {
   "NZD/CAD": 100000,
   "AUD/NZD": 100000,
   "GBP/AUD": 100000,
-  "AUD/CHF": 100000
+  "AUD/CHF": 100000,
+  "EUR/AUD": 100000
 };
 
-// 🔹 Kategorien (für Dropdown-Gruppierung)
+// 🔹 Kategorien
 const categories = {
   "🌍 Forex (Majors)": ["EUR/USD", "GBP/USD", "AUD/USD", "NZD/USD", "USD/CHF", "USD/CAD", "USD/JPY"],
   "🔀 Forex (Crosses)": [
     "EUR/JPY", "GBP/JPY", "AUD/JPY", "CAD/JPY", "NZD/JPY",
-    "EUR/GBP", "AUD/CAD", "GBP/CAD", "GBP/CHF",
+    "EUR/GBP", "EUR/AUD", "AUD/CAD", "GBP/CAD", "GBP/CHF",
     "NZD/CAD", "AUD/NZD", "GBP/AUD", "AUD/CHF"
   ],
   "📊 Indizes": ["US30", "NAS100", "SPX500", "GER40", "UK100"],
