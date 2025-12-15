@@ -1461,6 +1461,55 @@ function testNotification() {
     });
 }
 </script>
+
+<button onclick="debugNotification()" style="padding: 20px; background: orange; color: black; font-weight: bold; margin: 20px; border: 2px solid white;">
+  🛠️ FEHLERSUCHE STARTEN
+</button>
+
+<script>
+function debugNotification() {
+    alert("1. Start: Knopf gedrückt.");
+
+    // Check: Unterstützt der Browser das überhaupt?
+    if (!('serviceWorker' in navigator)) {
+        alert("❌ Fehler: Dein Browser unterstützt keine Service Worker.");
+        return;
+    }
+
+    if (!('Notification' in window)) {
+        alert("❌ Fehler: Dein Browser unterstützt keine Benachrichtigungen.");
+        return;
+    }
+
+    // Check: Wie ist der Status der Erlaubnis?
+    alert("2. Status der Erlaubnis: " + Notification.permission);
+
+    Notification.requestPermission().then(perm => {
+        if (perm !== "granted") {
+            alert("❌ Fehler: Erlaubnis wurde verweigert! Bitte in Android-Einstellungen für Chrome freigeben.");
+            return;
+        }
+
+        alert("3. Erlaubnis ist da! Suche Service Worker...");
+
+        // Check: Finden wir den Service Worker?
+        navigator.serviceWorker.ready.then(registration => {
+            alert("4. Service Worker gefunden! Sende Nachricht...");
+            
+            registration.showNotification("AlphaOS System Check", {
+                body: "Wenn du das liest, funktioniert alles!",
+                icon: "/app/icon-192.png",
+                vibrate: [200, 100, 200]
+            });
+            
+        }).catch(error => {
+            // HIER liegt meistens das Problem
+            alert("❌ SERVICE WORKER FEHLER: " + error.message); 
+            console.log(error);
+        });
+    });
+}
+</script>
 <!-- ============================================================
      ⚡ NEW SIDEBAR v0.2 — HYBRID LOGIK
      (Icons öffnen Drawer, Unterpunkte öffnen Panels)
