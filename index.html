@@ -1444,13 +1444,39 @@
 
 <script src="scripts/quiz.js"></script>
 <script src="scripts/quiz-db.js"></script>
+<button onclick="testNotification()" style="padding: 20px; background: red; color: white; font-weight: bold; margin: 20px;">
+  🔔 TEST ALARM
+</button>
 
+<script>
+function testNotification() {
+    // 1. Erstmal Erlaubnis fragen (falls noch nicht passiert)
+    Notification.requestPermission().then(perm => {
+        if (perm === "granted") {
+            // 2. Testnachricht senden
+            showSessionStartNotification("TEST SESSION", "Das ist ein System-Check für AlphaOS.");
+        } else {
+            alert("Benachrichtigungen sind im Browser blockiert! Bitte in den Einstellungen erlauben.");
+        }
+    });
+}
+</script>
 <!-- ============================================================
      ⚡ NEW SIDEBAR v0.2 — HYBRID LOGIK
      (Icons öffnen Drawer, Unterpunkte öffnen Panels)
    ============================================================ -->
 <script>
-
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/app/sw.js') // Pfad zu deiner Service Worker Datei
+        .then(registration => {
+          console.log('AlphaOS Service Worker angemeldet mit Scope:', registration.scope);
+        })
+        .catch(err => {
+          console.log('Service Worker Anmeldung fehlgeschlagen:', err);
+        });
+    });
+  }
 </script>
 
 
