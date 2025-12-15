@@ -657,6 +657,165 @@ Disziplin. Kein Revenge. Früh Schluss möglich.<br><br>
 BTC oft Pre-Move fürs Wochenende.
 `
 };
+
+/* ==========================================================================
+   2. EINSTELLUNGEN (SETTINGS LOGIC) - HIER WAR DER FEHLER
+   ========================================================================== */
+
+// Standard: 'all'
+let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+
+// Modus setzen (wird vom Button aufgerufen)
+function setNotifyMode(mode) {
+    currentNotifyMode = mode;
+    localStorage.setItem("alphaNotifyMode", mode);
+    
+    // UI aktualisieren (Buttons färben)
+    updateNotifyUI();
+    
+    // Feedback geben
+    const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
+    showAlert(`✅ ${modeNames[mode]}`);
+
+    // Test-Feedback abspielen
+    if ((mode === 'all' || mode === 'sound') && alertSound) {
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => {});
+    }
+    if ((mode === 'all' || mode === 'push') && navigator.vibrate) {
+        navigator.vibrate([50, 50, 50]);
+    }
+}
+
+// UI Aktualisieren (DIESE FUNKTION FEHLTE BEI DIR!)
+function updateNotifyUI() {
+    const btns = document.querySelectorAll(".btn-notify");
+    btns.forEach(btn => {
+        if (btn.dataset.mode === currentNotifyMode) {
+            btn.classList.add("active");
+            // Inline Styles zur Sicherheit, falls CSS fehlt
+            btn.style.border = "2px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.1)";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #333";
+            btn.style.background = "transparent";
+        }
+    });
+}
+
+// Panel öffnen/schließen
+function closeNotifySettings() {
+    const p = document.getElementById("panel-settings-notify");
+    if(p) p.classList.add("hidden");
+}
+
+/* ==========================================================================
+   3. HELPER FUNKTIONEN
+   ========================================================================== */
+
+// Konvertiert Hex (#RRGGBB) zu RGBA mit Opacity
+function hexToRgba(hex, opacity) {
+    hex = hex.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+// Formatiert Minuten (z.B. 600) zu "HH:MM"
+function formatHM(mins) {
+    const h = Math.floor(mins / 60) % 24;
+    const m = mins % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+}
+
+// Holt aktuelle Minuten seit Mitternacht
+function getMinutesNow() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+}
+
+function requestNotificationPermission() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+            console.log("🔐 Notification permission:", permission);
+        });
+    }
+}
+
+// Benachrichtigung anzeigen (Helper für Alerts)
+function showAlert(msg) {
+    if (alertBox) {
+        alertBox.textContent = msg;
+        alertBox.style.display = "block";
+        setTimeout(() => { alertBox.style.display = "none"; }, 5000);
+    }
+    console.log(msg);
+}
+
+// 🔥 START NOTIFICATION (Hört jetzt auf die Einstellungen!)
+function showSessionStartNotification(name, info) {
+    if (currentNotifyMode === 'off') return;
+
+    const title = `AlphaOS: ${name} gestartet!`;
+    const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100);
+
+    // PUSH PART
+    if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
+        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, {
+                    body: cleanInfo,
+                    icon: "/app/icon-192.png",
+                    vibrate: [200, 100, 200, 100, 400], 
+                    tag: "session-start",
+                    renotify: true
+                });
+            });
+        }
+    }
+
+    // AUDIO PART
+    if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
+        if (alertSound) {
+            alertSound.volume = 1.0;
+            alertSound.currentTime = 0;
+            alertSound.play().catch(e => {});
+        }
+    }
+}
+
+// 🔥 END NOTIFICATION (Hört jetzt auf die Einstellungen!)
+function showSessionEndNotification(name) {
+    if (currentNotifyMode === 'off') return;
+
+    const title = `AlphaOS: ${name} Beendet`;
+    
+    // PUSH PART
+    if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
+        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, {
+                    body: "Liquidität sinkt. Risk prüfen.",
+                    icon: "/app/icon-192.png",
+                    vibrate: [100, 50, 100], 
+                    tag: "session-end"
+                });
+            });
+        }
+    }
+
+    // AUDIO PART
+    if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
+        if (alertSound) {
+            alertSound.volume = 0.5; 
+            alertSound.currentTime = 0;
+            alertSound.play().catch(e => {});
+        }
+    }
+}
 /* ==========================================================================
    3. HELPER FUNKTIONEN
    ========================================================================== */
@@ -1198,44 +1357,32 @@ else if (minutes >= 1380 || minutes < 60) {
     applySidebarDrawerSessionColor(name);
 
 // ============================================================
-    // ⏰ ALERT LOGIK (Mit "First Load" Bremse)
+    // ⏰ ALERT LOGIK (Mit First Load Bremse & Settings)
     // ============================================================
-
     const currentNamesList = activeSessions.map(s => s.name);
     const currentSessionString = currentNamesList.join(",");
-    
-    // Alte Liste holen (für den Vergleich)
     const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
 
-    // 🔥 NEU: Der "Erster Start" Check
     if (isFirstLoad) {
-        // Beim ersten Laden machen wir NIX, außer den Status zu speichern.
-        // So verhindern wir den Alarm beim Neuladen der Seite.
         lastActiveSessionState = currentSessionString;
         isFirstLoad = false; 
-    } 
-    // 🔥 Erst danach (beim nächsten Timer-Tick) darf er prüfen
-    else if (currentSessionString !== lastActiveSessionState) {
-
-        // A) START-ALARM (Ist etwas NEU dazugekommen?)
+    } else if (currentSessionString !== lastActiveSessionState) {
+        // A) START
         const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
         if (newSession) {
             showSessionStartNotification(newSession.name, newSession.info);
             showAlert(`🚀 START: ${newSession.name}`);
         }
-
-        // B) ENDE-ALARM (Ist etwas WEG gefallen?)
+        // B) ENDE
         const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
         if (endedSessionName) {
             showSessionEndNotification(endedSessionName);
             showAlert(`🏁 ENDE: ${endedSessionName}`);
         }
-        
-        // Status aktualisieren
         lastActiveSessionState = currentSessionString;
     }
 
-    // 2. Warnung 5 Min vorher
+    // 5 Min Warnung
     const minutesToNext = getMinutesToNextSession(minutes);
     if (minutesToNext <= 5 && minutesToNext > 0) {
         const nextInfo = getNextSessionInfo(minutes);
@@ -1243,8 +1390,6 @@ else if (minutes >= 1380 || minutes < 60) {
             const warningKey = `warn-${nextInfo.session.name}`;
             if (lastAlertSession !== warningKey) {
                 showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in 5 Min!`);
-                // Kleiner Sound bei Warnung (optional)
-                // if(alertSound) alertSound.play().catch(e=>{});
                 lastAlertSession = warningKey;
             }
         }
@@ -1402,6 +1547,8 @@ window.addEventListener("load", () => {
     requestNotificationPermission();
     updateRealTimeBar();
     updateDaySummary();
+	// WICHTIG: Settings beim Start laden
+    updateNotifyUI();
 
     // Intervalle
     setInterval(updateRealTimeBar, 60000); // 1 Minute
