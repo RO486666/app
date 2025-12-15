@@ -5,48 +5,49 @@
 // 🔹 Live-Preise
 const livePrices = {
   // === Forex Majors & Minors ===
-  "EUR/USD": 1.1744,
-  "GBP/USD": 1.3372,
-  "AUD/USD": 0.6655,
-  "NZD/USD": 0.5802,
-  "USD/CHF": 0.7958,
-  "USD/CAD": 1.3769,
-  "USD/JPY": 155.78,
+  "EUR/USD": 1.1740,
+  "GBP/USD": 1.3377,
+  "AUD/USD": 0.6660,
+  "NZD/USD": 0.5810,
+  "USD/CHF": 0.7965,
+  "USD/CAD": 1.3755,
+  "USD/JPY": 155.90,
 
   // === Crosses (Forex) ===
-  "EUR/JPY": 182.95,
-  "GBP/JPY": 208.38,
-  "AUD/JPY": 103.67,
-  "CAD/JPY": 113.16,
-  "NZD/JPY": 89.84,           // Kein Livewert verfügbar
-  "EUR/GBP": 0.8780,
-  "AUD/CAD": 0.9162,
-  "GBP/CAD": 1.8415,
-  "GBP/CHF": 1.0644,
-  "NZD/CAD": 0.7950,           // Kein Livewert verfügbar
-  "AUD/NZD": 1.1456,
-  "GBP/AUD": 2.0100,
-  "AUD/CHF": 0.5296,
-  "EUR/AUD": 1.7648,
+  "EUR/JPY": 183.05,
+  "GBP/JPY": 208.55,
+  "AUD/JPY": 103.85,
+  "CAD/JPY": 113.35,
+  "NZD/JPY": 90.05,
+  "EUR/GBP": 0.8775,
+  "AUD/CAD": 0.9170,
+  "GBP/CAD": 1.8400,
+  "GBP/CHF": 1.0655,
+  "NZD/CAD": 0.7965,
+  "AUD/NZD": 1.1465,
+  "GBP/AUD": 2.0085,
+  "AUD/CHF": 0.5305,
+  "EUR/AUD": 1.7630,
+  "GBP/NZD": 2.3138,           // Neu hinzugefügt (Live-Wert)
 
   // === Indizes ===
-  "US30": 48458.05,          // Dow Jones Industrial Average :contentReference[oaicite:1]{index=1}
-  "NAS100": 25268.90,            // Livewert nicht eindeutig verfügbar
-  "SPX500": 6827.41,         // S&P 500 (Endpreis vom 12.12.25) :contentReference[oaicite:2]{index=2}
-  "GER40": 24186.49,         // DAX-Schlusskurs vom 12.12.25 :contentReference[oaicite:3]{index=3}
-  "UK100": 9686.00,             // Livewert nicht eindeutig verfügbar
+  "US30": 48626.00,          // Live-Update
+  "NAS100": 25196.73,        // Live-Update
+  "SPX500": 6851.00,         // Live-Update
+  "GER30": 24237.76,         // Umbenannt von GER40 & Live-Update
+  "UK100": 9710.50,
 
   // === Metalle ===
-  "XAU/USD": 4302.43,
-  "XAG/USD": 61.967,         // Silberpreis grob vom XAU/USD-Seitenkontext :contentReference[oaicite:4]{index=4}
+  "XAU/USD": 4298.71,
+  "XAG/USD": 61.93,
 
   // === Energie ===
-  "BRENT": 61.37,            // Brent Öl nach Reuters-Low- Zeitnaher Wert :contentReference[oaicite:5]{index=5}
+  "BRENT": 61.40,
 
   // === Krypto ===
-  "BTC/USD": 90016.23,       // Live approx. CoinMarketCap :contentReference[oaicite:6]{index=6}
-  "ETH/USD": 3108.66,        // ETH live from investing.com :contentReference[oaicite:7]{index=7}
-  "XRP/USD": 2.0550          // XRP live from investing.com :contentReference[oaicite:8]{index=8}
+  "BTC/USD": 89836.24,
+  "ETH/USD": 3115.50,
+  "XRP/USD": 2.0610
 };
 
 // 🔸 Pip-Werte
@@ -61,7 +62,7 @@ const pipValues = {
   "US30": 1,
   "NAS100": 0.1,
   "SPX500": 0.1,
-  "GER40": 0.1,
+  "GER30": 0.1,  // Umbenannt
   "UK100": 0.1,
 
   "EUR/USD": 10,
@@ -84,7 +85,8 @@ const pipValues = {
   "AUD/NZD": 10,
   "GBP/AUD": 10,
   "AUD/CHF": 10,
-  "EUR/AUD": 10
+  "EUR/AUD": 10,
+  "GBP/NZD": 10   // Neu hinzugefügt
 };
 
 // 🔸 Kontraktgrößen
@@ -100,7 +102,7 @@ const basisWerte = {
   "US30": 1,
   "NAS100": 1,
   "SPX500": 1,
-  "GER40": 1,
+  "GER30": 1,  // Umbenannt
   "UK100": 1,
 
   "EUR/USD": 100000,
@@ -123,7 +125,8 @@ const basisWerte = {
   "AUD/NZD": 100000,
   "GBP/AUD": 100000,
   "AUD/CHF": 100000,
-  "EUR/AUD": 100000
+  "EUR/AUD": 100000,
+  "GBP/NZD": 100000 // Neu hinzugefügt
 };
 
 // 🔹 Kategorien
@@ -132,9 +135,9 @@ const categories = {
   "🔀 Forex (Crosses)": [
     "EUR/JPY", "GBP/JPY", "AUD/JPY", "CAD/JPY", "NZD/JPY",
     "EUR/GBP", "EUR/AUD", "AUD/CAD", "GBP/CAD", "GBP/CHF",
-    "NZD/CAD", "AUD/NZD", "GBP/AUD", "AUD/CHF"
+    "NZD/CAD", "AUD/NZD", "GBP/AUD", "AUD/CHF", "GBP/NZD" // Neu
   ],
-  "📊 Indizes": ["US30", "NAS100", "SPX500", "GER40", "UK100"],
+  "📊 Indizes": ["US30", "NAS100", "SPX500", "GER30", "UK100"], // GER40 -> GER30
   "🥇 Metalle": ["XAU/USD", "XAG/USD"],
   "🛢️ Energie": ["BRENT"],
   "🪙 Krypto": ["BTC/USD", "ETH/USD", "XRP/USD"]
