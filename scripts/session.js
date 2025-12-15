@@ -699,14 +699,30 @@ function showAlert(msg) {
     console.log(msg);
 }
 
+// ✅ NEU: Diese Funktion in deine session.js einfügen (die alte überschreiben)
 function showSessionStartNotification(name, info) {
-    if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(`Session Start: ${name}`, {
-            body: "Die Session hat begonnen. Prüfe deine Levels.",
-            icon: "https://via.placeholder.com/128"
+    // 1. Prüfen, ob Benachrichtigungen erlaubt sind
+    if (Notification.permission === "granted") {
+        
+        // 2. Service Worker beauftragen (WICHTIG für Android!)
+        navigator.serviceWorker.ready.then(function(registration) {
+            registration.showNotification(`AlphaOS: ${name}`, {
+                body: info.replace(/<[^>]*>/g, ""), // Entfernt HTML-Tags für die Anzeige
+                icon: "/app/icon-192.png",
+                vibrate: [200, 100, 200], // Vibration: Brrt-Pause-Brrt
+                tag: "session-alert",     // Verhindert, dass sich Nachrichten stapeln
+                renotify: true            // Vibriert auch, wenn schon eine Nachricht da ist
+            });
         });
+
+    } else {
+        console.log("Benachrichtigung blockiert oder nicht erlaubt.");
     }
-    if (alertSound) alertSound.play().catch(e => console.log("Audio autoplay blocked", e));
+
+    // 3. Audio abspielen (Geht nur, wenn du vorher schonmal auf die Seite geklickt hast)
+    if (alertSound) {
+        alertSound.play().catch(e => console.log("Audio Autoplay vom Browser blockiert - User muss erst interagieren."));
+    }
 }
 
 /* ==========================================================================
