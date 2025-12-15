@@ -176,31 +176,98 @@
   /* Session Farbe kommt per JS als --> --box-color */
 }
 
-/* ---------------------------------------------------------
-   1) Header – Matte Carbon Plate mit Laser Cut Border
-   --------------------------------------------------------- */
+/* =========================================================
+   📡 SESSION HEADER – System Intelligence Look
+   ========================================================= */
+
 .session-details-header {
-  font-family: 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* Abstand zwischen Strichen und Text */
+
+  /* Größe & Spacing */
+  padding: 18px 0;
+  margin-bottom: 20px;
+  
+  /* Text Styling */
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;     /* Macht es sehr "cinematic" */
   text-transform: uppercase;
-  letter-spacing: 1.8px;
-  color: #fff;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 
-  padding: 16px 20px;
-  margin-bottom: 18px;
+  /* Hintergrund: Dunkel mit feinem Grid */
+  background-color: #0b0b0e;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px; /* Größe des Gitter-Musters */
 
-  background-color: var(--carbon-panel);
-  background-image: repeating-linear-gradient(
-      45deg,
-      #0f0f12 0 2px,
-      #141419 2px 4px
-  );
+  /* Rahmen & Form */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  
+  overflow: hidden; /* Wichtig für den Scanner-Effekt */
+}
 
-  border-bottom: 1px solid var(--carbon-border);
-  box-shadow:
-      inset 0 -2px 4px rgba(0,0,0,0.4),
-      0 4px 12px rgba(0,0,0,0.5);
+/* 🔹 Der "Scanner" Lichtbalken unten (Animiert) */
+.session-details-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 50%;
+  height: 2px;
+  
+  /* Farbverlauf: Transparent -> Cyan/Gold -> Transparent */
+  background: linear-gradient(90deg, transparent, var(--session-color, #00ffcc), transparent);
+  
+  /* Animation: Läuft von links nach rechts */
+  animation: scanLine 3s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+  opacity: 0.8;
+}
+
+/* 🔹 Die kleinen Deko-Linien links und rechts vom Text */
+.header-deco {
+  display: block;
+  width: 30px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+/* Kleine Punkte an den Enden der Deko-Linien */
+.header-deco::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  width: 4px;
+  height: 4px;
+  background: var(--session-color, #00ffcc); /* Nimmt die aktuelle Session Farbe! */
+  box-shadow: 0 0 8px var(--session-color, #00ffcc);
+}
+
+/* Linker Punkt */
+.session-details-header .header-deco:first-child::before {
+  right: 0;
+}
+
+/* Rechter Punkt */
+.session-details-header .header-deco:last-child::before {
+  left: 0;
+}
+
+/* 🎬 ANIMATION */
+@keyframes scanLine {
+  0% { left: -50%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
 }
 
 /* ---------------------------------------------------------
