@@ -25,6 +25,7 @@ const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_s
 // State Variablen
 let lastAlertSession = null;
 let lastActiveSessionState = "";
+let isFirstLoad = true; // <--- NEU: Damit wir den Start erkennen
 
 // Farben-Konfiguration
 const sessionColors = {
@@ -1197,42 +1198,42 @@ else if (minutes >= 1380 || minutes < 60) {
     applySidebarDrawerSessionColor(name);
 
 // ============================================================
-    // ⏰ ALERT LOGIK: START & ENDE ERKENNUNG
+    // ⏰ ALERT LOGIK (Mit "First Load" Bremse)
     // ============================================================
 
-    // 1. Listen erstellen (Aktuell vs. Vorher)
     const currentNamesList = activeSessions.map(s => s.name);
     const currentSessionString = currentNamesList.join(",");
     
-    // Die alte Liste holen (aus dem String wieder ein Array machen)
-    // .filter(n => n) entfernt leere Einträge, falls der String leer war
+    // Alte Liste holen (für den Vergleich)
     const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
 
-    // Nur prüfen, wenn sich wirklich was geändert hat
-    if (currentSessionString !== lastActiveSessionState) {
+    // 🔥 NEU: Der "Erster Start" Check
+    if (isFirstLoad) {
+        // Beim ersten Laden machen wir NIX, außer den Status zu speichern.
+        // So verhindern wir den Alarm beim Neuladen der Seite.
+        lastActiveSessionState = currentSessionString;
+        isFirstLoad = false; 
+    } 
+    // 🔥 Erst danach (beim nächsten Timer-Tick) darf er prüfen
+    else if (currentSessionString !== lastActiveSessionState) {
 
-        // A) PRÜFUNG AUF START (Ist etwas NEU dazu gekommen?)
-        // Wir suchen eine Session, die JETZT da ist, aber VORHER nicht da war.
+        // A) START-ALARM (Ist etwas NEU dazugekommen?)
         const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
-        
         if (newSession) {
             showSessionStartNotification(newSession.name, newSession.info);
             showAlert(`🚀 START: ${newSession.name}`);
         }
 
-        // B) PRÜFUNG AUF ENDE (Ist etwas WEG gefallen?)
-        // Wir suchen einen Namen, der VORHER da war, aber JETZT fehlt.
+        // B) ENDE-ALARM (Ist etwas WEG gefallen?)
         const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
-
         if (endedSessionName) {
             showSessionEndNotification(endedSessionName);
             showAlert(`🏁 ENDE: ${endedSessionName}`);
         }
+        
+        // Status aktualisieren
+        lastActiveSessionState = currentSessionString;
     }
-
-    // Status speichern für die nächste Minute
-    lastActiveSessionState = currentSessionString;
-
 
     // 2. Warnung 5 Min vorher
     const minutesToNext = getMinutesToNextSession(minutes);
@@ -1242,7 +1243,8 @@ else if (minutes >= 1380 || minutes < 60) {
             const warningKey = `warn-${nextInfo.session.name}`;
             if (lastAlertSession !== warningKey) {
                 showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in 5 Min!`);
-                if(alertSound) alertSound.play().catch(e=>{});
+                // Kleiner Sound bei Warnung (optional)
+                // if(alertSound) alertSound.play().catch(e=>{});
                 lastAlertSession = warningKey;
             }
         }
