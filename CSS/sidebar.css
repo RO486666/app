@@ -43,19 +43,22 @@
   position: relative;
 }
 
-/* Hover Effekt */
-#sidebarLeft button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  transform: translateY(-2px);
+/* Suche diesen Block für die Sidebar Buttons */
+#sidebarLeft button.active {
+    /* WICHTIG: Hier muss var(--session-accent) stehen! */
+    background: var(--session-accent, #007bff) !important; 
+    color: #fff !important;
+    
+    /* Der Glow um den Button */
+    box-shadow: 0 0 15px var(--session-accent, #007bff) !important;
+    
+    transform: scale(1.05);
 }
 
-/* Active State mit Glow */
-#sidebarLeft button.active {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0 15px var(--accent); /* Leucht-Effekt */
-  transform: scale(1.05);
+/* Optional: Damit sie auch beim Hovern schon die Farbe andeuten */
+#sidebarLeft button:hover {
+    color: var(--session-accent, #fff);
+    background: rgba(255,255,255,0.1);
 }
 /* ============================================================
    3. DRAWER – OBSIDIAN CARBON VAULT
