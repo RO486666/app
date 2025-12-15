@@ -1444,70 +1444,42 @@
 
 <script src="scripts/quiz.js"></script>
 <script src="scripts/quiz-db.js"></script>
-<button onclick="testNotification()" style="padding: 20px; background: red; color: white; font-weight: bold; margin: 20px;">
-  🔔 TEST ALARM
+<button onclick="simulateSession()" style="
+    display: block; 
+    width: 90%; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background: #00ffcc; 
+    color: black; 
+    font-weight: 900; 
+    font-size: 18px; 
+    border: none; 
+    border-radius: 12px; 
+    box-shadow: 0 0 15px #00ffcc;">
+  🚀 ALARM TESTEN (JETZT)
 </button>
 
 <script>
-function testNotification() {
-    // 1. Erstmal Erlaubnis fragen (falls noch nicht passiert)
-    Notification.requestPermission().then(perm => {
-        if (perm === "granted") {
-            // 2. Testnachricht senden
-            showSessionStartNotification("TEST SESSION", "Das ist ein System-Check für AlphaOS.");
-        } else {
-            alert("Benachrichtigungen sind im Browser blockiert! Bitte in den Einstellungen erlauben.");
-        }
-    });
-}
-</script>
-
-<button onclick="debugNotification()" style="padding: 20px; background: orange; color: black; font-weight: bold; margin: 20px; border: 2px solid white;">
-  🛠️ FEHLERSUCHE STARTEN
-</button>
-
-<script>
-function debugNotification() {
-    alert("1. Start: Knopf gedrückt.");
-
-    // Check: Unterstützt der Browser das überhaupt?
-    if (!('serviceWorker' in navigator)) {
-        alert("❌ Fehler: Dein Browser unterstützt keine Service Worker.");
-        return;
-    }
-
-    if (!('Notification' in window)) {
-        alert("❌ Fehler: Dein Browser unterstützt keine Benachrichtigungen.");
-        return;
-    }
-
-    // Check: Wie ist der Status der Erlaubnis?
-    alert("2. Status der Erlaubnis: " + Notification.permission);
-
-    Notification.requestPermission().then(perm => {
-        if (perm !== "granted") {
-            alert("❌ Fehler: Erlaubnis wurde verweigert! Bitte in Android-Einstellungen für Chrome freigeben.");
-            return;
-        }
-
-        alert("3. Erlaubnis ist da! Suche Service Worker...");
-
-        // Check: Finden wir den Service Worker?
-        navigator.serviceWorker.ready.then(registration => {
-            alert("4. Service Worker gefunden! Sende Nachricht...");
-            
-            registration.showNotification("AlphaOS System Check", {
-                body: "Wenn du das liest, funktioniert alles!",
-                icon: "/app/icon-192.png",
-                vibrate: [200, 100, 200]
-            });
-            
-        }).catch(error => {
-            // HIER liegt meistens das Problem
-            alert("❌ SERVICE WORKER FEHLER: " + error.message); 
-            console.log(error);
+function simulateSession() {
+    // 1. Erlaubnis prüfen
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(perm => {
+            if (perm === "granted") simulateSession();
         });
-    });
+        return;
+    }
+
+    // 2. Die ECHTE Funktion aus session.js aufrufen
+    // Wir tun so, als ob "London" gerade startet
+    if (typeof showSessionStartNotification === "function") {
+        showSessionStartNotification(
+            "TEST SESSION", 
+            "Das ist ein Test für Sound & Vibration. <br><strong>Viel Erfolg!</strong>"
+        );
+        console.log("Simulation gestartet...");
+    } else {
+        alert("Fehler: Die Funktion showSessionStartNotification wurde nicht gefunden. Ist session.js geladen?");
+    }
 }
 </script>
 <!-- ============================================================
