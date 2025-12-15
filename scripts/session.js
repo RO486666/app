@@ -1,144 +1,42 @@
-/* =========================================================
-   📌 DOM-REFERENZEN (zentrale UI-Elemente)
-   Zweck: Einmal selektieren → überall wiederverwenden
-   ========================================================= */
+/* ==========================================================================
+   1. DOM-REFERENZEN & KONFIGURATION
+   ========================================================================== */
 
-const sessionText = document.getElementById("sessionText");                 // Obere Session-Zeitanzeige
-const sessionProgressEl = document.getElementById("sessionProgressDisplay"); // Fortschrittsanzeige je Session
-const sessionInfoEl = document.getElementById("sessionInfo");               // Kurzinfo zur aktiven Session
-const sessionDetailsBox = document.getElementById("sessionDetailsBox");     // Ausklappbare Detailansicht
-const alertBox = document.getElementById("alertBox");                       // Alert-/Hinweisbox
-const progressBar = document.getElementById("progressBar");                 // Tagesfortschrittsbalken
-const progressContainer = document.querySelector(".progress-container");    // Container für Progress-Bar
+// UI Elemente
+const sessionText = document.getElementById("sessionText");
+const sessionProgressEl = document.getElementById("sessionProgressDisplay");
+const sessionInfoEl = document.getElementById("sessionInfo");
+const sessionDetailsBox = document.getElementById("sessionDetailsBox");
+const alertBox = document.getElementById("alertBox");
+const progressBar = document.getElementById("progressBar");
+const progressContainer = document.querySelector(".progress-container");
+const daySummaryEl = document.getElementById("daySummary");
+const dayDetailsEl = document.getElementById("dayDetails");
 
+// DST Settings Elemente
+const dstPanel = document.getElementById("panel-settings-dst");
+const dstButtons = document.querySelectorAll("#panel-settings-dst .dst-switch button");
+const dstInfo = document.getElementById("dstInfo");
+const dstClose = document.querySelector("#panel-settings-dst .dst-close");
 
+// Audio
+const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
-/* =========================================================
-   📌 Session-Details Toggle (Click auf Uhrzeit)
-   Zweck: Details nur bei Bedarf rendern (Performance)
-   ========================================================= */
+// State Variablen
+let lastAlertSession = null;
 
-sessionText.addEventListener("click", () => {
-  const visible = sessionDetailsBox.style.display === "block";
-
-  // Toggle Anzeige
-  sessionDetailsBox.style.display = visible ? "none" : "block";
-
-  // Details nur neu bauen, wenn geöffnet wird
-  if (!visible) {
-    buildSessionDetails();
-  }
-});
-
-
-
-/* =========================================================
-   🌍 DST / ZEITMODUS (AUTO | WINTER | SOMMER)
-   ========================================================= */
-
-/**
- * Prüft, ob aktuell europäische Sommerzeit (MESZ) aktiv ist
- * Logik: letzter Sonntag im März bis letzter Sonntag im Oktober
- */
-function isSummerTimeEU(date = new Date()) {
-  const year = date.getFullYear();
-
-  // Letzter Sonntag im März
-  const march = new Date(year, 2, 31);
-  march.setDate(march.getDate() - march.getDay());
-
-  // Letzter Sonntag im Oktober
-  const october = new Date(year, 9, 31);
-  october.setDate(october.getDate() - october.getDay());
-
-  return date >= march && date < october;
-}
-
-/**
- * Ermittelt den Zeit-Offset in Minuten basierend auf:
- * - Manuellem User-Override (localStorage)
- * - Automatischer Sommerzeit-Erkennung
- */
-function getDSTOffsetMinutes() {
-  const mode = localStorage.getItem("dstMode"); // null | winter | summer
-
-  if (mode === "summer") return 60; // MESZ erzwingen
-  if (mode === "winter") return 0;  // MEZ erzwingen
-
-  // AUTO-Modus
-  return isSummerTimeEU() ? 60 : 0;
-}
-
-/**
- * Gibt alle Sessions mit angewendetem DST-Offset zurück
- * Basisdaten bleiben unverändert → saubere Trennung
- */
-function getShiftedSessions() {
-  const offset = getDSTOffsetMinutes();
-
-  return sessions.map(s => {
-    let start = s.start + offset;
-    let end   = s.end + offset;
-
-    // Tagesüberlauf korrigieren
-    if (start >= 1440) start -= 1440;
-    if (end >= 1440) end -= 1440;
-
-    return { ...s, start, end };
-  });
-}
-
-
-
-/* =========================================================
-   🎨 Session-Text Styling (Glow / Farbe)
-   Zweck: Aktive Session visuell hervorheben
-   ========================================================= */
-
-function updateSessionTextStyle(activeSessionName) {
-  const el = document.getElementById("sessionText");
-  const color = sessionColors[activeSessionName] || "#ffffff";
-  if (!el) return;
-
-  el.style.setProperty("--session-text-color", color);
-  el.style.setProperty("--session-border", `${color}66`);
-  el.style.setProperty("--session-box-shadow1", `${color}40`);
-  el.style.setProperty("--session-box-shadow2", `${color}20`);
-  el.style.setProperty("--session-box-shadow3", `${color}30`);
-  el.style.setProperty("--session-text-shadow1", `${color}66`);
-  el.style.setProperty("--session-text-shadow2", `${color}33`);
-}
-
-
-
-/* =========================================================
-   🕓 Zeitformatierung
-   Zweck: Minuten → HH:MM Anzeige
-   ========================================================= */
-
-function formatHM(mins) {
-  const h = Math.floor(mins / 60) % 24;
-  const m = mins % 60;
-  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
-}
-
-
-
-/* =========================================================
-   🎨 Session-Farben (zentrale Definition)
-   ========================================================= */
-
+// Farben-Konfiguration
 const sessionColors = {
-  "Sydney": "#3388ff",
-  "Tokyo": "#00aaff",
-  "London": "#ffd700",
-  "New York": "#ff4500",
-  "London Killzone": "#ccff00",
-  "New York Killzone": "#ff8800",
-  "Deadzone": "#333333",
+    "Sydney": "#3388ff",
+    "Tokyo": "#00aaff",
+    "London": "#ffd700",
+    "New York": "#ff4500",
+    "London Killzone": "#ccff00",
+    "New York Killzone": "#ff8800",
+    "Deadzone": "#333333",
+    // Fallback für DaySummary, falls nötig
+    "Crypto": "#9900ff" 
 };
-
-
 
 /* =========================================================
    🧠 SESSION-DEFINITIONEN (Basisdaten, DST-frei)
@@ -401,297 +299,6 @@ Deadzone ist Schlafzeit. Wer hier tradet, zahlt Lerngebühren.
 
   },
 ];
-
-let lastAlertSession = null;
-
-
-
-/* =========================================================
-   ⏱️ Zeit-Hilfsfunktionen
-   ========================================================= */
-
-/**
- * Aktuelle Uhrzeit in Minuten seit Tagesbeginn
- */
-function getMinutesNow() {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
-}
-
-/**
- * Liefert alle aktuell aktiven Sessions
- * Berücksichtigt Sessions über Mitternacht
- */
-function getCurrentSessions(minNow) {
-  const shifted = getShiftedSessions();
-
-  return shifted.filter(s => {
-    if (s.start > s.end) {
-      return minNow >= s.start || minNow < s.end;
-    } else {
-      return minNow >= s.start && minNow < s.end;
-    }
-  });
-}
-
-/* =========================================================
-   📊 Progress-Bar (Tages- & Sessionfarben)
-   ========================================================= */
-
-function updateGradientBar(colors) {
-  if (colors.length === 0) {
-    progressBar.style.background = "#444";
-    progressBar.style.backgroundImage = "";
-    return;
-  }
-  
-  
-  // SVG-Gradient für saubere Übergänge
-  const svg = `
-    <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
-      <defs>
-        <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='0%'>
-          ${colors.map((c, i) => `<stop offset='${(i / (colors.length - 1)) * 100}%' stop-color='${c}'/>`).join("")}
-        </linearGradient>
-      </defs>
-      <rect x='0' y='0' width='100%' height='100%' fill='url(#g)'/>
-    </svg>`;
-  const base64 = btoa(svg);
-  progressBar.style.backgroundImage = `url("data:image/svg+xml;base64,${base64}")`;
-}
-
-function hexToRgba(hex, alpha) {
-  hex = hex.replace("#", "");
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-function getMinutesToNextSession(minNow) {
-  const shifted = getShiftedSessions();
-  const futureStarts = shifted.map(s => s.start).filter(start => start > minNow);
-
-  if (futureStarts.length === 0)
-    return shifted[0].start + 1440 - minNow;
-
-  return Math.min(...futureStarts) - minNow;
-}
-
-
-const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-
-function requestNotificationPermission() {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      console.log("🔐 Notification permission:", permission);
-    });
-  }
-}
-
-
-
-function updateRealTimeBar() {
-	const wd = new Date().getDay(); // Sonntag=0, Montag=1 ... Samstag=6
-if (wd === 0 || wd === 6) {
-  console.log("⏹️ Session.js deaktiviert (Wochenende).");
-  return;
-}
-	
-  const now = new Date();
-  const weekday = now.getDay(); // Sonntag = 0, Samstag = 6
-  const hours = String(now.getHours()).padStart(2, "0");
-  const mins = String(now.getMinutes()).padStart(2, "0");
-  const minutes = now.getHours() * 60 + now.getMinutes();
-  const percent = (minutes / 1439) * 100;
-
-  // Fortschrittsbalken immer aktualisieren
-  progressBar.style.width = `${percent}%`;
-progressBar.style.background = "linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff)";
-progressContainer.style.boxShadow = "0 0 14px 4px rgba(153, 0, 255, 0.4)";
-
-  
-  // ⏬ Werktag-Session-Logik
-  const activeSessions = getCurrentSessions(minutes);
-const names = activeSessions.map(s => s.name);
-updateTabButtonColors(names);
-if (names.length > 0) {
-  applyStatsBoxGlow(names[0]); // Nur erste aktive Session verwenden
-}
-  const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
-  sessionText.textContent = `🕒 ${hours}:${mins} (${getDSTLabel()}) ${activeNames}`;
-
-	
-  const colors = names.map(n => sessionColors[n] || "#666");
-  updateGradientBar(colors);
-  if (document.getElementById("sessionProgressDisplay")) {
-  showSessionProgress(activeSessions, minutes);
-}
-
-
-  progressContainer.style.boxShadow = colors.length > 0
-    ? `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}`
-    : "0 0 12px 6px rgba(0,0,0,0)";
-
-  const name = activeSessions.length > 0 ? activeSessions[0].name : "";
-  let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
-  
-
-if (name === "Sydney") {
-  infoText =
-    minutes >= 1380
-      ? "🌙 Sydney startet – Übergang aus der Deadzone, Liquidity-Aufbau, kein Trend-Commitment."
-      : minutes < 180
-      ? "🦘 Sydney aktiv – enge Ranges, Fake-Struktur häufig, Mapping statt Trading."
-      : "🌅 Späte Sydney – Range steht, Vorbereitung für Tokyo-Sweeps.";
-}
-
-else if (name === "Tokyo") {
-  infoText =
-    minutes < 180
-      ? "🌏 Tokyo eröffnet – Asia-High/Low formt sich, erste saubere Struktur."
-      : minutes < 360
-      ? "🇯🇵 Tokyo aktiv – HL/LH möglich, Expansion begrenzt, Liquidity für London."
-      : "🛑 Späte Tokyo – Bewegungen oft nur Liquidity vor London.";
-}
-
-else if (name === "London Killzone") {
-  infoText =
-    "⚠️ London Killzone – Asia-Liquidity wird geholt, Fake-Breakouts vor echter Direction.";
-}
-
-else if (name === "London") {
-  infoText =
-    minutes < 720
-      ? "💷 London aktiv – nach Sweep folgt Direction, beste Phase für strukturierte Entries."
-      : minutes < 840
-      ? "😴 London Mittag – Volumen raus, Chop & Pullbacks dominieren."
-      : "📈 Späte London – Positionierung vor NY, Breakouts kritisch prüfen.";
-}
-
-else if (name === "New York Killzone") {
-  infoText =
-    "🔥 NY Killzone – London-Liquidity wird gesweept, Manipulation vor echtem Move.";
-}
-
-else if (name === "New York") {
-  infoText =
-    minutes < 1080
-      ? "🇺🇸 NY aktiv – Volumenwechsel, Reversal oder Continuation nach London-Sweep."
-      : minutes < 1200
-      ? "⚠️ Post-NY-Open – Struktur läuft, keine späten Breakouts jagen."
-      : "🌃 Späte NY – Gewinnmitnahmen, Struktur wird instabil.";
-}
-
-else if (minutes >= 720 && minutes < 840) {
-  infoText =
-    "😴 Mittagliche Deadzone – geringes Volumen, Chop, statistisch schlechter Entry-Bereich.";
-}
-
-else if (minutes >= 1380 || minutes < 60) {
-  if (activeSessions.length === 0) {
-    infoText =
-      "🌙 Nacht-Deadzone – extrem niedrige Liquidität, Algo-Noise, kein Trading empfohlen.";
-  }
-}
-
-
-updateBodyBackground(name);
-  sessionInfoEl.textContent = infoText;
-
-  // 📋 Aktive Session-Details + Wochentagstexte
-  if (activeSessions.length > 0) {
-    let fullInfo = "";
-
-    activeSessions.forEach(s => {
-      let weekDaysHtml = "";
-      if (s.weekDaysInfo) {
-        weekDaysHtml = "<ul style='margin-left:18px; margin-top:4px;'>";
-        s.weekDaysInfo.forEach(({ day, text }) => {
-          weekDaysHtml += `<li><strong>${day}:</strong> ${text}</li>`;
-        });
-        weekDaysHtml += "</ul>";
-      }
-
-      const label = s.name.includes("Killzone") ? "🔥" :
-                    s.name.includes("New York") ? "🇺🇸" :
-                    s.name.includes("London") ? "💷" :
-                    s.name.includes("Tokyo") ? "🌏" :
-                    s.name.includes("Sydney") ? "🌙" :
-                    
-
-      fullInfo += `
-  <div class="session-box">
-
-    <div class="session-box-title">
-      ${label} ${s.name}
-    </div>
-
-    <div class="session-box-row">📅 Start: ${formatHM(s.start)} Uhr</div>
-    <div class="session-box-row">🕓 Ende: ${formatHM(s.end)} Uhr</div>
-    <div class="session-box-row">ℹ️ ${s.info}</div>
-
-    ${s.weekDaysInfo ? `
-      <ul class="session-box-days">
-        ${s.weekDaysInfo.map(d => `
-          <li><strong>${d.day}:</strong> ${d.text}</li>
-        `).join("")}
-      </ul>
-    ` : ""}
-
-    <hr class="session-box-divider">
-
-  </div>
-`;
-
-    });
-
-    sessionDetailsBox.innerHTML = fullInfo;
-  } else {
-    sessionDetailsBox.innerHTML = "Keine aktive Session – Markt ist ruhig.";
-  }
-
-  // ⏰ Session-Wechsel-Warnung
-  const minutesToNext = getMinutesToNextSession(minutes);
-  if (minutesToNext <= 5 && minutesToNext > 0) {
-    const currentActive = sessionText.textContent;
-    if (lastAlertSession !== currentActive) {
-      showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-      lastAlertSession = currentActive;
-
-      if (activeSessions.length > 0) {
-        const s = activeSessions[0];
-        showSessionStartNotification(s.name, s.info);
-      }
-    }
-  } else {
-    lastAlertSession = null;
-  }
-// ✅ Nur setzen, wenn noch nichts drinsteht (Backup)
-if (!sessionInfoEl.innerHTML.trim()) {
-  sessionInfoEl.textContent = infoText;
-}
-
-
-// 🎨 Farbe aus aktiver Session übernehmen
-if (sessionColors[name]) {
-  const infoColor = sessionColors[name];
-  sessionInfoEl.style.background = hexToRgba(infoColor, 0.07);
-  sessionInfoEl.style.color = infoColor;
-  sessionInfoEl.style.textShadow = `0 0 2px ${infoColor}, 0 0 6px ${hexToRgba(infoColor, 0.3)}`;
-  sessionInfoEl.style.boxShadow = `inset 0 0 6px ${hexToRgba(infoColor, 0.15)}`;
-} else {
-  // Standard-Fallback
-  sessionInfoEl.style.background = "transparent";
-  sessionInfoEl.style.color = "#ccc";
-  sessionInfoEl.style.textShadow = "none";
-  sessionInfoEl.style.boxShadow = "none";
-}
-updateSessionTextStyle(name);
-applySidebarDrawerSessionColor(name);
-
-}
-
 
 const dayDetailsMap = {
 
@@ -1048,33 +655,534 @@ Disziplin. Kein Revenge. Früh Schluss möglich.<br><br>
 BTC oft Pre-Move fürs Wochenende.
 `
 };
+/* ==========================================================================
+   3. HELPER FUNKTIONEN
+   ========================================================================== */
 
-
-
+// Konvertiert Hex (#RRGGBB) zu RGBA mit Opacity
 function hexToRgba(hex, opacity) {
-  const bigint = parseInt(hex.replace("#", ""), 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    hex = hex.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
-function updateDaySummary() {
-  const now = new Date();
-  const wd = now.getDay();
+// Formatiert Minuten (z.B. 600) zu "HH:MM"
+function formatHM(mins) {
+    const h = Math.floor(mins / 60) % 24;
+    const m = mins % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+}
 
-  // Wochenende ausblenden
-  if (wd === 0 || wd === 6) {
-    console.log("⏹️ DaySummary deaktiviert (Wochenende).");
-    return;
+// Holt aktuelle Minuten seit Mitternacht
+function getMinutesNow() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+}
+
+function requestNotificationPermission() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+            console.log("🔐 Notification permission:", permission);
+        });
+    }
+}
+
+// Benachrichtigung anzeigen (Helper für Alerts)
+function showAlert(msg) {
+    if (alertBox) {
+        alertBox.textContent = msg;
+        alertBox.style.display = "block";
+        setTimeout(() => { alertBox.style.display = "none"; }, 5000);
+    }
+    console.log(msg);
+}
+
+function showSessionStartNotification(name, info) {
+    if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(`Session Start: ${name}`, {
+            body: "Die Session hat begonnen. Prüfe deine Levels.",
+            icon: "https://via.placeholder.com/128"
+        });
+    }
+    if (alertSound) alertSound.play().catch(e => console.log("Audio autoplay blocked", e));
+}
+
+/* ==========================================================================
+   4. DST / ZEITMODUS LOGIK
+   ========================================================================== */
+
+function isSummerTimeEU(date = new Date()) {
+    const year = date.getFullYear();
+    // Letzter Sonntag im März
+    const march = new Date(year, 2, 31);
+    march.setDate(march.getDate() - march.getDay());
+    // Letzter Sonntag im Oktober
+    const october = new Date(year, 9, 31);
+    october.setDate(october.getDate() - october.getDay());
+    return date >= march && date < october;
+}
+
+function getDSTOffsetMinutes() {
+    const mode = localStorage.getItem("dstMode"); // null | winter | summer
+    if (mode === "summer") return 60; // MESZ erzwingen
+    if (mode === "winter") return 0;  // MEZ erzwingen
+    // AUTO-Modus
+    return isSummerTimeEU() ? 60 : 0;
+}
+
+function getDSTLabel() {
+    const mode = localStorage.getItem("dstMode");
+    if (mode === "summer") return "Sommer";
+    if (mode === "winter") return "Winter";
+    return isSummerTimeEU() ? "Auto" : "Auto";
+}
+
+function setDSTMode(mode) {
+    if (mode === "auto") {
+        localStorage.removeItem("dstMode");
+    } else {
+        localStorage.setItem("dstMode", mode);
+    }
+    location.reload();
+}
+
+/* ==========================================================================
+   5. CORE SESSION LOGIK
+   ========================================================================== */
+
+function getShiftedSessions() {
+    const offset = getDSTOffsetMinutes();
+    return sessions.map(s => {
+        let start = s.start + offset;
+        let end = s.end + offset;
+        // Tagesüberlauf korrigieren
+        if (start >= 1440) start -= 1440;
+        if (end >= 1440) end -= 1440;
+        return { ...s, start, end };
+    });
+}
+
+function getCurrentSessions(minNow) {
+    const shifted = getShiftedSessions();
+    return shifted.filter(s => {
+        if (s.start > s.end) {
+            return minNow >= s.start || minNow < s.end;
+        } else {
+            return minNow >= s.start && minNow < s.end;
+        }
+    });
+}
+
+function getMinutesToNextSession(minNow) {
+    const shifted = getShiftedSessions();
+    const futureStarts = shifted.map(s => s.start).filter(start => start > minNow);
+    if (futureStarts.length === 0)
+        return shifted[0].start + 1440 - minNow;
+    return Math.min(...futureStarts) - minNow;
+}
+
+/* ==========================================================================
+   6. UI FUNKTIONEN & STYLING
+   ========================================================================== */
+
+function updateSessionTextStyle(activeSessionName) {
+    if (!sessionText) return;
+    const color = sessionColors[activeSessionName] || "#ffffff";
+
+    document.documentElement.style.setProperty("--session-accent", color);
+    document.documentElement.style.setProperty("--session-color", color);
+    document.documentElement.style.setProperty("--box-color", color);
+
+    sessionText.style.setProperty("--session-text-color", color);
+    sessionText.style.setProperty("--session-border", `${color}66`);
+    sessionText.style.setProperty("--session-box-shadow1", `${color}40`);
+    sessionText.style.setProperty("--session-box-shadow2", `${color}20`);
+    sessionText.style.setProperty("--session-box-shadow3", `${color}30`);
+    sessionText.style.setProperty("--session-text-shadow1", `${color}66`);
+    sessionText.style.setProperty("--session-text-shadow2", `${color}33`);
+}
+
+function updateGradientBar(colors) {
+    if (!progressBar || !progressContainer) return;
+    if (!colors || colors.length === 0) return;
+
+    const lastColor = colors[colors.length - 1];
+
+    if (colors.length === 1) {
+        const c = colors[0];
+        progressBar.style.background = c;
+        progressBar.style.boxShadow = `0 0 15px ${c}`;
+    } else {
+        const gradientString = colors.join(", ");
+        progressBar.style.background = `linear-gradient(90deg, ${gradientString})`;
+        progressBar.style.boxShadow = `0 0 20px ${lastColor}`;
+    }
+    progressContainer.style.boxShadow = `0 0 15px ${lastColor}44`;
+    progressContainer.style.borderColor = `${lastColor}44`;
+}
+
+function updateBodyBackground(sessionName) {
+    const glowMap = {
+        "Sydney": "radial-gradient(ellipse at bottom, rgba(0, 128, 255, 0.15) 0%, transparent 70%)",
+        "Tokyo": "radial-gradient(ellipse at bottom, rgba(0, 200, 255, 0.15) 0%, transparent 70%)",
+        "London": "radial-gradient(ellipse at bottom, rgba(255, 215, 0, 0.1) 0%, transparent 70%)",
+        "New York": "radial-gradient(ellipse at bottom, rgba(255, 69, 0, 0.1) 0%, transparent 70%)",
+        "London Killzone": "radial-gradient(ellipse at bottom, rgba(204, 255, 0, 0.15) 0%, transparent 70%)",
+        "New York Killzone": "radial-gradient(ellipse at bottom, rgba(255, 136, 0, 0.15) 0%, transparent 70%)",
+    };
+
+    const baseColor = {
+        "Sydney": "#0a0e1a",
+        "Tokyo": "#0a1018",
+        "London": "#1b1a0e",
+        "New York": "#1a0e0e",
+        "London Killzone": "#12160a",
+        "New York Killzone": "#1a1408",
+    };
+
+    const sessionColorClassMap = {
+        "Sydney": "session-sydney",
+        "Tokyo": "session-tokyo",
+        "London": "session-london",
+        "New York": "session-ny",
+        "London Killzone": "session-killzone",
+        "New York Killzone": "session-killzone",
+    };
+
+    if (sessionDetailsBox) {
+        sessionDetailsBox.className = "session-details-box"; // Reset
+        if (sessionColorClassMap[sessionName]) {
+            sessionDetailsBox.classList.add(sessionColorClassMap[sessionName]);
+        }
+    }
+
+    document.body.style.setProperty("--session-glow", glowMap[sessionName] || "radial-gradient(ellipse at bottom, rgba(255,255,255,0.1) 0%, transparent 70%)");
+    document.body.style.setProperty("--session-bg-color", baseColor[sessionName] || "#111");
+}
+
+function applySidebarDrawerSessionColor(sessionName) {
+    const color = sessionColors[sessionName] || "#ffffff";
+    document.documentElement.style.setProperty("--session-color", color);
+}
+
+/* ==========================================================================
+   📌 HELPER: Zeit-Berechnungen für Countdown & Next Session
+   ========================================================================== */
+
+// 1. Formatiert Minuten in "HH:MM" (für Countdowns)
+function formatDuration(totalMinutes) {
+    if (totalMinutes < 0) totalMinutes = 0;
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+}
+
+// 2. Berechnet Restzeit der aktuellen Session
+function getSessionRemaining(session, minNow) {
+    let targetEnd = session.end;
+    
+    // Spezialfall: Session geht über Mitternacht (z.B. 22:00 - 02:00)
+    if (session.end < session.start) {
+        // Wenn wir aktuell VOR Mitternacht sind (z.B. 23:00), ist das Ende "morgen" (+1440 Min)
+        if (minNow >= session.start) {
+            targetEnd += 1440;
+        }
+    }
+    return targetEnd - minNow;
+}
+
+// 3. Findet die NÄCHSTE Session (für die untere Box)
+function getNextSessionInfo(minNow) {
+    const shifted = getShiftedSessions();
+    // Sortieren, damit wir die zeitlich nächste finden
+    shifted.sort((a, b) => a.start - b.start);
+
+    // Suche die erste Session, die HEUTE noch startet
+    let next = shifted.find(s => s.start > minNow);
+    let diff = 0;
+
+    if (next) {
+        diff = next.start - minNow;
+    } else {
+        // Falls heute keine mehr kommt, nimm die allererste von morgen früh
+        next = shifted[0];
+        diff = (1440 - minNow) + next.start;
+    }
+
+    return { session: next, diff: diff };
+}
+
+
+/* ==========================================================================
+   📌 HAUPTFUNKTION: Session Details (Mit Countdown & Next Box)
+   ========================================================================== */
+
+function buildSessionDetails() {
+    if (!sessionDetailsBox) return;
+    
+    const minutes = getMinutesNow();
+    const activeSessions = getCurrentSessions(minutes);
+    const nextInfo = getNextSessionInfo(minutes); // Daten für "Nächste Session"
+
+    let htmlContent = "";
+
+   // 1. HEADER (High-Tech Style)
+    htmlContent += `
+    <div class="session-details-header">
+        <span class="header-deco"></span>
+        SESSION INTELLIGENCE
+        <span class="header-deco"></span>
+    </div>`;
+
+    if (activeSessions.length > 0) {
+        activeSessions.forEach(s => {
+            const label = s.name.includes("Killzone") ? "🔥" :
+                s.name.includes("New York") ? "🇺🇸" :
+                s.name.includes("London") ? "💷" :
+                s.name.includes("Tokyo") ? "🌏" :
+                s.name.includes("Sydney") ? "🌙" : "ℹ️";
+            
+            const color = sessionColors[s.name] || "#fff";
+            
+            // Restzeit berechnen
+            const remainingMins = getSessionRemaining(s, minutes);
+            const remainingStr = formatDuration(remainingMins);
+
+            // HTML Aufbau (Genau wie in deinem Screenshot)
+            htmlContent += `
+            <div class="session-box-clean" style="--box-color: ${color}">
+                
+                <div class="session-title">
+                    ${label} ${s.name}
+                </div>
+
+                <div class="session-meta-grid">
+                    <div class="session-row" style="color: #ffcc00;">
+                        <strong>⏱️ Noch:</strong> ${remainingStr}
+                    </div>
+                    <div class="session-row">
+                        <strong>📅 Start:</strong> ${formatHM(s.start)} Uhr
+                    </div>
+                    <div class="session-row">
+                        <strong>🕓 Ende:</strong> ${formatHM(s.end)} Uhr
+                    </div>
+                </div>
+
+                <div class="session-info-text">
+                    ${s.info}
+                </div>
+
+            </div>`;
+        });
+    } else {
+        // Fallback, wenn nichts aktiv ist
+        htmlContent += `
+        <div class="session-empty">
+            Keine aktive Session – Markt ist ruhig.<br>
+            Bereite dich auf die nächste Phase vor.
+        </div>`;
+    }
+
+   // 2. FOOTER: NÄCHSTE SESSION BOX (Mit Glow-Farbe)
+    if (nextInfo && nextInfo.session) {
+        // 🔥 Hier holen wir die Farbe der NÄCHSTEN Session
+        const nextName = nextInfo.session.name;
+        const nextColor = sessionColors[nextName] || "#ffffff";
+        
+        // 🔥 Hier bauen wir den Glow-Effekt (text-shadow) direkt ein
+        htmlContent += `
+        <div class="session-next">
+            🔜 Nächste: 
+            <span class="next-name" style="
+                color: ${nextColor}; 
+                text-shadow: 0 0 10px ${nextColor}, 0 0 20px ${nextColor}44;
+                font-weight: 800;
+                text-transform: uppercase;">
+                ${nextName}
+            </span> 
+            in ${formatDuration(nextInfo.diff)}
+        </div>`;
+    }
+
+    // Alles ins DOM schreiben
+    sessionDetailsBox.innerHTML = htmlContent;
+}
+
+// 📌 HAUPTFUNKTION: Aktualisiert die Real-Time Bar & Texte
+function updateRealTimeBar() {
+    const wd = new Date().getDay(); // Sonntag=0, Samstag=6
+    if (wd === 0 || wd === 6) {
+        console.log("⏹️ Session.js deaktiviert (Wochenende).");
+        return;
+    }
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const mins = String(now.getMinutes()).padStart(2, "0");
+    const minutes = now.getHours() * 60 + now.getMinutes();
+    const percent = (minutes / 1439) * 100;
+
+    // Progress Bar
+    if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+        progressBar.style.background = "linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff)";
+    }
+    if (progressContainer) {
+        progressContainer.style.boxShadow = "0 0 14px 4px rgba(153, 0, 255, 0.4)";
+    }
+
+    // Sessions ermitteln
+    const activeSessions = getCurrentSessions(minutes);
+    const names = activeSessions.map(s => s.name);
+
+    // Externe Hooks (Sicherheitscheck)
+    if (typeof updateTabButtonColors === "function") updateTabButtonColors(names);
+    if (names.length > 0 && typeof applyStatsBoxGlow === "function") {
+        applyStatsBoxGlow(names[0]);
+    }
+
+    const activeNames = names.length > 0 ? `| Aktive Session: ${names.join(" + ")}` : "| Keine Session aktiv";
+    if (sessionText) {
+        sessionText.textContent = `🕒 ${hours}:${mins} (${getDSTLabel()}) ${activeNames}`;
+    }
+
+    const colors = names.map(n => sessionColors[n] || "#666");
+    updateGradientBar(colors);
+
+    // Falls externe Progress-Funktion existiert
+    if (document.getElementById("sessionProgressDisplay") && typeof showSessionProgress === "function") {
+        showSessionProgress(activeSessions, minutes);
+    }
+
+    if (progressContainer) {
+        progressContainer.style.boxShadow = colors.length > 0 ?
+            `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}` :
+            "0 0 12px 6px rgba(0,0,0,0)";
+    }
+
+    const name = activeSessions.length > 0 ? activeSessions[0].name : "";
+    let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
+
+    // Infotext Logik
+
+if (name === "Sydney") {
+  infoText =
+    minutes >= 1380
+      ? "🌙 Sydney startet – Übergang aus der Deadzone, Liquidity-Aufbau, kein Trend-Commitment."
+      : minutes < 180
+      ? "🦘 Sydney aktiv – enge Ranges, Fake-Struktur häufig, Mapping statt Trading."
+      : "🌅 Späte Sydney – Range steht, Vorbereitung für Tokyo-Sweeps.";
+}
+
+else if (name === "Tokyo") {
+  infoText =
+    minutes < 180
+      ? "🌏 Tokyo eröffnet – Asia-High/Low formt sich, erste saubere Struktur."
+      : minutes < 360
+      ? "🇯🇵 Tokyo aktiv – HL/LH möglich, Expansion begrenzt, Liquidity für London."
+      : "🛑 Späte Tokyo – Bewegungen oft nur Liquidity vor London.";
+}
+
+else if (name === "London Killzone") {
+  infoText =
+    "⚠️ London Killzone – Asia-Liquidity wird geholt, Fake-Breakouts vor echter Direction.";
+}
+
+else if (name === "London") {
+  infoText =
+    minutes < 720
+      ? "💷 London aktiv – nach Sweep folgt Direction, beste Phase für strukturierte Entries."
+      : minutes < 840
+      ? "😴 London Mittag – Volumen raus, Chop & Pullbacks dominieren."
+      : "📈 Späte London – Positionierung vor NY, Breakouts kritisch prüfen.";
+}
+
+else if (name === "New York Killzone") {
+  infoText =
+    "🔥 NY Killzone – London-Liquidity wird gesweept, Manipulation vor echtem Move.";
+}
+
+else if (name === "New York") {
+  infoText =
+    minutes < 1080
+      ? "🇺🇸 NY aktiv – Volumenwechsel, Reversal oder Continuation nach London-Sweep."
+      : minutes < 1200
+      ? "⚠️ Post-NY-Open – Struktur läuft, keine späten Breakouts jagen."
+      : "🌃 Späte NY – Gewinnmitnahmen, Struktur wird instabil.";
+}
+
+else if (minutes >= 720 && minutes < 840) {
+  infoText =
+    "😴 Mittagliche Deadzone – geringes Volumen, Chop, statistisch schlechter Entry-Bereich.";
+}
+
+else if (minutes >= 1380 || minutes < 60) {
+  if (activeSessions.length === 0) {
+    infoText =
+      "🌙 Nacht-Deadzone – extrem niedrige Liquidität, Algo-Noise, kein Trading empfohlen.";
   }
+}
 
-  const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const dayName = days[wd];
+    updateBodyBackground(name);
+    
+    if (sessionInfoEl) {
+        // Text nur setzen wenn leer oder geändert
+        if (!sessionInfoEl.innerHTML.trim() || sessionInfoEl.textContent !== infoText) {
+            sessionInfoEl.textContent = infoText;
+        }
 
-  const minutes = now.getHours() * 60 + now.getMinutes();
+        // Info Style anpassen
+        if (sessionColors[name]) {
+            const infoColor = sessionColors[name];
+            sessionInfoEl.style.background = hexToRgba(infoColor, 0.07);
+            sessionInfoEl.style.color = infoColor;
+            sessionInfoEl.style.textShadow = `0 0 2px ${infoColor}, 0 0 6px ${hexToRgba(infoColor, 0.3)}`;
+            sessionInfoEl.style.boxShadow = `inset 0 0 6px ${hexToRgba(infoColor, 0.15)}`;
+        } else {
+            sessionInfoEl.style.background = "transparent";
+            sessionInfoEl.style.color = "#ccc";
+            sessionInfoEl.style.textShadow = "none";
+            sessionInfoEl.style.boxShadow = "none";
+        }
+    }
 
-  // 🔹 Tagesphasen (Zeitlogik, keine Asset-Wiederholungen)
+    updateSessionTextStyle(name);
+    applySidebarDrawerSessionColor(name);
+
+    // ⏰ Alert Logik (Session Wechsel)
+    const minutesToNext = getMinutesToNextSession(minutes);
+    if (minutesToNext <= 5 && minutesToNext > 0) {
+        const currentActive = sessionText ? sessionText.textContent : "";
+        if (lastAlertSession !== currentActive) {
+            showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
+            lastAlertSession = currentActive;
+            if (activeSessions.length > 0) {
+                const s = activeSessions[0];
+                showSessionStartNotification(s.name, s.info);
+            }
+        }
+    } else {
+        lastAlertSession = null;
+    }
+}
+
+// Update Day Summary (Wochentag-Anzeige)
+function updateDaySummary() {
+    const now = new Date();
+    const wd = now.getDay();
+
+    if (wd === 0 || wd === 6) {
+        console.log("⏹️ DaySummary deaktiviert (Wochenende).");
+        return;
+    }
+
+    const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+    const dayName = days[wd];
+    const minutes = now.getHours() * 60 + now.getMinutes();
+
+   // 🔹 Tagesphasen (Zeitlogik, keine Asset-Wiederholungen)
 const infos = {
   "Montag": [
     { end: 600,  text: "🧭 Wochenstart – Markt tastet sich ab, Strukturaufbau dominiert." },      // 00:00–10:00
@@ -1108,192 +1216,116 @@ const infos = {
 };
 
 
-  const phases = infos[dayName];
-  if (!phases) return;
+    const phases = infos[dayName];
+    if (!phases) return;
+    const phase = phases.find(p => minutes < p.end);
+    const dayText = phase ? phase.text : "";
 
-  const phase = phases.find(p => minutes < p.end);
-  const dayText = phase ? phase.text : "";
+    const activeSessions = getCurrentSessions(minutes);
+    const dominantSession = activeSessions.find(s => s.name !== "Crypto") || activeSessions[0];
+    const sessionColor = sessionColors[dominantSession?.name] || "#00ffcc";
 
-  // 🔹 Session-Farbe bestimmen
-  const activeSessions = getCurrentSessions(minutes);
-  const dominantSession =
-    activeSessions.find(s => s.name !== "Crypto") || activeSessions[0];
-  const sessionColor = sessionColors[dominantSession?.name] || "#00ffcc";
+    if (!daySummaryEl) return;
 
-  // 🔹 UI setzen
-  const el = document.getElementById("daySummary");
-  if (!el) return;
+    daySummaryEl.textContent = `🗓️ ${dayName} – ${dayText}`;
+    daySummaryEl.style.background = sessionColor + "22";
+    daySummaryEl.style.color = sessionColor;
+    daySummaryEl.style.border = `1px solid ${sessionColor}88`;
+    daySummaryEl.style.boxShadow = `0 0 8px ${sessionColor}`;
+    daySummaryEl.style.textShadow = `0 0 3px ${sessionColor}`;
+    daySummaryEl.style.cursor = "pointer";
 
-  el.textContent = `🗓️ ${dayName} – ${dayText}`;
-  el.style.background = sessionColor + "22";
-  el.style.color = sessionColor;
-  el.style.border = `1px solid ${sessionColor}88`;
-  el.style.boxShadow = `0 0 8px ${sessionColor}`;
-  el.style.textShadow = `0 0 3px ${sessionColor}`;
-  el.style.cursor = "pointer";
-
-  // 🔹 Klick → Detailansicht
-  el.onclick = () => {
-    const dayDetailsEl = document.getElementById("dayDetails");
-    if (!dayDetailsEl) return;
-
-    const raw = dayDetailsMap?.[dayName] || "📆 Keine Details verfügbar.";
-
-    const wrapped = `
+    // Click Handler für Day Details
+    daySummaryEl.onclick = () => {
+        if (!dayDetailsEl) return;
+        const raw = dayDetailsMap?.[dayName] || "📆 Keine Details verfügbar.";
+        const wrapped = `
       <div class="day-details-wrapper" style="--day-color:${sessionColor}">
         <div class="day-details-title">📅 ${dayName}</div>
         <div class="day-details-content">
           ${raw.replaceAll("<strong>", `<strong class="day-strong">`)}
         </div>
-      </div>
-    `;
+      </div>`;
 
-    const isVisible = dayDetailsEl.style.display === "block";
-    dayDetailsEl.style.display = isVisible ? "none" : "block";
-    if (!isVisible) dayDetailsEl.innerHTML = wrapped;
-  };
+        const isVisible = dayDetailsEl.style.display === "block";
+        dayDetailsEl.style.display = isVisible ? "none" : "block";
+        if (!isVisible) dayDetailsEl.innerHTML = wrapped;
+    };
 }
 
-// 🔹 Initialisierung
-document.addEventListener("DOMContentLoaded", () => {
-  updateDaySummary();
-  setInterval(updateDaySummary, 60000); // jede Minute aktualisieren
-});
+/* ==========================================================================
+   7. INITIALISIERUNG & EVENT LISTENERS
+   ========================================================================== */
 
-
-function updateBodyBackground(sessionName) {
-  const glowMap = {
-    "Sydney": "radial-gradient(ellipse at bottom, rgba(0, 128, 255, 0.15) 0%, transparent 70%)",
-    "Tokyo": "radial-gradient(ellipse at bottom, rgba(0, 200, 255, 0.15) 0%, transparent 70%)",
-    "London": "radial-gradient(ellipse at bottom, rgba(255, 215, 0, 0.1) 0%, transparent 70%)",
-    "New York": "radial-gradient(ellipse at bottom, rgba(255, 69, 0, 0.1) 0%, transparent 70%)",
-    "London Killzone": "radial-gradient(ellipse at bottom, rgba(204, 255, 0, 0.15) 0%, transparent 70%)",
-    "New York Killzone": "radial-gradient(ellipse at bottom, rgba(255, 136, 0, 0.15) 0%, transparent 70%)",
-    
-  };
-
-  const baseColor = {
-    "Sydney": "#0a0e1a",
-    "Tokyo": "#0a1018",
-    "London": "#1b1a0e",
-    "New York": "#1a0e0e",
-    "London Killzone": "#12160a",
-    "New York Killzone": "#1a1408",
-    
-  };
-
-  const sessionColorClassMap = {
-    "Sydney": "session-sydney",
-    "Tokyo": "session-tokyo",
-    "London": "session-london",
-    "New York": "session-ny",
-    "London Killzone": "session-killzone",
-    "New York Killzone": "session-killzone",
-    
-  };
-
-  // ✅ Korrektur: Parameter `sessionName` statt `name`
-  sessionDetailsBox.className = "session-details-box";
-  if (sessionColorClassMap[sessionName]) {
-    sessionDetailsBox.classList.add(sessionColorClassMap[sessionName]);
-  }
-
-  document.body.style.setProperty("--session-glow", glowMap[sessionName] || "radial-gradient(ellipse at bottom, rgba(255,255,255,0.1) 0%, transparent 70%)");
-  document.body.style.setProperty("--session-bg-color", baseColor[sessionName] || "#111");
-}
-
-function applySidebarDrawerSessionColor(sessionName) {
-  const color = sessionColors[sessionName] || "#ffffff";
-  document.documentElement.style.setProperty("--session-color", color);
-}
-
-
-function setDSTMode(mode) {
-  if (mode === "auto") {
-    localStorage.removeItem("dstMode");
-  } else {
-    localStorage.setItem("dstMode", mode);
-  }
-  location.reload();
-}
-
-function getDSTLabel() {
-  const mode = localStorage.getItem("dstMode");
-  if (mode === "summer") return "Sommer";
-  if (mode === "winter") return "Winter";
-  return isSummerTimeEU() ? "auto" : "auto";
-}
-
-/* =========================================================
-   🌍 DST POPUP UI (Open/Close + Active-State)
-   ========================================================= */
-
-const dstPanel = document.getElementById("panel-settings-dst");
-const dstButtons = document.querySelectorAll("#panel-settings-dst .dst-switch button");
-const dstInfo = document.getElementById("dstInfo");
-const dstClose = document.querySelector("#panel-settings-dst .dst-close");
-
-// Öffnen (z. B. über dein Sidebar Settings-Menü)
+// DST UI Management
 function openDSTSettings() {
-  if (!dstPanel) return;
-  dstPanel.classList.remove("hidden");
-  syncDSTUI();
-}
-
-// Schließen
-function closeDSTSettings() {
-  if (!dstPanel) return;
-  dstPanel.classList.add("hidden");
-}
-
-// UI Sync
-function syncDSTUI() {
-  const mode = localStorage.getItem("dstMode") || "auto";
-
-  dstButtons.forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.dst === mode);
-  });
-
-  if (dstInfo) {
-    dstInfo.textContent =
-      mode === "summer" ? "🌞 Sommerzeit (MESZ) manuell aktiv" :
-      mode === "winter" ? "❄️ Winterzeit (MEZ) manuell aktiv" :
-      "🧠 Automatische Umstellung aktiv (empfohlen)";
-  }
-}
-
-// Buttons → setDSTMode + UI Sync
-dstButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    setDSTMode(btn.dataset.dst);
+    if (!dstPanel) return;
+    dstPanel.classList.remove("hidden");
     syncDSTUI();
-  });
-});
-
-// Close Button
-if (dstClose) dstClose.addEventListener("click", closeDSTSettings);
-
-// Klick auf Overlay (außerhalb Popup) → Close
-if (dstPanel) {
-  dstPanel.addEventListener("click", e => {
-    if (e.target === dstPanel) closeDSTSettings();
-  });
 }
 
+function closeDSTSettings() {
+    if (!dstPanel) return;
+    dstPanel.classList.add("hidden");
+}
 
+function syncDSTUI() {
+    const mode = localStorage.getItem("dstMode") || "auto";
+    if (dstButtons) {
+        dstButtons.forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.dst === mode);
+        });
+    }
+    if (dstInfo) {
+        dstInfo.textContent =
+            mode === "summer" ? "🌞 Sommerzeit (MESZ) manuell aktiv" :
+            mode === "winter" ? "❄️ Winterzeit (MEZ) manuell aktiv" :
+            "🧠 Automatische Umstellung aktiv (empfohlen)";
+    }
+}
 
+// Session Details Toggle
+if (sessionText) {
+    sessionText.addEventListener("click", () => {
+        if (!sessionDetailsBox) return;
+        const visible = sessionDetailsBox.style.display === "block";
+        sessionDetailsBox.style.display = visible ? "none" : "block";
+        if (!visible) {
+            buildSessionDetails();
+        }
+    });
+}
 
+// DST Listeners
+if (dstButtons) {
+    dstButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            setDSTMode(btn.dataset.dst);
+            syncDSTUI();
+        });
+    });
+}
+if (dstClose) dstClose.addEventListener("click", closeDSTSettings);
+if (dstPanel) {
+    dstPanel.addEventListener("click", e => {
+        if (e.target === dstPanel) closeDSTSettings();
+    });
+}
 
-
+// Main Load
 window.addEventListener("load", () => {
-  requestNotificationPermission();
-  updateRealTimeBar();
-  updateDaySummary(); // 📅 Wochentag-Anzeige aktualisieren
+    requestNotificationPermission();
+    updateRealTimeBar();
+    updateDaySummary();
 
-  setInterval(() => {
-  if (sessionDetailsBox.style.display === "block") {
-    buildSessionDetails();
-  }
-}, 30000); // alle 30 Sekunden neu rendern
+    // Intervalle
+    setInterval(updateRealTimeBar, 60000); // 1 Minute
+    setInterval(updateDaySummary, 60000); // 1 Minute
 
+    // Nur neu rendern, wenn Box offen ist (Performance)
+    setInterval(() => {
+        if (sessionDetailsBox && sessionDetailsBox.style.display === "block") {
+            buildSessionDetails();
+        }
+    }, 30000);
 });
