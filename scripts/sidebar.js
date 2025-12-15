@@ -59,56 +59,46 @@ const MENU = {
    ============================================================ */
 
 function applySidebarDrawerSessionColor(sessionName) {
-    const color = sessionColors[sessionName] || "#888"; // Fallback
+    // Hol die Farbe oder nimm Standard-Blau als Fallback
+    const color = sessionColors[sessionName] || "#007bff"; 
 
-    // === CSS Variablen global setzen ===
+    // === 1. ZENTRALE VARIABLEN GLOBAL SETZEN ===
+    // Damit weiß das gesamte CSS (Sidebar, Drawer, Texte) sofort Bescheid
     document.documentElement.style.setProperty("--session-accent", color);
-    document.documentElement.style.setProperty("--session-accent-soft", color + "33");
-    document.documentElement.style.setProperty("--session-accent-border", color + "55");
+    document.documentElement.style.setProperty("--session-color", color);
+    document.documentElement.style.setProperty("--box-color", color); // Auch für die Boxen oben
 
-    // === Drawer dynamisch einfärben ===
-    drawer.style.borderLeft = `1px solid ${color}`;
-    drawerTitle.style.color = color;
-    if (drawerCloseBtn) {
-        drawerCloseBtn.style.borderColor = color + "66";
-        drawerCloseBtn.style.color = color;
+    // Optionale Hilfsvariablen für Transparenzen
+    document.documentElement.style.setProperty("--session-accent-soft", color + "33");   // 20% Deckkraft
+    document.documentElement.style.setProperty("--session-accent-border", color + "55"); // 33% Deckkraft
+
+    // === 2. SIDEBAR GLOW ERZWINGEN (Sicherheitsnetz) ===
+    // Falls das CSS die Variable nicht schnell genug greift, setzen wir den Glow direkt
+    const sidebar = document.getElementById("sidebarLeft");
+    if (sidebar) {
+        // Desktop Glow (nach rechts)
+        if (window.innerWidth > 900) {
+            sidebar.style.boxShadow = `2px 0 10px rgba(0,0,0,0.5), 1px 0 20px -5px ${color}`;
+            sidebar.style.borderRight = `1px solid ${color}44`; // Leicht transparent
+            sidebar.style.borderTop = "none";
+        } 
+        // Mobile Glow (nach oben)
+        else {
+            sidebar.style.boxShadow = `0 -4px 15px rgba(0,0,0,0.5), 0 -5px 25px -8px ${color}`;
+            sidebar.style.borderTop = `1px solid ${color}44`;
+            sidebar.style.borderRight = "none";
+        }
     }
 
-    // === Drawer-Links einfärben (wenn geöffnet) ===
-    const links = drawer.querySelectorAll(".drawer-link");
-    links.forEach(l => {
-        l.style.borderColor = color + "33";
-        l.style.color = color;
-        l.onmouseenter = () => {
-            l.style.borderColor = color;
-            l.style.color = color;
-            l.style.background = color + "11";
-        };
-        l.onmouseleave = () => {
-            l.style.borderColor = color + "33";
-            l.style.color = color;
-            l.style.background = "transparent";
-        };
-    });
-
-    // === Sidebar-Buttons einfärben ===
-    const sidebarButtons = document.querySelectorAll("#sidebarLeft button");
-    sidebarButtons.forEach(btn => {
-        btn.style.setProperty("--btn-accent", color);
-
-        btn.onmouseenter = () => {
-            btn.style.borderColor = color;
-            btn.style.color = color;
-        };
-
-        btn.onmouseleave = () => {
-            btn.style.borderColor = "";
-            btn.style.color = "";
-        };
-    });
+    // === 3. DRAWER STYLE ===
+    // (Der Rest wird eigentlich über CSS var(--session-accent) geregelt, 
+    // aber das hier hilft für die dynamischen Rahmen)
+    const drawer = document.getElementById("drawer");
+    if (drawer) {
+        drawer.style.borderLeftColor = color;
+        drawer.style.borderRightColor = color;
+    }
 }
-
-
 // ===============================
 // PANELS AUSBLENDEN
 // ===============================
