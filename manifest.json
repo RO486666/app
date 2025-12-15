@@ -1,11 +1,11 @@
 {
-  "name": "TradeMind: Journal & Performance Tracker",
-  "short_name": "TradeMind",
+  "name": "AlphaOS",
+  "short_name": "AlphaOS",
   "start_url": "/app/",
   "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#00aa44",
-  "description": "Dein smarter Trading-Begleiter – mit Session-Timer, Trade-Analyse, Erfolgsstatistik und Journal-Tracking. Entwickelt für Fokus, Disziplin und Profitabilität.",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Das Betriebssystem für dein Trading. AlphaOS optimiert deinen Fokus, trackt deine Performance und maximiert deine Disziplin.",
   "icons": [
     {
       "src": "/app/icon-192.png",
