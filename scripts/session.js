@@ -24,6 +24,7 @@ const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_s
 
 // State Variablen
 let lastAlertSession = null;
+let lastActiveSessionState = "";
 
 // Farben-Konfiguration
 const sessionColors = {
@@ -689,7 +690,6 @@ function requestNotificationPermission() {
     }
 }
 
-// Benachrichtigung anzeigen (Helper für Alerts)
 function showAlert(msg) {
     if (alertBox) {
         alertBox.textContent = msg;
@@ -699,29 +699,32 @@ function showAlert(msg) {
     console.log(msg);
 }
 
-// ✅ NEU: Diese Funktion in deine session.js einfügen (die alte überschreiben)
+// 🔥 VERBESSERTE NOTIFICATION FUNKTION (CLEAN & PUSH)
 function showSessionStartNotification(name, info) {
-    // 1. Prüfen, ob Benachrichtigungen erlaubt sind
-    if (Notification.permission === "granted") {
-        
-        // 2. Service Worker beauftragen (WICHTIG für Android!)
-        navigator.serviceWorker.ready.then(function(registration) {
-            registration.showNotification(`AlphaOS: ${name}`, {
-                body: info.replace(/<[^>]*>/g, ""), // Entfernt HTML-Tags für die Anzeige
+    const title = `AlphaOS: ${name} gestartet!`;
+    
+    // HTML-Tags entfernen für saubere Push-Nachricht
+    const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100) + "...";
+
+    // 1. PUSH NACHRICHT (Service Worker)
+    if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(title, {
+                body: cleanInfo,
                 icon: "/app/icon-192.png",
-                vibrate: [200, 100, 200], // Vibration: Brrt-Pause-Brrt
-                tag: "session-alert",     // Verhindert, dass sich Nachrichten stapeln
-                renotify: true            // Vibriert auch, wenn schon eine Nachricht da ist
+                vibrate: [200, 100, 200, 100, 400], // Aggressive Vibration
+                tag: "session-start",
+                renotify: true,
+                requireInteraction: true
             });
         });
-
-    } else {
-        console.log("Benachrichtigung blockiert oder nicht erlaubt.");
     }
 
-    // 3. Audio abspielen (Geht nur, wenn du vorher schonmal auf die Seite geklickt hast)
+    // 2. AUDIO (Nur wenn App offen)
     if (alertSound) {
-        alertSound.play().catch(e => console.log("Audio Autoplay vom Browser blockiert - User muss erst interagieren."));
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => console.log("Audio braucht Interaktion"));
     }
 }
 
@@ -1167,20 +1170,41 @@ else if (minutes >= 1380 || minutes < 60) {
     updateSessionTextStyle(name);
     applySidebarDrawerSessionColor(name);
 
-    // ⏰ Alert Logik (Session Wechsel)
+// ============================================================
+    // ⏰ ALERT LOGIK (Hier passiert der Push & Sound)
+    // ============================================================
+
+    // 1. Der "EXAKTE START" Trigger
+    const currentSessionNames = activeSessions.map(s => s.name).join(",");
+
+    // Prüfen: Hat sich der Status geändert?
+    if (lastActiveSessionState !== "" && currentSessionNames !== lastActiveSessionState) {
+        // Haben wir eine aktive Session?
+        if (activeSessions.length > 0) {
+            const newSession = activeSessions[0];
+            
+            // 🔥 ALARM AUSLÖSEN (Push + Sound)
+            showSessionStartNotification(newSession.name, newSession.info);
+            showAlert(`🚀 START: ${newSession.name}`);
+        }
+    }
+    // Status speichern
+    lastActiveSessionState = currentSessionNames;
+
+    // 2. Warnung 5 Min vorher
     const minutesToNext = getMinutesToNextSession(minutes);
     if (minutesToNext <= 5 && minutesToNext > 0) {
-        const currentActive = sessionText ? sessionText.textContent : "";
-        if (lastAlertSession !== currentActive) {
-            showAlert(`⚠️ Session-Wechsel in 5 Minuten!`);
-            lastAlertSession = currentActive;
-            if (activeSessions.length > 0) {
-                const s = activeSessions[0];
-                showSessionStartNotification(s.name, s.info);
+        const nextInfo = getNextSessionInfo(minutes);
+        if (nextInfo && nextInfo.session) {
+            const warningKey = `warn-${nextInfo.session.name}`;
+            if (lastAlertSession !== warningKey) {
+                showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in 5 Min!`);
+                if(alertSound) alertSound.play().catch(e=>{});
+                lastAlertSession = warningKey;
             }
         }
     } else {
-        lastAlertSession = null;
+        if (minutesToNext > 5) lastAlertSession = null;
     }
 }
 
