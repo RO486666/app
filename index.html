@@ -1444,42 +1444,55 @@
 
 <script src="scripts/quiz.js"></script>
 <script src="scripts/quiz-db.js"></script>
-<button onclick="simulateSession()" style="
+
+
+<button id="timerBtn" onclick="startTimeBomb()" style="
     display: block; 
     width: 90%; 
     margin: 20px auto; 
     padding: 20px; 
-    background: #00ffcc; 
+    background: #ffcc00; 
     color: black; 
     font-weight: 900; 
     font-size: 18px; 
     border: none; 
     border-radius: 12px; 
-    box-shadow: 0 0 15px #00ffcc;">
-  🚀 ALARM TESTEN (JETZT)
+    box-shadow: 0 0 15px #ffcc00;">
+  ⏱️ 5 SEKUNDEN TIMER (Lockscreen Test)
 </button>
 
 <script>
-function simulateSession() {
-    // 1. Erlaubnis prüfen
+function startTimeBomb() {
+    const btn = document.getElementById("timerBtn");
+
+    // 1. Erlaubnis Check
     if (Notification.permission !== "granted") {
-        Notification.requestPermission().then(perm => {
-            if (perm === "granted") simulateSession();
-        });
+        Notification.requestPermission();
         return;
     }
 
-    // 2. Die ECHTE Funktion aus session.js aufrufen
-    // Wir tun so, als ob "London" gerade startet
-    if (typeof showSessionStartNotification === "function") {
-        showSessionStartNotification(
-            "TEST SESSION", 
-            "Das ist ein Test für Sound & Vibration. <br><strong>Viel Erfolg!</strong>"
-        );
-        console.log("Simulation gestartet...");
-    } else {
-        alert("Fehler: Die Funktion showSessionStartNotification wurde nicht gefunden. Ist session.js geladen?");
-    }
+    // 2. Optisches Feedback
+    btn.innerHTML = "⏳ 5 SEKUNDEN... SPERR JETZT DAS HANDY!";
+    btn.style.background = "orange";
+
+    // 3. Der Countdown (5000 Millisekunden = 5 Sekunden)
+    setTimeout(() => {
+        
+        // Button zurücksetzen
+        btn.innerHTML = "🚀 BOOM! (Prüf dein Handy)";
+        btn.style.background = "#00ffcc";
+
+        // Alarm auslösen
+        if (typeof showSessionStartNotification === "function") {
+            showSessionStartNotification(
+                "LOCKSCREEN TEST", 
+                "Hat es im Sperrbildschirm vibriert? Dann bist du ready!"
+            );
+        } else {
+            alert("Fehler: session.js nicht gefunden!");
+        }
+
+    }, 5000); // <--- Hier kannst du die Zeit ändern (5000 = 5s)
 }
 </script>
 <!-- ============================================================
