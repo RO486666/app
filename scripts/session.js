@@ -1232,10 +1232,7 @@ else if (minutes >= 1380 || minutes < 60) {
 
     // Status speichern für die nächste Minute
     lastActiveSessionState = currentSessionString;
-    
-    // Status speichern für den nächsten Vergleich
-    // (Aber nur, wenn wir nicht ganz am Anfang sind, damit der erste Start nicht verschluckt wird, falls du das willst)
-    lastActiveSessionState = currentSessionNames;
+
 
     // 2. Warnung 5 Min vorher
     const minutesToNext = getMinutesToNextSession(minutes);
