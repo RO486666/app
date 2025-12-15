@@ -1,21 +1,27 @@
 {
+  "id": "alphaos-trading-v1",
   "name": "AlphaOS",
   "short_name": "AlphaOS",
   "start_url": "/app/",
+  "scope": "/app/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
   "description": "Das Betriebssystem für dein Trading. AlphaOS optimiert deinen Fokus, trackt deine Performance und maximiert deine Disziplin.",
+  "categories": ["finance", "productivity", "business"],
   "icons": [
     {
       "src": "/app/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/app/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
