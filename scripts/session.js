@@ -728,6 +728,32 @@ function showSessionStartNotification(name, info) {
     }
 }
 
+// 🔥 NEU: Benachrichtigung für SESSION ENDE
+function showSessionEndNotification(name) {
+    const title = `AlphaOS: ${name} Beendet`;
+    const bodyText = "Liquidität sinkt. Schließe offene Positionen oder manage Risk.";
+
+    // 1. Push
+    if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(title, {
+                body: bodyText,
+                icon: "/app/icon-192.png",
+                vibrate: [100, 50, 100], // Kürzeres Vibrieren als beim Start
+                tag: "session-end",
+                renotify: true
+            });
+        });
+    }
+
+    // 2. Audio (Optional anderer Sound, hier der gleiche kurz)
+    if (alertSound) {
+        alertSound.volume = 0.5; // Etwas leiser
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => {});
+    }
+}
+
 /* ==========================================================================
    4. DST / ZEITMODUS LOGIK
    ========================================================================== */
@@ -1171,24 +1197,44 @@ else if (minutes >= 1380 || minutes < 60) {
     applySidebarDrawerSessionColor(name);
 
 // ============================================================
-    // ⏰ ALERT LOGIK (Hier passiert der Push & Sound)
+    // ⏰ ALERT LOGIK: START & ENDE ERKENNUNG
     // ============================================================
 
-    // 1. Der "EXAKTE START" Trigger
-    const currentSessionNames = activeSessions.map(s => s.name).join(",");
+    // 1. Listen erstellen (Aktuell vs. Vorher)
+    const currentNamesList = activeSessions.map(s => s.name);
+    const currentSessionString = currentNamesList.join(",");
+    
+    // Die alte Liste holen (aus dem String wieder ein Array machen)
+    // .filter(n => n) entfernt leere Einträge, falls der String leer war
+    const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
 
-    // Prüfen: Hat sich der Status geändert?
-    if (lastActiveSessionState !== "" && currentSessionNames !== lastActiveSessionState) {
-        // Haben wir eine aktive Session?
-        if (activeSessions.length > 0) {
-            const newSession = activeSessions[0];
-            
-            // 🔥 ALARM AUSLÖSEN (Push + Sound)
+    // Nur prüfen, wenn sich wirklich was geändert hat
+    if (currentSessionString !== lastActiveSessionState) {
+
+        // A) PRÜFUNG AUF START (Ist etwas NEU dazu gekommen?)
+        // Wir suchen eine Session, die JETZT da ist, aber VORHER nicht da war.
+        const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
+        
+        if (newSession) {
             showSessionStartNotification(newSession.name, newSession.info);
             showAlert(`🚀 START: ${newSession.name}`);
         }
+
+        // B) PRÜFUNG AUF ENDE (Ist etwas WEG gefallen?)
+        // Wir suchen einen Namen, der VORHER da war, aber JETZT fehlt.
+        const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
+
+        if (endedSessionName) {
+            showSessionEndNotification(endedSessionName);
+            showAlert(`🏁 ENDE: ${endedSessionName}`);
+        }
     }
-    // Status speichern
+
+    // Status speichern für die nächste Minute
+    lastActiveSessionState = currentSessionString;
+    
+    // Status speichern für den nächsten Vergleich
+    // (Aber nur, wenn wir nicht ganz am Anfang sind, damit der erste Start nicht verschluckt wird, falls du das willst)
     lastActiveSessionState = currentSessionNames;
 
     // 2. Warnung 5 Min vorher
