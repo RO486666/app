@@ -826,7 +826,39 @@ function showSessionEndNotification(name) {
         }
     }
 }
+/* =========================================================
+   🧪 TEST-FUNKTIONEN (Für das Simulations-Panel)
+   ========================================================= */
+
+function testSessionStart() {
+    const selector = document.getElementById("testSessionSelect");
+    if (!selector) return;
+    
+    const sessionName = selector.value;
+    
+    // Wir suchen den echten Info-Text aus deiner Liste, damit es echt aussieht
+    const sessionObj = sessions.find(s => s.name === sessionName);
+    const infoText = sessionObj ? sessionObj.info : "Test-Simulation gestartet.";
+
+    console.log(`Simuliere Start: ${sessionName}`);
+    showSessionStartNotification(sessionName, infoText);
+    
+    // Optional: Visuelles Feedback im App-Fenster
+    showAlert(`🚀 Test: ${sessionName} Start`);
 }
+
+function testSessionEnd() {
+    const selector = document.getElementById("testSessionSelect");
+    if (!selector) return;
+    
+    const sessionName = selector.value;
+
+    console.log(`Simuliere Ende: ${sessionName}`);
+    showSessionEndNotification(sessionName);
+    
+    showAlert(`🏁 Test: ${sessionName} Ende`);
+}
+
 /* ==========================================================================
    3. HELPER FUNKTIONEN
    ========================================================================== */
