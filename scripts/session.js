@@ -789,7 +789,7 @@ function showAlert(msg) {
 }
 
 /* ==========================================================================
-   4. NOTIFICATION LOGIK (Verbesserte Version)
+   4. NOTIFICATION LOGIK (Robust & "Unkaputtbar")
    ========================================================================== */
 
 // 🔥 SESSION START
@@ -797,25 +797,44 @@ function showSessionStartNotification(name, info) {
     if (currentNotifyMode === 'off') return;
 
     const title = `AlphaOS: ${name} gestartet!`;
-    // HTML-Tags entfernen für saubere Push-Nachricht
     const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100) + "...";
 
-    // 1. PUSH NACHRICHT (Service Worker)
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && 
-        Notification.permission === "granted" && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, {
-                body: cleanInfo,
-                icon: "/app/icon-192.png",
-                vibrate: [200, 100, 200, 100, 400], // Aggressive Vibration
-                tag: "session-start",
-                renotify: true,
-                requireInteraction: true
+    // Prüfen, ob wir überhaupt dürfen
+    if (Notification.permission === "granted") {
+        
+        // VERSUCH 1: Über Service Worker (Besser für Handy-Vibration)
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, {
+                    body: cleanInfo,
+                    icon: "/app/icon-192.png",
+                    vibrate: [200, 100, 200, 100, 400],
+                    tag: "session-start",
+                    renotify: true,
+                    requireInteraction: true // Zwingt User zum Klicken
+                });
+            }).catch(e => {
+                // Falls SW fehlschlägt -> Fallback sofort auslösen
+                new Notification(title, { body: cleanInfo, icon: "/app/icon-192.png" });
             });
-        });
+        } 
+        // VERSUCH 2: Direkte Benachrichtigung (Der "Sicherheits-Fallback")
+        else {
+            console.log("⚠️ SW nicht aktiv, sende Standard-Notification");
+            try {
+                const notif = new Notification(title, {
+                    body: cleanInfo,
+                    icon: "/app/icon-192.png",
+                    vibrate: [200, 100, 200, 100, 400],
+                    tag: "session-start"
+                });
+            } catch (e) {
+                console.error("Notification Error:", e);
+            }
+        }
     }
 
-    // 2. AUDIO
+    // AUDIO (Unabhängig von Push)
     if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
         alertSound.volume = 1.0;
         alertSound.currentTime = 0;
@@ -828,60 +847,65 @@ function showSessionEndNotification(name) {
     if (currentNotifyMode === 'off') return;
 
     const title = `AlphaOS: ${name} Beendet`;
-    const bodyText = "Liquidität sinkt. Schließe offene Positionen oder manage Risk.";
+    const bodyText = "Liquidität sinkt. Risk Management prüfen.";
 
-    // 1. Push
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && 
-        Notification.permission === "granted" && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, {
-                body: bodyText,
-                icon: "/app/icon-192.png",
-                vibrate: [100, 50, 100], 
-                tag: "session-end",
-                renotify: true
+    if (Notification.permission === "granted") {
+        // Versuch 1: SW
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, {
+                    body: bodyText,
+                    icon: "/app/icon-192.png",
+                    vibrate: [100, 50, 100], 
+                    tag: "session-end",
+                    renotify: true
+                });
             });
-        });
+        } 
+        // Versuch 2: Standard
+        else {
+            new Notification(title, {
+                body: bodyText,
+                icon: "/app/icon-192.png", 
+                vibrate: [100, 50, 100]
+            });
+        }
     }
 
-    // 2. Audio
     if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
-        alertSound.volume = 0.5; // Etwas leiser
+        alertSound.volume = 0.5;
         alertSound.currentTime = 0;
         alertSound.play().catch(e => {});
     }
 }
 
-// 🔥 VORWARNUNG (Warning)
+// 🔥 VORWARNUNG
 function showSessionWarningNotification(name, minutes) {
     if (currentNotifyMode === 'off') return;
-
     const title = `AlphaOS: ${name} bald!`;
-    const bodyText = `Startet in ${minutes} Minuten. Mach dich bereit.`;
+    const bodyText = `Startet in ${minutes} Minuten.`;
 
-    // PUSH
-    if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
-        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && Notification.permission === "granted") {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.ready.then(reg => {
                 reg.showNotification(title, {
                     body: bodyText,
                     icon: "/app/icon-192.png",
-                    vibrate: [50, 50], // Nur kurz: "Dit-Dit"
-                    tag: "session-warning",
-                    renotify: true
+                    vibrate: [50, 50],
+                    tag: "session-warning"
                 });
             });
+        } else {
+            new Notification(title, { body: bodyText, vibrate: [50, 50] });
         }
     }
-
-    // AUDIO
+    
     if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
         alertSound.volume = 0.3; 
         alertSound.currentTime = 0;
         alertSound.play().catch(e => {});
     }
 }
-
 /* =========================================================
    🧪 TEST-TOOLS (Für Simulation)
    ========================================================= */
