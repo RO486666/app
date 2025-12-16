@@ -1495,11 +1495,16 @@ if (dstPanel) {
 window.addEventListener("load", () => {
     requestNotificationPermission();
     updateRealTimeBar();
-    // updateDaySummary(); // Falls du die Funktion oben wieder gefüllt hast, einkommentieren
+    
+    // HIER DIE STRICHE WEGMACHEN:
+    updateDaySummary(); 
+    
     updateNotifyUI();
 
     setInterval(updateRealTimeBar, 60000); 
-    // setInterval(updateDaySummary, 60000); 
+    
+    // HIER AUCH STRICHE WEGMACHEN:
+    setInterval(updateDaySummary, 60000); 
 
     setInterval(() => {
         if (sessionDetailsBox && sessionDetailsBox.style.display === "block") {
