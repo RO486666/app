@@ -847,34 +847,61 @@ function showSessionEndNotification(name) {
    // 🧪 TEST-FUNKTIONEN (Für das Simulations-Panel)
    // ========================================================= */
 
-// function testSessionStart() {
-    // const selector = document.getElementById("testSessionSelect");
-    // if (!selector) return;
-    
-    // const sessionName = selector.value;
-    
-    // Wir suchen den echten Info-Text aus deiner Liste, damit es echt aussieht
-    // const sessionObj = sessions.find(s => s.name === sessionName);
-    // const infoText = sessionObj ? sessionObj.info : "Test-Simulation gestartet.";
+/* =========================================================
+   🧪 TEST-TOOLS (Mit 5 Sekunden Verzögerung)
+   ========================================================= */
 
-    // console.log(`Simuliere Start: ${sessionName}`);
-    // showSessionStartNotification(sessionName, infoText);
+function testSessionStart() {
+    const selector = document.getElementById("testSessionSelect");
+    if (!selector) return;
     
-    // Optional: Visuelles Feedback im App-Fenster
-    // showAlert(`🚀 Test: ${sessionName} Start`);
-// }
+    const sessionName = selector.value;
+    
+    // Echten Info-Text aus der Datenbank suchen
+    const sessionObj = sessions.find(s => s.name === sessionName);
+    const infoText = sessionObj ? sessionObj.info : "Test-Simulation gestartet.";
 
-// function testSessionEnd() {
-    // const selector = document.getElementById("testSessionSelect");
-    // if (!selector) return;
-    
-    // const sessionName = selector.value;
+    // 1. Sofortiges Feedback: "Timer läuft"
+    console.log(`⏳ Timer gestartet: Start von ${sessionName} in 5s...`);
+    showAlert(`⏳ Warte 5s... (${sessionName} Start)`);
 
-    // console.log(`Simuliere Ende: ${sessionName}`);
-    // showSessionEndNotification(sessionName);
+    // 2. Verzögerung von 5000 Millisekunden (5 Sekunden)
+    setTimeout(() => {
+        console.log(`🚀 FEUER: Simuliere Start von ${sessionName}`);
+        
+        // Die echte Push-Notification Funktion aufrufen
+        if (typeof showSessionStartNotification === "function") {
+            showSessionStartNotification(sessionName, infoText);
+        } else {
+            alert(`⚠️ Test erfolgreich! (Notification-Funktion wurde aufgerufen für: ${sessionName})`);
+        }
+
+    }, 5000);
+}
+
+function testSessionEnd() {
+    const selector = document.getElementById("testSessionSelect");
+    if (!selector) return;
     
-    // showAlert(`🏁 Test: ${sessionName} Ende`);
-// }
+    const sessionName = selector.value;
+
+    // 1. Sofortiges Feedback
+    console.log(`⏳ Timer gestartet: Ende von ${sessionName} in 5s...`);
+    showAlert(`⏳ Warte 5s... (${sessionName} Ende)`);
+
+    // 2. Verzögerung von 5 Sekunden
+    setTimeout(() => {
+        console.log(`🏁 FEUER: Simuliere Ende von ${sessionName}`);
+        
+        // Die echte Push-Notification Funktion aufrufen
+        if (typeof showSessionEndNotification === "function") {
+            showSessionEndNotification(sessionName);
+        } else {
+            alert(`⚠️ Test erfolgreich! (End-Notification für: ${sessionName})`);
+        }
+        
+    }, 5000);
+}
 /* ==========================================================================
    3. HELPER FUNKTIONEN
    ========================================================================== */
