@@ -457,73 +457,73 @@
   </div>
 </section>
 
-<!-- <section id="panel-settings-notify" class="panel hidden"> -->
-  <!-- <div class="stats-box" style="max-width: 400px; margin: 50px auto; position: relative;"> -->
+<section id="panel-settings-notify" class="panel hidden">
+  <div class="stats-box" style="max-width: 400px; margin: 50px auto; position: relative;">
     
-    <!-- <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"> -->
-        <!-- <h3 style="margin: 0;">🔔 Alarm-Modus</h3> -->
-        <!-- <button onclick="closeNotifySettings()" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕</button> -->
-    <!-- </div> -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0;">🔔 Alarm-Modus</h3>
+        <button onclick="closeNotifySettings()" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕</button>
+    </div>
     
-    <!-- <div class="panel-content"> -->
-        <!-- <p style="font-size: 0.9em; color: #ccc; margin-bottom: 15px;"> -->
-            <!-- Wähle, wie AlphaOS dich informieren soll: -->
-        <!-- </p> -->
+    <div class="panel-content">
+        <p style="font-size: 0.9em; color: #ccc; margin-bottom: 15px;">
+            Wähle, wie AlphaOS dich informieren soll:
+        </p>
         
-        <!-- <div class="notify-switch-grid" style="display: grid; gap: 10px;"> -->
-            <!-- <button class="btn-notify active" onclick="setNotifyMode('all')" data-mode="all"  -->
-                <!-- style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;"> -->
-                <!-- 🔊 <strong>Alles an</strong><br> -->
-                <!-- <span style="font-size:0.8em; opacity:0.7">Ton + Vibration + Push</span> -->
-            <!-- </button> -->
+        <div class="notify-switch-grid" style="display: grid; gap: 10px;">
+            <button class="btn-notify active" onclick="setNotifyMode('all')" data-mode="all" 
+                style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;">
+                🔊 <strong>Alles an</strong><br>
+                <span style="font-size:0.8em; opacity:0.7">Ton + Vibration + Push</span>
+            </button>
             
-            <!-- <button class="btn-notify" onclick="setNotifyMode('push')" data-mode="push" -->
-                <!-- style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;"> -->
-                <!-- 📳 <strong>Nur Push</strong><br> -->
-                <!-- <span style="font-size:0.8em; opacity:0.7">Lautlos, nur Nachricht</span> -->
-            <!-- </button> -->
+            <button class="btn-notify" onclick="setNotifyMode('push')" data-mode="push"
+                style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;">
+                📳 <strong>Nur Push</strong><br>
+                <span style="font-size:0.8em; opacity:0.7">Lautlos, nur Nachricht</span>
+            </button>
             
-            <!-- <button class="btn-notify" onclick="setNotifyMode('sound')" data-mode="sound" -->
-                <!-- style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;"> -->
-                <!-- 🔈 <strong>Nur Ton</strong><br> -->
-                <!-- <span style="font-size:0.8em; opacity:0.7">Audio an, keine Push</span> -->
-            <!-- </button> -->
+            <button class="btn-notify" onclick="setNotifyMode('sound')" data-mode="sound"
+                style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;">
+                🔈 <strong>Nur Ton</strong><br>
+                <span style="font-size:0.8em; opacity:0.7">Audio an, keine Push</span>
+            </button>
             
-            <!-- <button class="btn-notify" onclick="setNotifyMode('off')" data-mode="off" -->
-                <!-- style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;"> -->
-                <!-- 🔕 <strong>Komplett aus</strong><br> -->
-                <!-- <span style="font-size:0.8em; opacity:0.7">Keine Alarme</span> -->
-            <!-- </button> -->
-        <!-- </div> -->
-    <!-- </div> -->
-
-  <!-- </div> -->
-<!-- </section> -->
-
-
-<div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <h4 style="margin: 0 0 10px 0; color: #00ffcc; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
-                🧪 Simulation
-            </h4>
-            
-            <select id="testSessionSelect" style="width:100%; padding:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #444; border-radius:8px; font-size:14px; outline:none;">
-                <option value="Sydney">🟦 Sydney</option>
-                <option value="Tokyo">🟦 Tokyo</option>
-                <option value="London">🟦 London</option>
-                <option value="New York">🟦 New York</option>
-                <option value="London Killzone">🟥 London Killzone</option>
-                <option value="New York Killzone">🟥 New York Killzone</option>
-            </select>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button onclick="testSessionStart()" style="padding:10px; background:rgba(0, 255, 204, 0.15); border:1px solid #00ffcc; color:#00ffcc; border-radius:8px; cursor:pointer; font-weight:bold;">
-                    🚀 Start Test
-                </button>
-                <button onclick="testSessionEnd()" style="padding:10px; background:rgba(255, 0, 100, 0.15); border:1px solid #ff0066; color:#ff0066; border-radius:8px; cursor:pointer; font-weight:bold;">
-                    🏁 Ende Test
-                </button>
-            </div>
+            <button class="btn-notify" onclick="setNotifyMode('off')" data-mode="off"
+                style="padding: 12px; border: 1px solid #333; background: transparent; color: white; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s;">
+                🔕 <strong>Komplett aus</strong><br>
+                <span style="font-size:0.8em; opacity:0.7">Keine Alarme</span>
+            </button>
         </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);"> -->
+            <!-- <h4 style="margin: 0 0 10px 0; color: #00ffcc; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;"> -->
+                <!-- 🧪 Simulation -->
+            <!-- </h4> -->
+            
+            <!-- <select id="testSessionSelect" style="width:100%; padding:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #444; border-radius:8px; font-size:14px; outline:none;"> -->
+                <!-- <option value="Sydney">🟦 Sydney</option> -->
+                <!-- <option value="Tokyo">🟦 Tokyo</option> -->
+                <!-- <option value="London">🟦 London</option> -->
+                <!-- <option value="New York">🟦 New York</option> -->
+                <!-- <option value="London Killzone">🟥 London Killzone</option> -->
+                <!-- <option value="New York Killzone">🟥 New York Killzone</option> -->
+            <!-- </select> -->
+
+            <!-- <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"> -->
+                <!-- <button onclick="testSessionStart()" style="padding:10px; background:rgba(0, 255, 204, 0.15); border:1px solid #00ffcc; color:#00ffcc; border-radius:8px; cursor:pointer; font-weight:bold;"> -->
+                    <!-- 🚀 Start Test -->
+                <!-- </button> -->
+                <!-- <button onclick="testSessionEnd()" style="padding:10px; background:rgba(255, 0, 100, 0.15); border:1px solid #ff0066; color:#ff0066; border-radius:8px; cursor:pointer; font-weight:bold;"> -->
+                    <!-- 🏁 Ende Test -->
+                <!-- </button> -->
+            <!-- </div> -->
+        <!-- </div> -->
 
 
     <!-- ============================================================
