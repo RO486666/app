@@ -775,59 +775,62 @@ function showAlert(msg) {
     console.log(msg);
 }
 
-// 🔥 START NOTIFICATION (Hört jetzt auf die Einstellungen!)
+// 🔥 START NOTIFICATION (Repariert & Robust)
 function showSessionStartNotification(name, info) {
+    // 1. Grundeinstellung prüfen
     if (currentNotifyMode === 'off') return;
 
     const title = `AlphaOS: ${name} gestartet!`;
     const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100);
 
-    // PUSH PART
+    // 2. VISUELL (Push) - Jetzt ohne "controller" Zwang!
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
-        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+        if ("serviceWorker" in navigator && Notification.permission === "granted") {
             navigator.serviceWorker.ready.then(registration => {
                 registration.showNotification(title, {
                     body: cleanInfo,
                     icon: "/app/icon-192.png",
                     vibrate: [200, 100, 200, 100, 400], 
-                    tag: "session-start",
-                    renotify: true
+                    tag: "session-start", 
+                    renotify: true,
+                    requireInteraction: true
                 });
-            });
+            }).catch(err => console.log("Push Error:", err));
         }
     }
 
-    // AUDIO PART
+    // 3. AUDIO
     if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
         if (alertSound) {
             alertSound.volume = 1.0;
             alertSound.currentTime = 0;
-            alertSound.play().catch(e => {});
+            alertSound.play().catch(e => console.log("Audio braucht Interaktion"));
         }
     }
 }
 
-// 🔥 END NOTIFICATION (Hört jetzt auf die Einstellungen!)
+// 🔥 END NOTIFICATION (Repariert & Robust)
 function showSessionEndNotification(name) {
     if (currentNotifyMode === 'off') return;
 
     const title = `AlphaOS: ${name} Beendet`;
     
-    // PUSH PART
+    // PUSH
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
-        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+        if ("serviceWorker" in navigator && Notification.permission === "granted") {
             navigator.serviceWorker.ready.then(registration => {
                 registration.showNotification(title, {
                     body: "Liquidität sinkt. Risk prüfen.",
                     icon: "/app/icon-192.png",
                     vibrate: [100, 50, 100], 
-                    tag: "session-end"
+                    tag: "session-end",
+                    renotify: true
                 });
-            });
+            }).catch(err => console.log("Push Error:", err));
         }
     }
 
-    // AUDIO PART
+    // AUDIO
     if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
         if (alertSound) {
             alertSound.volume = 0.5; 
