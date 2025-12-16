@@ -1491,43 +1491,19 @@ if (dstPanel) {
     });
 }
 
-/* ==========================================================================
-   8. INITIALISIERUNG & EVENT LISTENERS (MIT AUTO-TEST)
-   ========================================================================== */
-
-// ... (Deine DST Funktionen openDSTSettings etc. bleiben hier drüber stehen) ...
-
 // Main Load
 window.addEventListener("load", () => {
-    // 1. Standard Initialisierung
     requestNotificationPermission();
     updateRealTimeBar();
+    // updateDaySummary(); // Falls du die Funktion oben wieder gefüllt hast, einkommentieren
     updateNotifyUI();
 
-    // Intervalle starten
     setInterval(updateRealTimeBar, 60000); 
-    
-    // Performance-Optimierung für Details-Box
+    // setInterval(updateDaySummary, 60000); 
+
     setInterval(() => {
         if (sessionDetailsBox && sessionDetailsBox.style.display === "block") {
             buildSessionDetails();
         }
     }, 30000);
-
-    // ============================================================
-    // 🤖 AUTO-SIMULATION (Nur zum Testen!)
-    // ============================================================
-    console.log("🤖 Auto-Simulation aktiviert: Alarm kommt in 5 Sekunden...");
-    showAlert("🤖 Auto-Test: Alarm in 5 Sekunden...");
-
-    setTimeout(() => {
-        // Hier simulieren wir eine Fake-Session "London"
-        const testName = "TEST-LONDON";
-        const testInfo = "Das ist ein automatischer Test-Alarm nach dem App-Start. <br>Struktur und Volume prüfen.";
-        
-        // Feuern!
-        showSessionStartNotification(testName, testInfo);
-        showAlert(`🚀 AUTO-FEUER: ${testName}`);
-        
-    }, 5000); // 5000 Millisekunden = 5 Sekunden warten
 });
