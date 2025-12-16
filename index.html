@@ -501,7 +501,29 @@
 </section>
 
 
+<div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin: 0 0 10px 0; color: #00ffcc; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
+                🧪 Simulation
+            </h4>
+            
+            <select id="testSessionSelect" style="width:100%; padding:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid #444; border-radius:8px; font-size:14px; outline:none;">
+                <option value="Sydney">🟦 Sydney</option>
+                <option value="Tokyo">🟦 Tokyo</option>
+                <option value="London">🟦 London</option>
+                <option value="New York">🟦 New York</option>
+                <option value="London Killzone">🟥 London Killzone</option>
+                <option value="New York Killzone">🟥 New York Killzone</option>
+            </select>
 
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button onclick="testSessionStart()" style="padding:10px; background:rgba(0, 255, 204, 0.15); border:1px solid #00ffcc; color:#00ffcc; border-radius:8px; cursor:pointer; font-weight:bold;">
+                    🚀 Start Test
+                </button>
+                <button onclick="testSessionEnd()" style="padding:10px; background:rgba(255, 0, 100, 0.15); border:1px solid #ff0066; color:#ff0066; border-radius:8px; cursor:pointer; font-weight:bold;">
+                    🏁 Ende Test
+                </button>
+            </div>
+        </div>
 
 
     <!-- ============================================================
