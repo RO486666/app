@@ -466,7 +466,8 @@
     </div>
     
     <div class="panel-content">
-        <p style="font-size: 0.9em; color: #ccc; margin-bottom: 15px;">
+        
+        <p style="font-size: 0.9em; color: #ccc; margin-bottom: 10px;">
             Wähle, wie AlphaOS dich informieren soll:
         </p>
         
@@ -495,8 +496,36 @@
                 <span style="font-size:0.8em; opacity:0.7">Keine Alarme</span>
             </button>
         </div>
-    </div>
 
+        <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            <p style="font-size: 0.9em; color: #ccc; margin-bottom: 10px; margin-top: 0;">
+                ⏳ <strong>Wann erinnern?</strong> (Vor Session-Start)
+            </p>
+            
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                <button class="btn-time" onclick="setWarningTime(5)" data-time="5" 
+                    style="flex:1; padding: 10px; border: 1px solid #444; background: transparent; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                    5m
+                </button>
+                
+                <button class="btn-time" onclick="setWarningTime(10)" data-time="10" 
+                    style="flex:1; padding: 10px; border: 1px solid #444; background: transparent; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                    10m
+                </button>
+                
+                <button class="btn-time" onclick="setWarningTime(30)" data-time="30" 
+                    style="flex:1; padding: 10px; border: 1px solid #444; background: transparent; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                    30m
+                </button>
+                
+                <button class="btn-time" onclick="setWarningTime(60)" data-time="60" 
+                    style="flex:1; padding: 10px; border: 1px solid #444; background: transparent; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                    1h
+                </button>
+            </div>
+        </div>
+
+    </div>
   </div>
 </section>
 
