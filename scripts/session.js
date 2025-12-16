@@ -973,6 +973,37 @@ function showSessionEndNotification(name) {
     }
 }
 
+// 🔥 WARNING NOTIFICATION (Neu: Für die Vorwarnung)
+function showSessionWarningNotification(name, minutes) {
+    if (currentNotifyMode === 'off') return;
+
+    const title = `AlphaOS: ${name} bald!`;
+    const bodyText = `Startet in ${minutes} Minuten. Mach dich bereit.`;
+
+    // PUSH
+    if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
+        if (Notification.permission === "granted") {
+            navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification(title, {
+                    body: bodyText,
+                    icon: "/app/icon-192.png",
+                    vibrate: [50, 50], // Nur kurz: "Dit-Dit"
+                    tag: "session-warning",
+                    renotify: true
+                });
+            });
+        }
+    }
+
+    // AUDIO (Optional: Ein dezenterer Ton?)
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        // Wir nutzen den gleichen Sound, aber leiser
+        alertSound.volume = 0.3; 
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => {});
+    }
+}
+
 /* ==========================================================================
    4. DST / ZEITMODUS LOGIK
    ========================================================================== */
@@ -1427,13 +1458,11 @@ else if (minutes >= 1380 || minutes < 60) {
         lastActiveSessionState = currentSessionString;
         isFirstLoad = false; 
     } else if (currentSessionString !== lastActiveSessionState) {
-        // Start
         const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
         if (newSession) {
             showSessionStartNotification(newSession.name, newSession.info);
             showAlert(`🚀 START: ${newSession.name}`);
         }
-        // Ende
         const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
         if (endedSessionName) {
             showSessionEndNotification(endedSessionName);
@@ -1442,16 +1471,24 @@ else if (minutes >= 1380 || minutes < 60) {
         lastActiveSessionState = currentSessionString;
     }
 
-    // 2. VORWARNUNG (Dynamisch je nach Einstellung!)
+    // 2. 🔥 VORWARNUNG (Mit Push Nachricht!)
     const minutesToNext = getMinutesToNextSession(minutes);
     
-    // Prüfen gegen warningMinutes statt hart "5"
+    // Wir prüfen gegen 'warningMinutes' (z.B. 60)
     if (minutesToNext <= warningMinutes && minutesToNext > 0) {
         const nextInfo = getNextSessionInfo(minutes);
         if (nextInfo && nextInfo.session) {
+            
+            // Key enthält die Zeit, damit der Alarm feuert, wenn sich die Zeit ändert
             const warningKey = `warn-${nextInfo.session.name}-${warningMinutes}`;
+            
             if (lastAlertSession !== warningKey) {
+                // In-App
                 showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in ${minutesToNext} Min!`);
+                
+                // Push
+                showSessionWarningNotification(nextInfo.session.name, minutesToNext);
+
                 lastAlertSession = warningKey;
             }
         }
