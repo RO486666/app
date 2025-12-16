@@ -659,13 +659,14 @@ BTC oft Pre-Move fürs Wochenende.
 };
 
 /* ==========================================================================
-   2. EINSTELLUNGEN & ALARME (Der gefixte Teil)
+   2. EINSTELLUNGEN & ALARME (JETZT MIT ZEIT-AUSWAHL)
    ========================================================================== */
 
-// Standard: 'all'
+// Einstellungen laden
 let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+let warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; // Standard: 5 Min
 
-// Modus setzen (wird vom Button aufgerufen)
+// Modus setzen (Alles an, Push, etc.)
 function setNotifyMode(mode) {
     currentNotifyMode = mode;
     localStorage.setItem("alphaNotifyMode", mode);
@@ -674,18 +675,15 @@ function setNotifyMode(mode) {
     const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
     showAlert(`✅ ${modeNames[mode]}`);
 
-    // 1. Audio Test
+    // Audio Test
     if ((mode === 'all' || mode === 'sound') && alertSound) {
         alertSound.volume = 1.0;
         alertSound.currentTime = 0;
         alertSound.play().catch(e => {});
     }
-
-    // 2. Push Test (Die "Aggressive" Methode)
+    // Push Test
     if (mode === 'all' || mode === 'push') {
         if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-        
-        // Wir fragen nicht lange, wir machen einfach:
         if (Notification.permission === "granted") {
             navigator.serviceWorker.ready.then(reg => {
                 reg.showNotification("🔔 Test erfolgreich!", {
@@ -699,8 +697,20 @@ function setNotifyMode(mode) {
     }
 }
 
-// UI Aktualisieren (Damit die Buttons leuchten)
+// ⏳ NEU: Vorwarnzeit setzen (5, 10, 30, 60)
+function setWarningTime(mins) {
+    warningMinutes = mins;
+    localStorage.setItem("alphaWarningTime", mins);
+    updateNotifyUI();
+    
+    // Kleines Feedback
+    if(navigator.vibrate) navigator.vibrate(30);
+    console.log(`Vorwarnzeit gesetzt auf: ${mins} Minuten`);
+}
+
+// UI Aktualisieren (Färbt jetzt AUCH die Zeit-Buttons)
 function updateNotifyUI() {
+    // 1. Modus Buttons
     const btns = document.querySelectorAll(".btn-notify");
     btns.forEach(btn => {
         if (btn.dataset.mode === currentNotifyMode) {
@@ -711,6 +721,23 @@ function updateNotifyUI() {
             btn.classList.remove("active");
             btn.style.border = "1px solid #333";
             btn.style.background = "transparent";
+        }
+    });
+
+    // 2. Zeit Buttons (NEU)
+    const timeBtns = document.querySelectorAll(".btn-time");
+    timeBtns.forEach(btn => {
+        if (parseInt(btn.dataset.time) === warningMinutes) {
+            btn.classList.add("active");
+            // Inline Styles erzwingen (falls CSS fehlt)
+            btn.style.border = "1px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.15)";
+            btn.style.color = "#00ffcc";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #444";
+            btn.style.background = "transparent";
+            btn.style.color = "#fff";
         }
     });
 }
@@ -746,15 +773,16 @@ function getMinutesNow() {
     return now.getHours() * 60 + now.getMinutes();
 }
 
+/* ==========================================================================
+   3. NOTIFICATION LOGIK
+   ========================================================================== */
+
 function requestNotificationPermission() {
     if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission().then(permission => {
-            console.log("🔐 Notification permission:", permission);
-        });
+        Notification.requestPermission();
     }
 }
 
-// Benachrichtigung anzeigen (Helper für Alerts)
 function showAlert(msg) {
     if (alertBox) {
         alertBox.textContent = msg;
@@ -764,14 +792,12 @@ function showAlert(msg) {
     console.log(msg);
 }
 
-// 🔥 START NOTIFICATION (Zurück zur einfachen Logik)
+// 🔥 START NOTIFICATION
 function showSessionStartNotification(name, info) {
     if (currentNotifyMode === 'off') return;
-
     const title = `AlphaOS: ${name} gestartet!`;
     const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100);
 
-    // PUSH (Ohne Controller-Zwang)
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
         if (Notification.permission === "granted") {
             navigator.serviceWorker.ready.then(reg => {
@@ -786,24 +812,18 @@ function showSessionStartNotification(name, info) {
             });
         }
     }
-
-    // AUDIO
-    if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
-        if (alertSound) {
-            alertSound.volume = 1.0;
-            alertSound.currentTime = 0;
-            alertSound.play().catch(e => {});
-        }
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => {});
     }
 }
 
 // 🔥 END NOTIFICATION
 function showSessionEndNotification(name) {
     if (currentNotifyMode === 'off') return;
-
     const title = `AlphaOS: ${name} Beendet`;
     
-    // PUSH
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
         if (Notification.permission === "granted") {
             navigator.serviceWorker.ready.then(reg => {
@@ -816,14 +836,10 @@ function showSessionEndNotification(name) {
             });
         }
     }
-
-    // AUDIO
-    if (currentNotifyMode === 'all' || currentNotifyMode === 'sound') {
-        if (alertSound) {
-            alertSound.volume = 0.5; 
-            alertSound.currentTime = 0;
-            alertSound.play().catch(e => {});
-        }
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        alertSound.volume = 0.5; 
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => {});
     }
 }
 
@@ -1400,23 +1416,24 @@ else if (minutes >= 1380 || minutes < 60) {
     applySidebarDrawerSessionColor(name);
 
 // ============================================================
-    // ⏰ ALERT LOGIK (Mit First Load Bremse & Settings)
+    // ⏰ ALERT LOGIK (Dynamisch mit warningMinutes)
     // ============================================================
     const currentNamesList = activeSessions.map(s => s.name);
     const currentSessionString = currentNamesList.join(",");
     const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
 
+    // 1. Session START & ENDE Alarme
     if (isFirstLoad) {
         lastActiveSessionState = currentSessionString;
         isFirstLoad = false; 
     } else if (currentSessionString !== lastActiveSessionState) {
-        // A) START
+        // Start
         const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
         if (newSession) {
             showSessionStartNotification(newSession.name, newSession.info);
             showAlert(`🚀 START: ${newSession.name}`);
         }
-        // B) ENDE
+        // Ende
         const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
         if (endedSessionName) {
             showSessionEndNotification(endedSessionName);
@@ -1425,19 +1442,21 @@ else if (minutes >= 1380 || minutes < 60) {
         lastActiveSessionState = currentSessionString;
     }
 
-    // 5 Min Warnung
+    // 2. VORWARNUNG (Dynamisch je nach Einstellung!)
     const minutesToNext = getMinutesToNextSession(minutes);
-    if (minutesToNext <= 5 && minutesToNext > 0) {
+    
+    // Prüfen gegen warningMinutes statt hart "5"
+    if (minutesToNext <= warningMinutes && minutesToNext > 0) {
         const nextInfo = getNextSessionInfo(minutes);
         if (nextInfo && nextInfo.session) {
-            const warningKey = `warn-${nextInfo.session.name}`;
+            const warningKey = `warn-${nextInfo.session.name}-${warningMinutes}`;
             if (lastAlertSession !== warningKey) {
-                showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in 5 Min!`);
+                showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in ${minutesToNext} Min!`);
                 lastAlertSession = warningKey;
             }
         }
     } else {
-        if (minutesToNext > 5) lastAlertSession = null;
+        if (minutesToNext > warningMinutes) lastAlertSession = null;
     }
 }
 
