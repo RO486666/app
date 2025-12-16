@@ -667,24 +667,44 @@ let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
 
 // Modus setzen (wird vom Button aufgerufen)
 function setNotifyMode(mode) {
+    // 1. Speichern
     currentNotifyMode = mode;
     localStorage.setItem("alphaNotifyMode", mode);
     
     // UI aktualisieren (Buttons färben)
     updateNotifyUI();
     
-    // Feedback geben
+    // Feedback Namen
     const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
+    
+    // In-App Meldung
     showAlert(`✅ ${modeNames[mode]}`);
 
-    // Test-Feedback abspielen
+    // 2. Audio-Test (Sofort abspielen)
     if ((mode === 'all' || mode === 'sound') && alertSound) {
         alertSound.volume = 1.0;
         alertSound.currentTime = 0;
         alertSound.play().catch(e => {});
     }
-    if ((mode === 'all' || mode === 'push') && navigator.vibrate) {
-        navigator.vibrate([50, 50, 50]);
+
+    // 3. ECHTER PUSH TEST (Das habe ich ergänzt!)
+    if (mode === 'all' || mode === 'push') {
+        // Vibration
+        if (navigator.vibrate) {
+            navigator.vibrate([50, 50, 50]); 
+        }
+
+        // Visuelle Nachricht anfordern
+        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification("🔔 Test erfolgreich!", {
+                    body: `Dein Modus "${modeNames[mode]}" ist aktiv.`,
+                    icon: "/app/icon-192.png",
+                    vibrate: [50, 50, 50], 
+                    tag: "test-push-feedback"
+                });
+            });
+        }
     }
 }
 
