@@ -1,16 +1,14 @@
 /* ==========================================================================
-   🚀 ALPHA OS - JARVIS PUSH CORE (Final Production Version)
+   🚀 ALPHA OS - JARVIS PUSH CORE (Final Production Version - MERGED)
    ========================================================================== */
 
 // 1. STATE & SETTINGS
-// Wir nutzen "var", um Konflikte im Global Scope zu vermeiden
 var currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
 var warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; 
-var systemActive = false;
+var systemActive = false; // Master Switch
 var lastTriggeredTime = ""; 
 
 // 2. CONFIG: Session Zeitplan (Minuten ab 00:00)
-// start = Beginn | end = Ende (Liquidität raus)
 const alarmSessions = [
     { name: "Sydney",           start: 1380, end: 480 },  // 23:00 - 08:00
     { name: "Tokyo",            start: 60,   end: 600 },  // 01:00 - 10:00
@@ -30,7 +28,7 @@ silentLoop.volume = 0.01;
 
 
 /* ==========================================================================
-   4. SETTINGS INTERFACE (Verbunden mit deinem HTML)
+   4. SETTINGS INTERFACE
    ========================================================================== */
 
 window.setNotifyMode = function(mode) {
@@ -38,7 +36,7 @@ window.setNotifyMode = function(mode) {
     localStorage.setItem("alphaNotifyMode", mode);
     updateNotifyUI();
     
-    // Kleines Feedback beim Umschalten
+    // Feedback
     if (mode !== 'off') {
         if (navigator.vibrate) navigator.vibrate(30);
         if ((mode === 'all' || mode === 'sound') && alarmSound) {
@@ -64,8 +62,8 @@ window.closeNotifySettings = function() {
     if(el) el.classList.add("hidden");
 };
 
-// UI-Status aktualisieren (Buttons färben)
 function updateNotifyUI() {
+    // Mode Buttons
     const modeBtns = document.querySelectorAll(".btn-notify");
     if(modeBtns) {
         modeBtns.forEach(btn => {
@@ -81,6 +79,7 @@ function updateNotifyUI() {
         });
     }
 
+    // Time Buttons
     const timeBtns = document.querySelectorAll(".btn-time");
     if(timeBtns) {
         timeBtns.forEach(btn => {
@@ -101,73 +100,66 @@ function updateNotifyUI() {
 
 
 /* ==========================================================================
-   5. SYSTEM START ENGINE
+   5. SYSTEM START ENGINE (INTEGRATED)
    ========================================================================== */
 
 window.activateAlarmSystem = function() {
-    if (systemActive) return;
+    const btn = document.getElementById("system-start-btn");
 
-    // Erlaubnis prüfen
-    Notification.requestPermission().then(perm => {
-        if (perm !== "granted") {
-            alert("⚠️ SYSTEM FEHLER: Benachrichtigungen nicht erlaubt! Bitte im Browser aktivieren.");
-        }
-    });
+    // FALL 1: System ist AUS -> Einschalten
+    if (!systemActive) {
+        // Erlaubnis prüfen
+        Notification.requestPermission().then(perm => {
+            if (perm !== "granted") {
+                alert("⚠️ SYSTEM FEHLER: Benachrichtigungen nicht erlaubt! Bitte im Browser aktivieren.");
+            }
+        });
 
-    // Motor starten
-    silentLoop.play().then(() => {
-        systemActive = true;
-        console.log("🚀 ALPHA OS: Hintergrund-System aktiv.");
-        
-        // Button Update (Falls vorhanden)
-        const btn = document.getElementById("system-start-btn");
-        if(btn) {
-            btn.innerHTML = "✅ SYSTEM AKTIV";
-            btn.style.background = "linear-gradient(135deg, #00ff00, #006600)";
-            btn.style.boxShadow = "0 0 25px rgba(0, 255, 0, 0.5)";
-            btn.style.color = "#000";
-            btn.style.border = "none";
-        }
-
-        // Initiale Bestätigung
-        window.triggerAlarm("AlphaOS Online", "Wach-Modus aktiviert. Warte auf Signale.");
-
-        // Wake Lock (Android Display anlassen Option)
-        if ('wakeLock' in navigator) {
-            navigator.wakeLock.request('screen').catch(e => console.log("WakeLock:", e));
-        }
-    }).catch(e => {
-        alert("⚠️ Fehler: Bitte einmal auf den Bildschirm tippen, um Audio zu erlauben!");
-    });
-};
-// Status-Variable, um zu wissen, ob das System läuft
-    let isSystemActive = false;
-
-    function activateAlarmSystem() {
-        const btn = document.getElementById('system-start-btn');
-        
-        if (!isSystemActive) {
-            // System aktivieren
-            isSystemActive = true;
-            btn.innerHTML = "✅ SYSTEM AKTIV (ONLINE)";
-            btn.style.background = "#0f0"; // Helles Grün für Aktivität
-            btn.style.color = "#000";       // Text schwarz für Kontrast
-            btn.style.borderColor = "#0a0";
-            btn.style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.6)";
+        // Audio Engine Starten (Wichtig für iOS/Android Hintergrund)
+        silentLoop.play().then(() => {
+            systemActive = true;
+            console.log("🚀 ALPHA OS: Hintergrund-System aktiv.");
             
-            console.log("System initialisiert. Status: ONLINE.");
-        } else {
-            // System deaktivieren (optional, falls Toggle gewünscht)
-            isSystemActive = false;
+            // UI Update: ON (Grün)
+            if(btn) {
+                btn.innerHTML = "✅ SYSTEM AKTIV (ONLINE)";
+                btn.style.background = "#0f0";
+                btn.style.color = "#000";
+                btn.style.borderColor = "#0a0";
+                btn.style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.6)";
+            }
+
+            // Initiale Bestätigung
+            window.triggerAlarm("AlphaOS Online", "Wach-Modus aktiviert. Warte auf Signale.");
+
+            // Wake Lock versuchen
+            if ('wakeLock' in navigator) {
+                navigator.wakeLock.request('screen').catch(e => console.log("WakeLock:", e));
+            }
+
+        }).catch(e => {
+            console.error(e);
+            alert("⚠️ Fehler: Bitte einmal fest auf den Bildschirm tippen, um Audio zu erlauben!");
+        });
+
+    // FALL 2: System ist AN -> Ausschalten
+    } else {
+        systemActive = false;
+        silentLoop.pause();
+        silentLoop.currentTime = 0;
+        console.log("🛑 ALPHA OS: System heruntergefahren.");
+
+        // UI Update: OFF (Grau/Rot)
+        if(btn) {
             btn.innerHTML = "🛑 SYSTEM STARTEN (OFFLINE)";
             btn.style.background = "#222";
             btn.style.color = "#fff";
             btn.style.borderColor = "#444";
             btn.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
-            
-            console.log("System heruntergefahren. Status: OFFLINE.");
         }
     }
+};
+
 
 /* ==========================================================================
    6. ZEIT-LOOP (Das Gehirn)
@@ -178,6 +170,7 @@ function getCurrentMinutes() {
     return now.getHours() * 60 + now.getMinutes();
 }
 
+// Einfache Sommerzeit-Erkennung für DE
 function isSummerTime() {
     const d = new Date();
     const year = d.getFullYear();
@@ -186,20 +179,21 @@ function isSummerTime() {
     return d >= march && d < october;
 }
 
-// Check alle 2 Sekunden
+// Heartbeat alle 2 Sekunden
 setInterval(() => {
+    // Wenn System aus, mach gar nichts
     if (!systemActive) return;
 
     const rawMinutes = getCurrentMinutes();
-    // DST Automatisch (Winterzeit Basis im Array angenommen)
+    // DST Offset (Hier +1h im Sommer, anpassbar je nach Broker-Zeit)
     const dstOffset = isSummerTime() ? 60 : 0;
     const nowString = new Date().toLocaleTimeString().slice(0, 5); 
 
-    // Nur 1x pro Minute feuern
+    // Spam-Schutz: Nur 1x pro Minute feuern
     if (nowString === lastTriggeredTime) return;
 
     alarmSessions.forEach(session => {
-        // Zeiten anpassen (Sommerzeit + Tagesüberlauf)
+        // Zeiten normalisieren
         let adjStart = (session.start + dstOffset) % 1440;
         let adjEnd = (session.end + dstOffset) % 1440;
 
@@ -215,7 +209,7 @@ setInterval(() => {
             lastTriggeredTime = nowString;
         }
 
-        // 3. VORWARNUNG (Next Session)
+        // 3. VORWARNUNG
         let warnTime = adjStart - warningMinutes;
         if (warnTime < 0) warnTime += 1440;
 
@@ -228,7 +222,7 @@ setInterval(() => {
 
 
 /* ==========================================================================
-   7. NOTIFICATION ENGINE (Sendet den Push)
+   7. NOTIFICATION ENGINE
    ========================================================================== */
 
 window.triggerAlarm = function(title, body) {
@@ -240,33 +234,30 @@ window.triggerAlarm = function(title, body) {
     if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alarmSound) {
         alarmSound.currentTime = 0;
         alarmSound.volume = 1.0;
-        alarmSound.play().catch(e => console.log("Audio blockiert (User Interaction fehlt)"));
+        alarmSound.play().catch(e => console.log("Audio Autoplay blockiert"));
     }
 
     // B. Push
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
         if (Notification.permission === "granted") {
             try {
-                // Standard Notification (zuverlässiger ohne PWA-Install)
                 const notif = new Notification(title, {
                     body: body,
                     icon: "https://cdn-icons-png.flaticon.com/512/1827/1827349.png", 
                     vibrate: [200, 100, 200, 100, 500],
-                    requireInteraction: true // Bleibt bis Klick
+                    requireInteraction: true 
                 });
                 
                 notif.onclick = function() { window.focus(); this.close(); };
 
             } catch (e) {
                 console.error("Push Error:", e);
-                // Fallback falls Push fehlschlägt
-                // alert(`🔔 ALARM: ${title}\n${body}`); 
             }
         }
     }
 };
 
-// Auto-Init beim Laden
+// Auto-Init UI beim Laden
 window.addEventListener("load", () => {
     updateNotifyUI();
 });
