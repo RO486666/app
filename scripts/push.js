@@ -1,15 +1,15 @@
 /* ==========================================================================
-   🚀 ALPHA OS - PUSH CORE (Logic + Settings + All Alarms)
+   🚀 ALPHA OS - PUSH CORE (Final Logic: Start, End, Warn)
    ========================================================================== */
 
-// 1. STATE & SETTINGS (Laden aus dem Speicher)
-let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
-let warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; 
-let systemActive = false;
-let lastTriggeredTime = ""; 
+// 1. STATE & SETTINGS
+// Wir nutzen "var" statt "let" im Global Scope, um Abstürze bei Doppel-Ladung zu verhindern
+var currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+var warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; 
+var systemActive = false;
+var lastTriggeredTime = ""; 
 
-// 2. CONFIG: Sessions mit START und ENDE (Minuten ab 00:00)
-// Wir brauchen 'end', damit wir dir sagen können, wann Feierabend ist.
+// 2. CONFIG: Alle Zeiten (Minuten ab 00:00)
 const alarmSessions = [
     { name: "Sydney",           start: 1380, end: 480 },  // 23:00 - 08:00
     { name: "Tokyo",            start: 60,   end: 600 },  // 01:00 - 10:00
@@ -17,7 +17,7 @@ const alarmSessions = [
     { name: "London Open",      start: 540,  end: 1020 }, // 09:00 - 17:00
     { name: "NY Killzone",      start: 810,  end: 1020 }, // 13:30 - 17:00
     { name: "New York Open",    start: 870,  end: 1320 }, // 14:30 - 22:00
-    { name: "London Close",     start: 1020, end: 1080 }, // 17:00 (Fixpunkt)
+    { name: "London Close",     start: 1020, end: 1080 }, // 17:00 Fix
     { name: "Deadzone",         start: 1380, end: 60 }    // 23:00 - 01:00
 ];
 
@@ -29,10 +29,9 @@ silentLoop.volume = 0.01;
 
 
 /* ==========================================================================
-   4. SETTINGS FUNKTIONEN (Global für dein HTML onclick)
+   4. SETTINGS FUNKTIONEN (Global für HTML onclick)
    ========================================================================== */
 
-// Modus ändern: onclick="setNotifyMode('all')"
 window.setNotifyMode = function(mode) {
     currentNotifyMode = mode;
     localStorage.setItem("alphaNotifyMode", mode);
@@ -46,27 +45,24 @@ window.setNotifyMode = function(mode) {
             alarmSound.play().catch(()=>{});
         }
     }
-    console.log(`🎛️ Modus geändert auf: ${mode}`);
+    console.log(`🎛️ Modus: ${mode}`);
 };
 
-// Zeit ändern: onclick="setWarningTime(5)"
 window.setWarningTime = function(mins) {
     warningMinutes = parseInt(mins);
     localStorage.setItem("alphaWarningTime", mins);
     updateNotifyUI();
-    
     if(navigator.vibrate) navigator.vibrate(30);
-    console.log(`⏱️ Vorwarnzeit: ${mins} min`);
+    console.log(`⏱️ Warnung vor: ${mins} min`);
 };
 
-// Panel schließen: onclick="closeNotifySettings()"
 window.closeNotifySettings = function() {
     const el = document.getElementById("panel-settings-notify");
     if(el) el.classList.add("hidden");
 };
 
-// UI Aktualisieren (Buttons färben)
 function updateNotifyUI() {
+    // Modus Buttons färben
     const modeBtns = document.querySelectorAll(".btn-notify");
     if(modeBtns) {
         modeBtns.forEach(btn => {
@@ -81,7 +77,7 @@ function updateNotifyUI() {
             }
         });
     }
-
+    // Zeit Buttons färben
     const timeBtns = document.querySelectorAll(".btn-time");
     if(timeBtns) {
         timeBtns.forEach(btn => {
@@ -102,17 +98,24 @@ function updateNotifyUI() {
 
 
 /* ==========================================================================
-   5. SYSTEM START (Der rote Button auf dem Dashboard)
+   5. SYSTEM START
    ========================================================================== */
 
 window.activateAlarmSystem = function() {
     if (systemActive) return;
 
+    // Browser-Erlaubnis anfragen (WICHTIG!)
+    Notification.requestPermission().then(perm => {
+        if (perm !== "granted") {
+            alert("⚠️ ACHTUNG: Du musst Benachrichtigungen ERLAUBEN, sonst geht nichts!");
+        }
+    });
+
     silentLoop.play().then(() => {
         systemActive = true;
-        console.log("🚀 SYSTEM ONLINE - ALARME SCHARF");
-        triggerAlarm("AlphaOS", "System aktiv. Start/Ende/Warnungen laufen.");
+        console.log("🚀 ALARM SYSTEM SCHARF.");
         
+        // Button grün färben
         const btn = document.getElementById("system-start-btn");
         if(btn) {
             btn.innerHTML = "✅ SYSTEM LÄUFT";
@@ -121,17 +124,20 @@ window.activateAlarmSystem = function() {
             btn.style.color = "#000";
         }
 
+        // Test-Alarm beim Start
+        window.triggerAlarm("AlphaOS", "System läuft. Start/Ende/Warnung aktiv.");
+
         if ('wakeLock' in navigator) {
             navigator.wakeLock.request('screen').catch(e => console.log("WakeLock:", e));
         }
     }).catch(e => {
-        alert("⚠️ Fehler: Bitte auf den Bildschirm tippen!");
+        alert("⚠️ Fehler: Tippe auf den Bildschirm, damit Sound abgespielt werden darf!");
     });
 };
 
 
 /* ==========================================================================
-   6. ZEIT & ALARM LOOP (Das Herzstück)
+   6. DER LOOP (Prüft Start, Ende, Warnung)
    ========================================================================== */
 
 function getCurrentMinutes() {
@@ -147,7 +153,7 @@ function isSummerTime() {
     return d >= march && d < october;
 }
 
-// Check alle 2 Sekunden
+// Loop läuft alle 2 Sekunden
 setInterval(() => {
     if (!systemActive) return;
 
@@ -155,32 +161,32 @@ setInterval(() => {
     const dstOffset = isSummerTime() ? 60 : 0;
     const nowString = new Date().toLocaleTimeString().slice(0, 5); 
 
-    // Nur 1x pro Minute feuern (Verhindert Dauerfeuer)
+    // Nur 1x pro Minute feuern
     if (nowString === lastTriggeredTime) return;
 
     alarmSessions.forEach(session => {
-        // Zeiten anpassen (Sommerzeit + Tagesüberlauf korrigieren)
+        // Zeiten berechnen
         let adjStart = (session.start + dstOffset) % 1440;
         let adjEnd = (session.end + dstOffset) % 1440;
 
         // 1. START ALARM
         if (rawMinutes === adjStart) {
-            triggerAlarm(`🚀 START: ${session.name}`, "Marktstruktur prüfen!");
+            window.triggerAlarm(`🚀 START: ${session.name}`, "Marktstruktur prüfen! Liquidity Sweep?");
             lastTriggeredTime = nowString;
         }
 
         // 2. ENDE ALARM
         if (rawMinutes === adjEnd) {
-            triggerAlarm(`🏁 ENDE: ${session.name}`, "Session beendet. Risk off.");
+            window.triggerAlarm(`🏁 ENDE: ${session.name}`, "Session beendet. Risk off. Gewinne sichern.");
             lastTriggeredTime = nowString;
         }
 
-        // 3. VORWARNUNG (Warning)
+        // 3. VORWARNUNG (Next Session)
         let warnTime = adjStart - warningMinutes;
         if (warnTime < 0) warnTime += 1440;
 
         if (rawMinutes === warnTime) {
-            triggerAlarm(`⚠️ BALD: ${session.name}`, `Startet in ${warningMinutes} Minuten.`);
+            window.triggerAlarm(`⚠️ BALD: ${session.name}`, `Startet in ${warningMinutes} Minuten. Bereite dich vor.`);
             lastTriggeredTime = nowString;
         }
     });
@@ -188,72 +194,47 @@ setInterval(() => {
 
 
 /* ==========================================================================
-   7. TRIGGER ENGINE (Robust & Debugging Version)
+   7. TRIGGER ENGINE (Bulletproof)
    ========================================================================== */
 
-function triggerAlarm(title, body) {
-    console.log(`⚡ TRIGGER BEFEHL ERHALTEN: ${title}`); // Debug Log
+window.triggerAlarm = function(title, body) {
+    if (currentNotifyMode === 'off') return;
 
-    // 1. Check: Ist Modus auf "OFF"?
-    if (currentNotifyMode === 'off') {
-        console.log("❌ Abbruch: Modus ist OFF");
-        return;
-    }
+    console.log(`🔔 TRIGGER: ${title}`);
 
-    // 2. Audio abspielen (Unabhängig von Push)
+    // A. Audio
     if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alarmSound) {
         alarmSound.currentTime = 0;
         alarmSound.volume = 1.0;
-        alarmSound.play()
-            .then(() => console.log("🔊 Audio spielt"))
-            .catch(e => console.warn("⚠️ Audio blockiert (User Interaction fehlt):", e));
+        alarmSound.play().catch(e => console.log("Audio blockiert"));
     }
 
-    // 3. Push Notification senden
+    // B. Push Notification
     if (currentNotifyMode === 'all' || currentNotifyMode === 'push') {
-        
-        // Haben wir überhaupt die Erlaubnis?
         if (Notification.permission === "granted") {
             try {
-                // Versuche Standard-Notification (funktioniert am zuverlässigsten ohne PWA Setup)
+                // Die einfachste, sicherste Methode
                 const notif = new Notification(title, {
                     body: body,
-                    icon: "https://cdn-icons-png.flaticon.com/512/1827/1827349.png", // Test-Icon aus dem Web (um Pfadfehler auszuschließen)
-                    vibrate: [200, 100, 200, 100, 200, 100, 400],
-                    requireInteraction: true, // Bleibt bis man klickt
-                    tag: "alpha-alarm" 
+                    icon: "https://cdn-icons-png.flaticon.com/512/1827/1827349.png", 
+                    vibrate: [200, 100, 200],
+                    requireInteraction: true
                 });
                 
-                notif.onclick = function() {
-                    window.focus();
-                    this.close();
-                };
-                
-                console.log("✅ Push gesendet via new Notification()");
+                notif.onclick = function() { window.focus(); this.close(); };
 
             } catch (e) {
-                console.error("❌ Push Fehler (Catch):", e);
-                alert(`ALARM: ${title}\n${body}`); // Fallback Alert, falls Push crasht
+                console.error("Push Error:", e);
+                // Fallback falls Push fehlschlägt (z.B. wegen file://)
+                alert(`🔔 ALARM: ${title}\n${body}`); 
             }
-        } else if (Notification.permission === "denied") {
-            console.error("⛔ Push verweigert! Bitte im Browser erlauben.");
-            alert("⚠️ ACHTUNG: Benachrichtigungen sind blockiert! Klicke auf das Schloss-Symbol in der Adressleiste.");
         } else {
-            console.log("❓ Push Berechtigung noch nicht angefragt.");
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    triggerAlarm(title, body); // Sofort nochmal versuchen
-                }
-            });
+            console.log("Push Berechtigung fehlt.");
         }
     }
-}
+};
 
-
-// Initialisierung beim Laden
+// Start
 window.addEventListener("load", () => {
     updateNotifyUI();
-    if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission();
-    }
 });
