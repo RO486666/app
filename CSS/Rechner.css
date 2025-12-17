@@ -554,3 +554,294 @@
     animation: none !important;
   }
 }
+
+
+
+/* ============================================================
+   📊 PAIR PROFILE EXTENSION
+   (Passt sich perfekt an deine Obsidian/Mana Global CSS an)
+   ============================================================ */
+
+/* 1. Container & Header Anpassung */
+/* Der Hauptcontainer #calc-pairProfile übernimmt bereits deine .calc-box Styles */
+
+#pairProfileBox h3 {
+  /* Nutzt deine Orbitron-Schrift */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  color: #e0f0ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+#pairProfileBox h3 span {
+  /* Der Untertitel */
+  font-family: 'Inter', sans-serif;
+  text-transform: none;
+  font-size: 0.75rem !important; /* Kleiner */
+  color: #8faab9 !important; /* Dein Label-Grau */
+  letter-spacing: 0;
+  margin-top: 6px;
+  opacity: 0.8;
+  font-weight: 400;
+  text-shadow: none;
+}
+
+/* 2. Session Filter & Dropdown Styling */
+/* Wir erzwingen den "Inset"-Look deiner Inputs auch hier */
+
+#sessionFilterSelect,
+#pairProfileSymbol {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  appearance: none; /* Entfernt Standard-Pfeil */
+  /* Custom Pfeil andeuten */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px top 50%;
+  background-size: 10px;
+}
+
+#sessionFilterSelect:focus,
+#pairProfileSymbol:focus {
+  background-color: rgba(0, 10, 20, 0.5);
+  border-color: rgba(0, 255, 255, 0.5);
+  color: #00ffff;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+}
+
+/* Container für den Filter (vom JS generiert) */
+#sessionFilterContainer {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px !important;
+}
+
+#sessionFilterContainer label {
+  margin: 0 !important; /* Reset margin */
+  margin-right: 12px !important;
+  color: #00ffff !important; /* Neon Label */
+}
+
+/* 3. Basis-Daten Grid (Das Dashboard) */
+#pairProfileBasics > div {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 Spalten */
+  gap: 12px;
+  margin-top: 15px !important;
+}
+
+#pairProfileBasics > div > div {
+  /* Kachel-Look */
+  background: linear-gradient(180deg, #1f252b, #15191d);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #8faab9;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Die Werte in den Kacheln */
+#pairProfileBasics span {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.1rem;
+  color: #e0f0ff;
+  margin-top: 4px;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(224, 240, 255, 0.2);
+}
+
+/* Speziell für Preise & Pips: Ein bisschen Neon */
+#pairProfilePrice, #pairProfilePip {
+  color: #aaddff !important;
+}
+
+/* ============================================================
+   🚀 HUD DASHBOARD STYLING (Sci-Fi Look)
+   ============================================================ */
+
+/* 1. VERHALTEN & CHARAKTERISTIK (Terminal Style) */
+#pairProfileText {
+    background: #0f1114; /* Sehr dunkel */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #00ffff; /* Neon Balken */
+    color: #aaddff;
+    font-family: 'Consolas', 'Monaco', monospace; /* Tech Font */
+    font-size: 0.85rem;
+    line-height: 1.6;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Scanline Effekt (optional, sehr subtil) */
+#pairProfileText::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: rgba(0, 255, 255, 0.1);
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+}
+@keyframes scanline { 0% {top:0} 100% {top:100%} }
+
+
+/* 2. DAS GRID SYSTEM (Kacheln) */
+.notes-grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: 1 Spalte */
+    gap: 16px;
+    margin-top: 20px;
+}
+/* Ab Tablet: 2 Spalten */
+@media (min-width: 650px) {
+    .notes-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* 3. DIE DATEN-KARTEN (Cards) */
+.note-card {
+    background: rgba(22, 26, 30, 0.8); /* Semi-transparent */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Lichtkante oben */
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hover Effekt: Karte hebt sich ab */
+.note-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 255, 255, 0.3);
+    box-shadow: 
+        0 10px 30px -10px rgba(0,0,0,0.8),
+        0 0 15px rgba(0, 255, 255, 0.05); /* Leichter Neon Glow */
+}
+
+
+/* 4. CARD HEADER (Überschrift) */
+.card-header {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+    padding: 10px 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #8faab9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+/* Die Icons im Header */
+.card-icon {
+    font-size: 1.1rem;
+    margin-right: 10px;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.4));
+}
+
+
+/* 5. CARD CONTENT (Der Inhalt) */
+.card-content {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+/* Einzelne Datenzeile */
+.data-row {
+    margin-bottom: 8px;
+    position: relative;
+    padding-left: 14px;
+}
+.data-row:last-child { margin-bottom: 0; }
+
+/* Custom Bullet Point */
+.bullet {
+    position: absolute;
+    left: 0;
+    color: #00ffff;
+    font-weight: bold;
+    top: 0px;
+}
+
+
+/* 6. HIGHLIGHTS (Die Neon-Farben im Text) */
+
+/* Sessions (Blau/Cyan) */
+.hl-session {
+    color: #fff;
+    background: rgba(0, 255, 255, 0.15);
+    padding: 0 4px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 5px rgba(0,255,255,0.1);
+}
+
+/* Tech Terms (Gold/Gelb) */
+.hl-tech {
+    color: #ffcc00;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
+}
+
+/* Danger Terms (Rot) */
+.hl-danger {
+    color: #ff4d4d;
+    font-weight: 600;
+    text-decoration: underline rgba(255, 77, 77, 0.5);
+}
+
+
+/* 7. GEFAHRZONEN KARTE SPEZIAL-STYLE */
+.note-card.danger-zone {
+    border-color: rgba(255, 50, 50, 0.3);
+    background: linear-gradient(145deg, rgba(40, 10, 10, 0.6), rgba(20, 10, 10, 0.8));
+}
+
+.note-card.danger-zone .card-header {
+    color: #ff4d4d;
+    border-bottom-color: rgba(255, 50, 50, 0.2);
+}
+
+.note-card.danger-zone .card-icon {
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6));
+}
+
+/* Empty State */
+.empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #555;
+    font-style: italic;
+    border: 1px dashed #333;
+    border-radius: 8px;
+}
