@@ -529,30 +529,7 @@
   </div>
 </section>
 
-<div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px dashed #444;">
-    
-    <h4 style="margin: 0 0 10px 0; color: #aaa; font-size: 12px; text-transform: uppercase;">
-        🔔 Notification Test (5s Delay)
-    </h4>
 
-    <select id="testSessionSelect" style="padding: 8px; border-radius: 6px; background: #222; color: #fff; border: 1px solid #444; margin-right: 5px;">
-        <option value="Sydney">Sydney</option>
-        <option value="Tokyo">Tokyo</option>
-        <option value="London">London</option>
-        <option value="New York">New York</option>
-        <option value="London Killzone">London Killzone</option>
-        <option value="New York Killzone">New York Killzone</option>
-    </select>
-
-    <button onclick="testSessionStart()" style="padding: 8px 12px; border-radius: 6px; border: none; background: #00aa00; color: white; cursor: pointer; font-weight: bold;">
-        ▶ Start
-    </button>
-
-    <button onclick="testSessionEnd()" style="padding: 8px 12px; border-radius: 6px; border: none; background: #aa0000; color: white; cursor: pointer; font-weight: bold;">
-        ⏹ Ende
-    </button>
-
-</div>
     <!-- ============================================================
          🧠 CONFLUENCE CHECKLIST PANEL
        ============================================================ -->
@@ -839,7 +816,7 @@
 
 </section>
 
-    <!-- ============================================================
+   <!-- ============================================================
          📊 PAIR PROFILE PANEL
        ============================================================ -->
     <section id="calc-pairProfile" class="panel hidden">
@@ -861,44 +838,37 @@
 
           <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
 
-          <!-- 🔥 FIX: Wrapper hinzugefügt -->
-          <div class="pair-select-wrapper">
-            <select id="pairProfileSymbol">
-              <option value="">– Bitte Paar wählen –</option>
-            </select>
-          </div>
-          <!-- 🔥 FIX ENDE -->
 
-          <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
-            <strong>Basis-Daten:</strong>
-            <div style="margin-top: 6px;">
-              <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
-              <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
-              <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
-              <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
-            </div>
-          </div>
+    
 
-          <div
-            id="pairProfileBehavior"
-            style="margin-top: 15px; font-size: 14px; line-height: 1.5;"
-          >
-            <strong>Verhalten & Charakteristik:</strong>
-            <p id="pairProfileText" style="margin-top: 6px;"></p>
-          </div>
+    <div class="pair-select-wrapper">
+      <select id="pairProfileSymbol">
+        <option value="">– Bitte Paar wählen –</option>
+      </select>
+    </div>
 
-          <div
-            id="pairProfileNotes"
-            style="margin-top: 15px; font-size: 13px; color: #ccc;"
-          >
-            <strong>Setup-Notizen:</strong>
-            <ul
-              id="pairProfileNotesList"
-              style="margin-top: 6px; padding-left: 18px;"
-            ></ul>
-          </div>
-        </div>
-      </section>
+    <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
+      <strong>Basis-Daten:</strong>
+      <div style="margin-top: 6px;">
+        <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
+        <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
+        <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
+        <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
+      </div>
+    </div>
+
+    <div id="pairProfileBehavior" style="margin-top: 15px; font-size: 14px; line-height: 1.5;">
+      <strong>Verhalten & Charakteristik:</strong>
+      <p id="pairProfileText" style="margin-top: 6px; color: #ddd;"></p>
+    </div>
+
+    <div id="pairProfileNotes" style="margin-top: 15px; font-size: 13px; color: #ccc;">
+      <strong>Setup-Notizen:</strong>
+      <ul id="pairProfileNotesList" style="margin-top: 6px; padding-left: 18px;"></ul>
+    </div>
+
+  </div>
+</section>
 
     <!-- ============================================================
          📄 STEUER/NETTO PLANER
