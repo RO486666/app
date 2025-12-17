@@ -140,7 +140,34 @@ window.activateAlarmSystem = function() {
         alert("⚠️ Fehler: Bitte einmal auf den Bildschirm tippen, um Audio zu erlauben!");
     });
 };
+// Status-Variable, um zu wissen, ob das System läuft
+    let isSystemActive = false;
 
+    function activateAlarmSystem() {
+        const btn = document.getElementById('system-start-btn');
+        
+        if (!isSystemActive) {
+            // System aktivieren
+            isSystemActive = true;
+            btn.innerHTML = "✅ SYSTEM AKTIV (ONLINE)";
+            btn.style.background = "#0f0"; // Helles Grün für Aktivität
+            btn.style.color = "#000";       // Text schwarz für Kontrast
+            btn.style.borderColor = "#0a0";
+            btn.style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.6)";
+            
+            console.log("System initialisiert. Status: ONLINE.");
+        } else {
+            // System deaktivieren (optional, falls Toggle gewünscht)
+            isSystemActive = false;
+            btn.innerHTML = "🛑 SYSTEM STARTEN (OFFLINE)";
+            btn.style.background = "#222";
+            btn.style.color = "#fff";
+            btn.style.borderColor = "#444";
+            btn.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
+            
+            console.log("System heruntergefahren. Status: OFFLINE.");
+        }
+    }
 
 /* ==========================================================================
    6. ZEIT-LOOP (Das Gehirn)
