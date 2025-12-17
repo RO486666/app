@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🚀 ALPHA OS - JARVIS PUSH CORE (Final Production Version - MERGED)
+   🚀 ALPHA OS - JARVIS PUSH CORE (ADAPTED FOR YOUR HTML)
    ========================================================================== */
 
 // 1. STATE & SETTINGS
@@ -22,6 +22,7 @@ const alarmSessions = [
 
 // 3. AUDIO ENGINE (Silent Loop & Alarm)
 const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+// Base64 für den Hintergrund-Prozess (WICHTIG!)
 const silentLoop = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD//////////////////////////////////////////////////////////////////wAAAP9MYXZjNTguNTQuMTAwAAAAAAAAAAAAIkcAAAAAAAABIAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAqv9HIjEFLQXAAAAAAAAAAAA0gAAAAATI7LrAAAB5iAAADSAAAAABMjsusAAAHmIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAqv9HIjEFLQXAAAAAAAAAAAA0gAAAAATI7LrAAAB5iAAADSAAAAABMjsusAAAHmIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
 silentLoop.loop = true; 
 silentLoop.volume = 0.01;
@@ -63,59 +64,57 @@ window.closeNotifySettings = function() {
 };
 
 function updateNotifyUI() {
-    // Mode Buttons
+    // Buttons aktualisieren (falls im HTML vorhanden)
     const modeBtns = document.querySelectorAll(".btn-notify");
-    if(modeBtns) {
-        modeBtns.forEach(btn => {
-            if (btn.dataset.mode === currentNotifyMode) {
-                btn.classList.add("active");
-                btn.style.border = "2px solid #00ffcc";
-                btn.style.background = "rgba(0, 255, 204, 0.1)";
-            } else {
-                btn.classList.remove("active");
-                btn.style.border = "1px solid #333";
-                btn.style.background = "transparent";
-            }
-        });
-    }
+    modeBtns.forEach(btn => {
+        if (btn.dataset.mode === currentNotifyMode) {
+            btn.classList.add("active");
+            btn.style.border = "2px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.1)";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #333";
+            btn.style.background = "transparent";
+        }
+    });
 
-    // Time Buttons
     const timeBtns = document.querySelectorAll(".btn-time");
-    if(timeBtns) {
-        timeBtns.forEach(btn => {
-            if (parseInt(btn.dataset.time) === warningMinutes) {
-                btn.classList.add("active");
-                btn.style.border = "1px solid #00ffcc";
-                btn.style.background = "rgba(0, 255, 204, 0.15)";
-                btn.style.color = "#00ffcc";
-            } else {
-                btn.classList.remove("active");
-                btn.style.border = "1px solid #444";
-                btn.style.background = "transparent";
-                btn.style.color = "#fff";
-            }
-        });
-    }
+    timeBtns.forEach(btn => {
+        if (parseInt(btn.dataset.time) === warningMinutes) {
+            btn.classList.add("active");
+            btn.style.border = "1px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.15)";
+            btn.style.color = "#00ffcc";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #444";
+            btn.style.background = "transparent";
+            btn.style.color = "#fff";
+        }
+    });
 }
 
 
 /* ==========================================================================
-   5. SYSTEM START ENGINE (INTEGRATED)
+   5. SYSTEM START ENGINE (Hier ist die Anpassung!)
    ========================================================================== */
 
 window.activateAlarmSystem = function() {
+    // HOLT SICH DEINE HTML ELEMENTE
     const btn = document.getElementById("system-start-btn");
+    const log = document.getElementById("status-log");
 
     // FALL 1: System ist AUS -> Einschalten
     if (!systemActive) {
-        // Erlaubnis prüfen
+        
+        // Erlaubnis für Push anfragen
         Notification.requestPermission().then(perm => {
             if (perm !== "granted") {
-                alert("⚠️ SYSTEM FEHLER: Benachrichtigungen nicht erlaubt! Bitte im Browser aktivieren.");
+                alert("⚠️ Browser blockiert Benachrichtigungen. Bitte manuell erlauben!");
             }
         });
 
-        // Audio Engine Starten (Wichtig für iOS/Android Hintergrund)
+        // Audio Engine Starten (Silent Loop für Mobile Background)
         silentLoop.play().then(() => {
             systemActive = true;
             console.log("🚀 ALPHA OS: Hintergrund-System aktiv.");
@@ -129,10 +128,16 @@ window.activateAlarmSystem = function() {
                 btn.style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.6)";
             }
 
-            // Initiale Bestätigung
+            // Status Log Update (NEU)
+            if(log) {
+                log.innerText = "🚀 ALPHA OS: ONLINE - Scanne Märkte...";
+                log.style.color = "#0f0";
+            }
+
+            // Initiale Bestätigung (Piep)
             window.triggerAlarm("AlphaOS Online", "Wach-Modus aktiviert. Warte auf Signale.");
 
-            // Wake Lock versuchen
+            // Wake Lock (Bildschirm anlassen, wichtig für Mobile)
             if ('wakeLock' in navigator) {
                 navigator.wakeLock.request('screen').catch(e => console.log("WakeLock:", e));
             }
@@ -157,6 +162,12 @@ window.activateAlarmSystem = function() {
             btn.style.borderColor = "#444";
             btn.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
         }
+
+        // Status Log Update (NEU)
+        if(log) {
+            log.innerText = "🛑 System gestoppt.";
+            log.style.color = "#666";
+        }
     }
 };
 
@@ -170,7 +181,6 @@ function getCurrentMinutes() {
     return now.getHours() * 60 + now.getMinutes();
 }
 
-// Einfache Sommerzeit-Erkennung für DE
 function isSummerTime() {
     const d = new Date();
     const year = d.getFullYear();
@@ -185,7 +195,6 @@ setInterval(() => {
     if (!systemActive) return;
 
     const rawMinutes = getCurrentMinutes();
-    // DST Offset (Hier +1h im Sommer, anpassbar je nach Broker-Zeit)
     const dstOffset = isSummerTime() ? 60 : 0;
     const nowString = new Date().toLocaleTimeString().slice(0, 5); 
 
@@ -193,7 +202,6 @@ setInterval(() => {
     if (nowString === lastTriggeredTime) return;
 
     alarmSessions.forEach(session => {
-        // Zeiten normalisieren
         let adjStart = (session.start + dstOffset) % 1440;
         let adjEnd = (session.end + dstOffset) % 1440;
 
@@ -247,9 +255,7 @@ window.triggerAlarm = function(title, body) {
                     vibrate: [200, 100, 200, 100, 500],
                     requireInteraction: true 
                 });
-                
                 notif.onclick = function() { window.focus(); this.close(); };
-
             } catch (e) {
                 console.error("Push Error:", e);
             }
