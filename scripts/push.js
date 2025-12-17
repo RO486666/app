@@ -195,6 +195,310 @@ setInterval(() => {
     });
 }, 2000);
 
+/* ==========================================================================
+   🚀 PUSH.JS - ALARM & NOTIFICATION ENGINE
+   ========================================================================== */
+
+// DOM Referenz für visuellen Alert
+const alertBox = document.getElementById("alertBox");
+
+// 1. STATE & AUDIO
+const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+let warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5;
+
+// Status-Variablen für Alarm-Trigger
+let lastAlertSession = null;
+let lastActiveSessionState = "";
+let isFirstLoad = true;
+
+/* ==========================================================================
+   2. SETTINGS INTERFACE (Aufrufbar aus HTML)
+   ========================================================================== */
+
+window.setNotifyMode = function(mode) {
+    currentNotifyMode = mode;
+    localStorage.setItem("alphaNotifyMode", mode);
+    updateNotifyUI();
+    
+    const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
+    showAlert(`✅ ${modeNames[mode]}`);
+
+    // Audio Test
+    if ((mode === 'all' || mode === 'sound') && alertSound) {
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => console.log("Audio Autoplay blockiert"));
+    }
+    // Push Test
+    if (mode === 'all' || mode === 'push') {
+        if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        if (Notification.permission === "granted") {
+            new Notification("🔔 Test", { body: `Modus: ${modeNames[mode]}`, icon: "/app/icon-192.png" });
+        }
+    }
+};
+
+window.setWarningTime = function(mins) {
+    warningMinutes = parseInt(mins);
+    localStorage.setItem("alphaWarningTime", mins);
+    updateNotifyUI();
+    
+    if(navigator.vibrate) navigator.vibrate(30);
+    console.log(`Vorwarnzeit gesetzt auf: ${mins} Minuten`);
+};
+
+window.closeNotifySettings = function() {
+    const p = document.getElementById("panel-settings-notify");
+    if(p) p.classList.add("hidden");
+};
+
+// UI Aktualisierung für Buttons
+function updateNotifyUI() {
+    const modeBtns = document.querySelectorAll(".btn-notify");
+    modeBtns.forEach(btn => {
+        if (btn.dataset.mode === currentNotifyMode) {
+            btn.classList.add("active");
+            btn.style.border = "2px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.1)";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #333";
+            btn.style.background = "transparent";
+        }
+    });
+
+    const timeBtns = document.querySelectorAll(".btn-time");
+    timeBtns.forEach(btn => {
+        if (parseInt(btn.dataset.time) === warningMinutes) {
+            btn.classList.add("active");
+            btn.style.border = "1px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.15)";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #444";
+            btn.style.background = "transparent";
+        }
+    });
+}
+
+// Initialer Load der UI
+window.addEventListener("load", () => {
+    requestNotificationPermission();
+    updateNotifyUI();
+});
+
+/* ==========================================================================
+   3. NOTIFICATION LOGIC
+   ========================================================================== */
+
+function requestNotificationPermission() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+}
+
+function showAlert(msg) {
+    if (alertBox) {
+        alertBox.textContent = msg;
+        alertBox.style.display = "block";
+        setTimeout(() => { alertBox.style.display = "none"; }, 5000);
+    }
+    console.log("ALERT:", msg);
+}
+
+// 🔥 SESSION START ALARM
+function showSessionStartNotification(name, info) {
+    if (currentNotifyMode === 'off') return;
+    const title = `AlphaOS: ${name} gestartet!`;
+    const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100) + "...";
+
+    // Push
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && Notification.permission === "granted") {
+        new Notification(title, { body: cleanInfo, icon: "/app/icon-192.png", vibrate: [200, 100, 200] });
+    }
+    // Audio
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(()=>{});
+    }
+}
+
+// 🔥 SESSION ENDE ALARM
+function showSessionEndNotification(name) {
+    if (currentNotifyMode === 'off') return;
+    const title = `AlphaOS: ${name} Beendet`;
+
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && Notification.permission === "granted") {
+        new Notification(title, { body: "Liquidität sinkt.", icon: "/app/icon-192.png", vibrate: [100, 50, 100] });
+    }
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        alertSound.volume = 0.5;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(()=>{});
+    }
+}
+
+// 🔥 VORWARNUNG ALARM
+function showSessionWarningNotification(name, minutes) {
+    if (currentNotifyMode === 'off') return;
+    const title = `AlphaOS: ${name} bald!`;
+    const bodyText = `Startet in ${minutes} Minuten.`;
+
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && Notification.permission === "granted") {
+        new Notification(title, { body: bodyText, icon: "/app/icon-192.png", vibrate: [50, 50] });
+    }
+    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
+        alertSound.volume = 0.3;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(()=>{});
+    }
+}
+
+/* ==========================================================================
+   2. EINSTELLUNGEN & ALARME (JETZT MIT ZEIT-AUSWAHL)
+   ========================================================================== */
+
+// Einstellungen laden
+let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+let warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; // Standard: 5 Min
+
+// Modus setzen (Alles an, Push, etc.)
+function setNotifyMode(mode) {
+    currentNotifyMode = mode;
+    localStorage.setItem("alphaNotifyMode", mode);
+    updateNotifyUI();
+    
+    const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
+    showAlert(`✅ ${modeNames[mode]}`);
+
+    // Audio Test
+    if ((mode === 'all' || mode === 'sound') && alertSound) {
+        alertSound.volume = 1.0;
+        alertSound.currentTime = 0;
+        alertSound.play().catch(e => console.log("Audio Autoplay blockiert"));
+    }
+    // Push Test
+    if (mode === 'all' || mode === 'push') {
+        if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification("🔔 Test erfolgreich!", {
+                    body: `Modus: ${modeNames[mode]}`,
+                    icon: "/app/icon-192.png",
+                    vibrate: [50, 50, 50],
+                    tag: "test-feedback"
+                });
+            });
+        }
+    }
+}
+
+// ⏳ Vorwarnzeit setzen (5, 10, 30, 60)
+function setWarningTime(mins) {
+    warningMinutes = mins;
+    localStorage.setItem("alphaWarningTime", mins);
+    updateNotifyUI();
+    
+    if(navigator.vibrate) navigator.vibrate(30);
+    console.log(`Vorwarnzeit gesetzt auf: ${mins} Minuten`);
+}
+
+// UI Aktualisieren
+function updateNotifyUI() {
+    // 1. Modus Buttons
+    const btns = document.querySelectorAll(".btn-notify");
+    btns.forEach(btn => {
+        if (btn.dataset.mode === currentNotifyMode) {
+            btn.classList.add("active");
+            btn.style.border = "2px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.1)";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #333";
+            btn.style.background = "transparent";
+        }
+    });
+
+    // 2. Zeit Buttons
+    const timeBtns = document.querySelectorAll(".btn-time");
+    timeBtns.forEach(btn => {
+        if (parseInt(btn.dataset.time) === warningMinutes) {
+            btn.classList.add("active");
+            btn.style.border = "1px solid #00ffcc";
+            btn.style.background = "rgba(0, 255, 204, 0.15)";
+            btn.style.color = "#00ffcc";
+        } else {
+            btn.classList.remove("active");
+            btn.style.border = "1px solid #444";
+            btn.style.background = "transparent";
+            btn.style.color = "#fff";
+        }
+    });
+}
+
+function closeNotifySettings() {
+    const p = document.getElementById("panel-settings-notify");
+    if(p) p.classList.add("hidden");
+}
+
+/* ==========================================================================
+   4. TRIGGER ENGINE (Verbindung zur Main JS)
+   ========================================================================== */
+
+// Diese Funktion wird von der Main JS jede Minute aufgerufen
+window.checkAndTriggerAlarms = function(activeSessions, minutesNow) {
+    
+    // 1. Namen sammeln
+    const currentNamesList = activeSessions.map(s => s.name);
+    const currentSessionString = currentNamesList.join(",");
+    const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
+
+    // 2. Change Detection (Start/Ende)
+    if (isFirstLoad) {
+        lastActiveSessionState = currentSessionString;
+        isFirstLoad = false; 
+    } else if (currentSessionString !== lastActiveSessionState) {
+        
+        // Check Start
+        const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
+        if (newSession) {
+            showSessionStartNotification(newSession.name, newSession.info);
+            showAlert(`🚀 START: ${newSession.name}`);
+        }
+        
+        // Check Ende
+        const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
+        if (endedSessionName) {
+            showSessionEndNotification(endedSessionName);
+            showAlert(`🏁 ENDE: ${endedSessionName}`);
+        }
+        
+        lastActiveSessionState = currentSessionString;
+    }
+
+    // 3. Vorwarnung (Nutzt Helper aus Main JS)
+    // Wir prüfen, ob die Helper existieren
+    if (window.getMinutesToNextSession && window.getNextSessionInfo) {
+        const minutesToNext = window.getMinutesToNextSession(minutesNow);
+        
+        if (minutesToNext <= warningMinutes && minutesToNext > 0) {
+            const nextInfo = window.getNextSessionInfo(minutesNow);
+            if (nextInfo && nextInfo.session) {
+                const warningKey = `warn-${nextInfo.session.name}-${warningMinutes}`;
+                if (lastAlertSession !== warningKey) {
+                    showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in ${minutesToNext} Min!`);
+                    showSessionWarningNotification(nextInfo.session.name, minutesToNext);
+                    lastAlertSession = warningKey;
+                }
+            }
+        } else {
+            if (minutesToNext > warningMinutes) lastAlertSession = null;
+        }
+    }
+};
+
 
 /* ==========================================================================
    7. NOTIFICATION ENGINE
