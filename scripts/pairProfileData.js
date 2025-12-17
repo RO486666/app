@@ -1,327 +1,357 @@
 /* ==========================================================
-   📘 PAIR PROFILE DATABASE – by Roman
+   📘 PAIR PROFILE DATABASE – FINAL SMC VERSION
+   Optimized for Killzone-Filtering & Institutional Orderflow
    ========================================================== */
 
 const pairProfileDB = {
 
   /* ==========================================================
-     🔥 MAJORS
+      🔥 MAJORS
   ========================================================== */
 
 "EUR/USD": {
-  behavior: "Liquidestes Paar. Ruhiger Flow. Sehr sauberer Trendverlauf.",
-  bestSessions: ["London"],
-  bestDays: ["Mittwoch", "Freitag"],
+  behavior: "Liquidestes Paar. Respektiert PD-Arrays (Premium/Discount) extrem genau.",
+  bestSessions: ["London", "London Killzone", "NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Mittel",
-  riskLevel: "Niedrig–Mittel",
+  riskLevel: "Niedrig",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Typischer London Judas 7:55–8:15",
-    "• Perfekt für Liquidity Grab → Displacement",
-    "• Sehr zuverlässige Fair Value Gaps in 5M, 15M",
-    "• Häufiger Sweep der Asia High/Low vor Trendstart",
+    "• Klassischer Judas Swing: London 08:00–09:00 oder NY 13:30–14:30",
+    "• OTE (Optimal Trade Entry) funktioniert hier am besten",
+    "• Sweep von Asia High/Low ist oft der Startschuss",
+    "• SMT Divergenz mit DXY (Dollar Index) ist das stärkste Signal",
 
     "🕒 Tagesstruktur:",
-    "• 07:00–10:00 — Strukturaufbau (HL/LH)",
-    "• 10:00–13:00 — Trendphase",
-    "• 15:00–17:00 — NY Retracement",
-    "• 18:00+ — Momentum fällt stark",
+    "• 07:00–10:00 — London Killzone (Setup & Expansion)",
+    "• 10:00–12:00 — Konsolidierung",
+    "• 13:30–16:00 — NY Killzone & News",
 
     "🌍 Sessions:",
-    "• London — Haupttrendrichtung + sauberste Moves",
-    "• NY — kleinere Sweeps + Erweiterung/Continuation",
-    "• Tokyo — Range, guter Manipulations-Bereich",
+    "• London Killzone — Die echte Richtung wird oft hier gesetzt",
+    "• NY Killzone — Sucht Liquidität (Sweeps) und setzt Trend fort",
 
     "⚠️ Gefahrzonen:",
-    "• 10:00 EU News → harte Spikes",
-    "• 14:30 US News → Volatilitätsschock",
-    "• 15:30 NY Open → Fakeouts möglich",
+    "• 14:30 US News (Tödliche Spikes)",
+    "• EZB Zinsentscheide (Donnerstag)",
 
     "🎯 Ideal-Setups:",
-    "• London Killzone — FVG Entry",
-    "• Breaker Block nach Asia Sweep",
-    "• NY Retracement in Discount/Premium Zone"
+    "• London Killzone FVG Entry",
+    "• Breaker Block Retest nach Asia-Sweep",
+    "• 15M Orderflow Continuation"
   ]
 },
-
 
 "GBP/USD": {
-  behavior: "Sehr volatil in London & NY. Viele Sweeps und starke Impulse.",
-  bestSessions: ["London", "NY Overlap"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Mittel–Hoch",
-  riskLevel: "Hoch",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Extrem ausgeprägter Judas Move (London 8:00–9:00)",
-    "• Häufig Stop-Hunts an psychologischen Levels (00/50)",
-    "• Reagiert brutal auf Liquidity Pools",
-    "• Sehr impulsive MSS Moves",
-
-    "🕒 Tagesstruktur:",
-    "• 08:00–10:00 — London Engine Move",
-    "• 11:00–13:00 — Konsolidierung",
-    "• 15:00–17:00 — Zweite Trendwelle",
-
-    "🌍 Sessions:",
-    "• London — größte Moves des Tages",
-    "• NY Overlap — oft Reversals",
-    "• Tokyo — kaum relevant",
-
-    "⚠️ Gefahrzonen:",
-    "• 10:30 UK News (CPI, PMI) → Explosion",
-    "• 14:30 US News → Killerbewegungen",
-    "• 15:30 NY Open → Sweeps garantiert",
-
-    "🎯 Ideal-Setups:",
-    "• London Liquidity Grab → Continuation",
-    "• NY Overlap Reversal Setups",
-    "• FVG + Breaker Combo nach Sweep"
-  ]
-},
-
-
- "AUD/USD": {
-  behavior: "Ruhiger Trend. Saubere Bewegungen, reagiert auf Sydney/Tokyo.",
-  bestSessions: ["Tokyo", "Sydney"],
-  bestDays: ["Dienstag", "Mittwoch"],
-  volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr strukturierter Flow, wenig Chaos",
-    "• FVGs im LTF werden fast immer respektiert",
-    "• Reagiert stark auf Asia Range Liquidity",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–06:00 — Trendaufbau",
-    "• 07:00–10:00 — Manipulation",
-    "• 10:00–14:00 — London Fortsetzung",
-
-    "🌍 Sessions:",
-    "• Tokyo — sauberster Trend",
-    "• London — trendverstärkend",
-    "• NY — oft Range",
-
-    "⚠️ Gefahrzonen:",
-    "• RBA News → große Spikes",
-    "• Asia Session High/Low Sweeps",
-
-    "🎯 Ideal-Setups:",
-    "• Asia Breakout → London Continuation",
-    "• HL/LH im LTF mit FVG",
-    "• Swing Structure Entries"
-  ]
-},
-
-
-"NZD/USD": {
-  behavior: "Sehr sauberer Trend. Ähnlich zu AUD/USD.",
-  bestSessions: ["Tokyo", "Sydney"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr gute Trendstruktur",
-    "• Liquidity Sweeps extrem sauber",
-    "• Reagiert stark auf Premium/Discount Levels",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–06:00 — Haupttrend",
-    "• 10:00–13:00 — London Retracement",
-    "• 15:00–17:00 — NY Auslaufen",
-
-    "🌍 Sessions:",
-    "• Tokyo — beste Moves",
-    "• London — Pullbacks",
-    "• NY — langsam",
-
-    "⚠️ Gefahrzonen:",
-    "• RBNZ News → harte Bewegungen",
-    "• Geringe Liquidität → Slippage möglich",
-
-    "🎯 Ideal-Setups:",
-    "• Tokyo HL/LH → Entry",
-    "• LTF MSS nach Sweep",
-    "• FVG Trendfortsetzung"
-  ]
-},
-
-
-  "USD/CHF": {
-  behavior: "Sehr ruhiges Paar. Wenig Fakeouts. Gute Pullbacks.",
-  bestSessions: ["London", "NY"],
-  bestDays: ["Mittwoch"],
-  volatility: "Niedrig",
-  riskLevel: "Sehr niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr 'saubere' Liquidity Runs",
-    "• Kaum Judas Moves",
-    "• Reagiert stark auf HTF Levels",
-
-    "🕒 Tagesstruktur:",
-    "• 07:00–12:00 — Haupttrend",
-    "• 14:00–16:00 — US Nachrichten",
-    "• 17:00+ — Stillstand",
-
-    "🌍 Sessions:",
-    "• London — beste Struktur",
-    "• NY — solider Trendfortsatz",
-    "• Tokyo — tot",
-
-    "⚠️ Gefahrzonen:",
-    "• News (FOMC etc.) können stärkeren Impact haben",
-
-    "🎯 Ideal-Setups:",
-    "• Pullback an HTF Block",
-    "• MSS nach Sweep",
-    "• Trendfolgende FVG Entries"
-  ]
-},
-
-
-"USD/CAD": {
-  behavior: "News-Sensibel wegen Ölpreis. Viele Sweeps.",
-  bestSessions: ["NY"],
-  bestDays: ["Mittwoch", "Freitag"],
+  behavior: "Das 'Cable'. Volatil, aggressiv, liebt tiefe Stop-Hunts.",
+  bestSessions: ["London", "London Killzone", "NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Mittel–Hoch",
   riskLevel: "Mittel–Hoch",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Liquidity Sweeps extrem häufig",
-    "• Trendwechsel oft nach Öl-News",
-    "• Oft Judas Move 14:30 NY Zeit",
+    "• Macht oft tiefere Retracements als EUR/USD",
+    "• Aggressive Sweeps an psychologischen Levels (1.2500)",
+    "• Turtle Soup Setups (False Breakouts) sind sehr häufig",
+    "• Reagiert explosiv auf GBP CPI und US NFP",
 
     "🕒 Tagesstruktur:",
-    "• 10:00–13:00 — NY Pre-Open",
-    "• 14:30 — Riesige Bewegungen",
-    "• 16:00 — Umkehrpunkte",
+    "• 08:00–10:00 — London Killzone (Große Moves)",
+    "• 14:00–16:30 — NY Killzone & Reversals",
 
     "🌍 Sessions:",
-    "• NY — beste Moves",
-    "• London — chaotisch",
-    "• Tokyo — uninteressant",
+    "• London — Hier passiert die Magie",
+    "• NY — Oft komplette Umkehr des London-Trends",
 
     "⚠️ Gefahrzonen:",
-    "• Ölpreis News (WTI)",
-    "• CAD CPI, Rate Decisions",
+    "• 08:00 London Open (Fakeout Gefahr)",
+    "• Bank of England (BoE) News",
 
     "🎯 Ideal-Setups:",
-    "• Liquidity Grab → MSS",
-    "• 14:30 FVG Entry",
-    "• Breaker nach News-Sweep"
+    "• London Open Judas Swing",
+    "• Power of 3 (Accumulation-Manipulation-Distribution)",
+    "• FVG + Breaker Combo nach Liquiditätsabgriff"
   ]
 },
 
-"USD/JPY": {
-  behavior: "Explosiv in Tokyo & NY. Extrem starke Momentum-Phasen.",
-  bestSessions: ["Tokyo", "NY"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Hoch",
-  riskLevel: "Hoch",
+"AUD/USD": {
+  behavior: "Commodity-Währung. Hängt an Gold. Ruhiger Trend.",
+  bestSessions: ["Tokyo", "Sydney", "London"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Niedrig–Mittel",
+  riskLevel: "Niedrig",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Sehr schnelle Displacements",
-    "• Trendmonster — läuft oft 300+ Pips",
-    "• Sweeps typisch am Tageshoch/-tief",
+    "• Respektiert 15M/1H Orderblocks sehr sauber",
+    "• Weniger 'fiese' Wicks als GBP",
+    "• Korreliert oft positiv mit Gold (XAU/USD)",
+    "• Asia Session ist hier oft keine Range, sondern Trend!",
 
     "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — starke Trendphasen",
-    "• 15:30 — NY Open Spikes",
-    "• Abends — Konsolidierung",
+    "• 01:00–06:00 — Echter Trend möglich (Sydney/Tokyo)",
+    "• 09:00–11:00 — London Fortsetzung",
 
     "🌍 Sessions:",
-    "• Tokyo — stärkste Moves",
-    "• NY — zweite Trendwelle",
-    "• London — Zufall",
+    "• Sydney/Tokyo — Hauptvolumen",
+    "• London — Gut für Retracements",
 
     "⚠️ Gefahrzonen:",
-    "• BoJ News → tödliche Volatilität",
-    "• Interventionen → 500 Pip Kerzen",
+    "• RBA Zinsentscheide (Nachts!)",
+    "• China Wirtschaftsdaten",
 
     "🎯 Ideal-Setups:",
-    "• Trendfortsetzung nach FVG",
-    "• MSS + Displacement",
-    "• Asia Sweep → London Run"
+    "• Asia Breakout & Retest",
+    "• Trendfolge im 15M Chart",
+    "• Swing Trading"
   ]
 },
 
-"GBP/CAD": {
-  behavior: "Sehr news-sensibel wegen CAD (Öl) + GBP (London). Viele Cross-Spikes.",
-  bestSessions: ["London", "NY"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Mittel–Hoch",
-  riskLevel: "Hoch",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Reagiert extrem auf CAD-Ölpreisbewegungen",
-    "• GBP-Judas Move wirkt verstärkt (Liquidity Sweeps überall)",
-    "• Trendwechsel oft nach CAD News (CPI, WTI Öl-Reports)",
-    "• Sehr saubere MSS nach starken Sweeps",
-
-    "🕒 Tagesstruktur:",
-    "• 08:00–10:00 — London Engine Move",
-    "• 14:30 — US + CAD News → harte Spikes",
-    "• 15:30 — NY Open → riesige Sweeps",
-
-    "🌍 Sessions:",
-    "• London — Hauptvolumen + klare Trendrichtung",
-    "• NY — Ölabhängige CAD-Impulse",
-    "• Tokyo — tot",
-
-    "⚠️ Gefahrzonen:",
-    "• Ölpreisbewegungen (WTI)",
-    "• 10:30 UK News",
-    "• 14:30 CAD/US Daten",
-    "• Cross Spread hoch → Slippage",
-
-    "🎯 Ideal-Setups:",
-    "• London HL/LH → MSS → FVG Entry",
-    "• CAD News Sweep → Reversal Richtung Trend",
-    "• 1H OB Rejection in London"
-  ]
-},
-
-"AUD/NZD": {
-  behavior: "Extrem ruhiges Paar, perfekte Struktur. Wenig Fakeouts.",
-  bestSessions: ["Tokyo"],
-  bestDays: ["Dienstag", "Mittwoch"],
+"NZD/USD": {
+  behavior: "Der kleine Bruder vom AUD. Sehr sauber, aber weniger Volumen.",
+  bestSessions: ["Tokyo", "Sydney"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Niedrig",
   riskLevel: "Niedrig",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Sehr stabile Trendstruktur",
+    "• Extrem technische Marktstruktur (Higher Highs / Lower Lows)",
+    "• Liquiditäts-Sweeps sind meist sehr präzise",
+    "• Reagiert stark auf Daily Bias",
+
+    "🕒 Tagesstruktur:",
+    "• 00:00–06:00 — Hauptbewegung",
+    "• 08:00–11:00 — London Fade",
+
+    "🌍 Sessions:",
+    "• Tokyo — Beste Chancen",
+    "• London/NY — Nur bei US News interessant",
+
+    "⚠️ Gefahrzonen:",
+    "• Geringe Liquidität (Slippage möglich)",
+    "• RBNZ News",
+
+    "🎯 Ideal-Setups:",
+    "• Tokyo Session Trends",
+    "• 4H Orderblock Rejections"
+  ]
+},
+
+"USD/CHF": {
+  behavior: "Der 'Swissy'. Negativ korreliert zu EUR/USD.",
+  bestSessions: ["London", "NY"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Niedrig",
+  riskLevel: "Sehr niedrig",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Spiegelbild zu EUR/USD (EUR hoch = CHF runter)",
+    "• Wirft oft lange Dojis / Wicks in Ranges",
+    "• Sehr gut für Hedging geeignet",
+    "• Safe Haven Währung",
+
+    "🕒 Tagesstruktur:",
+    "• 08:00–11:00 — London Struktur",
+    "• 14:00–16:00 — US Volatilität",
+
+    "🌍 Sessions:",
+    "• London & NY dominieren",
+    "• Tokyo irrelevant",
+
+    "⚠️ Gefahrzonen:",
+    "• SNB Interventionen (selten, aber extrem)",
+    "• Generell oft 'zäher' Markt",
+
+    "🎯 Ideal-Setups:",
+    "• SMT Divergenz mit EUR/USD suchen!",
+    "• Range Trading"
+  ]
+},
+
+"USD/CAD": {
+  behavior: "Der 'Loonie'. Hängt stark am Ölpreis (WTI).",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Mittwoch", "Donnerstag", "Freitag"],
+  volatility: "Mittel",
+  riskLevel: "Mittel",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Jagt Liquidität oft erst SPÄT (ab 14:30/16:00)",
+    "• Korreliert invers zum Ölpreis (Öl hoch = USD/CAD runter)",
+    "• Viele 'V-Form' Reversals in der NY Session",
+
+    "🕒 Tagesstruktur:",
+    "• 10:00–13:00 — Vorgeplänkel",
+    "• 14:30 — US/CAD News Release",
+    "• 16:00 — London Close + WTI Settlement",
+
+    "🌍 Sessions:",
+    "• NY Killzone ist King",
+
+    "⚠️ Gefahrzonen:",
+    "• WTI Öl Inventories (Mittwoch 16:30)",
+    "• CAD Arbeitsmarktdaten",
+
+    "🎯 Ideal-Setups:",
+    "• NY Killzone Reversal",
+    "• Breaker Blocks nach Öl-News"
+  ]
+},
+
+"USD/JPY": {
+  behavior: "Das Biest. Wenn es trendet, dann ohne Rücksicht.",
+  bestSessions: ["Tokyo", "NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Hoch",
+  riskLevel: "Hoch",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Läuft stark mit US 10-Year Treasury Yields",
+    "• Macht oft kaum Pullbacks in starken Trends (Runaway)",
+    "• Asiatische Session baut oft die Liquidität für London auf",
+    "• Stop Hunts finden meist am Tageshoch/-tief statt",
+
+    "🕒 Tagesstruktur:",
+    "• 01:00–06:00 — Tokyo Momentum",
+    "• 14:30–17:00 — NY Yield Reaktion",
+
+    "🌍 Sessions:",
+    "• Tokyo & NY sind die Haupttreiber",
+
+    "⚠️ Gefahrzonen:",
+    "• BoJ (Bank of Japan) Interventionen (Warnung!)",
+    "• Yen Flash Crashes",
+
+    "🎯 Ideal-Setups:",
+    "• Break & Retest (klassisch)",
+    "• Asia High/Low Sweep → Continuation",
+    "• 5M FVG im starken Momentum"
+  ]
+},
+
+  /* ==========================================================
+      🔥 CROSSES
+  ========================================================== */
+
+"GBP/JPY": {
+  behavior: "The Widowmaker. Riesige Range, extrem profitabel oder tödlich.",
+  bestSessions: ["London", "London Killzone", "NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Extrem",
+  riskLevel: "Extrem",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Vereint Volatilität von GBP und JPY",
+    "• Respektiert Zonen, aber 'overshoots' (Wicks) sind riesig",
+    "• Orderblocks müssen im HTF (1H/4H) gewählt werden",
+    "• Perfekt für 'Catch the falling Knife' an Key Levels",
+
+    "🕒 Tagesstruktur:",
+    "• 08:00–10:00 — London Explosion (oft 50+ Pips)",
+    "• 14:30–16:30 — NY Volatilität",
+
+    "🌍 Sessions:",
+    "• London Killzone ist die beste Zeit",
+
+    "⚠️ Gefahrzonen:",
+    "• ALLES. Stops müssen weiter weg gesetzt werden.",
+    "• Spread-Ausweitung bei News",
+
+    "🎯 Ideal-Setups:",
+    "• London Killzone Breakout",
+    "• Asia Range Sweep + MSB (Market Structure Break)",
+    "• Große HTF Reversals"
+  ]
+},
+
+"EUR/JPY": {
+  behavior: "Der kleine Bruder von GBP/JPY. Sauberer, strukturierter.",
+  bestSessions: ["Tokyo", "London", "London Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Mittel–Hoch",
+  riskLevel: "Mittel",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Trendet schöner als GBP/JPY (weniger wilde Spikes)",
+    "• Hält sich gut an Fibonacci Levels",
+    "• Asia Session oft schon trendig",
+
+    "🕒 Tagesstruktur:",
+    "• 02:00–06:00 — Tokyo Trend",
+    "• 08:00–11:00 — London Boost",
+
+    "🌍 Sessions:",
+    "• Tokyo & London",
+
+    "⚠️ Gefahrzonen:",
+    "• BoJ News",
+    "• EZB Pressekonferenzen",
+
+    "🎯 Ideal-Setups:",
+    "• Trend Continuation Patterns",
+    "• 15M OB Rejection",
+    "• Tokyo High/Low Retest"
+  ]
+},
+
+"EUR/GBP": {
+  behavior: "Der Grinder. Langsam, zäh, aber extrem technisch.",
+  bestSessions: ["London", "London Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Niedrig",
+  riskLevel: "Niedrig",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Bewegt sich oft nur 30-50 Pips am Tag",
+    "• Orderblocks werden auf den Punkt genau getroffen",
+    "• Wenig Fakeouts (ideal für Anfänger)",
+
+    "🕒 Tagesstruktur:",
+    "• 09:00–12:00 — Hauptbewegung",
+
+    "🌍 Sessions:",
+    "• Nur London ist relevant",
+
+    "⚠️ Gefahrzonen:",
+    "• Zeitgleiche UK/EU News",
+
+    "🎯 Ideal-Setups:",
+    "• Range Trading (Buy Low, Sell High)",
+    "• Precision Entries am 1H OB"
+  ]
+},
+
+"AUD/NZD": {
+  behavior: "Range-Monster. Extrem ruhige Struktur.",
+  bestSessions: ["Tokyo", "Sydney"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Niedrig",
+  riskLevel: "Niedrig",
+  notes: [
+    "🔎 ICT-Verhalten:",
+    "• Sehr stabile Trendstruktur in der Asia Session",
     "• Premium/Discount reagiert sauber",
-    "• Ideal für HL/LH Setups",
     "• Wenig Manipulation durch große Player",
 
     "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — saubere Asia-Trends",
-    "• 07:00–10:00 — kleine Sweeps",
-    "• 12:00+ — sehr ruhig",
+    "• 01:00–05:00 — Saubere Asia-Trends",
+    "• 12:00+ — Sehr ruhig (Dead Zone)",
 
     "🌍 Sessions:",
-    "• Tokyo — klare Trendrichtung",
-    "• London — kaum relevant",
-    "• NY — tot",
+    "• Tokyo & Sydney",
 
     "⚠️ Gefahrzonen:",
-    "• RBA News",
-    "• RBNZ News",
-    "• Sehr niedrige Liquidität",
+    "• RBA & RBNZ News",
+    "• Sehr niedrige Liquidität (Spread beachten)",
 
     "🎯 Ideal-Setups:",
     "• Asia Sweep → Continuation",
-    "• LTF MSS + FVG",
     "• Pullback Entries an Premium/Discount Levels"
   ]
 },
 
 "GBP/AUD": {
-  behavior: "Sehr volatil wegen GBP + AUD News. Große Impulse, starke Sweeps.",
-  bestSessions: ["London", "NY Overlap"],
+  behavior: "Volatiles Cross-Pair. Große Impulse.",
+  bestSessions: ["London", "London Killzone", "NY"],
   bestDays: ["Dienstag", "Donnerstag"],
   volatility: "Hoch",
   riskLevel: "Sehr hoch",
@@ -330,916 +360,311 @@ const pairProfileDB = {
     "• News-getriebene Sweeps durch UK + AUS",
     "• Sehr starke MSS Bewegungen im 5M/15M",
     "• FVG Entries extrem effektiv",
-    "• Cross-Flow Chaos zwischen EUR/AUD, GBP/USD, AUD/USD",
 
     "🕒 Tagesstruktur:",
-    "• 08:00–10:00 — London Trend Impuls",
-    "• 10:30 — UK News Risiko",
-    "• 14:30 — US News beeinflussen AUD indirekt",
+    "• 08:00–10:00 — London Killzone Impuls",
     "• 15:30 — NY Open Sweeps",
 
     "🌍 Sessions:",
-    "• London — hauptsächlich",
-    "• NY — Extension oder Reversals",
-    "• Tokyo — unbrauchbar",
+    "• London & NY",
 
     "⚠️ Gefahrzonen:",
-    "• UK News → harte Volatilität",
-    "• AUD News → starker Cross-Effekt",
+    "• UK News & AUD News",
     "• Spread höher als Major-Paare",
 
     "🎯 Ideal-Setups:",
     "• London Sweep → MSS → Displacement",
-    "• Breaker Block Reentries",
-    "• Cross-Correlation mit AUD/USD + GBP/USD"
+    "• Breaker Block Reentries"
   ]
 },
-
-"AUD/CHF": {
-  behavior: "Ruhiges Paar, aber reagiert stark auf Risk-Off/On.",
-  bestSessions: ["Tokyo", "London"],
-  bestDays: ["Mittwoch"],
-  volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr saubere HL/LH Struktur",
-    "• Wenig Manipulation",
-    "• CHF Safe-Haven Verhalten → klare Trendwechsel",
-    "• Reagiert stark auf AUD News und Risk Sentiment",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — Asia Trendphase",
-    "• 08:00–11:00 — London leichte Manipulation",
-    "• 14:00+ — langsamer Markt",
-
-    "🌍 Sessions:",
-    "• Tokyo — beste Struktur",
-    "• London — leichte Volatilität",
-    "• NY — schwach",
-
-    "⚠️ Gefahrzonen:",
-    "• RBA News",
-    "• CHF Safe-Haven Spikes",
-    "• Risk-Off Events (Geopolitik)",
-
-    "🎯 Ideal-Setups:",
-    "• Asia HL/LH → Continuation",
-    "• Breaker Block Entries",
-    "• Trend-Einstieg nach MSS"
-  ]
-},
-
-
 
   /* ==========================================================
-     🔥 CROSSES
-  ========================================================== */
-
-"EUR/JPY": {
-  behavior: "Sehr sauberer Trend. Weniger Fakeouts als GBP/JPY.",
-  bestSessions: ["Tokyo", "London"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Mittel–Hoch",
-  riskLevel: "Mittel",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr strukturierter Flow, perfekt für HL/LH Entries",
-    "• Liquidity Sweeps sauber und häufig am Asia High/Low",
-    "• Trendfortsetzung läuft oft extrem sauber",
-    "• Respektiert FVGs im 5M/15M fast perfekt",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — Tokyo Trendphase",
-    "• 07:00–10:00 — London Breakout",
-    "• 15:00–17:00 — NY Counter-Move möglich",
-
-    "🌍 Sessions:",
-    "• Tokyo — Haupttrend, sehr sauber",
-    "• London — Pullbacks + Trendbeschleunigung",
-    "• NY — Konter oder zweite Bewegung",
-
-    "⚠️ Gefahrzonen:",
-    "• BoJ News → extrem starke Volatilität",
-    "• 10:00 EU News → schnelle Sweeps",
-    "• 15:30 NY Open → Chaos möglich",
-
-    "🎯 Ideal-Setups:",
-    "• Tokyo HL/LH + FVG Entry",
-    "• Asia Sweep → London Trendmove",
-    "• Breaker Blocks an 1H Zonen",
-    "• NY Retracement → Continuation"
-  ]
-},
-
-
-"GBP/JPY": {
-  behavior: "König der Volatilität. Riesige Impulse. Sweeps überall.",
-  bestSessions: ["London", "NY"],
-  bestDays: ["Dienstag", "Donnerstag"],
-  volatility: "Extrem",
-  riskLevel: "Extrem",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• EXTREM cleaner Asia Sweep → London Explosion",
-    "• Reagiert hypersensibel auf Liquidity Pools",
-    "• MSS ist oft gewaltig (große 15M Kerzen)",
-    "• Fair Value Gaps werden schnell gefillt",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–03:00 — Asia Manipulation",
-    "• 08:00–10:00 — London Engine",
-    "• 14:00–17:00 — NY Zweite Trendwelle",
-    "• Abends — Mini-Range oder harte Umkehr",
-
-    "🌍 Sessions:",
-    "• Tokyo — Setup-Phase, HL/LH Struktur",
-    "• London — Hauptmove, riesige Kerzen",
-    "• NY — hohe Wahrscheinlichkeit für Reversal oder Extension",
-
-    "⚠️ Gefahrzonen:",
-    "• 10:30 UK News (CPI!)",
-    "• JPY Intervention → 300–1000 Pips möglich",
-    "• London Open Spikes sind tödlich",
-    "• 15:30 NY Open → MASSIVE Sweeps",
-
-    "🎯 Ideal-Setups:",
-    "• Asia Sweep → London Displacement",
-    "• MSS + FVG Entry (sehr stark!)",
-    "• Breaker Block nach News-Sweep",
-    "• Counter-Trend Elliott Liquidity Grab"
-  ]
-},
-
-
-"AUD/JPY": {
-  behavior: "Ruhig während Tokyo → ideal für strukturierte HL/LH Moves.",
-  bestSessions: ["Tokyo"],
-  bestDays: ["Dienstag"],
-  volatility: "Mittel",
-  riskLevel: "Niedrig–Mittel",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Einer der saubersten Asia-Trendpaare",
-    "• Perfekte HL/LH Struktur",
-    "• FVG Respekt extrem hoch",
-    "• Sehr klarer Liquidity Flow",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — starke Trendbewegung",
-    "• 07:00–10:00 — London macht kleine Manipulationen",
-    "• 15:00–17:00 — NY ruhiger, aber saubere Reversals",
-
-    "🌍 Sessions:",
-    "• Tokyo — beste Zeit zum Traden",
-    "• London — kleine Sweeps",
-    "• NY — oft Range",
-
-    "⚠️ Gefahrzonen:",
-    "• BoJ Eingriffe → unberechenbar",
-    "• RBA News wirken manchmal verstärkt",
-
-    "🎯 Ideal-Setups:",
-    "• HL/LH im 5M–15M",
-    "• Asia Sweep → Trendfortsetzung",
-    "• LTF MSS nach Premium/Discount Touch"
-  ]
-},
-
-
- "CAD/JPY": {
-  behavior: "Trendstark. Weniger extrem als GBP/JPY. Sehr saubere Bewegungen.",
-  bestSessions: ["Tokyo", "NY"],
-  bestDays: ["Mittwoch"],
-  volatility: "Mittel",
-  riskLevel: "Mittel",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr saubere Liquidity Runs",
-    "• Respektiert Marktstruktur",
-    "• MSS eindeutig sichtbar",
-    "• FVGs werden regelmäßig gefillt",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — japanische Trendphase",
-    "• 14:00–16:00 — CAD News → starker Impuls",
-    "• 17:00 — oft klare Umkehrpunkte",
-
-    "🌍 Sessions:",
-    "• Tokyo — Trendbeginn",
-    "• London — kleine Manipulationen",
-    "• NY — große Impulse (Öl-News)",
-
-    "⚠️ Gefahrzonen:",
-    "• CAD News (CPI, BOC)",
-    "• Ölpreisbewegungen beeinflussen stark",
-    "• Japanische Interventionen",
-
-    "🎯 Ideal-Setups:",
-    "• NY Reversal nach Oil-Driven Spike",
-    "• London Sweep → Tokyo Continuation",
-    "• LTF MSS + FVG"
-  ]
-},
-
-
-"NZD/JPY": {
-  behavior: "Sauberes Trendverhalten. Ruhig & stabil.",
-  bestSessions: ["Tokyo"],
-  bestDays: ["Dienstag"],
-  volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr klare Premium/Discount Reaktionen",
-    "• Wenig Fakeouts",
-    "• Struktur extrem sauber, perfekt für Anfänger",
-    "• MSS sichtbar und stabil",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — konstante Trendphase",
-    "• 07:00–10:00 — kleiner Sweep",
-    "• 15:00–17:00 — leichte Gegenbewegung",
-
-    "🌍 Sessions:",
-    "• Tokyo — bestes Setup-Potential",
-    "• London — meist ruhig",
-    "• NY — schwach",
-
-    "⚠️ Gefahrzonen:",
-    "• RBNZ News",
-    "• Japan Interventionsgerüchte",
-
-    "🎯 Ideal-Setups:",
-    "• Trend-Einstieg im 5M/15M nach HL/LH",
-    "• FVG Continuation Trades",
-    "• Asia Sweep → Reentry"
-  ]
-},
-
-
-"EUR/GBP": {
-  behavior: "Langsames Paar. Wenig Impulse. Gut vorhersehbar.",
-  bestSessions: ["London"],
-  bestDays: ["Dienstag", "Mittwoch"],
-  volatility: "Niedrig",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr langsamer Markt, perfekte Struktur",
-    "• Liquidity Zonen funktionieren außergewöhnlich gut",
-    "• FVGs sind klein aber präzise",
-    "• MSS verläuft oft kontrolliert und langsam",
-
-    "🕒 Tagesstruktur:",
-    "• 08:00–12:00 — smoother Flow",
-    "• 14:30 — kleinerer USD-Impact",
-    "• Nachmittags — Range",
-
-    "🌍 Sessions:",
-    "• London — einzige wichtige Session",
-    "• NY — kaum Relevanz",
-    "• Tokyo — tot",
-
-    "⚠️ Gefahrzonen:",
-    "• UK/EU News gleichzeitig → kurze starke Moves",
-
-    "🎯 Ideal-Setups:",
-    "• HL/LH im LTF",
-    "• Range Breakouts → Retest Entry",
-    "• Liquidity Grab an klaren Swing Points"
-  ]
-},
-
-
-"AUD/CAD": {
-  behavior: "Stabiler Trend. Wenig Fakeouts.",
-  bestSessions: ["Tokyo", "London"],
-  bestDays: ["Dienstag"],
-  volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr ruhiges Paar, extrem strukturtreu",
-    "• LTF MSS ist fast immer sauber",
-    "• Liquidity Sweeps selten heftig",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — Asia Trend Move",
-    "• 09:00–12:00 — London leichte Manipulation",
-    "• 15:00–17:00 — NY Auslaufen",
-
-    "🌍 Sessions:",
-    "• Tokyo — beste Trendphase",
-    "• London — konsolidiert häufiger",
-    "• NY — kaum relevant",
-
-    "⚠️ Gefahrzonen:",
-    "• CAD News",
-    "• RBA News",
-
-    "🎯 Ideal-Setups:",
-    "• HL/LH Trendsetups",
-    "• Asia Breakout → London Retest",
-    "• Sehr saubere FVG-Einstiege"
-  ]
-},
-
-
-"GBP/CHF": {
-  behavior: "Volatil, aber nicht so verrückt wie GBP/JPY.",
-  bestSessions: ["London"],
-  bestDays: ["Donnerstag"],
-  volatility: "Mittel–Hoch",
-  riskLevel: "Mittel",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Liquidity Sweeps typisch (00/50 Levels)",
-    "• Sehr reaktionsfreudig auf HTF Zones",
-    "• MSS oft sauber sichtbar",
-    "• Perfekt für Premium/Discount Setups",
-
-    "🕒 Tagesstruktur:",
-    "• 08:00–10:00 — London Impulse",
-    "• 11:00–14:00 — Retracement",
-    "• 15:00+ — kleinerer Spike möglich",
-
-    "🌍 Sessions:",
-    "• London — höchste Qualität",
-    "• NY — wenig relevant",
-    "• Tokyo — tot",
-
-    "⚠️ Gefahrzonen:",
-    "• UK News",
-    "• CHF Safe-Haven Spikes",
-
-    "🎯 Ideal-Setups:",
-    "• MSS nach Sweep",
-    "• FVG Entries (sehr stark)",
-    "• Rejection an HTF Block"
-  ]
-},
-
-
-"NZD/CAD": {
-  behavior: "Sehr ruhiges Paar. Wenig Whipsaws.",
-  bestSessions: ["Tokyo"],
-  bestDays: ["Mittwoch"],
-  volatility: "Niedrig",
-  riskLevel: "Niedrig",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Extrem ruhiger, sauberer Flow",
-    "• FVG und Block-Respekt sehr hoch",
-    "• Perfekte Struktur für Anfänger",
-
-    "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — Haupttrend",
-    "• 10:00 — kleiner London Sweep",
-    "• NY — kaum Aktivitäten",
-
-    "🌍 Sessions:",
-    "• Tokyo — beste Chancen",
-    "• London — leichter Umschwung",
-    "• NY — vernachlässigbar",
-
-    "⚠️ Gefahrzonen:",
-    "• RBNZ News",
-    "• CAD News",
-
-    "🎯 Ideal-Setups:",
-    "• Strukturierte HL/LH Setups",
-    "• Asia Sweep → Entry",
-    "• Saubere FVG Trades"
-  ]
-},
-
-
-"EUR/AUD": {
-  behavior: "Richtungsstark. Große Bewegungen, aber sauber.",
-  bestSessions: ["London"],
-  bestDays: ["Donnerstag"],
-  volatility: "Hoch",
-  riskLevel: "Hoch",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr impulsiver Markt nach Liquidity Sweeps",
-    "• FVGs extrem stark",
-    "• Häufig asynchron zu AUD/USD & EUR/USD",
-    "• MSS oft gewaltig",
-
-    "🕒 Tagesstruktur:",
-    "• 07:00–10:00 — Setup Phase",
-    "• 10:00–12:00 — Breakout",
-    "• 14:00–16:00 — große US-Impulsbewegung",
-
-    "🌍 Sessions:",
-    "• London — Haupttrend",
-    "• NY — starke Newsbewegungen",
-    "• Tokyo — Setup-Range",
-
-    "⚠️ Gefahrzonen:",
-    "• EU News",
-    "• RBA + AUD News",
-    "• Cross-Flow Chaos möglich",
-
-    "🎯 Ideal-Setups:",
-    "• Liquidity Grab → Displacement",
-    "• Breaker Block Reentries",
-    "• FVG Continuation Trades"
-  ]
-},
-
-
-  /* ==========================================================
-     🔥 METALLE
+      🔥 METALLE
   ========================================================== */
 
 "XAU/USD": {
-  behavior: "Extrem News-driven. Brutale Impulse. Stop-Hunt Maschine.",
-  bestSessions: ["NY Killzone", "NY Open"],
-  bestDays: ["Mittwoch", "Freitag"],
+  behavior: "Gold. Der König der Liquidity Grabs.",
+  bestSessions: ["London Killzone", "NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Sehr hoch",
   riskLevel: "Extrem",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Krassester Judas Move im gesamten Markt (NY 13:30–14:30)",
-    "• Sehr klare Liquidity Sweeps über Asia High/Low",
-    "• Displacement-Kerzen enorm groß – perfekt für FVG Entries",
-    "• Reagiert extrem sauber auf Premium/Discount Levels (1H/4H)",
+    "• Holt IMMER Stops auf beiden Seiten, bevor der echte Move kommt",
+    "• 13:30 (Pre-Market) & 14:30 sind Schlüsselzeiten",
+    "• Reagiert perfekt auf Daily/Weekly Orderblocks",
+    "• Korreliert negativ zu DXY und US-Yields",
 
     "🕒 Tagesstruktur:",
-    "• 02:00–06:00 — Asia Range (Manipulation Zone)",
-    "• 08:00–11:00 — London Setup Phase",
-    "• 13:30 — US Big News (CPI, PPI, Retail Sales)",
-    "• 14:30 — Hauptmove! Explosiver Trendstart",
-    "• 15:30 — NY Stock Open = höchster Liquidity Grab",
-    "• 17:00 — Reversal oder Auslaufen",
+    "• 08:00–11:00 — London (oft Setup für NY)",
+    "• 13:30–16:00 — NY Killzone (Der echte Move)",
+    "• 18:00+ — Oft Retracement",
 
     "🌍 Sessions:",
-    "• Tokyo — Range, oft Sweep des Vortages",
-    "• London — langsam, aber gute HL/LH Struktur",
-    "• NY — alle großen Moves entstehen hier",
+    "• NY Killzone ist für Gold entscheidend",
 
     "⚠️ Gefahrzonen:",
-    "• 14:30 (US News) → tödliche Spikes",
-    "• 15:30 (NY Open) → komplett unberechenbar",
-    "• FOMC, NFP → 300+ Pip Moves in Sekunden",
-    "• Jede Kerze kann manipuliert sein – Gold jagt immer Stopps!",
+    "• ALLE US-News (NFP, CPI, PPI, FOMC)",
+    "• Geopolitische Schlagzeilen (Kriegsangst = Gold steigt)",
 
     "🎯 Ideal-Setups:",
-    "• NY Killzone Liquidity Grab → FVG Entry",
-    "• Sweeps über Asia High/Low → MSS → Displacement",
-    "• CPI/NFP Fake Move → Reversal",
-    "• 1H/4H OB Rejection mit LTF Confirmation",
-
-    "📌 Besondere Eigenschaften:",
-    "• Gold hat eine 100% berechenbare Stop Hunt Struktur täglich",
-    "• Ideal für ICT Modelle (FVG, Breaker, Displacement)",
-    "• News-Volatilität kann SL extrem schnell auslösen",
-    "• Heatmap & Dollar-Index spielen große Rolle"
+    "• NY Killzone Sweep + MSB",
+    "• 'Trap Moves' (Falle für Breakout Trader)",
+    "• 15M FVG im Trend"
   ]
 },
-
 
 "XAG/USD": {
-  behavior: "Silber: ähnlich wie Gold, aber chaotischer und explosiver.",
-  bestSessions: ["NY"],
-  bestDays: ["Dienstag"],
-  volatility: "Sehr hoch",
+  behavior: "Silber. Gold auf Steroiden. Chaotisch.",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Extrem+",
   riskLevel: "Extrem",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Super schnelle Sweeps – noch stärker als Gold",
-    "• Extrem gefährlich vor US News",
-    "• FVG Entries funktionieren gut, aber SL muss breiter sein",
-    "• Charakteristisch: 1–3 Sekunden Liquiditätspicks",
+    "• Gleiche Struktur wie Gold, aber viel längere Wicks",
+    "• Kann Konten in Sekunden sprengen",
+    "• Stops müssen viel weiter weg (ATR beachten)",
+    "• Läuft oft nach, wenn Gold schon gestartet ist",
 
     "🕒 Tagesstruktur:",
-    "• 02:00–06:00 — Chaotische Asia Range",
-    "• 08:00–10:00 — London Mini-Moves",
-    "• 14:30 — Explosion sicher",
-    "• 15:30 — Reversal-Spike oder Trendfortsetzung",
-    "• 17:00 — Full Stabilization",
+    "• Siehe Gold, aber komprimierter auf NY Open",
 
     "🌍 Sessions:",
-    "• Tokyo — super messy",
-    "• London — erste Richtungsfindung",
-    "• NY — Haupt-Volatilität",
+    "• NY Only (für Sicherheit)",
 
     "⚠️ Gefahrzonen:",
-    "• US News (CPI, NFP, PPI) → GIGANTISCHE Sweeps",
-    "• Silber reagiert stärker als Gold",
-    "• Spread kann stark steigen",
-    "• Spikes von 50–200 Pips in Sekunden",
+    "• Geringere Liquidität als Gold = Slippage",
+    "• Industrielle Nachfrage",
 
     "🎯 Ideal-Setups:",
-    "• Nur NY Killzone traden",
-    "• FVG + MSS Combo",
-    "• Asia High/Low Sweep → Entry in Richtung NY Trend",
-    "• Trend-Einstiege nach 14:30 Manipulation",
-
-    "📌 Besondere Eigenschaften:",
-    "• Silber ist das unberechenbarste Metall",
-    "• Liquidity räumt SILBER IMMER ab – keine Ausnahme",
-    "• Sehr großes RR Potenzial (1:10 bis 1:30 möglich)",
-    "• Trader mit schwachen Nerven dürfen Silber NICHT handeln"
+    "• Nur mit reduzierter Position Size handeln!",
+    "• Catch-up Plays zu Gold"
   ]
 },
 
-
   /* ==========================================================
-     🔥 INDIZES
+      🔥 INDIZES
   ========================================================== */
 
 "NAS100": {
-  behavior: "Ultra-volatil. Technologietrends beeinflussen stark.",
-  bestSessions: ["NY Open"],
-  bestDays: ["Dienstag", "Donnerstag"],
+  behavior: "Tech-Monster. Schnell, sauber, trendstark.",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Extrem",
-  riskLevel: "Extrem",
+  riskLevel: "Hoch",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Krassester Judas Move aller Indizes",
-    "• 14:30 und 15:30 sind Manipulationsmaschinen",
-    "• Jeder Move beginnt mit Liquiditätssweep",
-    "• MSS + Displacement funktioniert extrem gut",
-    "• FVGs werden fast immer respektiert (besonders 5M–15M)",
-    "• Premium/Discount auf 1H/4H fast 100% sauber",
+    "• Respektiert ICT-Konzepte am besten von allen Indizes",
+    "• 09:30 EST (15:30 DE) Open: Typischer 'Judas' Fake-Move",
+    "• 09:50–10:10 EST (15:50–16:10 DE): 'Silver Bullet' Zeitfenster",
+    "• FVG im 1M/5M funktionieren hier extrem gut",
 
     "🕒 Tagesstruktur:",
-    "• 08:00–12:00 → Vorbereitungsphase, langsame HL/LH",
-    "• 14:30 → US News Kickstart",
-    "• 15:30 → New York Stock Open (maximale Gewalt!)",
-    "• 16:00–17:00 → Trendfortsetzung",
-    "• 19:00–21:00 → Reversal oder langsamer Abbau",
+    "• 14:30 — Futures Volatilität",
+    "• 15:30 — NY Killzone Stock Open (Chaos)",
+    "• 16:00 — Der echte Trend etabliert sich",
+    "• 20:00 — 'Power Hour'",
 
     "🌍 Sessions:",
-    "• London — schwach, Vorbereitung",
-    "• NY — alle Hauptmoves",
-    "• Nachbörslich — Reversal Moves",
+    "• NY Killzone (Alles davor ist Vorgeplänkel)",
 
     "⚠️ Gefahrzonen:",
-    "• 14:30 (CPI, PPI, FOMC)",
-    "• 15:30 (Stock Market Open!)",
-    "• FOMC → absolutes Chaos",
-    "• Earnings Season → unberechenbar",
+    "• Earnings von Big Tech (Apple, Nvidia, Microsoft)",
+    "• FOMC Meetings",
 
     "🎯 Ideal-Setups:",
-    "• NY Open Liquidity Grab → FVG Entry",
-    "• Asia Range Sweep → Trendmove in NY",
-    "• 1H OB Rejection + 5M MSS",
-    "• Breaker-Block Entries extrem stark",
-
-    "📌 Besondere Eigenschaften:",
-    "• NAS100 = sauberste technische Struktur aller Indizes",
-    "• Sehr schnelle Moves → perfekt für kleine SL",
-    "• FVG werden fast immer gefüllt",
-    "• Extrem manipulative Liquidity Sweeps (besonders 15:28–15:32)"
+    "• NY AM Silver Bullet (10:00–11:00 EST)",
+    "• Opening Range Breakout & Retest",
+    "• 15M MSS nach Liquidity Grab"
   ]
 },
-
 
 "US30": {
-  behavior: "Dümmste Impulse im Markt. Riesige Sweeps. Für Anfänger brutal.",
-  bestSessions: ["NY Open", "NY Killzone"],
-  bestDays: ["Mittwoch", "Freitag"],
+  behavior: "Der Dow Jones. 'Dumb Money' Index. Unsauber.",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Extrem",
   riskLevel: "Extrem",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• US30 liebt 100–300 Pip Sweeps",
-    "• Judas Move kurz vor NY Open fast garantiert",
-    "• Oben & unten Liquidität wird IMMER geholt",
-    "• Sehr sauber mit Orderblocks in 1H/4H",
-    "• Displacement Kerzen gigantisch → SL muss groß genug sein",
+    "• Macht oft tiefere, 'hässliche' Sweeps als NAS100",
+    "• Dochte (Wicks) sind oft 50-100 Punkte lang",
+    "• Manipuliert Hochs/Tiefs aggressiver",
+    "• SMT Divergenz mit NAS100 ist hier Gold wert",
 
     "🕒 Tagesstruktur:",
-    "• 08:00–12:00 — ruhiger Aufbau",
-    "• 14:30 — erste Explosion",
-    "• 15:30 — absoluter Wahnsinn (größte Sweeps)",
-    "• 16:00–17:00 — echte Trendrichtung",
-    "• 18:00 — Reversal",
+    "• Siehe NAS100, aber oft volatiler beim Open",
 
     "🌍 Sessions:",
-    "• London — oft Fake-Moves",
-    "• NY — Haupttrend & größte Manipulation",
-    "• Nachbörslich — unklar, oft illiquide",
+    "• NY Killzone",
 
     "⚠️ Gefahrzonen:",
-    "• 15:30 (NY Open!) → SL wird oft in 1 Sekunde geholt",
-    "• US News → 200+ Pip Kerzen",
-    "• Mehrfach Fake-Einbrüche vor echten Moves",
+    "• 15:30 DE — Stop Hunt garantiert",
+    "• Bewegt sich oft irrational in Ranges",
 
     "🎯 Ideal-Setups:",
-    "• Liquidity Grab an Daily/4H High/Low",
-    "• FVG Entry nach Displacement",
-    "• Breaker-Block nach harter Manipulation",
-    "• 15:30 Sweep → MSS → Entry",
-
-    "📌 Besondere Eigenschaften:",
-    "• Chaotischster Index der Welt",
-    "• Perfekt für schnelle Scalps",
-    "• Sehr große FVGs → bombastisches RR",
-    "• Funktioniert extrem gut mit ICT Killzones"
+    "• SMT Divergenz (Wenn NAS Higher High macht, US30 aber nicht → Short)",
+    "• Große Liquiditätspools im 1H Chart"
   ]
 },
-
-
-"SPX500": {
-  behavior: "Ruhiger als NAS100. Saubere Bewegungen.",
-  bestSessions: ["NY"],
-  bestDays: ["Mittwoch"],
-  volatility: "Mittel–Hoch",
-  riskLevel: "Mittel",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Sehr saubere Liquidity Sweeps",
-    "• Weniger Chaos als NAS & US30",
-    "• FVG respektiert wie ein Schulbuch",
-    "• MSS → Displacement → Entry ideal",
-
-    "🕒 Tagesstruktur:",
-    "• 08:00–13:00 — ruhige Akkumulation",
-    "• 14:30 — Impuls",
-    "• 15:30 — Follow-through",
-    "• 17:00 — Trend-Finish",
-
-    "🌍 Sessions:",
-    "• London — oft nutzlos",
-    "• NY — alles passiert hier",
-
-    "⚠️ Gefahrzonen:",
-    "• CPI & FOMC → SPX kann 30 Punkte instant bewegen",
-    "• Tech Earnings beeinflussen SPX stark",
-
-    "🎯 Ideal-Setups:",
-    "• 1H OB Rejection",
-    "• 5M FVG Entry",
-    "• Killzone Trades",
-
-    "📌 Besondere Eigenschaften:",
-    "• Klarster Trend unter allen US-Indizes",
-    "• Am freundlichsten für Anfänger",
-    "• Füllt FVGs fast immer"
-  ]
-},
-
 
 "GER40": {
-  behavior: "Volatil in Frankfurt + London. Viele Sweeps.",
-  bestSessions: ["Frankfurt", "London"],
-  bestDays: ["Dienstag", "Donnerstag"],
+  behavior: "Der DAX. Liebt Gaps und V-Reversals.",
+  bestSessions: ["London", "London Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Hoch",
   riskLevel: "Hoch",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Frankfurt Open = Mini NAS100",
-    "• Sweep + Fake Move sehr typisch",
-    "• Range → impulsiver Breakout",
-    "• Reagiert gut auf 1H Levels",
+    "• 08:00 (Frankfurt) Open Gap ist oft Ziel",
+    "• 09:00 (Xetra) Open bringt Volumen und Richtung",
+    "• Reagiert technisch sauber auf Fibonacci Retracements",
+    "• Korreliert oft mit US-Futures, läuft aber vor",
 
     "🕒 Tagesstruktur:",
-    "• 08:00–09:00 — Frankfurt Chaos",
-    "• 09:00–10:00 — Trendübersicht",
-    "• 10:30–12:00 — beste HL/LH Struktur",
-    "• Nachmittag = ruhiger",
+    "• 08:00–10:00 — Beste Zeit (Frankfurt/London Overlap)",
+    "• 11:30–13:00 — Mittagspause (Finger weg)",
+    "• 15:30 — Reagiert auf US Open",
 
     "🌍 Sessions:",
-    "• Frankfurt — Hauptmanipulation",
-    "• London — Trendfortsetzung",
-    "• NY — weniger Einfluss",
+    "• London & London Killzone",
 
     "⚠️ Gefahrzonen:",
-    "• 09:00 Eröffnung",
-    "• Deutsche News",
+    "• 09:00 Xetra Eröffnung (Vola-Spike)",
+    "• EZB News",
 
     "🎯 Ideal-Setups:",
-    "• Sweep Frankfurt High/Low",
-    "• OB Rejection",
-    "• FVG Entry 5M",
-
-    "📌 Besonderes:",
-    "• Sehr abhängig von EU Wirtschaftsdaten",
-    "• Charakteristisch: lange Wicks"
+    "• Frankfurt Open Breakout",
+    "• Gap Close Strategien",
+    "• London Session Continuation"
   ]
 },
 
-
 "UK100": {
   behavior: "Ruhiger Index, reagiert gut auf Levels.",
-  bestSessions: ["London"],
-  bestDays: ["Mittwoch"],
+  bestSessions: ["London", "London Killzone"],
+  bestDays: ["Mittwoch", "Donnerstag"],
   volatility: "Niedrig–Mittel",
-  riskLevel: "Niedrig–Mittel",
+  riskLevel: "Niedrig",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Weniger manipulativ",
-    "• FVG Respekt extrem hoch",
+    "• Weniger manipulativ als DAX oder US-Indizes",
     "• Liquidity Sweeps sauber und langsam",
     "• Ideal für ruhige Intraday Trades",
 
     "🕒 Tagesstruktur:",
-    "• 09:00–10:00 — beste Zeit",
-    "• Nachmittag wird schnell langweilig",
+    "• 09:00–10:00 — London Killzone",
 
     "🌍 Sessions:",
-    "• London — Hauptvolumen",
-    "• NY — kaum Einfluss",
+    "• London",
 
     "⚠️ Gefahrzonen:",
     "• UK News 08:00–10:30",
 
     "🎯 Ideal-Setups:",
     "• Swing-Reaktionen an 1H Levels",
-    "• FVG Trendfolge",
-    "• Rejection an psychologischen Levels",
-
-    "📌 Besonderes:",
-    "• Sehr angenehm für Anfänger",
-    "• Perfekt für konservative Trader"
+    "• FVG Trendfolge"
   ]
 },
 
-
   /* ==========================================================
-     🔥 KRYPTOS
+      🔥 KRYPTOS
   ========================================================== */
 
 "BTC/USD": {
-  behavior: "24/7 Markt. Hohe Abhängigkeit vom Sentiment.",
-  bestSessions: ["NY Overlap", "Crypto Evening Move"],
-  bestDays: ["Dienstag", "Freitag", "Sonntag Abend"],
+  behavior: "24/7 Asset. Institutionelles Geld steuert den Preis.",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Montag", "Dienstag", "Mittwoch", "Donnerstag"],
   volatility: "Mittel–Hoch",
   riskLevel: "Hoch",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Perfekte Liquidity Sweeps über Asia High/Low",
-    "• 80% aller Moves starten mit einem Judas Move",
-    "• Sehr klarer MSS → Displacement → FVG Entry (15M–1H)",
-    "• Premium/Discount extrem zuverlässig",
-    "• BTC reagiert sauber auf 1H/4H OB",
-    "• Weekend Liquidity Hunt typisch (Samstag/Sonntag)",
+    "• Weekend Manipulation: 'Sunday Scam Pump' wird Montag oft korrigiert",
+    "• CME Futures Gaps sind Magneten",
+    "• Reagiert auf US-Tech (NAS100) Korrelation",
+    "• Asia Highs/Lows sind extrem wichtige Liquiditätsziele",
 
     "🕒 Tagesstruktur:",
-    "• 02:00–05:00 — Asia Accumulation",
-    "• 09:00–12:00 — EU Liquidity Grab",
-    "• 14:00–17:00 — NY Trend Move",
-    "• 20:00–23:00 — Crypto Evening Move (zweite Chance)",
-    "• Sonntag 18:00–23:00 — Wochenstart-Move",
+    "• 02:00–04:00 — Asia Volatilität",
+    "• 14:00–17:00 — NY Killzone (ETF Flows)",
+    "• Sonntagabend — CME Open Volatilität",
 
     "🌍 Sessions:",
-    "• London — oft Fake Moves",
-    "• NY — Haupttrend",
-    "• Evening — Reversal/Continuation",
+    "• NY (wegen ETFs & Wall Street)",
+    "• Asia (Retail & Mining)",
 
     "⚠️ Gefahrzonen:",
-    "• FOMC (BTC reagiert wie NAS100)",
-    "• Silicon Valley News",
-    "• Elon Tweets (weniger geworden, aber möglich)",
-    "• Sonntag → fiese Stop Hunts",
+    "• Niedrige Liquidität am Wochenende (Fake Moves)",
+    "• SEC / Regulierungs-News",
 
     "🎯 Ideal-Setups:",
-    "• Asia High/Low Sweep → NY Killzone Entry",
-    "• 1H OB Rejection",
-    "• 15M MSS → Displacement → Entry",
-    "• Liquidity Sweep vor 20:00 Evening Reversal",
-
-    "📌 Besonderheiten:",
-    "• BTC ist technisch wie NAS100, aber 24/7",
-    "• Extrem gut für FVG Trader",
-    "• Überraschend sauber im Trend",
-    "• Perfekt für SMC weil Liquidität klar sichtbar ist"
+    "• Monday Range Manipulation",
+    "• CME Gap Close",
+    "• 4H Orderblock Retest"
   ]
 },
 
-
 "ETH/USD": {
-  behavior: "Ruhiger als BTC, aber cleaner Trend.",
-  bestSessions: ["NY", "Crypto Abend"],
-  bestDays: ["Mittwoch", "Freitag"],
-  volatility: "Mittel",
+  behavior: "Beta zu BTC. Läuft oft sauberer, aber volatiler.",
+  bestSessions: ["NY", "NY Killzone"],
+  bestDays: ["Dienstag", "Mittwoch", "Donnerstag"],
+  volatility: "Mittel–Hoch",
   riskLevel: "Mittel",
   notes: [
     "🔎 ICT-Verhalten:",
-    "• Kleinerer Judas Move als BTC",
-    "• Trendstruktur sehr sauber",
-    "• FVG in 5M–15M extrem respektiert",
-    "• Weniger Noise als BTC",
-    "• Premium/Discount greift perfekt",
+    "• Struktur ist oft klarer als bei BTC",
+    "• Liquiditäts-Pools sind leichter zu identifizieren",
+    "• 'Altcoin Season' Indikator",
 
     "🕒 Tagesstruktur:",
-    "• 01:00–05:00 — ruhige Asia Range",
-    "• 09:00–11:00 — EU Trend follow",
-    "• 14:00–17:00 — NY Hauptmove",
-    "• 20:00–22:30 — Evening Reversal",
+    "• Folgt BTC mit leichter Verzögerung oder Übertreibung",
 
     "🌍 Sessions:",
-    "• London → Trendrichtung wird gesetzt",
-    "• NY → Volumen explodiert",
-    "• Evening → Korrekturen",
+    "• NY Killzone",
 
     "⚠️ Gefahrzonen:",
-    "• Ethereum News (Updates, Upgrades)",
-    "• Bitcoin Dominanz Veränderungen",
-    "• Liquidity Dumps höher als bei BTC",
+    "• BTC Dominanz steigt (ETH fällt gegen BTC)",
+    "• Gas Fees Spikes",
 
     "🎯 Ideal-Setups:",
-    "• 15M FVG Entry",
-    "• 1H OB → LTF Shift",
-    "• Weekend Sweep → Monday Trend",
-    "• Liquidity Hunt an psychologischen Levels (2000, 2500 etc.)",
-
-    "📌 Besonderheiten:",
-    "• ETH ist viel klarer im Preisverhalten",
-    "• Weniger manipulative Spikes",
-    "• Sehr saubere Intraday-Setups"
-  ]
-},
-
-"XRP/USD": {
-  behavior: "Sehr chaotisch. Plötzliche Spikes.",
-  bestSessions: ["NY", "Crypto Evening"],
-  bestDays: ["Mittwoch"],
-  volatility: "Extrem",
-  riskLevel: "Hoch",
-  notes: [
-    "🔎 ICT-Verhalten:",
-    "• Stärkste Sweeps im gesamten Kryptomarkt",
-    "• Fast jeder Move ist ein Liquidity Grab",
-    "• FVG funktioniert, aber muss schnell genommen werden",
-    "• Extrem schnelle MSS-Formation",
-    "• Plötzliche Manipulationskerzen typisch",
-
-    "🕒 Tagesstruktur:",
-    "• 03:00–05:00 — Asia Fake Moves",
-    "• 09:00–11:00 — EU Sweep",
-    "• 14:00–17:00 — NY Main Move",
-    "• Abend — absolute Chaosphase (Pump & Dump)",
-
-    "🌍 Sessions:",
-    "• London — Sweeps",
-    "• NY — Trend",
-    "• Evening — PnD",
-
-    "⚠️ Gefahrzonen:",
-    "• SEC News → instant 5–20% Moves",
-    "• Listing/Delisting",
-    "• Social Media Pumps",
-
-    "🎯 Ideal-Setups:",
-    "• Nur NY Killzone handeln",
-    "• FVG nach Manipulationskerze",
-    "• 1H Sweep → 5M Entry",
-    "• Range Breakouts (sehr profitabel)",
-
-    "📌 Besonderheiten:",
-    "• XRP ist für Anfänger brandgefährlich",
-    "• Aber → Wenn du SMC beherrschst → beste RR-Möglichkeiten",
-    "• Viele Fakeouts → SL muss clever sitzen"
+    "• ETH/BTC Chart Analyse für Stärke/Schwäche",
+    "• Klassische SMC Setups"
   ]
 },
 
   /* ==========================================================
-     🔥 Rohstoffe
+      🔥 ROHSTOFFE
   ========================================================== */
 
 "BRENT": {
-  behavior: "Extrem news-driven. Starke Impulse, Trendmonster.",
-  bestSessions: ["NY", "London"],
-  bestDays: ["Mittwoch"],
-  volatility: "Sehr hoch",
+  behavior: "Das schwarze Gold. Geopolitik & Inventories.",
+  bestSessions: ["London", "NY", "NY Killzone"],
+  bestDays: ["Mittwoch", "Freitag"],
+  volatility: "Hoch",
   riskLevel: "Extrem",
   notes: [
-    "🔎 Verhalten:",
-    "• Ölpreis beeinflusst CAD enorm (USD/CAD & CAD-Pairs)",
-    "• Sehr saubere Orderflow-Reaktionen",
-    "• Liquidity Sweeps typisch bei DOE/EIA Reports",
-    "• Trendphasen können 200–500 Pips laufen",
+    "🔎 ICT-Verhalten:",
+    "• Trendphasen sind lang und impulsiv (Momentum)",
+    "• Respektiert Supply/Demand Zonen im 4H/Daily sehr gut",
+    "• Reagiert extrem auf Headlines (Krieg, OPEC)",
 
     "🕒 Tagesstruktur:",
-    "• 08:00–10:00 — London Setup Phase",
-    "• 14:30 — Öl-News (EIA/DOE) → Explosion",
-    "• 15:30 — NY Open → große Trendfolge",
+    "• 09:00–11:00 — London",
+    "• 14:30–17:00 — NY Killzone & Inventories",
 
     "🌍 Sessions:",
-    "• London — Vorbereitung",
-    "• NY — Haupttrend",
-    "• Asia — schwach",
+    "• London & NY",
 
     "⚠️ Gefahrzonen:",
-    "• DOE/EIA Reports (Mittwoch 16:30)",
-    "• OPEC News",
-    "• Risk-Off Ereignisse",
-    "• Geopolitik (Middle East)",
+    "• Mittwoch 16:30 (Inventories) = Casino",
+    "• OPEC Meetings",
+    "• Freitagabend (Profit Taking)",
 
     "🎯 Ideal-Setups:",
-    "• News Sweep → MSS → FVG Entry",
-    "• Trendfolge nach DOE/EIA",
-    "• Breaker Block Rejections"
+    "• Inventory-Sweep & Reversal",
+    "• Break & Retest von psychologischen Levels"
   ]
-},
-
-
+}
 
 };
