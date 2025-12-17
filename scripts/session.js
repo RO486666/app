@@ -1256,29 +1256,65 @@ function updateRealTimeBar() {
     const name = activeSessions.length > 0 ? activeSessions[0].name : "";
     let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
 
-    // Infotext Logik (Gekürzt für Übersicht, Logik bleibt gleich)
-    if (name === "Sydney") {
-        infoText = minutes >= 1380 ? "🌙 Sydney startet – Übergang aus der Deadzone." : 
-                   minutes < 180 ? "🦘 Sydney aktiv – enge Ranges." : "🌅 Späte Sydney.";
-    }
-    else if (name === "Tokyo") {
-        infoText = minutes < 180 ? "🌏 Tokyo eröffnet – Asia-High/Low." : 
-                   minutes < 360 ? "🇯🇵 Tokyo aktiv – Strukturaufbau." : "🛑 Späte Tokyo.";
-    }
-    else if (name === "London Killzone") infoText = "⚠️ London Killzone – Manipulation vor Direction.";
-    else if (name === "London") {
-        infoText = minutes < 720 ? "💷 London aktiv – Expansion." : 
-                   minutes < 840 ? "😴 London Mittag – Chop." : "📈 Späte London.";
-    }
-    else if (name === "New York Killzone") infoText = "🔥 NY Killzone – Aggressive Sweeps.";
-    else if (name === "New York") {
-        infoText = minutes < 1080 ? "🇺🇸 NY aktiv – Volumen & Reversal." : 
-                   minutes < 1200 ? "⚠️ Post-NY-Open – Struktur läuft." : "🌃 Späte NY – Close.";
-    }
-    else if (minutes >= 720 && minutes < 840) infoText = "😴 Mittagliche Deadzone.";
-    else if (minutes >= 1380 || minutes < 60) {
-        if (activeSessions.length === 0) infoText = "🌙 Nacht-Deadzone – Algo-Noise.";
-    }
+   // Infotext Logik
+
+if (name === "Sydney") {
+  infoText =
+    minutes >= 1380
+      ? "🌙 Sydney startet – Übergang aus der Deadzone, Liquidity-Aufbau, kein Trend-Commitment."
+      : minutes < 180
+      ? "🦘 Sydney aktiv – enge Ranges, Fake-Struktur häufig, Mapping statt Trading."
+      : "🌅 Späte Sydney – Range steht, Vorbereitung für Tokyo-Sweeps.";
+}
+
+else if (name === "Tokyo") {
+  infoText =
+    minutes < 180
+      ? "🌏 Tokyo eröffnet – Asia-High/Low formt sich, erste saubere Struktur."
+      : minutes < 360
+      ? "🇯🇵 Tokyo aktiv – HL/LH möglich, Expansion begrenzt, Liquidity für London."
+      : "🛑 Späte Tokyo – Bewegungen oft nur Liquidity vor London.";
+}
+
+else if (name === "London Killzone") {
+  infoText =
+    "⚠️ London Killzone – Asia-Liquidity wird geholt, Fake-Breakouts vor echter Direction.";
+}
+
+else if (name === "London") {
+  infoText =
+    minutes < 720
+      ? "💷 London aktiv – nach Sweep folgt Direction, beste Phase für strukturierte Entries."
+      : minutes < 840
+      ? "😴 London Mittag – Volumen raus, Chop & Pullbacks dominieren."
+      : "📈 Späte London – Positionierung vor NY, Breakouts kritisch prüfen.";
+}
+
+else if (name === "New York Killzone") {
+  infoText =
+    "🔥 NY Killzone – London-Liquidity wird gesweept, Manipulation vor echtem Move.";
+}
+
+else if (name === "New York") {
+  infoText =
+    minutes < 1080
+      ? "🇺🇸 NY aktiv – Volumenwechsel, Reversal oder Continuation nach London-Sweep."
+      : minutes < 1200
+      ? "⚠️ Post-NY-Open – Struktur läuft, keine späten Breakouts jagen."
+      : "🌃 Späte NY – Gewinnmitnahmen, Struktur wird instabil.";
+}
+
+else if (minutes >= 720 && minutes < 840) {
+  infoText =
+    "😴 Mittagliche Deadzone – geringes Volumen, Chop, statistisch schlechter Entry-Bereich.";
+}
+
+else if (minutes >= 1380 || minutes < 60) {
+  if (activeSessions.length === 0) {
+    infoText =
+      "🌙 Nacht-Deadzone – extrem niedrige Liquidität, Algo-Noise, kein Trading empfohlen.";
+  }
+}
 
     updateBodyBackground(name);
     
