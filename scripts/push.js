@@ -1,168 +1,123 @@
 /* ==========================================================================
-   🚀 ALPHA OS - STANDALONE PUSH CORE (FINAL FIX)
+   🚀 ALPHA OS - STANDALONE PUSH CORE (MOBILE OPTIMIZED)
    ========================================================================== */
 
-(function() {
-    const CONFIG = {
-        sessions: [
-            { name: "Sydney",            start: 1380, end: 480,  info: "Übergang aus der Deadzone, Liquidity-Aufbau." },
-            { name: "Tokyo",             start: 60,   end: 600,  info: "Asia-High/Low formt sich, saubere Struktur." },
-            { name: "London Killzone",   start: 420,  end: 600,  info: "Asia-Liquidity Sweep vor der London Direction." },
-            { name: "London Open",       start: 540,  end: 1020, info: "Haupttrend-Phase & London Expansion." },
-            { name: "NY Killzone",       start: 810,  end: 1020, info: "Manipulation vor dem US-Volumen-Shift." },
-            { name: "New York Open",     start: 870,  end: 1320, info: "Volumenwechsel, Reversal oder Continuation." },
-            { name: "London Close",      start: 1020, end: 1080, info: "Gewinnmitnahmen & Volumenrückgang." },
-            { name: "Deadzone",          start: 1380, end: 60,   info: "Nacht-Ruhephase, kein Trading empfohlen." }
-        ],
-        checkInterval: 2000,
-        icon: "https://cdn-icons-png.flaticon.com/512/2910/2910795.png"
-    };
+// Wir verzichten auf die (function(){}) Kapselung, damit das Handy 
+// die Funktionen global besser verwalten kann.
 
-    let state = {
-        notifyMode: localStorage.getItem("alphaNotifyMode") || "all",
-        warningMins: parseInt(localStorage.getItem("alphaWarningTime")) || 5,
-        lastTriggeredMinute: -1,
-        lastWarnedSession: null
-    };
+const ALARM_CONFIG = {
+    sessions: [
+        { name: "Sydney",            start: 1380, end: 480,  info: "Übergang aus der Deadzone." },
+        { name: "Tokyo",             start: 60,   end: 600,  info: "Asia-High/Low formt sich." },
+        { name: "London Killzone",   start: 420,  end: 600,  info: "Asia-Liquidity Sweep." },
+        { name: "London Open",       start: 540,  end: 1020, info: "Haupttrend-Phase." },
+        { name: "NY Killzone",       start: 810,  end: 1020, info: "Manipulation vor US-Volumen." },
+        { name: "New York Open",     start: 870,  end: 1320, info: "Volumenwechsel & Reversal." },
+        { name: "London Close",      start: 1020, end: 1080, info: "Gewinnmitnahmen." },
+        { name: "Deadzone",          start: 1380, end: 60,   info: "Nacht-Ruhephase." }
+    ],
+    icon: "https://cdn-icons-png.flaticon.com/512/2910/2910795.png"
+};
 
-    const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-    const alertBox = document.getElementById("alertBox");
+// Globaler State
+var notifyMode = localStorage.getItem("alphaNotifyMode") || "all";
+var warningMins = parseInt(localStorage.getItem("alphaWarningTime")) || 5;
+var lastMinuteTriggered = -1;
+var lastWarnedSessionKey = "";
 
-    // --- HILFSFUNKTIONEN ---
-    function getMinutesNow() {
-        const now = new Date();
-        return now.getHours() * 60 + now.getMinutes();
+// Audio-Objekt (Einmalig erstellen)
+const alarmSoundEffect = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
+function triggerPushAlarm(title, body) {
+    if (notifyMode === 'off') return;
+
+    // 1. SOUND (Wichtig für Mobile: Muss kurz angespielt werden)
+    if (notifyMode === 'all' || notifyMode === 'sound') {
+        alarmSoundEffect.currentTime = 0;
+        alarmSoundEffect.play().catch(e => console.log("Handy braucht Klick für Sound"));
     }
 
-    function isSummerTimeEU() {
-        const d = new Date();
-        const year = d.getFullYear();
-        const march = new Date(year, 2, 31); march.setDate(march.getDate() - march.getDay());
-        const october = new Date(year, 9, 31); october.setDate(october.getDate() - october.getDay());
-        return d >= march && d < october;
-    }
-
-    function getAdjustedTime(baseMinutes) {
-        const offset = isSummerTimeEU() ? 60 : 0;
-        return (baseMinutes + offset) % 1440;
-    }
-
-    // --- DIE ALARM FUNKTION (HIER ENTSCHEIDET SICH PUSH) ---
-    function triggerAlarm(title, body, volume = 1.0) {
-        if (state.notifyMode === 'off') return;
-
-        // 1. Visuelle Box in der App
-        if (alertBox) {
-            alertBox.textContent = `🔔 ${title}`;
-            alertBox.style.display = "block";
-            setTimeout(() => { alertBox.style.display = "none"; }, 7000);
-        }
-
-        // 2. Sound
-        if (state.notifyMode === 'all' || state.notifyMode === 'sound') {
-            alarmSound.volume = volume;
-            alarmSound.currentTime = 0;
-            alarmSound.play().catch(e => console.warn("Audio blockiert: Klicke einmal auf die Seite."));
-        }
-
-        // 3. ECHTER PUSH (Browser)
-        if (state.notifyMode === 'all' || state.notifyMode === 'push') {
-            if (!("Notification" in window)) {
-                console.error("Browser unterstützt keine Push-Nachrichten.");
-            } else if (Notification.permission === "granted") {
-                try {
-                    new Notification(title, {
-                        body: body,
-                        icon: CONFIG.icon,
-                        badge: CONFIG.icon
-                    });
-                } catch(e) {
-                    console.error("Push-Fehler:", e);
-                }
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
+    // 2. PUSH
+    if (notifyMode === 'all' || notifyMode === 'push') {
+        if (Notification.permission === "granted") {
+            new Notification(title, {
+                body: body,
+                icon: ALARM_CONFIG.icon,
+                silent: (notifyMode === 'push') // Falls nur Push, dann Sound vom System unterdrücken
+            });
         }
     }
+}
 
-    // --- DAS GEHIRN (PRÜFT DIE ZEIT) ---
-    function heartbeat() {
-        const currentMins = getMinutesNow();
-        if (currentMins === state.lastTriggeredMinute) return;
+// Zeit-Logik
+function checkSessionTimes() {
+    const now = new Date();
+    const mins = now.getHours() * 60 + now.getMinutes();
 
-        let nextSession = null;
-        let minTimeToNext = 1441;
+    if (mins === lastMinuteTriggered) return;
 
-        CONFIG.sessions.forEach(session => {
-            const start = getAdjustedTime(session.start);
-            const end = getAdjustedTime(session.end);
+    // DST Check
+    const march = new Date(now.getFullYear(), 2, 31); march.setDate(march.getDate() - march.getDay());
+    const oct = new Date(now.getFullYear(), 9, 31); oct.setDate(oct.getDate() - oct.getDay());
+    const offset = (now >= march && now < oct) ? 60 : 0;
 
-            // 1. Start-Alarm
-            if (currentMins === start) {
-                triggerAlarm(`🚀 START: ${session.name}`, session.info);
-            }
+    ALARM_CONFIG.sessions.forEach(s => {
+        const start = (s.start + offset) % 1440;
+        const end = (s.end + offset) % 1440;
+        const warn = (start - warningMins + 1440) % 1440;
 
-            // 2. Ende-Alarm
-            if (currentMins === end) {
-                triggerAlarm(`🏁 ENDE: ${session.name}`, "Liquidität sinkt. Risk Management prüfen.", 0.6);
-            }
-
-            // 3. Vorwarnzeit berechnen
-            let diff = start - currentMins;
-            if (diff <= 0) diff += 1440;
-            if (diff < minTimeToNext) {
-                minTimeToNext = diff;
-                nextSession = session;
-            }
-        });
-
-        // 4. Vorwarnungs-Alarm
-        if (nextSession && minTimeToNext === state.warningMins) {
-            const warnKey = `${nextSession.name}-${currentMins}`;
-            if (state.lastWarnedSession !== warnKey) {
-                triggerAlarm(`⚠️ BALD: ${nextSession.name}`, `Startet in ${state.warningMins} Min.`, 0.4);
-                state.lastWarnedSession = warnKey;
-            }
-        }
-        state.lastTriggeredMinute = currentMins;
-    }
-
-    // --- EXTERNE STEUERUNG (BUTTONS) ---
-    window.setNotifyMode = function(mode) {
-        state.notifyMode = mode;
-        localStorage.setItem("alphaNotifyMode", mode);
-        updateNotifyUI();
+        if (mins === start) triggerPushAlarm(`🚀 START: ${s.name}`, "Session aktiv!");
+        if (mins === end) triggerPushAlarm(`🏁 ENDE: ${s.name}`, "Session beendet.");
         
-        // TEST-ALARM beim Klicken
-        if(mode !== 'off') {
-            triggerAlarm("AlphaOS System", `Benachrichtigungen erfolgreich auf '${mode}' gesetzt!`);
+        if (mins === warn) {
+            const key = `${s.name}-${mins}`;
+            if (lastWarnedSessionKey !== key) {
+                triggerPushAlarm(`⚠️ BALD: ${s.name}`, `In ${warningMins} Min.`);
+                lastWarnedSessionKey = key;
+            }
         }
-    };
+    });
 
-    window.setWarningTime = function(mins) {
-        state.warningMins = parseInt(mins);
-        localStorage.setItem("alphaWarningTime", mins);
-        updateNotifyUI();
-        triggerAlarm("Zeit geändert", `Du wirst nun ${mins} Min. vor Start erinnert.`);
-    };
+    lastMinuteTriggered = mins;
+}
 
-    window.updateNotifyUI = function() {
-        const m = localStorage.getItem("alphaNotifyMode") || "all";
-        const t = localStorage.getItem("alphaWarningTime") || "5";
-        document.querySelectorAll(".btn-notify").forEach(b => b.classList.toggle("active", b.dataset.mode === m));
-        document.querySelectorAll(".btn-time").forEach(b => b.classList.toggle("active", b.dataset.time === t));
-    };
-
-    window.closeNotifySettings = function() {
-        document.getElementById("panel-settings-notify").classList.add("hidden");
-    };
-
-    // --- INITIALISIERUNG ---
-    setInterval(heartbeat, CONFIG.checkInterval);
-    window.addEventListener("load", updateNotifyUI);
+// BUTTON FUNKTIONEN (Global für das HTML)
+window.setNotifyMode = function(mode) {
+    notifyMode = mode;
+    localStorage.setItem("alphaNotifyMode", mode);
     
-    // Permission beim Start anfragen
-    if ("Notification" in window) {
+    // WICHTIG FÜR HANDY: Sound beim Klick kurz "entsperren"
+    alarmSoundEffect.play().then(() => {
+        alarmSoundEffect.pause();
+        alarmSoundEffect.currentTime = 0;
+    }).catch(() => {});
+
+    updateNotifyUI();
+    if (mode !== 'off') triggerPushAlarm("System Check", "Alarme aktiviert.");
+};
+
+window.setWarningTime = function(mins) {
+    warningMins = parseInt(mins);
+    localStorage.setItem("alphaWarningTime", mins);
+    updateNotifyUI();
+};
+
+window.updateNotifyUI = function() {
+    const m = localStorage.getItem("alphaNotifyMode") || "all";
+    const t = localStorage.getItem("alphaWarningTime") || "5";
+    document.querySelectorAll(".btn-notify").forEach(b => b.classList.toggle("active", b.dataset.mode === m));
+    document.querySelectorAll(".btn-time").forEach(b => b.classList.toggle("active", b.dataset.time === t));
+};
+
+window.closeNotifySettings = function() {
+    document.getElementById("panel-settings-notify").classList.add("hidden");
+};
+
+// Start
+setInterval(checkSessionTimes, 5000);
+window.addEventListener("load", () => {
+    updateNotifyUI();
+    if ("Notification" in window && Notification.permission !== "granted") {
         Notification.requestPermission();
     }
-})();
+});
