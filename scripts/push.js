@@ -114,21 +114,27 @@
         state.lastTriggeredMinute = currentMins;
     }
 
-    // --- EXTERNE BUTTONS ---
+      // --- BUTTONS ---
     window.setNotifyMode = function(mode) {
-        unlockMobileFeatures(); 
+        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
         state.notifyMode = mode;
         localStorage.setItem("alphaNotifyMode", mode);
         updateNotifyUI();
-        if(mode !== 'off') triggerAlarm("AlphaOS", `Jarvis: System online (${mode})`);
+        if(mode !== 'off') triggerAlarm("AlphaOS", "Alarme scharf geschaltet!");
     };
 
     window.setWarningTime = function(mins) {
-        unlockMobileFeatures(); 
+        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
         state.warningMins = parseInt(mins);
         localStorage.setItem("alphaWarningTime", mins);
         updateNotifyUI();
-        state.lastTriggeredMinute = -1; // Sofort-Check erzwingen
+        triggerAlarm("AlphaOS", `Timer auf ${mins} Min. gesetzt.`);
+    };
+
+    // TEST-FUNKTION (Füge diesen Button in dein HTML ein für Sicherheit)
+    window.testMobilePush = function() {
+        unlockMobileFeatures();
+        triggerAlarm("🔔 Test-Alarm", "Wenn du das hörst/siehst, funktioniert alles!");
     };
 
     window.updateNotifyUI = function() {
