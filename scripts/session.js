@@ -906,41 +906,6 @@ function showSessionWarningNotification(name, minutes) {
         alertSound.play().catch(e => {});
     }
 }
-/* =========================================================
-   🧪 TEST-TOOLS (Für Simulation)
-   ========================================================= */
-
-function testSessionStart() {
-    const selector = document.getElementById("testSessionSelect");
-    if (!selector) return;
-    
-    const sessionName = selector.value;
-    const sessionObj = sessions.find(s => s.name === sessionName);
-    const infoText = sessionObj ? sessionObj.info : "Test-Simulation gestartet.";
-
-    console.log(`⏳ Timer gestartet: Start von ${sessionName} in 5s...`);
-    showAlert(`⏳ Warte 5s... (${sessionName} Start)`);
-
-    setTimeout(() => {
-        console.log(`🚀 FEUER: Simuliere Start von ${sessionName}`);
-        showSessionStartNotification(sessionName, infoText);
-    }, 5000);
-}
-
-function testSessionEnd() {
-    const selector = document.getElementById("testSessionSelect");
-    if (!selector) return;
-    
-    const sessionName = selector.value;
-
-    console.log(`⏳ Timer gestartet: Ende von ${sessionName} in 5s...`);
-    showAlert(`⏳ Warte 5s... (${sessionName} Ende)`);
-
-    setTimeout(() => {
-        console.log(`🏁 FEUER: Simuliere Ende von ${sessionName}`);
-        showSessionEndNotification(sessionName);
-    }, 5000);
-}
 
 /* ==========================================================================
    5. DST / ZEITMODUS LOGIK
