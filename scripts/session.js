@@ -7,7 +7,6 @@ const sessionText = document.getElementById("sessionText");
 const sessionProgressEl = document.getElementById("sessionProgressDisplay");
 const sessionInfoEl = document.getElementById("sessionInfo");
 const sessionDetailsBox = document.getElementById("sessionDetailsBox");
-const alertBox = document.getElementById("alertBox");
 const progressBar = document.getElementById("progressBar");
 const progressContainer = document.querySelector(".progress-container");
 const daySummaryEl = document.getElementById("daySummary");
@@ -19,13 +18,9 @@ const dstButtons = document.querySelectorAll("#panel-settings-dst .dst-switch bu
 const dstInfo = document.getElementById("dstInfo");
 const dstClose = document.querySelector("#panel-settings-dst .dst-close");
 
-// Audio
-const alertSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-
 // State Variablen
-let lastAlertSession = null;
 let lastActiveSessionState = "";
-let isFirstLoad = true; // <--- NEU: Damit wir den Start erkennen
+let isFirstLoad = true;
 
 // Farben-Konfiguration
 const sessionColors = {
@@ -36,13 +31,11 @@ const sessionColors = {
     "London Killzone": "#ccff00",
     "New York Killzone": "#ff8800",
     "Deadzone": "#333333",
-    // Fallback für DaySummary, falls nötig
     "Crypto": "#9900ff" 
 };
 
 /* =========================================================
    🧠 SESSION-DEFINITIONEN (Basisdaten, DST-frei)
-   start/end = Minuten ab 00:00 MEZ
    ========================================================= */
 
 const sessions = [
@@ -659,96 +652,8 @@ BTC oft Pre-Move fürs Wochenende.
 };
 
 /* ==========================================================================
-   2. EINSTELLUNGEN & ALARME (JETZT MIT ZEIT-AUSWAHL)
+   2. HELPER FUNKTIONEN
    ========================================================================== */
-
-// Einstellungen laden
-let currentNotifyMode = localStorage.getItem("alphaNotifyMode") || "all";
-let warningMinutes = parseInt(localStorage.getItem("alphaWarningTime")) || 5; // Standard: 5 Min
-
-// Modus setzen (Alles an, Push, etc.)
-function setNotifyMode(mode) {
-    currentNotifyMode = mode;
-    localStorage.setItem("alphaNotifyMode", mode);
-    updateNotifyUI();
-    
-    const modeNames = { 'all': "🔊 Alles an", 'push': "📳 Nur Push", 'sound': "🔈 Nur Ton", 'off': "🔕 Stumm" };
-    showAlert(`✅ ${modeNames[mode]}`);
-
-    // Audio Test
-    if ((mode === 'all' || mode === 'sound') && alertSound) {
-        alertSound.volume = 1.0;
-        alertSound.currentTime = 0;
-        alertSound.play().catch(e => console.log("Audio Autoplay blockiert"));
-    }
-    // Push Test
-    if (mode === 'all' || mode === 'push') {
-        if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification("🔔 Test erfolgreich!", {
-                    body: `Modus: ${modeNames[mode]}`,
-                    icon: "/app/icon-192.png",
-                    vibrate: [50, 50, 50],
-                    tag: "test-feedback"
-                });
-            });
-        }
-    }
-}
-
-// ⏳ Vorwarnzeit setzen (5, 10, 30, 60)
-function setWarningTime(mins) {
-    warningMinutes = mins;
-    localStorage.setItem("alphaWarningTime", mins);
-    updateNotifyUI();
-    
-    if(navigator.vibrate) navigator.vibrate(30);
-    console.log(`Vorwarnzeit gesetzt auf: ${mins} Minuten`);
-}
-
-// UI Aktualisieren
-function updateNotifyUI() {
-    // 1. Modus Buttons
-    const btns = document.querySelectorAll(".btn-notify");
-    btns.forEach(btn => {
-        if (btn.dataset.mode === currentNotifyMode) {
-            btn.classList.add("active");
-            btn.style.border = "2px solid #00ffcc";
-            btn.style.background = "rgba(0, 255, 204, 0.1)";
-        } else {
-            btn.classList.remove("active");
-            btn.style.border = "1px solid #333";
-            btn.style.background = "transparent";
-        }
-    });
-
-    // 2. Zeit Buttons
-    const timeBtns = document.querySelectorAll(".btn-time");
-    timeBtns.forEach(btn => {
-        if (parseInt(btn.dataset.time) === warningMinutes) {
-            btn.classList.add("active");
-            btn.style.border = "1px solid #00ffcc";
-            btn.style.background = "rgba(0, 255, 204, 0.15)";
-            btn.style.color = "#00ffcc";
-        } else {
-            btn.classList.remove("active");
-            btn.style.border = "1px solid #444";
-            btn.style.background = "transparent";
-            btn.style.color = "#fff";
-        }
-    });
-}
-
-function closeNotifySettings() {
-    const p = document.getElementById("panel-settings-notify");
-    if(p) p.classList.add("hidden");
-}
-
-/* ==========================================================================
-   3. HELPER FUNKTIONEN (Zentralisiert & Bereinigt)
-   ========================================================================== */
-
 // Konvertiert Hex (#RRGGBB) zu RGBA mit Opacity
 function hexToRgba(hex, opacity) {
     hex = hex.replace("#", "");
@@ -771,144 +676,8 @@ function getMinutesNow() {
     return now.getHours() * 60 + now.getMinutes();
 }
 
-function requestNotificationPermission() {
-    if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission().then(permission => {
-            console.log("🔐 Notification permission:", permission);
-        });
-    }
-}
-
-function showAlert(msg) {
-    if (alertBox) {
-        alertBox.textContent = msg;
-        alertBox.style.display = "block";
-        setTimeout(() => { alertBox.style.display = "none"; }, 5000);
-    }
-    console.log(msg);
-}
-
 /* ==========================================================================
-   4. NOTIFICATION LOGIK (Robust & "Unkaputtbar")
-   ========================================================================== */
-
-// 🔥 SESSION START
-function showSessionStartNotification(name, info) {
-    if (currentNotifyMode === 'off') return;
-
-    const title = `AlphaOS: ${name} gestartet!`;
-    const cleanInfo = info.replace(/<[^>]*>/g, "").substring(0, 100) + "...";
-
-    // Prüfen, ob wir überhaupt dürfen
-    if (Notification.permission === "granted") {
-        
-        // VERSUCH 1: Über Service Worker (Besser für Handy-Vibration)
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.showNotification(title, {
-                    body: cleanInfo,
-                    icon: "/app/icon-192.png",
-                    vibrate: [200, 100, 200, 100, 400],
-                    tag: "session-start",
-                    renotify: true,
-                    requireInteraction: true // Zwingt User zum Klicken
-                });
-            }).catch(e => {
-                // Falls SW fehlschlägt -> Fallback sofort auslösen
-                new Notification(title, { body: cleanInfo, icon: "/app/icon-192.png" });
-            });
-        } 
-        // VERSUCH 2: Direkte Benachrichtigung (Der "Sicherheits-Fallback")
-        else {
-            console.log("⚠️ SW nicht aktiv, sende Standard-Notification");
-            try {
-                const notif = new Notification(title, {
-                    body: cleanInfo,
-                    icon: "/app/icon-192.png",
-                    vibrate: [200, 100, 200, 100, 400],
-                    tag: "session-start"
-                });
-            } catch (e) {
-                console.error("Notification Error:", e);
-            }
-        }
-    }
-
-    // AUDIO (Unabhängig von Push)
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
-        alertSound.volume = 1.0;
-        alertSound.currentTime = 0;
-        alertSound.play().catch(e => console.log("Audio braucht Interaktion"));
-    }
-}
-
-// 🔥 SESSION ENDE
-function showSessionEndNotification(name) {
-    if (currentNotifyMode === 'off') return;
-
-    const title = `AlphaOS: ${name} Beendet`;
-    const bodyText = "Liquidität sinkt. Risk Management prüfen.";
-
-    if (Notification.permission === "granted") {
-        // Versuch 1: SW
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.showNotification(title, {
-                    body: bodyText,
-                    icon: "/app/icon-192.png",
-                    vibrate: [100, 50, 100], 
-                    tag: "session-end",
-                    renotify: true
-                });
-            });
-        } 
-        // Versuch 2: Standard
-        else {
-            new Notification(title, {
-                body: bodyText,
-                icon: "/app/icon-192.png", 
-                vibrate: [100, 50, 100]
-            });
-        }
-    }
-
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
-        alertSound.volume = 0.5;
-        alertSound.currentTime = 0;
-        alertSound.play().catch(e => {});
-    }
-}
-
-// 🔥 VORWARNUNG
-function showSessionWarningNotification(name, minutes) {
-    if (currentNotifyMode === 'off') return;
-    const title = `AlphaOS: ${name} bald!`;
-    const bodyText = `Startet in ${minutes} Minuten.`;
-
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'push') && Notification.permission === "granted") {
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(title, {
-                    body: bodyText,
-                    icon: "/app/icon-192.png",
-                    vibrate: [50, 50],
-                    tag: "session-warning"
-                });
-            });
-        } else {
-            new Notification(title, { body: bodyText, vibrate: [50, 50] });
-        }
-    }
-    
-    if ((currentNotifyMode === 'all' || currentNotifyMode === 'sound') && alertSound) {
-        alertSound.volume = 0.3; 
-        alertSound.currentTime = 0;
-        alertSound.play().catch(e => {});
-    }
-}
-
-/* ==========================================================================
-   5. DST / ZEITMODUS LOGIK
+   3. DST / ZEITMODUS LOGIK
    ========================================================================== */
 
 function isSummerTimeEU(date = new Date()) {
@@ -921,7 +690,7 @@ function isSummerTimeEU(date = new Date()) {
 }
 
 function getDSTOffsetMinutes() {
-    const mode = localStorage.getItem("dstMode"); // null | winter | summer
+    const mode = localStorage.getItem("dstMode");
     if (mode === "summer") return 60; 
     if (mode === "winter") return 0;  
     return isSummerTimeEU() ? 60 : 0;
@@ -929,22 +698,17 @@ function getDSTOffsetMinutes() {
 
 function getDSTLabel() {
     const mode = localStorage.getItem("dstMode");
-    if (mode === "summer") return "Sommer";
-    if (mode === "winter") return "Winter";
-    return isSummerTimeEU() ? "Auto" : "Auto";
+    return (mode === "summer" || mode === "winter") ? (mode === "summer" ? "Sommer" : "Winter") : "Auto";
 }
 
 function setDSTMode(mode) {
-    if (mode === "auto") {
-        localStorage.removeItem("dstMode");
-    } else {
-        localStorage.setItem("dstMode", mode);
-    }
+    if (mode === "auto") localStorage.removeItem("dstMode");
+    else localStorage.setItem("dstMode", mode);
     location.reload();
 }
 
 /* ==========================================================================
-   6. CORE SESSION LOGIK
+   5. CORE SESSION LOGIK
    ========================================================================== */
 
 function getShiftedSessions() {
@@ -952,6 +716,7 @@ function getShiftedSessions() {
     return sessions.map(s => {
         let start = s.start + offset;
         let end = s.end + offset;
+        // Tagesüberlauf korrigieren
         if (start >= 1440) start -= 1440;
         if (end >= 1440) end -= 1440;
         return { ...s, start, end };
@@ -969,23 +734,16 @@ function getCurrentSessions(minNow) {
     });
 }
 
-// ⚠️ BUGFIX: Sortierung hinzugefügt, um sicherzustellen, dass 'next' korrekt ist
 function getMinutesToNextSession(minNow) {
     const shifted = getShiftedSessions();
-    shifted.sort((a, b) => a.start - b.start);
-    
-    // Suche Startzeiten in der Zukunft
     const futureStarts = shifted.map(s => s.start).filter(start => start > minNow);
-    
-    if (futureStarts.length === 0) {
-        // Wenn heute nichts mehr kommt, nimm die allererste von morgen
-        return (1440 - minNow) + shifted[0].start;
-    }
+    if (futureStarts.length === 0)
+        return shifted[0].start + 1440 - minNow;
     return Math.min(...futureStarts) - minNow;
 }
 
 /* ==========================================================================
-   7. UI FUNKTIONEN & STYLING
+   6. UI FUNKTIONEN & STYLING
    ========================================================================== */
 
 function updateSessionTextStyle(activeSessionName) {
@@ -995,8 +753,14 @@ function updateSessionTextStyle(activeSessionName) {
     document.documentElement.style.setProperty("--session-accent", color);
     document.documentElement.style.setProperty("--session-color", color);
     document.documentElement.style.setProperty("--box-color", color);
-    // Schatten-Variablen hier aktualisieren wie im Original...
+
     sessionText.style.setProperty("--session-text-color", color);
+    sessionText.style.setProperty("--session-border", `${color}66`);
+    sessionText.style.setProperty("--session-box-shadow1", `${color}40`);
+    sessionText.style.setProperty("--session-box-shadow2", `${color}20`);
+    sessionText.style.setProperty("--session-box-shadow3", `${color}30`);
+    sessionText.style.setProperty("--session-text-shadow1", `${color}66`);
+    sessionText.style.setProperty("--session-text-shadow2", `${color}33`);
 }
 
 function updateGradientBar(colors) {
@@ -1029,13 +793,21 @@ function updateBodyBackground(sessionName) {
     };
 
     const baseColor = {
-        "Sydney": "#0a0e1a", "Tokyo": "#0a1018", "London": "#1b1a0e",
-        "New York": "#1a0e0e", "London Killzone": "#12160a", "New York Killzone": "#1a1408",
+        "Sydney": "#0a0e1a",
+        "Tokyo": "#0a1018",
+        "London": "#1b1a0e",
+        "New York": "#1a0e0e",
+        "London Killzone": "#12160a",
+        "New York Killzone": "#1a1408",
     };
 
     const sessionColorClassMap = {
-        "Sydney": "session-sydney", "Tokyo": "session-tokyo", "London": "session-london",
-        "New York": "session-ny", "London Killzone": "session-killzone", "New York Killzone": "session-killzone",
+        "Sydney": "session-sydney",
+        "Tokyo": "session-tokyo",
+        "London": "session-london",
+        "New York": "session-ny",
+        "London Killzone": "session-killzone",
+        "New York Killzone": "session-killzone",
     };
 
     if (sessionDetailsBox) {
@@ -1054,7 +826,12 @@ function applySidebarDrawerSessionColor(sessionName) {
     document.documentElement.style.setProperty("--session-color", color);
 }
 
-// Helper: Zeitformatierung für Countdown
+
+/* ==========================================================================
+   📌 HELPER: Zeit-Berechnungen für Countdown & Next Session
+   ========================================================================== */
+
+// 1. Formatiert Minuten in "HH:MM" (für Countdowns)
 function formatDuration(totalMinutes) {
     if (totalMinutes < 0) totalMinutes = 0;
     const h = Math.floor(totalMinutes / 60);
@@ -1062,10 +839,13 @@ function formatDuration(totalMinutes) {
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 }
 
-// Helper: Restzeit berechnen
+// 2. Berechnet Restzeit der aktuellen Session
 function getSessionRemaining(session, minNow) {
     let targetEnd = session.end;
+    
+    // Spezialfall: Session geht über Mitternacht (z.B. 22:00 - 02:00)
     if (session.end < session.start) {
+        // Wenn wir aktuell VOR Mitternacht sind (z.B. 23:00), ist das Ende "morgen" (+1440 Min)
         if (minNow >= session.start) {
             targetEnd += 1440;
         }
@@ -1073,9 +853,10 @@ function getSessionRemaining(session, minNow) {
     return targetEnd - minNow;
 }
 
-// Helper: Nächste Session finden (Bugfix inkludiert)
+// 3. Findet die NÄCHSTE Session (für die untere Box)
 function getNextSessionInfo(minNow) {
     const shifted = getShiftedSessions();
+    // Sortieren, damit wir die zeitlich nächste finden
     shifted.sort((a, b) => a.start - b.start);
 
     // Suche die erste Session, die HEUTE noch startet
@@ -1085,13 +866,13 @@ function getNextSessionInfo(minNow) {
     if (next) {
         diff = next.start - minNow;
     } else {
+        // Falls heute keine mehr kommt, nimm die allererste von morgen früh
         next = shifted[0];
         diff = (1440 - minNow) + next.start;
     }
 
     return { session: next, diff: diff };
 }
-
 
 /* ==========================================================================
    📌 HAUPTFUNKTION: Session Details (Mit Countdown & Next Box)
@@ -1102,11 +883,11 @@ function buildSessionDetails() {
     
     const minutes = getMinutesNow();
     const activeSessions = getCurrentSessions(minutes);
-    const nextInfo = getNextSessionInfo(minutes); 
+    const nextInfo = getNextSessionInfo(minutes); // Daten für "Nächste Session"
 
     let htmlContent = "";
 
-    // 1. HEADER
+   // 1. HEADER (High-Tech Style)
     htmlContent += `
     <div class="session-details-header">
         <span class="header-deco"></span>
@@ -1123,12 +904,19 @@ function buildSessionDetails() {
                 s.name.includes("Sydney") ? "🌙" : "ℹ️";
             
             const color = sessionColors[s.name] || "#fff";
+            
+            // Restzeit berechnen
             const remainingMins = getSessionRemaining(s, minutes);
             const remainingStr = formatDuration(remainingMins);
 
+            // HTML Aufbau (Genau wie in deinem Screenshot)
             htmlContent += `
             <div class="session-box-clean" style="--box-color: ${color}">
-                <div class="session-title">${label} ${s.name}</div>
+                
+                <div class="session-title">
+                    ${label} ${s.name}
+                </div>
+
                 <div class="session-meta-grid">
                     <div class="session-row" style="color: #ffcc00;">
                         <strong>⏱️ Noch:</strong> ${remainingStr}
@@ -1140,10 +928,15 @@ function buildSessionDetails() {
                         <strong>🕓 Ende:</strong> ${formatHM(s.end)} Uhr
                     </div>
                 </div>
-                <div class="session-info-text">${s.info}</div>
+
+                <div class="session-info-text">
+                    ${s.info}
+                </div>
+
             </div>`;
         });
     } else {
+        // Fallback, wenn nichts aktiv ist
         htmlContent += `
         <div class="session-empty">
             Keine aktive Session – Markt ist ruhig.<br>
@@ -1151,11 +944,13 @@ function buildSessionDetails() {
         </div>`;
     }
 
-    // 2. FOOTER: NÄCHSTE SESSION BOX
+   // 2. FOOTER: NÄCHSTE SESSION BOX (Mit Glow-Farbe)
     if (nextInfo && nextInfo.session) {
+        // 🔥 Hier holen wir die Farbe der NÄCHSTEN Session
         const nextName = nextInfo.session.name;
         const nextColor = sessionColors[nextName] || "#ffffff";
         
+        // 🔥 Hier bauen wir den Glow-Effekt (text-shadow) direkt ein
         htmlContent += `
         <div class="session-next">
             🔜 Nächste: 
@@ -1170,12 +965,13 @@ function buildSessionDetails() {
         </div>`;
     }
 
+    // Alles ins DOM schreiben
     sessionDetailsBox.innerHTML = htmlContent;
 }
 
 // 📌 HAUPTFUNKTION: Aktualisiert die Real-Time Bar & Texte
 function updateRealTimeBar() {
-    const wd = new Date().getDay(); 
+    const wd = new Date().getDay(); // Sonntag=0, Samstag=6
     if (wd === 0 || wd === 6) {
         console.log("⏹️ Session.js deaktiviert (Wochenende).");
         return;
@@ -1200,6 +996,7 @@ function updateRealTimeBar() {
     const activeSessions = getCurrentSessions(minutes);
     const names = activeSessions.map(s => s.name);
 
+    // Externe Hooks (Sicherheitscheck)
     if (typeof updateTabButtonColors === "function") updateTabButtonColors(names);
     if (names.length > 0 && typeof applyStatsBoxGlow === "function") {
         applyStatsBoxGlow(names[0]);
@@ -1213,15 +1010,21 @@ function updateRealTimeBar() {
     const colors = names.map(n => sessionColors[n] || "#666");
     updateGradientBar(colors);
 
-    // Progress Hook
+    // Falls externe Progress-Funktion existiert
     if (document.getElementById("sessionProgressDisplay") && typeof showSessionProgress === "function") {
         showSessionProgress(activeSessions, minutes);
+    }
+
+    if (progressContainer) {
+        progressContainer.style.boxShadow = colors.length > 0 ?
+            `0 0 12px 6px ${hexToRgba(colors[0], 0.6)}` :
+            "0 0 12px 6px rgba(0,0,0,0)";
     }
 
     const name = activeSessions.length > 0 ? activeSessions[0].name : "";
     let infoText = "Keine aktiven Sessions – Markt wahrscheinlich ruhig.";
 
-   // Infotext Logik
+    // Infotext Logik
 
 if (name === "Sydney") {
   infoText =
@@ -1284,9 +1087,12 @@ else if (minutes >= 1380 || minutes < 60) {
     updateBodyBackground(name);
     
     if (sessionInfoEl) {
+        // Text nur setzen wenn leer oder geändert
         if (!sessionInfoEl.innerHTML.trim() || sessionInfoEl.textContent !== infoText) {
             sessionInfoEl.textContent = infoText;
         }
+
+        // Info Style anpassen
         if (sessionColors[name]) {
             const infoColor = sessionColors[name];
             sessionInfoEl.style.background = hexToRgba(infoColor, 0.07);
@@ -1303,49 +1109,8 @@ else if (minutes >= 1380 || minutes < 60) {
 
     updateSessionTextStyle(name);
     applySidebarDrawerSessionColor(name);
-
-    // ============================================================
-    // ⏰ ALERT LOGIK
-    // ============================================================
-    const currentNamesList = activeSessions.map(s => s.name);
-    const currentSessionString = currentNamesList.join(",");
-    const lastNamesList = lastActiveSessionState ? lastActiveSessionState.split(",").filter(n => n) : [];
-
-    // 1. Session START & ENDE Alarme
-    if (isFirstLoad) {
-        lastActiveSessionState = currentSessionString;
-        isFirstLoad = false; 
-    } else if (currentSessionString !== lastActiveSessionState) {
-        const newSession = activeSessions.find(s => !lastNamesList.includes(s.name));
-        if (newSession) {
-            showSessionStartNotification(newSession.name, newSession.info);
-            showAlert(`🚀 START: ${newSession.name}`);
-        }
-        const endedSessionName = lastNamesList.find(name => !currentNamesList.includes(name));
-        if (endedSessionName) {
-            showSessionEndNotification(endedSessionName);
-            showAlert(`🏁 ENDE: ${endedSessionName}`);
-        }
-        lastActiveSessionState = currentSessionString;
-    }
-
-    // 2. 🔥 VORWARNUNG
-    const minutesToNext = getMinutesToNextSession(minutes);
-    
-    if (minutesToNext <= warningMinutes && minutesToNext > 0) {
-        const nextInfo = getNextSessionInfo(minutes);
-        if (nextInfo && nextInfo.session) {
-            const warningKey = `warn-${nextInfo.session.name}-${warningMinutes}`;
-            if (lastAlertSession !== warningKey) {
-                showAlert(`⚠️ Achtung: ${nextInfo.session.name} startet in ${minutesToNext} Min!`);
-                showSessionWarningNotification(nextInfo.session.name, minutesToNext);
-                lastAlertSession = warningKey;
-            }
-        }
-    } else {
-        if (minutesToNext > warningMinutes) lastAlertSession = null;
-    }
 }
+
 
 // Update Day Summary (Wochentag-Anzeige)
 function updateDaySummary() {
@@ -1432,84 +1197,24 @@ const infos = {
     };
 }
 
-
 /* ==========================================================================
-   8. INITIALISIERUNG & EVENT LISTENERS
+   6. INITIALISIERUNG
    ========================================================================== */
 
-// DST UI Management
-function openDSTSettings() {
-    if (!dstPanel) return;
-    dstPanel.classList.remove("hidden");
-    syncDSTUI();
-}
-
-function closeDSTSettings() {
-    if (!dstPanel) return;
-    dstPanel.classList.add("hidden");
-}
-
-function syncDSTUI() {
-    const mode = localStorage.getItem("dstMode") || "auto";
-    if (dstButtons) {
-        dstButtons.forEach(btn => {
-            btn.classList.toggle("active", btn.dataset.dst === mode);
-        });
-    }
-    if (dstInfo) {
-        dstInfo.textContent =
-            mode === "summer" ? "🌞 Sommerzeit (MESZ) manuell aktiv" :
-            mode === "winter" ? "❄️ Winterzeit (MEZ) manuell aktiv" :
-            "🧠 Automatische Umstellung aktiv (empfohlen)";
-    }
-}
-
-// Session Details Toggle
-if (sessionText) {
-    sessionText.addEventListener("click", () => {
-        if (!sessionDetailsBox) return;
-        const visible = sessionDetailsBox.style.display === "block";
-        sessionDetailsBox.style.display = visible ? "none" : "block";
-        if (!visible) {
-            buildSessionDetails();
-        }
-    });
-}
-
-// DST Listeners
-if (dstButtons) {
-    dstButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            setDSTMode(btn.dataset.dst);
-            syncDSTUI();
-        });
-    });
-}
-if (dstClose) dstClose.addEventListener("click", closeDSTSettings);
-if (dstPanel) {
-    dstPanel.addEventListener("click", e => {
-        if (e.target === dstPanel) closeDSTSettings();
-    });
-}
-
-// Main Load
 window.addEventListener("load", () => {
-    requestNotificationPermission();
     updateRealTimeBar();
-    
-    // HIER DIE STRICHE WEGMACHEN:
     updateDaySummary(); 
-    
-    updateNotifyUI();
-
     setInterval(updateRealTimeBar, 60000); 
-    
-    // HIER AUCH STRICHE WEGMACHEN:
     setInterval(updateDaySummary, 60000); 
 
-    setInterval(() => {
-        if (sessionDetailsBox && sessionDetailsBox.style.display === "block") {
-            buildSessionDetails();
-        }
-    }, 30000);
+    if (sessionText) {
+        sessionText.addEventListener("click", () => {
+            sessionDetailsBox.style.display = sessionDetailsBox.style.display === "block" ? "none" : "block";
+            if (sessionDetailsBox.style.display === "block") buildSessionDetails();
+        });
+    }
+
+    if (dstButtons) {
+        dstButtons.forEach(btn => btn.addEventListener("click", () => setDSTMode(btn.dataset.dst)));
+    }
 });
