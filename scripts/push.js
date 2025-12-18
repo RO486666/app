@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🚀 ALPHA OS - STANDALONE PUSH CORE (AGGRESSIVE UNLOCK)
+   🚀 ALPHA OS - STANDALONE PUSH CORE (WAKE-LOCK & SPOTIFY-TRICK)
    ========================================================================== */
 
 (function() {
@@ -25,17 +25,33 @@
         isUnlocked: false 
     };
 
+    // 1. Audio-Setups
     const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    // Lautloser Loop (Spotify-Trick)
+    const silentWakeLock = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=");
+    silentWakeLock.loop = true;
 
-    // --- MOBILE UNLOCK (Zwingend für Handy) ---
+    // --- MEDIA SESSION (Zwingt das Handy, die App offen zu lassen) ---
+    function activateMediaSession() {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'AlphaOS Market Scanner',
+                artist: 'Jarvis Core',
+                album: 'Hintergrund-Überwachung aktiv',
+                artwork: [{ src: CONFIG.icon, sizes: '512x512', type: 'image/png' }]
+            });
+        }
+    }
+
     function unlockMobileFeatures() {
-        // Wir versuchen den Unlock bei jedem Klick, falls er verloren ging
-        alarmSound.play().then(() => {
-            alarmSound.pause();
-            alarmSound.currentTime = 0;
+        if (state.isUnlocked) return;
+        
+        // Zwinge das Handy in den Musik-Modus
+        silentWakeLock.play().then(() => {
+            activateMediaSession();
             state.isUnlocked = true;
-            console.log("🔊 Mobile System Unlocked");
-        }).catch(e => console.warn("Interaktion für Audio nötig!"));
+            console.log("🔊 Spotify-Mode aktiv: Hintergrund-Scan gesichert.");
+        }).catch(e => console.warn("Interaktion nötig für Wake-Lock"));
 
         if ("Notification" in window && Notification.permission !== "granted") {
             Notification.requestPermission();
@@ -45,25 +61,24 @@
     function triggerAlarm(title, body, volume = 1.0) {
         if (state.notifyMode === 'off') return;
 
-        // Sound-Force
         if (state.notifyMode === 'all' || state.notifyMode === 'sound') {
             alarmSound.volume = volume;
             alarmSound.currentTime = 0;
             alarmSound.play().catch(() => {
-                console.log("Hintergrund-Audio blockiert. Bitte App im Vordergrund lassen.");
+                // Falls der Hauptsound blockiert, versuchen wir den Silent-Loop kurz zu kicken
+                silentWakeLock.play();
             });
         }
 
-        // Push-Force (mit Vibration & Re-Notify)
         if (state.notifyMode === 'all' || state.notifyMode === 'push') {
             if (Notification.permission === "granted") {
                 const options = {
                     body: body,
                     icon: CONFIG.icon,
-                    vibrate: [500, 100, 500],
+                    vibrate: [500, 100, 500, 100, 500],
                     tag: 'session-alert',
-                    renotify: true, // Zwingt Handy neu zu vibrieren
-                    requireInteraction: true // Nachricht bleibt stehen
+                    renotify: true,
+                    requireInteraction: true // Nachricht bleibt auf Sperrbildschirm stehen!
                 };
                 
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -78,6 +93,8 @@
     function heartbeat() {
         const now = new Date();
         const currentMins = now.getHours() * 60 + now.getMinutes();
+        
+        // Verhindert doppeltes Feuern, erlaubt aber Check nach Standby
         if (currentMins === state.lastTriggeredMinute) return;
 
         const march = new Date(now.getFullYear(), 2, 31); march.setDate(march.getDate() - march.getDay());
@@ -89,35 +106,29 @@
             const end = (s.end + offset) % 1440;
             const warn = (start - state.warningMins + 1440) % 1440;
 
-            if (currentMins === start) triggerAlarm(`🚀 START: ${s.name}`, "Session aktiv!");
-            if (currentMins === end) triggerAlarm(`🏁 ENDE: ${s.name}`, "Session beendet.");
-            if (currentMins === warn) triggerAlarm(`⚠️ BALD: ${s.name}`, `Startet in ${state.warningMins} Min.`, 0.5);
+            if (currentMins === start) triggerAlarm(`🚀 START: ${s.name}`, "Markt-Einstieg prüfen!");
+            if (currentMins === end) triggerAlarm(`🏁 ENDE: ${s.name}`, "Volumen sinkt.");
+            if (currentMins === warn) triggerAlarm(`⚠️ BALD: ${s.name}`, `Startet in ${state.warningMins} Min.`, 0.6);
         });
 
         state.lastTriggeredMinute = currentMins;
     }
 
-    // --- BUTTONS ---
+    // --- EXTERNE BUTTONS ---
     window.setNotifyMode = function(mode) {
-        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
+        unlockMobileFeatures(); 
         state.notifyMode = mode;
         localStorage.setItem("alphaNotifyMode", mode);
         updateNotifyUI();
-        if(mode !== 'off') triggerAlarm("AlphaOS", "Alarme scharf geschaltet!");
+        if(mode !== 'off') triggerAlarm("AlphaOS", `Jarvis: System online (${mode})`);
     };
 
     window.setWarningTime = function(mins) {
-        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
+        unlockMobileFeatures(); 
         state.warningMins = parseInt(mins);
         localStorage.setItem("alphaWarningTime", mins);
         updateNotifyUI();
-        triggerAlarm("AlphaOS", `Timer auf ${mins} Min. gesetzt.`);
-    };
-
-    // TEST-FUNKTION (Füge diesen Button in dein HTML ein für Sicherheit)
-    window.testMobilePush = function() {
-        unlockMobileFeatures();
-        triggerAlarm("🔔 Test-Alarm", "Wenn du das hörst/siehst, funktioniert alles!");
+        state.lastTriggeredMinute = -1; // Sofort-Check erzwingen
     };
 
     window.updateNotifyUI = function() {
