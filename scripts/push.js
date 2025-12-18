@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🚀 ALPHA OS - STANDALONE PUSH CORE (MOBILE ULTIMATE FIX)
+   🚀 ALPHA OS - STANDALONE PUSH CORE (AGGRESSIVE UNLOCK)
    ========================================================================== */
 
 (function() {
@@ -14,7 +14,7 @@
             { name: "London Close",      start: 1020, end: 1080, info: "Gewinnmitnahmen." },
             { name: "Deadzone",          start: 1380, end: 60,   info: "Nacht-Ruhephase." }
         ],
-        checkInterval: 2000,
+        checkInterval: 5000, 
         icon: "https://cdn-icons-png.flaticon.com/512/2910/2910795.png"
     };
 
@@ -22,25 +22,21 @@
         notifyMode: localStorage.getItem("alphaNotifyMode") || "all",
         warningMins: parseInt(localStorage.getItem("alphaWarningTime")) || 5,
         lastTriggeredMinute: -1,
-        isUnlocked: false // NEU: Tracker für Mobile Activation
+        isUnlocked: false 
     };
 
     const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
-    // --- MOBILE UNLOCK FUNKTION ---
-    // Diese Funktion muss einmalig durch einen Klick ausgelöst werden
+    // --- MOBILE UNLOCK (Zwingend für Handy) ---
     function unlockMobileFeatures() {
-        if (state.isUnlocked) return;
-        
-        // 1. Audio "anwärmen" (spielt lautlos)
+        // Wir versuchen den Unlock bei jedem Klick, falls er verloren ging
         alarmSound.play().then(() => {
             alarmSound.pause();
             alarmSound.currentTime = 0;
             state.isUnlocked = true;
-            console.log("🔊 Mobile Audio Unlocked");
-        }).catch(e => console.error("Audio Unlock Failed", e));
+            console.log("🔊 Mobile System Unlocked");
+        }).catch(e => console.warn("Interaktion für Audio nötig!"));
 
-        // 2. Push-Rechte nochmals aktiv triggern
         if ("Notification" in window && Notification.permission !== "granted") {
             Notification.requestPermission();
         }
@@ -49,25 +45,27 @@
     function triggerAlarm(title, body, volume = 1.0) {
         if (state.notifyMode === 'off') return;
 
-        // Sound (Mobile braucht vorherigen Unlock)
+        // Sound-Force
         if (state.notifyMode === 'all' || state.notifyMode === 'sound') {
             alarmSound.volume = volume;
             alarmSound.currentTime = 0;
-            alarmSound.play().catch(e => console.warn("Sound blockiert. Bitte Modus erneut anklicken."));
+            alarmSound.play().catch(() => {
+                console.log("Hintergrund-Audio blockiert. Bitte App im Vordergrund lassen.");
+            });
         }
 
-        // Push
+        // Push-Force (mit Vibration & Re-Notify)
         if (state.notifyMode === 'all' || state.notifyMode === 'push') {
             if (Notification.permission === "granted") {
-                // Auf Handys funktioniert Variante B oft besser
                 const options = {
                     body: body,
                     icon: CONFIG.icon,
-                    vibrate: [200, 100, 200],
-                    badge: CONFIG.icon
+                    vibrate: [500, 100, 500],
+                    tag: 'session-alert',
+                    renotify: true, // Zwingt Handy neu zu vibrieren
+                    requireInteraction: true // Nachricht bleibt stehen
                 };
                 
-                // Versuche ServiceWorker, dann Fallback
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options));
                 } else {
@@ -91,29 +89,35 @@
             const end = (s.end + offset) % 1440;
             const warn = (start - state.warningMins + 1440) % 1440;
 
-            if (currentMins === start) triggerAlarm(`🚀 START: ${s.name}`, s.info);
+            if (currentMins === start) triggerAlarm(`🚀 START: ${s.name}`, "Session aktiv!");
             if (currentMins === end) triggerAlarm(`🏁 ENDE: ${s.name}`, "Session beendet.");
-            if (currentMins === warn) triggerAlarm(`⚠️ BALD: ${s.name}`, `Startet in ${state.warningMins} Min.`, 0.4);
+            if (currentMins === warn) triggerAlarm(`⚠️ BALD: ${s.name}`, `Startet in ${state.warningMins} Min.`, 0.5);
         });
 
         state.lastTriggeredMinute = currentMins;
     }
 
-    // --- EXTERNE BUTTONS ---
+    // --- BUTTONS ---
     window.setNotifyMode = function(mode) {
-        unlockMobileFeatures(); // WICHTIG: Schaltet Handy-Features frei!
+        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
         state.notifyMode = mode;
         localStorage.setItem("alphaNotifyMode", mode);
         updateNotifyUI();
-        if(mode !== 'off') triggerAlarm("AlphaOS", `Modus: ${mode} aktiviert!`);
+        if(mode !== 'off') triggerAlarm("AlphaOS", "Alarme scharf geschaltet!");
     };
 
     window.setWarningTime = function(mins) {
-        unlockMobileFeatures(); // Unlock auch hier
+        unlockMobileFeatures(); // SCHALTET DAS HANDY FREI
         state.warningMins = parseInt(mins);
         localStorage.setItem("alphaWarningTime", mins);
         updateNotifyUI();
-        triggerAlarm("AlphaOS", `Erinnerung auf ${mins} Min. gesetzt.`);
+        triggerAlarm("AlphaOS", `Timer auf ${mins} Min. gesetzt.`);
+    };
+
+    // TEST-FUNKTION (Füge diesen Button in dein HTML ein für Sicherheit)
+    window.testMobilePush = function() {
+        unlockMobileFeatures();
+        triggerAlarm("🔔 Test-Alarm", "Wenn du das hörst/siehst, funktioniert alles!");
     };
 
     window.updateNotifyUI = function() {
