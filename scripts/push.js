@@ -84,23 +84,7 @@ function toggleSystem() {
     }
 }
 
-// Hilfsfunktion für Button Styles
-function updateButtonUI(isActive) {
-    if (isActive) {
-        btnElement.innerHTML = "✅ SYSTEM AKTIV (ONLINE)";
-        btnElement.style.background = "#0f0";
-        btnElement.style.color = "#000";
-        btnElement.style.borderColor = "#0a0";
-        btnElement.classList.add("pulse-active");
-    } else {
-        btnElement.innerHTML = "🛑 SYSTEM STARTEN (OFFLINE)";
-        btnElement.style.background = "#222";
-        btnElement.style.color = "#fff";
-        btnElement.style.borderColor = "#444";
-        btnElement.classList.remove("pulse-active");
-        btnElement.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
-    }
-}
+
 
 function updateLog(msg, color) {
     if(logElement) {
