@@ -1,9 +1,8 @@
 /* ==========================================================================
-   🚀 ALPHA OS - STANDALONE PUSH CORE (FIXED UI)
+   🚀 ALPHA OS - STANDALONE PUSH CORE (FINAL FIX)
    ========================================================================== */
 
 (function() {
-    // 1. KONFIGURATION & STATE
     const CONFIG = {
         sessions: [
             { name: "Sydney",            start: 1380, end: 480,  info: "Übergang aus der Deadzone, Liquidity-Aufbau." },
@@ -19,7 +18,6 @@
         icon: "https://cdn-icons-png.flaticon.com/512/2910/2910795.png"
     };
 
-    // State initialisieren
     let state = {
         notifyMode: localStorage.getItem("alphaNotifyMode") || "all",
         warningMins: parseInt(localStorage.getItem("alphaWarningTime")) || 5,
@@ -30,6 +28,7 @@
     const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
     const alertBox = document.getElementById("alertBox");
 
+    // --- HILFSFUNKTIONEN ---
     function getMinutesNow() {
         const now = new Date();
         return now.getHours() * 60 + now.getMinutes();
@@ -48,28 +47,45 @@
         return (baseMinutes + offset) % 1440;
     }
 
+    // --- DIE ALARM FUNKTION (HIER ENTSCHEIDET SICH PUSH) ---
     function triggerAlarm(title, body, volume = 1.0) {
         if (state.notifyMode === 'off') return;
 
+        // 1. Visuelle Box in der App
         if (alertBox) {
             alertBox.textContent = `🔔 ${title}`;
             alertBox.style.display = "block";
             setTimeout(() => { alertBox.style.display = "none"; }, 7000);
         }
 
+        // 2. Sound
         if (state.notifyMode === 'all' || state.notifyMode === 'sound') {
             alarmSound.volume = volume;
             alarmSound.currentTime = 0;
-            alarmSound.play().catch(() => {});
+            alarmSound.play().catch(e => console.warn("Audio blockiert: Klicke einmal auf die Seite."));
         }
 
+        // 3. ECHTER PUSH (Browser)
         if (state.notifyMode === 'all' || state.notifyMode === 'push') {
-            if (Notification.permission === "granted") {
-                new Notification(title, { body: body, icon: CONFIG.icon });
+            if (!("Notification" in window)) {
+                console.error("Browser unterstützt keine Push-Nachrichten.");
+            } else if (Notification.permission === "granted") {
+                try {
+                    new Notification(title, {
+                        body: body,
+                        icon: CONFIG.icon,
+                        badge: CONFIG.icon
+                    });
+                } catch(e) {
+                    console.error("Push-Fehler:", e);
+                }
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission();
             }
         }
     }
 
+    // --- DAS GEHIRN (PRÜFT DIE ZEIT) ---
     function heartbeat() {
         const currentMins = getMinutesNow();
         if (currentMins === state.lastTriggeredMinute) return;
@@ -81,11 +97,17 @@
             const start = getAdjustedTime(session.start);
             const end = getAdjustedTime(session.end);
 
-            // Alarme
-            if (currentMins === start) triggerAlarm(`🚀 START: ${session.name}`, session.info);
-            if (currentMins === end) triggerAlarm(`🏁 ENDE: ${session.name}`, "Session beendet.", 0.6);
+            // 1. Start-Alarm
+            if (currentMins === start) {
+                triggerAlarm(`🚀 START: ${session.name}`, session.info);
+            }
 
-            // Next Session Check
+            // 2. Ende-Alarm
+            if (currentMins === end) {
+                triggerAlarm(`🏁 ENDE: ${session.name}`, "Liquidität sinkt. Risk Management prüfen.", 0.6);
+            }
+
+            // 3. Vorwarnzeit berechnen
             let diff = start - currentMins;
             if (diff <= 0) diff += 1440;
             if (diff < minTimeToNext) {
@@ -94,6 +116,7 @@
             }
         });
 
+        // 4. Vorwarnungs-Alarm
         if (nextSession && minTimeToNext === state.warningMins) {
             const warnKey = `${nextSession.name}-${currentMins}`;
             if (state.lastWarnedSession !== warnKey) {
@@ -104,41 +127,42 @@
         state.lastTriggeredMinute = currentMins;
     }
 
-    /* --- EXTERNE SCHNITTSTELLEN --- */
-
+    // --- EXTERNE STEUERUNG (BUTTONS) ---
     window.setNotifyMode = function(mode) {
-        state.notifyMode = mode; // Update interner State
+        state.notifyMode = mode;
         localStorage.setItem("alphaNotifyMode", mode);
         updateNotifyUI();
-        if(mode !== 'off') triggerAlarm("Modus aktiv", `Alarme eingestellt auf: ${mode}`);
+        
+        // TEST-ALARM beim Klicken
+        if(mode !== 'off') {
+            triggerAlarm("AlphaOS System", `Benachrichtigungen erfolgreich auf '${mode}' gesetzt!`);
+        }
     };
 
     window.setWarningTime = function(mins) {
-        state.warningMins = parseInt(mins); // Update interner State
+        state.warningMins = parseInt(mins);
         localStorage.setItem("alphaWarningTime", mins);
         updateNotifyUI();
-        triggerAlarm("Zeit geändert", `Vorwarnung nun bei ${mins} Minuten.`);
+        triggerAlarm("Zeit geändert", `Du wirst nun ${mins} Min. vor Start erinnert.`);
     };
 
     window.updateNotifyUI = function() {
-        const currentMode = localStorage.getItem("alphaNotifyMode") || "all";
-        const currentTime = localStorage.getItem("alphaWarningTime") || "5";
-
-        document.querySelectorAll(".btn-notify").forEach(btn => {
-            btn.classList.toggle("active", btn.dataset.mode === currentMode);
-        });
-
-        document.querySelectorAll(".btn-time").forEach(btn => {
-            btn.classList.toggle("active", btn.dataset.time === currentTime);
-        });
+        const m = localStorage.getItem("alphaNotifyMode") || "all";
+        const t = localStorage.getItem("alphaWarningTime") || "5";
+        document.querySelectorAll(".btn-notify").forEach(b => b.classList.toggle("active", b.dataset.mode === m));
+        document.querySelectorAll(".btn-time").forEach(b => b.classList.toggle("active", b.dataset.time === t));
     };
 
     window.closeNotifySettings = function() {
         document.getElementById("panel-settings-notify").classList.add("hidden");
     };
 
+    // --- INITIALISIERUNG ---
     setInterval(heartbeat, CONFIG.checkInterval);
     window.addEventListener("load", updateNotifyUI);
-    if ("Notification" in window && Notification.permission !== "granted") Notification.requestPermission();
-
+    
+    // Permission beim Start anfragen
+    if ("Notification" in window) {
+        Notification.requestPermission();
+    }
 })();
