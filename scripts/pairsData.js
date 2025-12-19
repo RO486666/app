@@ -87,8 +87,8 @@ const pipValues = {
   "US30": 1,
 
   // Metalle
-  "XAG/USD": 50,
-  "XAU/USD": 10,
+  "XAG/USD": 0.09,
+  "XAU/USD": 0.045,
 
   // Energie
   "BRENT": 0.1,
