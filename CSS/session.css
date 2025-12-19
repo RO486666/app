@@ -445,6 +445,75 @@
 }
 
 /* ---------------------------------------------------------
+   📱 MOBILE ADAPTATION – Obsidian Vault Responsive
+   --------------------------------------------------------- */
+@media (max-width: 768px) {
+    .session-box-clean {
+        margin: 0 0 12px 0;
+        padding: 16px 14px; /* Kompakter auf dem Handy */
+        border-radius: 10px;
+    }
+
+    .session-header-row {
+        margin-bottom: 10px;
+        flex-direction: column; /* Stapeln für schmale Displays */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .session-title {
+        font-size: 18px; /* Etwas kleiner, um Zeilenumbrüche zu vermeiden */
+        letter-spacing: 3px;
+        line-height: 1.2;
+    }
+
+    .session-box-clean.expanded .session-title {
+        letter-spacing: 5px; /* Weniger aggressiv auf Mobile */
+    }
+
+    .session-timer-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+        align-self: flex-end; /* Timer rechtsbündig unter dem Titel */
+    }
+
+    .session-meta-grid {
+        grid-template-columns: 1fr; /* Einspaltig für bessere Lesbarkeit */
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    /* Optimierung für den Monolith Footer (Nächste Session) */
+    .session-next {
+        margin: 25px 0 10px 0;
+        padding: 18px 12px;
+        letter-spacing: 3px;
+    }
+
+    .next-name {
+        font-size: 20px; /* Massiv, aber passend fürs Handy */
+        padding: 0 5px;
+    }
+
+    .session-next span:last-child {
+        font-size: 16px;
+        display: block; /* Zeit in neue Zeile für mehr Wucht */
+        margin-top: 5px;
+    }
+
+    /* Playbook-Text auf Mobile */
+    .playbook-text {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* Hover-Effekt auf Mobile reduzieren (da Touch kein echtes Hover hat) */
+    .session-box-clean:hover {
+        transform: translateX(2px); /* Weniger Versatz */
+    }
+}
+
+/* ---------------------------------------------------------
    2) Session Box – Obsidian Vault Slot (Ultimate Edition)
    --------------------------------------------------------- */
 .session-box-clean {
