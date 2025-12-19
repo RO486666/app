@@ -875,20 +875,28 @@ function getNextSessionInfo(minNow) {
 }
 
 /* ==========================================================================
-   📌 HAUPTFUNKTION: Session Details (Mit Countdown & Next Box)
+   📌 HAUPTFUNKTION: Session Details (Smart Sort: Echtzeit-Reihenfolge)
    ========================================================================== */
-
 function buildSessionDetails() {
     if (!sessionDetailsBox) return;
     
     const minutes = getMinutesNow();
-    const activeSessions = getCurrentSessions(minutes);
-    const nextInfo = getNextSessionInfo(minutes); // Daten für "Nächste Session"
+    let activeSessions = getCurrentSessions(minutes);
+    const nextInfo = getNextSessionInfo(minutes);
 
-    let htmlContent = "";
+    // ✅ SMART SORT: Sortiert Sessions nach ihrem tatsächlichen Erscheinen im Tagesverlauf
+    activeSessions.sort((a, b) => {
+        // Wir berechnen den "relativen Startwert"
+        // Wenn eine Session einen sehr hohen Startwert hat (z.B. Sydney 23:00), 
+        // ziehen wir 1440 ab, damit sie als "früheste" Session des Zyklus gilt.
+        let startA = a.start > 1200 ? a.start - 1440 : a.start;
+        let startB = b.start > 1200 ? b.start - 1440 : b.start;
+        
+        // b - a sorgt dafür, dass der höchste Wert (die neueste Zeit) oben steht
+        return startB - startA;
+    });
 
-   // 1. HEADER (High-Tech Style)
-    htmlContent += `
+    let htmlContent = `
     <div class="session-details-header">
         <span class="header-deco"></span>
         SESSION INTELLIGENCE
@@ -896,7 +904,7 @@ function buildSessionDetails() {
     </div>`;
 
     if (activeSessions.length > 0) {
-        activeSessions.forEach(s => {
+        activeSessions.forEach((s) => {
             const label = s.name.includes("Killzone") ? "🔥" :
                 s.name.includes("New York") ? "🇺🇸" :
                 s.name.includes("London") ? "💷" :
@@ -904,68 +912,53 @@ function buildSessionDetails() {
                 s.name.includes("Sydney") ? "🌙" : "ℹ️";
             
             const color = sessionColors[s.name] || "#fff";
-            
-            // Restzeit berechnen
             const remainingMins = getSessionRemaining(s, minutes);
             const remainingStr = formatDuration(remainingMins);
 
-            // HTML Aufbau (Genau wie in deinem Screenshot)
             htmlContent += `
-            <div class="session-box-clean" style="--box-color: ${color}">
+            <div class="session-box-clean collapsible-session" 
+                 style="--box-color: ${color}; cursor: pointer; margin-bottom: 12px;" 
+                 onclick="this.classList.toggle('expanded')">
                 
-                <div class="session-title">
-                    ${label} ${s.name}
+                <div class="session-header-row">
+                    <div class="session-title" style="color: ${color}; font-weight: bold;">
+                        ${label} ${s.name}
+                    </div>
+                    <div class="session-timer-badge">${remainingStr} left</div>
                 </div>
 
                 <div class="session-meta-grid">
-                    <div class="session-row" style="color: #ffcc00;">
-                        <strong>⏱️ Noch:</strong> ${remainingStr}
-                    </div>
-                    <div class="session-row">
-                        <strong>📅 Start:</strong> ${formatHM(s.start)} Uhr
-                    </div>
-                    <div class="session-row">
-                        <strong>🕓 Ende:</strong> ${formatHM(s.end)} Uhr
-                    </div>
+                    <div class="session-row"><strong>📅 Start:</strong> ${formatHM(s.start)} Uhr</div>
+                    <div class="session-row"><strong>🕓 Ende:</strong> ${formatHM(s.end)} Uhr</div>
                 </div>
 
-                <div class="session-info-text">
-                    ${s.info}
+                <div class="session-info-content">
+                    <div class="info-divider"></div>
+                    <div class="playbook-text">
+                        ${s.info}
+                    </div>
                 </div>
-
+                
+                <div class="click-hint">KLICKE FÜR STRATEGIE-DETAILS</div>
             </div>`;
         });
     } else {
-        // Fallback, wenn nichts aktiv ist
-        htmlContent += `
-        <div class="session-empty">
-            Keine aktive Session – Markt ist ruhig.<br>
-            Bereite dich auf die nächste Phase vor.
-        </div>`;
+        htmlContent += `<div class="session-empty">Keine aktive Session – Fokus auf Mapping.</div>`;
     }
 
-   // 2. FOOTER: NÄCHSTE SESSION BOX (Mit Glow-Farbe)
     if (nextInfo && nextInfo.session) {
-        // 🔥 Hier holen wir die Farbe der NÄCHSTEN Session
         const nextName = nextInfo.session.name;
         const nextColor = sessionColors[nextName] || "#ffffff";
-        
-        // 🔥 Hier bauen wir den Glow-Effekt (text-shadow) direkt ein
         htmlContent += `
         <div class="session-next">
-            🔜 Nächste: 
-            <span class="next-name" style="
-                color: ${nextColor}; 
-                text-shadow: 0 0 10px ${nextColor}, 0 0 20px ${nextColor}44;
-                font-weight: 800;
-                text-transform: uppercase;">
+            🔜 NÄCHSTE: 
+            <span class="next-name" style="color: ${nextColor}; text-shadow: 0 0 10px ${nextColor};">
                 ${nextName}
             </span> 
             in ${formatDuration(nextInfo.diff)}
         </div>`;
     }
 
-    // Alles ins DOM schreiben
     sessionDetailsBox.innerHTML = htmlContent;
 }
 
