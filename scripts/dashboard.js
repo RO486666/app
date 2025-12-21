@@ -96,16 +96,19 @@ function buildWeeklyPairOptions() {
   }
 
   return Object.entries(categories)
-    .map(
-      ([groupName, syms]) => `
+    .map(([groupName, syms]) => `
       <optgroup label="${groupName}">
         ${syms
-          .filter(sym => pipValues[sym] !== undefined)
-          .map(sym => `<option value="${sym}">${sym}</option>`)
+          .map(sym => {
+            // Wir prüfen, ob das Symbol in pipValues existiert
+            if (pipValues[sym] !== undefined) {
+              return `<option value="${sym}">${sym}</option>`;
+            }
+            return ""; 
+          })
           .join("")}
       </optgroup>
-    `
-    )
+    `)
     .join("");
 }
 
