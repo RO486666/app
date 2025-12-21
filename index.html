@@ -436,6 +436,33 @@
   CLEAR ALL
 </button>
 
+<!-- ========================= -->
+<!-- 💾 DASHBOARD BACKUP BOX -->
+<!-- ========================= -->
+<div class="dashboard-backup-box">
+
+  <h4>💾 Backup & Restore</h4>
+
+  <button class="backup-btn backup-export" onclick="exportLocalBackup()">
+    📤 Export (lokal)
+  </button>
+
+  <button class="backup-btn backup-import"
+          onclick="document.getElementById('importFile').click()">
+    📥 Import (lokal)
+  </button>
+
+  <input
+    id="importFile"
+    type="file"
+    accept="application/json"
+    style="display:none"
+    onchange="importLocalBackup(this.files[0])"
+  />
+
+</div>
+
+
 </section>
 
 
@@ -456,6 +483,10 @@
     <p id="dstInfo"></p>
   </div>
 </section>
+
+
+
+
 
 <section id="panel-settings-notify" class="panel hidden">
   <div class="stats-box" style="max-width: 400px; margin: 50px auto; position: relative; background: #111; padding: 20px; border-radius: 12px; border: 1px solid #333;">
@@ -1425,6 +1456,11 @@
           </div>
         </div>
       </section>
+	  
+	  
+
+
+
 
 
     <!-- ============================================================
@@ -1448,6 +1484,8 @@
     </section>
 
   </main>
+  
+  
 
 <!-- ============================================================
      JS IMPORTS (alle deine originalen Scripts)
@@ -1463,6 +1501,8 @@
 <script src="scripts/push.js"></script>
 <script src="scripts/screen.js"></script>
 <script src="scripts/background-session.js"></script>
+<script src="scripts/exportinport.js"></script>
+
 
 <script src="scripts/pairProfile.js"></script>
 <script src="scripts/posmax.js"></script>
