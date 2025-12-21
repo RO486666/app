@@ -1022,3 +1022,104 @@ button.clear-btn:hover {
   font-size: 14px;
   margin-bottom: 2px;
 }
+
+/* =========================================================
+   💾 DASHBOARD BACKUP – KOMPAKT & UNAUFDRINGLICH
+   ========================================================= */
+
+.dashboard-backup-box {
+  width: 100%;
+  max-width: 420px;
+  margin: 14px auto 0 auto;
+  padding: 14px 16px;
+
+  border-radius: 14px;
+
+  background:
+    radial-gradient(120% 90% at 50% -20%, rgba(255,255,255,0.04), transparent 60%),
+    linear-gradient(165deg, rgba(18,22,26,.9), rgba(8,10,12,.96));
+
+  border: 1px solid rgba(255,255,255,0.06);
+
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.04);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- Titel ---------- */
+.dashboard-backup-box h4 {
+  margin: 0 0 4px 0;
+  text-align: center;
+
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  color: rgba(255,255,255,0.55);
+}
+
+/* ---------- Buttons ---------- */
+.dashboard-backup-box .backup-btn {
+  width: 100%;
+  height: 38px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+
+  background: linear-gradient(
+    165deg,
+    rgba(22,26,32,.9),
+    rgba(10,12,15,.95)
+  );
+
+  color: #e8f4ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  transition: all 0.22s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover */
+.dashboard-backup-box .backup-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(153,0,255,.55);
+  box-shadow:
+    0 0 14px rgba(153,0,255,.35),
+    inset 0 0 10px rgba(153,0,255,.2);
+}
+
+/* ---------- Export / Import Akzente ---------- */
+.dashboard-backup-box .backup-export:hover {
+  border-color: #9933ff;
+  box-shadow: 0 0 16px rgba(153,0,255,.45);
+}
+
+.dashboard-backup-box .backup-import:hover {
+  border-color: #00ffbc;
+  box-shadow: 0 0 16px rgba(0,255,188,.35);
+}
+
+/* ---------- Mobile ---------- */
+@media screen and (max-width: 768px) {
+  .dashboard-backup-box {
+    max-width: 100%;
+    padding: 12px 14px;
+  }
+
+  .dashboard-backup-box .backup-btn {
+    height: 42px; /* Touch-freundlicher */
+    font-size: 14px;
+  }
+}
+
