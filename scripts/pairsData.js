@@ -79,12 +79,12 @@ const pipValues = {
   "GBP/AUD": 8.60, "GBP/CAD": 8.60, "GBP/CHF": 8.60, "GBP/JPY": 8.50,
   "GBP/NZD": 8.60, "NZD/CAD": 8.60, "NZD/JPY": 8.50,
 
-<<<<<<< HEAD
+
   // === KRYPTO ===
   // Annahme: TV zeigt Dollar-Schritte. 1 Lot = 1 Coin.
   "BTC/USD": 0.86, 
   "ETH/USD": 0.86,
-=======
+
   // Metalle
   "XAG/USD": 0.09,
   "XAU/USD": 0.086,
@@ -95,7 +95,7 @@ const pipValues = {
   // Krypto
   "BTC/USD": 1,
   "ETH/USD": 0.1,
->>>>>>> d742f3c35efb04a086e2a86231ab920c6b79a4ed
+
   "XRP/USD": 0.0001
 };
 
