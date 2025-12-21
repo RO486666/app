@@ -50,52 +50,39 @@ const livePrices = {
   "ETH/USD": 3115.50,
   "XRP/USD": 2.0610
 };
-
-// 🔸 Pip-Werte (Standard 1 Lot)
+// 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
 const pipValues = {
-  // Forex Majors
-  "AUD/USD": 10,
-  "EUR/USD": 10,
-  "GBP/USD": 10,
-  "NZD/USD": 10,
-  "USD/CAD": 10,
-  "USD/CHF": 10,
-  "USD/JPY": 9.17,
+  // === INDIZES (SPX, NAS, US30) ===
+  // TradingView zeigt Cent-Schritte (z.B. 249).
+  // Dein Broker rechnet ca. 0,86€ pro 1.00$ Bewegung (Wechselkurs).
+  // Faktor: 0.0086 -> Macht aus Eingabe "249" echte ~2,14€.
+  "SPX500": 0.0086, 
+  "NAS100": 0.0086, 
+  "US30": 0.0086,   
+  "GER30": 0.01,     // DAX: 1 Punkt = 1€ (meistens)
+  "UK100": 0.011,
 
-  // Forex Crosses
-  "AUD/CAD": 10,
-  "AUD/CHF": 10,
-  "AUD/JPY": 9.17,
-  "AUD/NZD": 10,
-  "CAD/JPY": 9.17,
-  "EUR/AUD": 10,
-  "EUR/GBP": 10,
-  "EUR/JPY": 9.17,
-  "GBP/AUD": 10,
-  "GBP/CAD": 10,
-  "GBP/CHF": 10,
-  "GBP/JPY": 9.17,
-  "GBP/NZD": 10,
-  "NZD/CAD": 10, // Added
-  "NZD/JPY": 9.17,
+  // === METALLE (Gold) ===
+  // Dein Screenshot: Tick-Wert 1 (d.h. 1 Tick/Cent = 1$).
+  // 100 Ticks (1$ Bewegung) = 100$ Profit.
+  // In Euro (Wechselkurs ca. 0,86 aus deinem SPX-Beispiel): ~86€.
+  // Wenn TV "100" anzeigt -> Ergebnis muss 86€ sein.
+  "XAU/USD": 0.86,  
+  "XAG/USD": 0.43,
 
-  // Indizes
-  "GER30": 0.1,
-  "NAS100": 0.1,
-  "SPX500": 0.1,
-  "UK100": 0.1,
-  "US30": 1,
+  // === FOREX (Währungen) ===
+  // Standard: 10$ pro Pip ~ 8,60€ - 9,20€
+  "AUD/USD": 8.60, "EUR/USD": 8.60, "GBP/USD": 8.60, "NZD/USD": 8.60,
+  "USD/CAD": 8.60, "USD/CHF": 8.60, "USD/JPY": 8.50,
+  "AUD/CAD": 8.60, "AUD/CHF": 8.60, "AUD/JPY": 8.50, "AUD/NZD": 8.60,
+  "CAD/JPY": 8.50, "EUR/AUD": 8.60, "EUR/GBP": 10.00, "EUR/JPY": 8.50,
+  "GBP/AUD": 8.60, "GBP/CAD": 8.60, "GBP/CHF": 8.60, "GBP/JPY": 8.50,
+  "GBP/NZD": 8.60, "NZD/CAD": 8.60, "NZD/JPY": 8.50,
 
-  // Metalle
-  "XAG/USD": 50,
-  "XAU/USD": 10,
-
-  // Energie
-  "BRENT": 0.1,
-
-  // Krypto
-  "BTC/USD": 1,
-  "ETH/USD": 0.1,
+  // === KRYPTO ===
+  // Annahme: TV zeigt Dollar-Schritte. 1 Lot = 1 Coin.
+  "BTC/USD": 0.86, 
+  "ETH/USD": 0.86,
   "XRP/USD": 0.0001
 };
 
