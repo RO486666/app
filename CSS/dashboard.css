@@ -1123,3 +1123,39 @@ button.clear-btn:hover {
   }
 }
 
+
+/* Basis-Styling des Buttons (hast du schon, hier nur die Ergänzung) */
+.add-pair-btn {
+    min-width: 44px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 12px;
+}
+
+/* 🔄 UPDATE-MODUS: 
+   Wenn der Button Text enthält (dein JS schreibt "💾 (Update)"), 
+   färben wir ihn blau um, damit du siehst, dass du gerade editierst. */
+.add-pair-btn {
+    /* Standard: Dein Grün */
+    background: linear-gradient(135deg, #00ffbc, #00c998);
+}
+
+/* Selektor: Wenn der Inhalt länger ist als nur ein Emoji, 
+   nutzen wir eine hellblau-cyan Färbung für den Edit-Modus */
+.add-pair-btn:active, 
+.add-pair-btn:focus {
+    /* Kurzes haptisches Feedback */
+    transform: scale(0.95);
+}
+
+/* Da wir JS nicht anfassen: Wir stylen den Button so, 
+   dass er bei mehr Inhalt (Text) professionell mitwächst */
+.weekly-pair-editor-row .add-pair-btn {
+    width: auto !important; /* Erlaubt das Mitwachsen für den Text */
+    font-size: 14px;
+    color: #03110c;
+}
