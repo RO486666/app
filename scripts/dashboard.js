@@ -96,19 +96,16 @@ function buildWeeklyPairOptions() {
   }
 
   return Object.entries(categories)
-    .map(([groupName, syms]) => `
+    .map(
+      ([groupName, syms]) => `
       <optgroup label="${groupName}">
         ${syms
-          .map(sym => {
-            // Wir prüfen, ob das Symbol in pipValues existiert
-            if (pipValues[sym] !== undefined) {
-              return `<option value="${sym}">${sym}</option>`;
-            }
-            return ""; 
-          })
+          .filter(sym => pipValues[sym] !== undefined)
+          .map(sym => `<option value="${sym}">${sym}</option>`)
           .join("")}
       </optgroup>
-    `)
+    `
+    )
     .join("");
 }
 
@@ -200,42 +197,41 @@ function addWeeklyPair() {
     return;
   }
 
-  // Suchen, ob das Pair bereits existiert
-  const existingIndex = weeklyPairPlan.findIndex(p => p.symbol === symbol);
-
-  if (existingIndex !== -1) {
-    // UPDATE: Bestehendes Objekt modifizieren
-    // Wir ändern NUR Bias und Prio, Confluence bleibt unangetastet!
-    weeklyPairPlan[existingIndex].bias = bias;
-    weeklyPairPlan[existingIndex].priority = priority;
-  } else {
-    // NEUANLAGE: Nur wenn es noch nicht existiert
-    weeklyPairPlan.push({
-      symbol,
-      bias,
-      priority,
-      confluence: null // Startwert für neue Paare
-    });
+  // Check auf Duplikate
+  if (weeklyPairPlan.some(p => p.symbol === symbol)) {
+    alert("Pair ist bereits in der Liste! Nutze den ✏️ Stift zum Bearbeiten.");
+    return;
   }
 
+  weeklyPairPlan.push({
+    symbol,
+    bias,
+    priority,
+    confluence: null
+  });
+
   saveWeeklyPairPlan();
-  openWeeklyPairEditor(); 
+  openWeeklyPairEditor(); // Refresh
 }
 
+// ✏️ FUNKTION: Lädt Trade in Inputs und entfernt ihn aus der Liste
 function editWeeklyPair(symbol) {
   const pair = weeklyPairPlan.find(p => p.symbol === symbol);
   if (!pair) return;
 
-  // NUR die Werte in die Felder laden. 
-  // Das Objekt im Array NICHT löschen!
+  // 1. Aus Liste entfernen (damit kein Duplikat entsteht)
+  weeklyPairPlan = weeklyPairPlan.filter(p => p.symbol !== symbol);
+  saveWeeklyPairPlan();
+
+  // 2. Editor neu laden (Liste aktualisieren)
+  openWeeklyPairEditor();
+
+  // 3. Werte in die Input-Felder schreiben
   document.getElementById("wpSymbol").value = pair.symbol;
   document.getElementById("wpBias").value = pair.bias;
   document.getElementById("wpPriority").value = pair.priority;
-  
-  // Optisches Feedback für den Button (optional)
-  const addBtn = document.querySelector(".add-pair-btn");
-  if(addBtn) addBtn.innerText = "💾 (Update)";
 }
+
 // 🗑️ FUNKTION: Löscht Trade komplett
 function removeWeeklyPairBySymbol(symbol) {
   if (!confirm(`${symbol} wirklich löschen?`)) return;
