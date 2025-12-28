@@ -1,0 +1,1132 @@
+/* Grundzustand: Info-Text ist versteckt */
+.session-info-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    opacity: 0;
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+/* Zustand wenn aufgeklappt (Klick auf Box) */
+.collapsible-session.expanded .session-info-content {
+    max-height: 800px; /* Groß genug für den Text */
+    opacity: 1;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+/* Der kleine Hinweis-Text unten */
+.click-hint {
+    font-size: 0.65em;
+    opacity: 0.4;
+    text-align: right;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Wenn ausgeklappt, verstecken wir den Hinweis */
+.collapsible-session.expanded .click-hint {
+    display: none;
+}
+
+/* Header innerhalb der Box */
+.session-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.session-timer-badge {
+    background: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+}
+
+.info-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--box-color), transparent);
+    margin-bottom: 10px;
+    opacity: 0.3;
+}
+/* Grundzustand: Info-Text ist versteckt */
+.session-info-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    opacity: 0;
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+/* Zustand wenn aufgeklappt (Klick auf Box) */
+.collapsible-session.expanded .session-info-content {
+    max-height: 800px; /* Groß genug für den Text */
+    opacity: 1;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+/* Der kleine Hinweis-Text unten */
+.click-hint {
+    font-size: 0.65em;
+    opacity: 0.4;
+    text-align: right;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Wenn ausgeklappt, verstecken wir den Hinweis */
+.collapsible-session.expanded .click-hint {
+    display: none;
+}
+
+/* Header innerhalb der Box */
+.session-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.session-timer-badge {
+    background: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+}
+
+.info-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--box-color), transparent);
+    margin-bottom: 10px;
+    opacity: 0.3;
+}
+
+/* Grundzustand: Info-Text ist versteckt */
+.session-info-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    opacity: 0;
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+/* Zustand wenn aufgeklappt (Klick auf Box) */
+.collapsible-session.expanded .session-info-content {
+    max-height: 800px; /* Groß genug für den Text */
+    opacity: 1;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+/* Der kleine Hinweis-Text unten */
+.click-hint {
+    font-size: 0.65em;
+    opacity: 0.4;
+    text-align: right;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Wenn ausgeklappt, verstecken wir den Hinweis */
+.collapsible-session.expanded .click-hint {
+    display: none;
+}
+
+/* Header innerhalb der Box */
+.session-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.session-timer-badge {
+    background: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+}
+
+.info-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--box-color), transparent);
+    margin-bottom: 10px;
+    opacity: 0.3;
+}
+
+
+/* =========================================================
+   💎 Session Details Panel – Obsidian Carbon "Ultra"
+   Premium Glass • Interactive • Neon Depth
+   ========================================================= */
+
+.day-details-wrapper {
+  /* Basis-Setup */
+  --day-color: #00ffcc; /* Wird per JS überschrieben */
+  --panel-bg: #121212;
+  
+  position: relative;
+  overflow: hidden; /* Wichtig für Glanz-Effekte */
+  
+  /* Komplexer Hintergrund: Dunkel + Subtiler Farb-Schein + Noise-Textur */
+  background: 
+    linear-gradient(135deg, rgba(18, 18, 18, 0.96), rgba(10, 10, 10, 0.98)),
+    radial-gradient(circle at top left, color-mix(in srgb, var(--day-color) 15%, transparent), transparent 60%);
+    
+  /* Der "Rahmen" – links dick, rest fein und leuchtend */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--day-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.15); /* Top Highlight für 3D Effekt */
+  
+  padding: 24px 28px; /* Etwas mehr Luft */
+  margin: 20px 10px;
+  border-radius: 16px;
+
+  /* Satter Schatten für schwebenden Effekt */
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    0 0 0 1px color-mix(in srgb, var(--day-color) 10%, transparent),
+    inset 0 0 20px color-mix(in srgb, var(--day-color) 5%, transparent);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  color: #d4d4d4;
+  line-height: 1.6;
+  font-family: 'Inter', 'Segoe UI', sans-serif; /* Falls verfügbar, sauberer */
+  font-size: 15px;
+  
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: panelSlideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Hover-Effekt: Das Panel kommt leicht entgegen */
+.day-details-wrapper:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 
+    0 15px 35px -5px rgba(0, 0, 0, 0.9),
+    0 0 15px color-mix(in srgb, var(--day-color) 15%, transparent);
+  border-left-color: color-mix(in srgb, var(--day-color) 10%, white); /* Hellerer Balken */
+}
+
+@keyframes panelSlideUp {
+  0% { opacity: 0; transform: translateY(15px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===============================
+   Title – Neon & Crisp
+   =============================== */
+.day-details-title {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase; /* Sieht technischer aus */
+  
+  color: var(--day-color);
+  text-shadow: 
+    0 0 10px color-mix(in srgb, var(--day-color) 50%, transparent);
+    
+  border-bottom: 1px solid color-mix(in srgb, var(--day-color) 20%, transparent);
+  padding-bottom: 8px;
+}
+
+/* Kleines Icon vor dem Titel (Optional, CSS-only) */
+.day-details-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--day-color);
+  margin-right: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--day-color);
+}
+
+/* ===============================
+   Strong Text – High Contrast
+   =============================== */
+.day-details-content strong,
+.day-strong {
+  color: #fff; /* Weiß für besseren Kontrast zur Farbe */
+  font-weight: 700;
+  border-bottom: 1px dashed color-mix(in srgb, var(--day-color) 50%, transparent);
+}
+
+/* ===============================
+   List styling – Custom Markers
+   =============================== */
+.day-details-content ul {
+  padding-left: 0; /* Reset */
+  margin-top: 12px;
+  list-style: none; /* Weg mit Standard-Bullets */
+}
+
+.day-details-content li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 8px;
+  color: #bbb;
+  transition: color 0.2s ease;
+}
+
+.day-details-content li:hover {
+  color: #fff;
+}
+
+/* Custom "Glowing" Bullet Points */
+.day-details-content li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  top: -1px;
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--day-color);
+  text-shadow: 0 0 5px var(--day-color);
+  transition: transform 0.2s ease;
+}
+
+.day-details-content li:hover::before {
+  transform: translateX(3px); /* Pfeil bewegt sich bei Hover */
+}
+
+/* ===============================
+   Paragraphs & Divider
+   =============================== */
+.day-details-content p {
+  margin: 10px 0;
+}
+
+.day-details-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    color-mix(in srgb, var(--day-color) 40%, transparent), 
+    transparent
+  );
+  margin: 20px 0;
+  border: none;
+}
+
+
+/* =========================================================
+   🧱 Session Details Panel – Obsidian Carbon 2.0
+   Clean • Nuclear Glow • High Readability
+   ========================================================= */
+
+/* GLOBAL ROOT COLORS */
+:root {
+  --carbon-bg: #060608;
+  --carbon-panel: #0a0a0c;
+  --carbon-border: #212126;
+  --carbon-light: rgba(255,255,255,0.06);
+  --carbon-text: #ccc;
+  --carbon-sub: #888;
+  --carbon-fade: rgba(255,255,255,0.03);
+
+  /* Session Farbe kommt per JS als --> --box-color */
+}
+
+/* =========================================================
+   📡 SESSION HEADER – System Intelligence Look
+   ========================================================= */
+
+.session-details-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* Abstand zwischen Strichen und Text */
+
+  /* Größe & Spacing */
+  padding: 18px 0;
+  margin-bottom: 20px;
+  
+  /* Text Styling */
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;     /* Macht es sehr "cinematic" */
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+
+  /* Hintergrund: Dunkel mit feinem Grid */
+  background-color: #0b0b0e;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px; /* Größe des Gitter-Musters */
+
+  /* Rahmen & Form */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  
+  overflow: hidden; /* Wichtig für den Scanner-Effekt */
+}
+
+/* 🔹 Der "Scanner" Lichtbalken unten (Animiert) */
+.session-details-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 50%;
+  height: 2px;
+  
+  /* Farbverlauf: Transparent -> Cyan/Gold -> Transparent */
+  background: linear-gradient(90deg, transparent, var(--session-color, #00ffcc), transparent);
+  
+  /* Animation: Läuft von links nach rechts */
+  animation: scanLine 3s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+  opacity: 0.8;
+}
+
+/* 🔹 Die kleinen Deko-Linien links und rechts vom Text */
+.header-deco {
+  display: block;
+  width: 30px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+/* Kleine Punkte an den Enden der Deko-Linien */
+.header-deco::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  width: 4px;
+  height: 4px;
+  background: var(--session-color, #00ffcc); /* Nimmt die aktuelle Session Farbe! */
+  box-shadow: 0 0 8px var(--session-color, #00ffcc);
+}
+
+/* Linker Punkt */
+.session-details-header .header-deco:first-child::before {
+  right: 0;
+}
+
+/* Rechter Punkt */
+.session-details-header .header-deco:last-child::before {
+  left: 0;
+}
+
+/* 🎬 ANIMATION */
+@keyframes scanLine {
+  0% { left: -50%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* ---------------------------------------------------------
+   📱 MOBILE ADAPTATION – Obsidian Vault Responsive
+   --------------------------------------------------------- */
+@media (max-width: 768px) {
+    .session-box-clean {
+        margin: 0 0 12px 0;
+        padding: 16px 14px; /* Kompakter auf dem Handy */
+        border-radius: 10px;
+    }
+
+    .session-header-row {
+        margin-bottom: 10px;
+        flex-direction: column; /* Stapeln für schmale Displays */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .session-title {
+        font-size: 18px; /* Etwas kleiner, um Zeilenumbrüche zu vermeiden */
+        letter-spacing: 3px;
+        line-height: 1.2;
+    }
+
+    .session-box-clean.expanded .session-title {
+        letter-spacing: 5px; /* Weniger aggressiv auf Mobile */
+    }
+
+    .session-timer-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+        align-self: flex-end; /* Timer rechtsbündig unter dem Titel */
+    }
+
+    .session-meta-grid {
+        grid-template-columns: 1fr; /* Einspaltig für bessere Lesbarkeit */
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    /* Optimierung für den Monolith Footer (Nächste Session) */
+    .session-next {
+        margin: 25px 0 10px 0;
+        padding: 18px 12px;
+        letter-spacing: 3px;
+    }
+
+    .next-name {
+        font-size: 20px; /* Massiv, aber passend fürs Handy */
+        padding: 0 5px;
+    }
+
+    .session-next span:last-child {
+        font-size: 16px;
+        display: block; /* Zeit in neue Zeile für mehr Wucht */
+        margin-top: 5px;
+    }
+
+    /* Playbook-Text auf Mobile */
+    .playbook-text {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* Hover-Effekt auf Mobile reduzieren (da Touch kein echtes Hover hat) */
+    .session-box-clean:hover {
+        transform: translateX(2px); /* Weniger Versatz */
+    }
+}
+
+/* ---------------------------------------------------------
+   2) Session Box – Obsidian Vault Slot (Ultimate Edition)
+   --------------------------------------------------------- */
+.session-box-clean {
+    position: relative;
+    margin: 0 0 20px 0;
+    padding: 24px 20px;
+    border-radius: 12px;
+    background: #050505;
+    
+    /* Glühende Gesteinsader & Physische Kanten */
+    border-left: 4px solid var(--box-color);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.02);
+    
+    cursor: pointer;
+    overflow: hidden;
+
+    /* Schwere, mehrschichtige Tiefe */
+    box-shadow:
+        inset 0 2px 8px rgba(0,0,0,0.9),
+        inset 0 0 30px color-mix(in srgb, var(--box-color), transparent 93%),
+        0 15px 35px rgba(0,0,0,0.6);
+
+    /* Obsidian-Lichtbrechung */
+    background-image: radial-gradient(
+        circle at 0% 50%,
+        color-mix(in srgb, var(--box-color), transparent 90%) 0%,
+        transparent 70%
+    );
+
+    transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.session-box-clean:hover {
+    background-color: #080808;
+    transform: translateX(4px);
+    box-shadow:
+        inset 0 2px 10px rgba(0,0,0,1),
+        inset 0 0 40px color-mix(in srgb, var(--box-color), transparent 88%),
+        0 20px 45px rgba(0,0,0,0.7);
+}
+
+/* ---------------------------------------------------------
+   3) Titel – High-Contrast Alpha Label
+   --------------------------------------------------------- */
+.session-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.session-title {
+    font-size: 24px; /* Deutlich größer */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 6px; /* Aggressives Spacing */
+    color: color-mix(in srgb, var(--box-color), white 15%);
+    
+    /* Intensiver Kern-Glow */
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--box-color), transparent 50%));
+    transition: letter-spacing 0.4s ease;
+}
+
+.session-box-clean.expanded .session-title {
+    letter-spacing: 10px;
+}
+
+.session-timer-badge {
+    background: #000;
+    color: #ffcc00;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 15px;
+    font-weight: 800;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.15);
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------
+   4) Meta Grid – Technical Readout
+   --------------------------------------------------------- */
+.session-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 5px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.session-meta-grid strong {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------------------------------------------------------
+   5) Playbook – Vault Content
+   --------------------------------------------------------- */
+.session-info-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
+
+.session-box-clean.expanded .session-info-content {
+    max-height: 2000px;
+    opacity: 1;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.playbook-text {
+    font-size: 15px;
+    color: #cecece;
+    line-height: 1.7;
+}
+
+.playbook-text strong {
+    color: var(--box-color);
+    font-weight: 800;
+    text-shadow: 0 0 10px color-mix(in srgb, var(--box-color), transparent 70%);
+}
+
+/* ---------------------------------------------------------
+   6) Hilfs-Elemente & Footer
+   --------------------------------------------------------- */
+.click-hint {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.2);
+    text-align: right;
+    margin-top: 10px;
+}
+
+.session-box-clean:hover .click-hint {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.session-box-clean.expanded .click-hint {
+    display: none;
+}
+
+/* ---------------------------------------------------------
+   8) Nächste Session – Floating Bar
+   --------------------------------------------------------- */
+.session-next {
+    margin: 25px 5px 10px 5px;
+    padding: 15px;
+    background: linear-gradient(to bottom, #111, #080808);
+    border-radius: 12px;
+    text-align: center;
+    color: var(--carbon-sub);
+    border: 1px solid rgba(255,255,255,0.05);
+    font-size: 16px;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.next-name {
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0 8px;
+}
+
+
+/* =========================================================
+   🕒 Session-Text Anzeige (Mit "Core Glow" Animation)
+   ========================================================= */
+#sessionText {
+  /* HIER FARBE ANPASSEN (Dein Gelb aus dem Screenshot oder Cyan) */
+  --glow-color: var(--session-accent, #00f3ff); 
+  --cf-dark: #0a0a0c;
+  --cf-mid: #141418;
+
+  position: relative;
+  margin: 16px 0;
+  padding: 18px 24px;
+  text-align: center;
+  
+  /* Typo */
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: clamp(14px, 4vw, 16px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  
+  color: var(--session-text-color, #fff);
+  user-select: none;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+
+  /* HINTERGRUND-MAGIE */
+  background: 
+    /* 1. Das Carbon-Muster (Overlay) */
+    repeating-linear-gradient(45deg, var(--cf-dark) 0 4px, var(--cf-mid) 4px 8px),
+    repeating-linear-gradient(-45deg, var(--cf-dark) 0 4px, var(--cf-mid) 4px 8px),
+    /* 2. Der GLOW von UNTEN (Radial Gradient) */
+    radial-gradient(circle at center, rgba(0, 243, 255, 0.15) 0%, transparent 70%);
+    
+  background-blend-mode: multiply, multiply, normal; /* Wichtig für die Mischung */
+  background-color: var(--cf-dark);
+
+  /* Schatten & Glow-Animation starten */
+  box-shadow: 
+    inset 3px 3px 8px rgba(0,0,0, 0.9), 
+    inset 0px 0px 2px rgba(255,255,255, 0.1),
+    0 2px 4px rgba(0,0,0,0.5);
+
+  /* Die Animation hinzufügen */
+  animation: obsidianPulse 4s infinite ease-in-out;
+  
+  text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* HOVER: Energie-Level erhöhen */
+#sessionText:hover {
+  color: #fff;
+  background-color: #0f0f12; /* Hintergrund leicht aufhellen */
+  
+  /* Stärkerer Inner Glow */
+  box-shadow: 
+    inset 2px 2px 5px rgba(0,0,0, 1), 
+    inset 0 0 5px var(--glow-color), /* HIER ist der starke Box-Glow */
+    0 0 15px var(--glow-color);       /* Leichter Schein nach außen */
+    
+  text-shadow: 
+    0 0 10px var(--glow-color),
+    0 0 20px var(--glow-color);
+    
+  transform: translateY(1px);
+  animation: none; /* Beim Hover statischer High-Energy State */
+}
+
+/* ACTIVE */
+#sessionText:active {
+  box-shadow: inset 4px 4px 15px rgba(0,0,0, 1);
+  transform: translateY(2px);
+  opacity: 0.9;
+}
+
+/* ANIMATION: Subtil & Smooth (Deine Werte, technisch korrigiert) */
+@keyframes obsidianPulse {
+  0% {
+    box-shadow: 
+      /* Tiefe (Bleibt gleich) */
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* Deine Start-Werte: Weicher Glow */
+      inset 0 0 2px var(--glow-color), 
+      0 0 15px var(--glow-color);
+  }
+  50% {
+    box-shadow: 
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* HIER REPARIERT: Statt -1px nutzen wir 2px. 
+         Der Glow zieht sich etwas zusammen (fokussiert sich), 
+         wird aber nicht ungültig. */
+      inset 0 0 2px var(--glow-color), 
+      
+      /* Außen etwas weiter, wie von dir gewünscht */
+      0 0 20px var(--glow-color);
+  }
+  100% {
+    box-shadow: 
+      inset 1px 1px 1px rgba(0,0,0, 0.9), 
+      
+      /* Zurück zum weichen Start */
+      inset 0 0 2px var(--glow-color), 
+      0 0 15px var(--glow-color);
+  }
+}
+
+
+/* =========================================================
+   📈 Progress Bar – Dark "Glass & Carbon" (rechteckig)
+   - Container: tiefschwarz + feine Schraff-/Carbon-Textur
+   - Bar: "liquid neon" mit diagonal wandernden Reflexen
+   - JS kann weiterhin nur die Breite von #progressBar setzen
+   ========================================================= */
+
+.progress-container {
+  --h: 30px;
+  --bg: #0a0a0a;                 /* tiefes Schwarz */
+  --edge: #0d0d0d;               /* Kante / Rahmen */
+  --innerHi: rgba(255,255,255,.08);
+  --innerLo: rgba(0,0,0,.6);
+
+  position: relative;
+  width: 100%;
+  height: var(--h);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  background-color: var(--bg);
+
+  /* ✳️ Carbon + Schraff-Layer (sehr fein & dezent) */
+  background-image:
+    /* leichte Vignette für Tiefe */
+    radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,.0) 0%, rgba(0,0,0,.35) 100%),
+    /* feine Kreuz-Schraffur */
+    repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(45deg,  rgba(255,255,255,.02) 0 1px, transparent 1px 7px),
+    /* subtile Carbon-Quadrate */
+    linear-gradient(45deg,
+      rgba(255,255,255,.04) 25%, transparent 25%, transparent 50%,
+      rgba(255,255,255,.04) 50%, rgba(255,255,255,.04) 75%, transparent 75%, transparent);
+  background-size:
+    100% 100%,
+    8px 8px,
+    8px 8px,
+    6px 6px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+
+  /* Glas-Kanten innen */
+  box-shadow:
+    inset 0 1px 0 var(--innerHi),
+    inset 0 -1px 0 var(--innerLo),
+    0 0 0 1px rgba(255,255,255,.04);
+}
+
+/* feiner Glas-Reflex oben & unten */
+.progress-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      rgba(255,255,255,.12), rgba(255,255,255,0) 35%,
+      rgba(0,0,0,0) 65%, rgba(0,0,0,.35));
+}
+
+/* ===== Der „liquid neon“ Balken ===== */
+#progressBar {
+  --c1: #00ffe1;   /* Neon Cyan */
+  --c2: #a855ff;   /* Electric Violet */
+  --c3: #00d1ff;   /* Ice Blue */
+
+  position: relative;
+  height: 100%;
+  width: 0; /* JS setzt die Breite */
+  background: linear-gradient(90deg, var(--c1), var(--c2) 45%, var(--c3));
+  background-size: 200% 100%;
+  animation: neonFlow 9s linear infinite;
+  will-change: background-position;
+
+  /* leichte Innenkante + dezente Außen-Aura */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 0 16px rgba(168,85,255,.25);
+  filter: saturate(1.08) brightness(1.03);
+}
+
+/* Schräg wandernde Highlights/Reflexe (überlagern Basis, auch wenn JS BG überschreibt) */
+#progressBar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    /* breiter Glas-Sheen */
+    linear-gradient(-25deg,
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,.22) 50%,
+      rgba(255,255,255,0) 60%),
+    /* feine, diagonale Lichtstreifen */
+    repeating-linear-gradient(-25deg,
+      rgba(255,255,255,.08) 0 2px,
+      rgba(255,255,255,0) 2px 16px);
+  background-size: 220% 100%, 28px 100%;
+  background-repeat: no-repeat, repeat;
+  mix-blend-mode: screen;                  /* edler „liquid“ Look */
+  animation: sheenSlide 2.8s linear infinite;
+  will-change: background-position;
+}
+
+/* optional: zusätzlicher zarter „Bloom“ im Bar-Innenraum */
+#progressBar::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 10% 50%, rgba(255,255,255,.10), transparent 60%);
+  opacity: .5;
+  animation: bloomDrift 6s ease-in-out infinite alternate;
+}
+
+/* ===== Motion ===== */
+@keyframes neonFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@keyframes sheenSlide {
+  0%   { background-position: -40% 50%, 0 0; }
+  100% { background-position: 140% 50%, 28px 0; }
+}
+@keyframes bloomDrift {
+  0%   { transform: translateX(0);   opacity: .45; }
+  100% { transform: translateX(6%); opacity: .6; }
+}
+
+/* ♿ Wenn Nutzer weniger Bewegung wünscht → Animationen aus */
+@media (prefers-reduced-motion: reduce) {
+  #progressBar,
+  #progressBar::before,
+  #progressBar::after { animation: none; }
+}
+
+/* =========================================================
+   📅 Tageszusammenfassung & Details (OBSIDIAN VAULT STYLE)
+   ========================================================= */
+
+/* Wir nutzen deine bestehenden Variablen oder Fallbacks */
+:root {
+  --obsidian-bg: #08080a;
+  --obsidian-slot: #050505;
+  --neon-default: #00ffcc; /* Fallback Neon */
+}
+
+/* 1. Die Zusammenfassung (Der "Button") */
+.day-summary {
+  position: relative;
+  cursor: pointer;
+  padding: 16px 20px;
+  margin-bottom: 5px; /* Kleiner Abstand zum Detail */
+  
+  /* OBSIDIAN BASIS: Carbon Dark */
+  background-color: var(--obsidian-bg);
+  background-image: repeating-linear-gradient(45deg, #0f0f12 0 2px, #16161a 2px 4px);
+  
+  /* TYPO: Tech Look */
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #e0e0e0;
+  text-align: center;
+  
+  /* SLOT OPTIK: Eingelassen */
+  border: none;
+  border-left: 3px solid var(--box-color, var(--neon-default)); /* Neon Indikator links */
+  
+  box-shadow: 
+    inset 0 0 15px rgba(0,0,0, 0.8),         /* Tiefe */
+    inset 1px 1px 0 rgba(255,255,255, 0.05), /* Lichtkante oben */
+    0 4px 10px rgba(0,0,0, 0.5);             /* Schatten außen */
+
+  transition: all 0.2s ease;
+}
+
+/* Hover: Neon wird aktiv */
+.day-summary:hover {
+  color: #fff;
+  background-color: #0f0f12;
+  
+  /* Glow verstärken */
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0, 0.9),
+    inset 0 0 10px color-mix(in srgb, var(--box-color, var(--neon-default)), transparent 90%),
+    0 0 15px color-mix(in srgb, var(--box-color, var(--neon-default)), transparent 80%);
+    
+  text-shadow: 0 0 8px var(--box-color, var(--neon-default));
+}
+
+/* 2. Die Details (Der "Inhalt" der aufklappt) */
+.day-details {
+  position: relative;
+  margin: 0 10px 15px 10px; /* Leicht eingerückt */
+  padding: 20px;
+  
+  /* TIEFES SCHWARZ (Recessed) */
+  background: var(--obsidian-slot);
+  
+  /* Slot-Schatten (Stark nach innen) */
+  box-shadow: 
+    inset 3px 3px 8px rgba(0,0,0, 0.95),
+    inset -1px -1px 2px rgba(255,255,255, 0.05);
+    
+  border-radius: 0 0 6px 6px;
+  border-left: 1px solid rgba(255,255,255,0.05); /* Feine Linie links */
+  
+  /* Typo im Content */
+  font-size: 13px;
+  line-height: 1.6;
+  color: #aaa;
+}
+
+/* Starke Elemente im Text (Hervorhebung) */
+.day-details strong {
+  color: var(--box-color, var(--neon-default));
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Links im Text */
+.day-details a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--box-color, var(--neon-default));
+  transition: color 0.2s;
+}
+
+.day-details a:hover {
+  color: var(--box-color, var(--neon-default));
+  text-shadow: 0 0 5px var(--box-color, var(--neon-default));
+}
+
+/* =========================================================
+   📅 Crypto Session – Optimiert
+   ========================================================= */
+
+/* 🔄 Einheitlicher Farbverlauf */
+@keyframes cryptoBarShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 💨 Pulsierender Glow */
+@keyframes cryptoGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(0,255,255,0.4),
+      0 0 20px rgba(255,0,204,0.3),
+      0 0 30px rgba(153,0,255,0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 18px rgba(0,255,255,0.6),
+      0 0 28px rgba(255,0,204,0.5),
+      0 0 38px rgba(153,0,255,0.4);
+  }
+}
+
+/* ✨ Text-Leuchten */
+@keyframes cryptoTextGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 4px rgba(0,255,204,0.4),
+      0 0 8px rgba(255,0,204,0.35);
+  }
+  50% {
+    text-shadow:
+      0 0 6px rgba(0,255,204,0.6),
+      0 0 12px rgba(255,0,204,0.5);
+  }
+}
+
+/* Fortschrittsbalken – Crypto Weekend */
+.progress-container.crypto-glow {
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#progressBar.crypto-bar {
+  background: linear-gradient(270deg, #00ffcc, #ff00cc, #9900ff, #00ffcc);
+  background-size: 300% 100%;
+  animation: cryptoBarShift 15s ease infinite, cryptoGlowPulse 6s ease-in-out infinite;
+  height: 100%;
+}
+
+/* Day-Summary Box – Crypto Weekend */
+.day-summary.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc22, #ff00cc22, #9900ff22);
+  background-size: 300% 300%;
+  animation: cryptoBarShift 15s ease infinite, cryptoGlowPulse 6s ease-in-out infinite;
+  color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  text-shadow: 0 0 4px rgba(0,255,255,0.4);
+  transition: box-shadow 0.3s, color 0.3s, background 0.3s;
+}
+
+/* Day-Details – Crypto Weekend */
+.day-details.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc15, #ff00cc15, #9900ff15);
+  background-size: 300% 300%;
+  animation: cryptoBarShift 15s ease infinite, cryptoGlowPulse 6s ease-in-out infinite;
+  color: #f0f0f0;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 204, 0.25);
+  text-shadow: 0 0 3px rgba(0,255,255,0.3);
+  transition: box-shadow 0.3s, color 0.3s, background 0.3s;
+}
+
+/* Session-Text – animierter Farbverlauf */
+#sessionText.crypto-weekend {
+  background: linear-gradient(90deg, #00ffcc, #ff00cc, #9900ff, #00ffcc);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: cryptoBarShift 20s ease-in-out infinite, cryptoTextGlow 6s ease-in-out infinite;
+}
+
+
+
+
