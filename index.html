@@ -423,7 +423,7 @@
   <main id="mainContent">
 
    <!-- DASHBOARD PANEL -->
-<section id="panel-dashboard" class="panel">
+<section id="panel-dashboard" class="panel hidden">
   <div class="dashboard-tactical-box">
 
     
@@ -536,7 +536,7 @@
 </section>
 
 
-<section id="panel-trade-log" class="panel hidden">
+<section id="panel-trade-log" class="panel">
   <link rel="stylesheet" href="jornal.css">
 <!DOCTYPE html>
 <html lang="de">
@@ -685,7 +685,7 @@
     <div class="row">
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title">Daily net cumulative P&amp;L</div>
+          <div id="equityTitle" class="panel-title">Daily net cumulative P&L</div>
           <div class="pill">Close-Datum</div>
         </div>
         <div class="panel-body">
@@ -717,6 +717,7 @@
         <div class="tz-cal-meta">
           <div class="tz-cal-pill">
             Monthly stats: <span id="tzMonthPnl" class="tz-cal-pill-val">0.00 €</span>
+
           </div>
           <div class="tz-cal-pill">
             <span id="tzMonthDays" class="tz-cal-pill-val">0</span> days
@@ -724,11 +725,23 @@
         </div>
       </div>
 
-      <div class="tz-cal-weekdays">
-        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-      </div>
+     <div class="tz-cal-layout">
+  <!-- LEFT: Calendar -->
+  <div class="tz-cal-left">
+    <div class="tz-cal-weekdays">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
 
-      <div class="tz-cal-grid" id="tzCalGrid"></div>
+    <div class="tz-cal-grid" id="tzCalGrid"></div>
+  </div>
+
+  <!-- RIGHT: Week summary (TradeZella style) -->
+  <aside class="tz-week-panel">
+    <div class="tz-week-title">Weeks</div>
+    <div id="tzWeekList" class="tz-week-list"></div>
+  </aside>
+</div>
+
 
       <div class="hint">
         Grün/Rot-Intensität = Tages-P&amp;L. Klick auf einen Tag: Filter auf diesen Tag.

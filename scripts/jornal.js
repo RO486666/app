@@ -38,32 +38,15 @@
     }));
   }
 
-  // ---------- Canvas sizing (nutzt deine bestehende Funktion, fallback) ----------
-  function _resizeCanvas(canvas, cssH=320){
-    if(typeof resizeCanvasToDisplaySize === "function"){
-      return resizeCanvasToDisplaySize(canvas, cssH);
-    }
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    const cssW = Math.max(200, Math.floor(rect.width));
-    const cssH2 = Math.max(240, Math.floor(cssH));
-    canvas.style.height = cssH2 + "px";
-    const needW = Math.floor(cssW * dpr);
-    const needH = Math.floor(cssH2 * dpr);
-    if(canvas.width !== needW || canvas.height !== needH){
-      canvas.width = needW; canvas.height = needH;
-    }
-    return { dpr, cssW, cssH: cssH2 };
-  }
 
   // ---------- Draw bar chart ----------
   function drawDailyBarChart(canvas, equityByDay){
     const series = buildDailyBarSeries(equityByDay);
 
-    const size = _resizeCanvas(canvas, 360);
-    const ctx = canvas.getContext("2d");
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.scale(size.dpr || (window.devicePixelRatio||1), size.dpr || (window.devicePixelRatio||1));
+ const size = resizeCanvasToDisplaySize(canvas, 360);
+const ctx = canvas.getContext("2d");
+ctx.setTransform(size.dpr,0,0,size.dpr,0,0);
+
 
     const w = size.cssW;
     const h = size.cssH;
@@ -699,31 +682,32 @@
   // =========================
   // Canvas sizing + chart
   // =========================
-  function resizeCanvasToDisplaySize(canvas, targetCssHeight=320){
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+ function resizeCanvasToDisplaySize(canvas, targetCssHeight=320){
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
 
-    const cssW = Math.max(200, Math.floor(rect.width));
-    const cssH = Math.max(240, Math.floor(targetCssHeight));
+  const cssW = Math.max(200, Math.floor(rect.width));
+  const cssH = Math.max(240, Math.floor(targetCssHeight));
 
-    canvas.style.height = cssH + "px";
+  canvas.style.height = cssH + "px";
 
-    const needW = Math.floor(cssW * dpr);
-    const needH = Math.floor(cssH * dpr);
+  const needW = Math.floor(cssW * dpr);
+  const needH = Math.floor(cssH * dpr);
 
-    if(canvas.width !== needW || canvas.height !== needH){
-      canvas.width = needW;
-      canvas.height = needH;
-      return { dpr, w: needW, h: needH, cssW, cssH };
-    }
-    return { dpr, w: canvas.width, h: canvas.height, cssW, cssH };
+  if(canvas.width !== needW || canvas.height !== needH){
+    canvas.width = needW;
+    canvas.height = needH;
   }
 
+  return { dpr, cssW, cssH };
+}
+
+
+  // ---------- Draw equity chart (angepasst für Rot/Grün) ----------
   function drawEquityChart(canvas, equityByDay){
     const size = resizeCanvasToDisplaySize(canvas, 320);
     const ctx = canvas.getContext("2d");
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.scale(size.dpr, size.dpr);
+    ctx.setTransform(size.dpr,0,0,size.dpr,0,0)
 
     const w = size.cssW;
     const h = size.cssH;
@@ -734,6 +718,7 @@
 
     const padL=56, padR=18, padT=18, padB=44;
 
+    // Grid zeichnen
     ctx.strokeStyle = "rgba(255,255,255,0.06)";
     ctx.lineWidth = 1;
     const gridY = 5;
@@ -752,9 +737,11 @@
       return;
     }
 
+    // Min/Max berechnen
     const ys = equityByDay.map(p => p.cum);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+    // Wir stellen sicher, dass 0 immer Teil der Skala ist, damit der Schnittpunkt sichtbar ist (optional)
+    const minY = Math.min(0, ...ys); 
+    const maxY = Math.max(0, ...ys); 
     const span = (maxY - minY) || 1;
 
     function xAt(i){
@@ -765,14 +752,57 @@
       return (h-padB) - (h-padT-padB) * t;
     }
 
+    // Labels links
     ctx.fillStyle = "rgba(255,255,255,0.70)";
     ctx.font = "12px -apple-system, Segoe UI, Roboto, Arial";
     ctx.fillText(fmtMoney(maxY), 10, padT + 12);
     ctx.fillText(fmtMoney(minY), 10, (h-padB));
+    
+    // Optional: 0-Label anzeigen
+    const yZeroPos = yAt(0);
+    if(yZeroPos > padT + 20 && yZeroPos < h-padB - 20) {
+        ctx.fillText(fmtMoney(0), 10, yZeroPos + 4);
+    }
 
-    ctx.strokeStyle = "rgba(0,230,118,0.85)";
+    // --- FARB-LOGIK (Gradient) ---
+    // Wir erstellen einen Verlauf von Oben nach Unten.
+    // Oben (hohe Werte) ist Grün, Unten (niedrige Werte) ist Rot.
+    // Der Umschwung muss genau bei yAt(0) passieren.
+    
+    const gradStart = padT;
+    const gradEnd = h - padB;
+    const zeroPixel = yAt(0);
+    
+    // Verhältnis berechnen (0.0 bis 1.0), wo die 0-Linie im Zeichenbereich liegt
+    let zeroRatio = (zeroPixel - gradStart) / (gradEnd - gradStart);
+    // Clampen, falls 0 außerhalb des Charts liegt
+    zeroRatio = Math.max(0, Math.min(1, zeroRatio));
+
+    // Farben definieren
+    const cGreen = "rgba(0,230,118,1)"; 
+    const cRed   = "rgba(255,82,82,1)";
+    const cGreenFill = "rgba(0,230,118,0.15)";
+    const cRedFill   = "rgba(255,82,82,0.15)";
+
+    // Gradient für die Linie (Stark)
+    const strokeGrad = ctx.createLinearGradient(0, gradStart, 0, gradEnd);
+    strokeGrad.addColorStop(0, cGreen);
+    strokeGrad.addColorStop(zeroRatio, cGreen); // Bis zur 0-Linie Grün
+    strokeGrad.addColorStop(zeroRatio, cRed);   // Ab der 0-Linie Rot
+    strokeGrad.addColorStop(1, cRed);
+
+    // Gradient für den Hintergrund (Transparenter)
+    const fillGrad = ctx.createLinearGradient(0, gradStart, 0, gradEnd);
+    fillGrad.addColorStop(0, cGreenFill);
+    fillGrad.addColorStop(zeroRatio, cGreenFill);
+    fillGrad.addColorStop(zeroRatio, cRedFill);
+    fillGrad.addColorStop(1, cRedFill);
+
+
+    // --- LINIE ZEICHNEN ---
     ctx.lineWidth = 2;
-
+    ctx.strokeStyle = strokeGrad; // Gradient zuweisen
+    
     ctx.beginPath();
     for(let i=0;i<equityByDay.length;i++){
       const x = xAt(i);
@@ -782,12 +812,15 @@
     }
     ctx.stroke();
 
-    ctx.lineTo(xAt(equityByDay.length-1), h-padB);
-    ctx.lineTo(xAt(0), h-padB);
+    // --- FILL (HINTERGRUND) ZEICHNEN ---
+    // Pfad schließen (runter zur X-Achse)
+    ctx.lineTo(xAt(equityByDay.length-1), yAt(0)); // Runter zur 0-Linie (oder Boden)
+    ctx.lineTo(xAt(0), yAt(0)); // Zurück zum Anfang auf 0-Höhe
     ctx.closePath();
-    ctx.fillStyle = "rgba(0,230,118,0.08)";
+    ctx.fillStyle = fillGrad; // Gradient zuweisen
     ctx.fill();
 
+    // Datums-Labels unten
     const start = equityByDay[0].date;
     const end = equityByDay[equityByDay.length-1].date;
     const fmt = (d)=>`${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
@@ -1240,60 +1273,139 @@ function renderTableToBody(tbody, trades, mode) {
       el.scrollIntoView({ behavior:"smooth", block:"start" });
     }
   }
+  
+  /* =========================
+   CANVAS – FINAL FIX (DROP-IN)
+   ========================= */
 
-  // =========================
-  // UI update
-  // =========================
-  function updateUI(meta){
-    $("dashboard").style.display = "block";
+/* 1) ZENTRALER REDRAW (EINZIGER ENTRYPOINT) */
+let _raf = false;
+function scheduleRedraw(){
+  if(_raf) return;
+  _raf = true;
+ requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>{
+    _raf = false;
+    if(!lastMeta) return;
+    drawEquityChart($("equityCanvas"), lastMeta.stats.equityByDay);
+    drawDailyBarsFromMeta(lastMeta);
+  });
+});
+}
+  
+  /* 2) NUR EIN RESIZE-HOOK */
+window.addEventListener("resize", scheduleRedraw);
 
-    $("sourceInfo").innerText = `${meta.sheetName} (Header-Zeile: ${meta.headerIndex+1}, Score: ${meta.score})`;
+function observeCanvasLayout(canvas, redraw){
+  const parent = canvas.parentElement;
+  if(!parent) return;
 
-    $("closedCount").innerText = meta.closed.length;
-    $("openCount").innerText = meta.open.length;
-    $("daysCount").innerText = meta.stats.tradingDays;
+  let lastW = 0;
 
-    const netEl = $("netProfit");
-    netEl.innerText = fmtMoney(meta.stats.net);
-    netEl.className = "stat-value " + (meta.stats.net >= 0 ? "text-green" : "text-red");
-
-    $("grossWin").innerText = fmtMoney(meta.stats.grossWin);
-    $("grossLoss").innerText = fmtMoney(meta.stats.grossLoss).replace("-", "");
-
-    $("ddChip").innerText = `DD: ${fmtMoney(meta.stats.ddAbs).replace("-", "")} (${meta.stats.ddPct.toFixed(1)}%)`;
-
-    $("winRate").innerText = `${meta.stats.winRate.toFixed(2)}%`;
-    $("wins").innerText = meta.stats.wins;
-    $("losses").innerText = meta.stats.losses;
-    $("breakeven").innerText = meta.stats.breakeven;
-
-    $("streakChip").innerText = `Max W/L: ${meta.stats.maxWinStreak} / ${meta.stats.maxLossStreak}`;
-
-    $("profitFactor").innerText = (meta.stats.profitFactor === Infinity) ? "∞" : meta.stats.profitFactor.toFixed(2);
-    $("expectancy").innerText = fmtMoney(meta.stats.expectancy);
-
-    $("avgWin").innerText = fmtMoney(meta.stats.avgWin);
-    $("avgLoss").innerText = fmtMoney(meta.stats.avgLoss);
-    $("avgWinLoss").innerText = (meta.stats.avgWinLoss === Infinity) ? "∞" : meta.stats.avgWinLoss.toFixed(2);
-
-    $("dayWinRate").innerText = `${meta.stats.dayWinRate.toFixed(2)}%`;
-    $("winDays").innerText = meta.stats.winDays;
-    $("lossDays").innerText = meta.stats.lossDays;
-    $("beDays").innerText = meta.stats.beDays;
-
-    drawEquityChart($("equityCanvas"), meta.stats.equityByDay);
-    renderHeatmap($("heatmap"), meta.stats.dailyMap);
-    initMonthlyCalendar(meta.closed);
-
-    if(selectedDayKey){
-      renderMonthlyCalendar(tzMonthState || new Date(), tzDailyDetails || new Map(), selectedDayKey);
+  const ro = new ResizeObserver(entries=>{
+    const w = Math.floor(entries[0].contentRect.width);
+    if(w > 0 && w !== lastW){
+      lastW = w;
+      redraw();
     }
+  });
 
-    showDayDetails(selectedDayKey, meta.closed);
-// ✅ HIER rein
-  drawDailyBarsFromMeta(meta);
-    setActiveTab(activeTab, meta);
+  ro.observe(parent);
+}
+
+
+ /* 3) UPDATE UI → KEIN DIREKTES DRAW MEHR */
+function updateUI(meta){
+  $("dashboard").style.display = "block";
+  // --- NEUER CODE FÜR TITEL-FARBE ---
+  const eqTitle = $("equityTitle");
+  if(eqTitle) {
+      // Lösche alte Farben
+      eqTitle.classList.remove("text-green", "text-red");
+      // Prüfe, ob das Gesamtergebnis (letzter Punkt der Equity) positiv/negativ ist
+      const lastVal = meta.stats.equityByDay.length > 0 
+                      ? meta.stats.equityByDay[meta.stats.equityByDay.length-1].cum 
+                      : 0;
+      
+      if(lastVal >= 0) eqTitle.classList.add("text-green");
+      else eqTitle.classList.add("text-red");
   }
+  // ----------------------------------
+  
+  $("sourceInfo").innerText = `${meta.sheetName} (Header-Zeile: ${meta.headerIndex+1}, Score: ${meta.score})`;
+
+  $("closedCount").innerText = meta.closed.length;
+  $("openCount").innerText = meta.open.length;
+  $("daysCount").innerText = meta.stats.tradingDays;
+
+  const netEl = $("netProfit");
+  netEl.innerText = fmtMoney(meta.stats.net);
+  netEl.className = "stat-value " + (meta.stats.net >= 0 ? "text-green" : "text-red");
+
+  $("grossWin").innerText = fmtMoney(meta.stats.grossWin);
+  $("grossLoss").innerText = fmtMoney(meta.stats.grossLoss).replace("-", "");
+  $("ddChip").innerText = `DD: ${fmtMoney(meta.stats.ddAbs).replace("-", "")} (${meta.stats.ddPct.toFixed(1)}%)`;
+
+  $("winRate").innerText = `${meta.stats.winRate.toFixed(2)}%`;
+  $("wins").innerText = meta.stats.wins;
+  $("losses").innerText = meta.stats.losses;
+  $("breakeven").innerText = meta.stats.breakeven;
+
+  $("streakChip").innerText = `Max W/L: ${meta.stats.maxWinStreak} / ${meta.stats.maxLossStreak}`;
+  $("profitFactor").innerText = (meta.stats.profitFactor === Infinity) ? "∞" : meta.stats.profitFactor.toFixed(2);
+  $("expectancy").innerText = fmtMoney(meta.stats.expectancy);
+
+  $("avgWin").innerText = fmtMoney(meta.stats.avgWin);
+  $("avgLoss").innerText = fmtMoney(meta.stats.avgLoss);
+  $("avgWinLoss").innerText = (meta.stats.avgWinLoss === Infinity) ? "∞" : meta.stats.avgWinLoss.toFixed(2);
+
+  $("dayWinRate").innerText = `${meta.stats.dayWinRate.toFixed(2)}%`;
+  $("winDays").innerText = meta.stats.winDays;
+  $("lossDays").innerText = meta.stats.lossDays;
+  $("beDays").innerText = meta.stats.beDays;
+
+  renderHeatmap($("heatmap"), meta.stats.dailyMap);
+  initMonthlyCalendar(meta.closed);
+
+  if(selectedDayKey){
+    renderMonthlyCalendar(tzMonthState || new Date(), tzDailyDetails || new Map(), selectedDayKey);
+  }
+
+  showDayDetails(selectedDayKey, meta.closed);
+  setActiveTab(activeTab, meta);
+
+  const eq = $("equityCanvas");
+const bar = $("dailyBarCanvas");
+
+if(eq) observeCanvasLayout(eq, scheduleRedraw);
+if(bar) observeCanvasLayout(bar, scheduleRedraw);
+
+// initial draw (fallback)
+scheduleRedraw();
+
+}
+
+/* 4) DOM LOAD → RESTORE + ERSTER DRAW */
+window.addEventListener("load", ()=>{
+	
+	
+	
+  const saved = localStorage.getItem("tradezellaLastMeta");
+  if(saved){
+    try{
+      const raw = JSON.parse(saved);
+      lastMetaOriginal = {
+        ...raw,
+        closed: restoreDates(raw.closed || []),
+        open: restoreDates(raw.open || [])
+      };
+      populateSymbolSelect(lastMetaOriginal.closed, lastMetaOriginal.open);
+      rebuildFromFilters(); // triggert updateUI → scheduleRedraw
+    }catch(e){}
+  }
+  scheduleRedraw();
+});
+
 
   // =========================
   // Meta state
@@ -1379,19 +1491,8 @@ function renderTableToBody(tbody, trades, mode) {
       rebuildFromFilters();
     });
   }
-  wireFilterEvents();
 
-  // =========================
-  // Resize redraw
-  // =========================
-  window.addEventListener("resize", ()=>{
-    if(lastMeta){
-      drawEquityChart($("equityCanvas"), lastMeta.stats.equityByDay);
-	  
-	    // ✅ HIER rein
-    drawDailyBarsFromMeta(lastMeta);
-    }
-  });
+
   
 // =========================
 // Speichern & Laden (LocalStorage)
@@ -1460,31 +1561,7 @@ $("fileInput").addEventListener("change", function(e) {
   reader.readAsArrayBuffer(file);
 });
 
-// =========================
-// DOMContentLoaded Restore (Repariert)
-// =========================
-window.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("tradezellaLastMeta");
-  if (!saved) return;
 
-  try {
-    const rawMeta = JSON.parse(saved);
-    if (rawMeta && rawMeta.closed) {
-      // WICHTIG: Datums-Strings zurück in Date-Objekte wandeln
-      lastMetaOriginal = {
-        ...rawMeta,
-        closed: restoreDates(rawMeta.closed),
-        open: restoreDates(rawMeta.open || [])
-      };
-
-      populateSymbolSelect(lastMetaOriginal.closed, lastMetaOriginal.open);
-      rebuildFromFilters();
-      console.log("✅ Daten erfolgreich wiederhergestellt");
-    }
-  } catch (err) {
-    console.warn("Fehler beim Wiederherstellen aus Storage:", err);
-  }
-});
 
 // Reset Button
 document.getElementById("btnClearStorage").addEventListener("click", () => {

@@ -13,17 +13,63 @@
       color:#e0e0e0;
       margin:0;
       padding:20px;
-    }
-    .wrap{ max-width:1200px; margin:0 auto; }
+    min-height: 100vh; /* Sorgt dafür, dass der BG immer bis ganz unten geht */
+  box-sizing: border-box; /* Hilft bei Padding-Berechnungen */
+}
+/* =========================================================
+   WRAP – KOMPAKT + MOBILE FIRST
+   ========================================================= */
+.wrap{
+  max-width: 1100px;        /* Desktop enger */
+  margin: 0 auto;
+  padding: 14px;            /* weniger Luft */
+}
 
-    .upload-container{
-      border:2px dashed var(--green);
-      padding:36px;
-      text-align:center;
-      border-radius:12px;
-      margin-bottom:22px;
-      background:var(--card);
-    }
+/* Tablet */
+@media (max-width: 900px){
+  .wrap{
+    max-width: 100%;
+    padding: 10px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px){
+  .wrap{
+    padding: 6px;           /* brutal kompakt */
+  }
+}
+
+
+  .upload-container {
+    border: 1px dashed var(--green); /* Dünnere Linie wirkt edler */
+    padding: 16px; /* Von 36px auf 16px reduziert */
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 14px; /* Weniger Abstand nach unten */
+    background: var(--card);
+    transition: all 0.2s ease;
+}
+
+/* Falls du den Text darin auch kleiner willst */
+.upload-container .sub {
+    font-size: 11px;
+    margin: 4px 0 10px;
+    color: var(--muted);
+}
+
+/* Der Button im Container etwas dezenter */
+.btn-upload {
+    background: var(--green);
+    color: #000;
+    padding: 6px 14px; /* Kompakter */
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-block;
+    user-select: none;
+}
     .btn-upload{
       background:var(--green);
       color:#000;
@@ -167,23 +213,115 @@
     .text-red{ color:var(--red); }
     .text-amber{ color:var(--amber); }
 
-    .row{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap:14px;
-      margin-bottom:14px;
-    }
-    @media(max-width: 980px){
-      .row{ grid-template-columns:1fr; }
-    }
+    .row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+  margin-bottom: 14px;
+  /* NEU: Verhindert, dass das Grid "stecken bleibt" */
+  min-width: 0; 
+}
 
-    .panel{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-    }
+/* =========================================================
+   MOBILE CALENDAR FIX (≤600px)
+   ========================================================= */
+@media (max-width: 600px){
+
+  /* Gesamtes Month-Panel enger */
+  #tzMonthPanel{
+    padding: 0;
+  }
+
+  /* Layout: alles untereinander */
+  #tzMonthPanel .tz-cal-layout{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0 6px 10px;
+  }
+
+  /* Wochentage kompakter */
+  .tz-cal-weekdays{
+    gap: 6px;
+    padding: 6px 6px 0;
+    font-size: 10px;
+  }
+
+  /* Kalender Grid */
+  .tz-cal-grid{
+    gap: 6px;
+    padding: 6px;
+  }
+
+  /* Einzelne Tages-Box */
+  .tz-cal-cell{
+    min-height: 54px;        /* WICHTIG */
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  .tz-cal-day{
+    top: 5px;
+    right: 6px;
+    font-size: 10px;
+  }
+
+  .tz-cal-pnl{
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .tz-cal-sub{
+    font-size: 10px;
+    gap: 1px;
+  }
+
+  /* Week Panel nach unten */
+  #tzMonthPanel .tz-week-panel{
+    margin-top: 8px;
+    padding: 8px;
+  }
+
+  .tz-week-row{
+    padding: 8px;
+  }
+
+  .tz-week-label,
+  .tz-week-pnl{
+    font-size: 11px;
+  }
+}
+
+
+.row > * {
+  min-width: 0; 
+}
+    /* Ändere 980px zu 1200px (oder 1100px) */
+@media(max-width: 1200px){ 
+  .row{ grid-template-columns:1fr; }
+}
+
+    /* Dein Standard-Panel */
+.panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    /* Wichtig: Animation für den Farbwechsel */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Wenn wir im Plus sind (Grüner Rahmen + Glow) */
+.panel.pos {
+    border-color: var(--green);
+    box-shadow: 0 10px 30px rgba(0, 230, 118, 0.15); 
+}
+
+/* Wenn wir im Minus sind (Roter Rahmen + Glow) */
+.panel.neg {
+    border-color: var(--red);
+    box-shadow: 0 10px 30px rgba(255, 82, 82, 0.15);
+}
     .panel-head{
       padding:14px 16px;
       border-bottom:1px solid var(--line);
@@ -201,9 +339,17 @@
       align-items:center;
       gap:10px;
     }
-    .panel-body{ padding:10px 12px 14px; }
+    .panel-body{
+    padding: 4px 6px 6px;
+}
 
-    canvas{ width:100%; height:320px; display:block; }
+   canvas {
+  display: block;
+  width: 100%;
+  height: 320px;
+}
+
+
 
     .heatmap{
       display:grid;
@@ -239,56 +385,104 @@
       text-overflow:ellipsis;
     }
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      padding:10px 12px 0;
-    }
-    .tab{
-      background:rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.10);
-      color:#dcdcdc;
-      padding:8px 10px;
-      border-radius:10px;
-      font-size:12px;
-      font-weight:900;
-      cursor:pointer;
-      user-select:none;
-    }
-    .tab.active{
-      background:rgba(0,230,118,0.12);
-      border-color:rgba(0,230,118,0.35);
-      color:#eafff3;
-    }
+/* =========================================================
+   TABS – ULTRA KOMPAKT (TradeZella-Level)
+   ========================================================= */
+.tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px 8px 0;
+}
 
-    .trade-table-container{ overflow-x:auto; }
-    table{ width:100%; border-collapse:collapse; font-size:13px; }
-    th{
-      text-align:left;
-      padding:12px 14px;
-      background:#252525;
-      color:#9a9a9a;
-      font-weight:800;
-      border-bottom:1px solid var(--line);
-      white-space:nowrap;
-    }
-    td{
-      padding:11px 14px;
-      border-bottom:1px solid #232323;
-      white-space:nowrap;
-      vertical-align:middle;
-    }
-    tr:hover{ background:#242424; }
+.tab {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #a8a8a8;
 
-    .badge{
-      padding:4px 8px;
-      border-radius:8px;
-      font-size:11px;
-      text-transform:uppercase;
-      font-weight:1000;
-      letter-spacing:0.4px;
-      display:inline-block;
-    }
+    padding: 3px 8px;
+    border-radius: 6px;
+
+    font-size: 10.5px;
+    font-weight: 800;
+    line-height: 1.1;
+
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.tab:hover {
+    background: rgba(255,255,255,0.06);
+}
+
+.tab.active {
+    background: rgba(0,230,118,0.08);
+    border-color: rgba(0,230,118,0.25);
+    color: var(--green);
+}
+
+
+/* =========================================================
+   TABELLE – MAXIMAL DICHT (KEIN GESTRECKE)
+   ========================================================= */
+.trade-table-container {
+    overflow-x: auto;
+    margin-top: 2px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+/* Header */
+th {
+    text-align: left;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.02);
+    color: #7a7a7a;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+/* Rows */
+td {
+    padding: 3px 8px;
+    border-bottom: 1px solid #232323;
+
+    font-size: 11px;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    vertical-align: middle;
+    color: #d0d0d0;
+}
+
+/* Zeilen nicht aufblasen */
+tr {
+    height: auto;
+}
+
+/* Hover dezent */
+tr:hover {
+    background: rgba(255,255,255,0.025);
+}
+
+
+/* Bonus: Kleine Anpassung für Badges in der Tabelle */
+.badge {
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 4px;
+}
     .badge-buy{ background:rgba(0,230,118,0.12); color:var(--green); border:1px solid rgba(0,230,118,0.25); }
     .badge-sell{ background:rgba(255,82,82,0.12); color:var(--red); border:1px solid rgba(255,82,82,0.25); }
     .badge-open{ background:rgba(255,204,102,0.10); color:var(--amber); border:1px solid rgba(255,204,102,0.25); }
@@ -470,3 +664,131 @@
     vertical-align:middle;
     border:1px solid rgba(255,255,255,0.18);
   }
+  
+  /* =========================================================
+   TZ Calendar v2: Layout + Week Panel (TradeZella Style)
+   (ADD-ON: am Ende der CSS einfügen)
+   ========================================================= */
+
+/* 1) Layout: Kalender links, Weeks rechts */
+#tzMonthPanel .tz-cal-layout{
+  display:grid;
+  grid-template-columns: 1fr 190px;
+  gap: 14px;
+  padding: 0 14px 16px; /* wir übernehmen padding von weekdays/grid */
+  align-items:start;
+}
+
+/* wir entfernen die alten paddings innen, weil layout padding übernimmt */
+#tzMonthPanel .tz-cal-layout .tz-cal-weekdays{
+  padding: 12px 0 0;
+}
+#tzMonthPanel .tz-cal-layout .tz-cal-grid{
+  padding: 12px 0 0;
+}
+
+/* 2) Week Panel rechts */
+#tzMonthPanel .tz-week-panel{
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+  min-width: 0;
+}
+
+#tzMonthPanel .tz-week-title{
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin: 2px 2px 10px;
+}
+
+/* List */
+#tzMonthPanel .tz-week-list{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+/* Week row card */
+#tzMonthPanel .tz-week-row{
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 10px 10px 9px;
+  cursor:pointer;
+  user-select:none;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+#tzMonthPanel .tz-week-row:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.14);
+}
+
+#tzMonthPanel .tz-week-row.is-active{
+  outline: 2px solid rgba(153,51,255,0.35);
+  box-shadow: 0 0 0 4px rgba(153,51,255,0.10);
+}
+
+#tzMonthPanel .tz-week-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+#tzMonthPanel .tz-week-label{
+  font-weight: 1000;
+  font-size: 12px;
+  color: rgba(255,255,255,0.80);
+}
+
+#tzMonthPanel .tz-week-pnl{
+  font-weight: 1000;
+  font-size: 12px;
+}
+
+#tzMonthPanel .tz-week-sub{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.60);
+}
+
+#tzMonthPanel .tz-week-pill{
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 900;
+}
+
+/* 3) Monthly stats farbig (PnL Text) */
+#tzMonthPnl.is-pos{ color: var(--green) !important; }
+#tzMonthPnl.is-neg{ color: var(--red) !important; }
+#tzMonthPnl.is-zero{ color: #fff !important; opacity: .85; }
+
+/* optional: Pills etwas "TradeZella-cleaner" */
+#tzMonthPanel .tz-cal-pill{
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+/* 4) Responsive: Week Panel unter den Kalender */
+@media (max-width: 860px){
+  #tzMonthPanel .tz-cal-layout{
+    grid-template-columns: 1fr;
+  }
+  #tzMonthPanel .tz-week-panel{
+    margin-top: 10px;
+  }
+}
+

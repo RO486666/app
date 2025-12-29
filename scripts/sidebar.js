@@ -23,8 +23,9 @@ const MENU = {
   dashboard: {
     title: "Dashboard",
     items: [
-      { label: "Dashboard", panel: "panel-dashboard" },
-	  { label: "TradeLog", panel: "panel-trade-log" }
+	{ label: "TradeLog", panel: "panel-trade-log" },
+      { label: "Dashboard", panel: "panel-dashboard" }
+	 
     ]
   },
   tools: {
