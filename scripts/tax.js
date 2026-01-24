@@ -93,7 +93,7 @@ function berechneSteuern() {
   `;
   ausgabe.style.color = "#0f0";
 
-  document.getElementById("gewinnBetrag").value = "";
+  //document.getElementById("gewinnBetrag").value = "";
 }
 
 // 💾 Manuelles Speichern
