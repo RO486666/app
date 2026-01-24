@@ -1615,3 +1615,38 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* ============================================================
+   🔴 4H VALIDATION – ALERT STATE (News-Style)
+   ============================================================ */
+
+/* Wenn die Strafe aktiv ist (MISSING) */
+#h4ValidationCard.penalty-active {
+  background: radial-gradient(
+    circle at center, 
+    rgba(80, 10, 0, 0.85) 0%, 
+    rgba(30, 0, 0, 0.98) 90%
+  ) !important;
+  border: 1px solid #ff3b3b !important;
+  animation: corePulse 2.5s infinite ease-in-out !important; /* Dein Reaktor-Puls */
+}
+
+#h4ValidationCard.penalty-active .tf-title,
+#h4ValidationCard.penalty-active #h4ValidationStatus,
+#h4ValidationCard.penalty-active #h4MultiplierDisplay {
+  color: #ff3b3b !important;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+/* --- ✅ Wenn bestätigt (CONFIRMED) --- */
+#h4ValidationCard.validation-confirmed {
+  border-color: rgba(0, 255, 154, 0.5) !important;
+  background: radial-gradient(circle at center, rgba(0, 40, 30, 0.7), rgba(3, 8, 5, 0.98)) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 154, 0.1);
+}
+
+#h4ValidationCard.validation-confirmed #h4ValidationStatus,
+#h4ValidationCard.validation-confirmed #h4MultiplierDisplay {
+  color: #00ff9a !important;
+  text-shadow: 0 0 10px rgba(0, 255, 154, 0.5);
+}
