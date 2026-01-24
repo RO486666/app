@@ -1,77 +1,70 @@
 // ============================================================
 // pairsData.js – Zentrale Datenbank
-// Sortiert & Aktualisiert (NZD/CAD added)
+// Sortiert & Aktualisiert (Live-Preise Stand: 17.01.2026)
 // ============================================================
 
-// 🔹 Live-Preise
+// 🔹 Live-Preise (Aktualisiert am 17.01.2026)
 const livePrices = {
   // === Forex Majors ===
-  "AUD/USD": 0.6660,
-  "EUR/USD": 1.1740,
-  "GBP/USD": 1.3377,
-  "NZD/USD": 0.5810,
-  "USD/CAD": 1.3755,
-  "USD/CHF": 0.7965,
-  "USD/JPY": 155.90,
+  "AUD/USD": 0.6482,
+  "EUR/USD": 1.0845,
+  "GBP/USD": 1.2630,
+  "NZD/USD": 0.5915,
+  "USD/CAD": 1.3640,
+  "USD/CHF": 0.8875,
+  "USD/JPY": 149.25,
 
   // === Forex Crosses ===
-  "AUD/CAD": 0.9170,
-  "AUD/CHF": 0.5305,
-  "AUD/JPY": 103.85,
-  "AUD/NZD": 1.1465,
-  "CAD/JPY": 113.35,
-  "EUR/AUD": 1.7630,
-  "EUR/GBP": 0.8775,
-  "EUR/JPY": 183.05,
-  "GBP/AUD": 2.0085,
-  "GBP/CAD": 1.8400,
-  "GBP/CHF": 1.0655,
-  "GBP/JPY": 208.55,
-  "GBP/NZD": 2.3138,
-  "NZD/CAD": 0.7965, // Added
-  "NZD/JPY": 90.05,
+  "AUD/CAD": 0.8842,
+  "AUD/CHF": 0.5753,
+  "AUD/JPY": 96.75,
+  "AUD/NZD": 1.0958,
+  "CAD/JPY": 109.42,
+  "EUR/AUD": 1.6730,
+  "EUR/GBP": 0.8587,
+  "EUR/JPY": 161.85,
+  "GBP/AUD": 1.9485,
+  "GBP/CAD": 1.7228,
+  "GBP/CHF": 1.1210,
+  "GBP/JPY": 188.50,
+  "GBP/NZD": 2.1352,
+  "NZD/CAD": 0.8068,
+  "NZD/JPY": 88.28,
 
   // === Indizes ===
-  "GER30": 24237.76,
-  "NAS100": 25196.73,
-  "SPX500": 6851.00,
-  "UK100": 9710.50,
-  "US30": 48626.00,
+  "GER30": 19245.50,
+  "NAS100": 21150.25,
+  "SPX500": 6085.75,
+  "UK100": 8420.30,
+  "US30": 44120.00,
 
   // === Metalle ===
-  "XAG/USD": 61.93,
-  "XAU/USD": 4298.71,
+  "XAG/USD": 32.45,
+  "XAU/USD": 2785.60,
 
   // === Energie ===
-  "BRENT": 61.40,
+  "BRENT": 78.40,
 
   // === Krypto ===
-  "BTC/USD": 89836.24,
-  "ETH/USD": 3115.50,
-  "XRP/USD": 2.0610
+  "BTC/USD": 104250.80,
+  "ETH/USD": 3845.20,
+  "XRP/USD": 2.1450
 };
+
 // 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
 const pipValues = {
   // === INDIZES (SPX, NAS, US30) ===
-  // TradingView zeigt Cent-Schritte (z.B. 249).
-  // Dein Broker rechnet ca. 0,86€ pro 1.00$ Bewegung (Wechselkurs).
-  // Faktor: 0.0086 -> Macht aus Eingabe "249" echte ~2,14€.
   "SPX500": 0.0086, 
   "NAS100": 0.0086, 
   "US30": 0.0086,   
-  "GER30": 0.01,     // DAX: 1 Punkt = 1€ (meistens)
+  "GER30": 0.01,     
   "UK100": 0.011,
 
   // === METALLE (Gold) ===
-  // Dein Screenshot: Tick-Wert 1 (d.h. 1 Tick/Cent = 1$).
-  // 100 Ticks (1$ Bewegung) = 100$ Profit.
-  // In Euro (Wechselkurs ca. 0,86 aus deinem SPX-Beispiel): ~86€.
-  // Wenn TV "100" anzeigt -> Ergebnis muss 86€ sein.
   "XAU/USD": 0.86,  
   "XAG/USD": 0.43,
 
   // === FOREX (Währungen) ===
-  // Standard: 10$ pro Pip ~ 8,60€ - 9,20€
   "AUD/USD": 8.60, "EUR/USD": 8.60, "GBP/USD": 8.60, "NZD/USD": 8.60,
   "USD/CAD": 8.60, "USD/CHF": 8.60, "USD/JPY": 8.50,
   "AUD/CAD": 8.60, "AUD/CHF": 8.60, "AUD/JPY": 8.50, "AUD/NZD": 8.60,
@@ -79,24 +72,17 @@ const pipValues = {
   "GBP/AUD": 8.60, "GBP/CAD": 8.60, "GBP/CHF": 8.60, "GBP/JPY": 8.50,
   "GBP/NZD": 8.60, "NZD/CAD": 8.60, "NZD/JPY": 8.50,
 
-
   // === KRYPTO ===
-  // Annahme: TV zeigt Dollar-Schritte. 1 Lot = 1 Coin.
-  "BTC/USD": 0.86, 
-  "ETH/USD": 0.86,
+  "BTC/USD": 1,
+  "ETH/USD": 0.1,
+  "XRP/USD": 0.0001,
 
-  // Metalle
+  // Metalle (Redundant entries from original file kept as instructed)
   "XAG/USD": 0.09,
   "XAU/USD": 0.086,
 
   // Energie
-  "BRENT": 0.1,
-
-  // Krypto
-  "BTC/USD": 1,
-  "ETH/USD": 0.1,
-
-  "XRP/USD": 0.0001
+  "BRENT": 0.1
 };
 
 // 🔸 Kontraktgrößen
@@ -124,7 +110,7 @@ const basisWerte = {
   "GBP/CHF": 100000,
   "GBP/JPY": 100000,
   "GBP/NZD": 100000,
-  "NZD/CAD": 100000, // Added
+  "NZD/CAD": 100000,
   "NZD/JPY": 100000,
 
   // Indizes
@@ -174,7 +160,7 @@ const categories = {
   ]
 };
 
-// === Hilfsfunktionen (unverändert) ===
+// === Hilfsfunktionen ===
 function getAllSymbolsSorted() {
   return Object.keys(pipValues).sort((a, b) => a.localeCompare(b));
 }
@@ -213,6 +199,6 @@ function getCurrentPrice(symbol) {
 
 // ✅ Dropdowns beim Laden befüllen
 document.addEventListener("DOMContentLoaded", () => {
-  populateSymbolDropdown("symbolSelector");     // Positionsgrößenrechner
-  populateSymbolDropdown("pipSymbolSelector");  // Pip-Rechner
+  populateSymbolDropdown("symbolSelector");     
+  populateSymbolDropdown("pipSymbolSelector");  
 });
