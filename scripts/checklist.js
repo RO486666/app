@@ -89,94 +89,99 @@ function getLevelData(total) {
 }
 
 /* ============================================================
-   🔥 SCORE CALCULATION
+    🔥 SCORE CALCULATION - FULLY INTERACTIVE UI
    ============================================================ */
 function updateConfluenceScore() {
   Object.keys(confGroups).forEach(k => (confGroups[k] = 0));
 
+  // 1. Basis-Punkte sammeln
   document.querySelectorAll(".conf-check").forEach(box => {
     if (!box.checked) return;
-
     const pts = Number(box.dataset.points || 0);
     const g1 = box.dataset.group;
     const g2 = box.dataset.group2;
-
     if (g1) confGroups[g1] += pts;
     if (g2) confGroups[g2] += pts;
   });
 
-  // SUMMARY UPDATE
-  setAll("sum_weekly", confGroups.weekly + "%");
-  setAll("sum_daily", confGroups.daily + "%");
-  setAll("sum_h4", confGroups.h4 + "%");
-  setAll("sum_intraday", confGroups.intraday + "%");
-  setAll("sum_entry", confGroups.entry + "%");
+  // 2. Summary Teilbereiche aktualisieren
+  const areas = ["weekly", "daily", "h4", "intraday", "entry"];
+  areas.forEach(area => setAll(`sum_${area}`, confGroups[area] + "%"));
 
-  toggleActiveBox("sum_weekly", confGroups.weekly);
-  toggleActiveBox("sum_daily", confGroups.daily);
-  toggleActiveBox("sum_h4", confGroups.h4);
-  toggleActiveBox("sum_intraday", confGroups.intraday);
-  toggleActiveBox("sum_entry", confGroups.entry);
-
-  // REQUIRED: Bias + AOI
-  const biasTotal = confGroups.weekly + confGroups.daily + confGroups.h4;
-  const aoiTotal = confGroups.aoi;
-
+  // UI-Elemente referenzieren
   const scoreBox = document.getElementById("confTotalBox");
   const totalValue = document.getElementById("confTotalValue");
   const totalText = document.getElementById("confTotalText");
+  
+  // Die 4H Validierungs-Elemente
+  const h4Card = document.getElementById("h4ValidationCard");
+  const h4Status = document.getElementById("h4ValidationStatus");
+  const h4Mult = document.getElementById("h4MultiplierDisplay");
+  const h4Desc = document.getElementById("h4ValidationText");
 
   if (!scoreBox || !totalValue || !totalText) return;
 
-  scoreBox.className = "conf-total-box";
+  // 3. BASIS-SCORE berechnen
+  let total = confGroups.weekly + confGroups.daily + confGroups.h4 + confGroups.intraday + confGroups.entry;
 
-  if (biasTotal === 0) {
-    totalValue.textContent = "❌";
-    totalText.innerHTML = `<div>Missing Bias</div>`;
-    totalValue.style.color = "#ff5050";
-    syncFloatingScore("❌", "Missing Bias", "#ff5050");
-    return;
+  // --- 4H BIAS CHECK (LOGIK + UI UPDATE) ---
+  const h4RadioChecked = document.querySelector('input[name="h4_htf"]:checked');
+  let isH4PenaltyActive = false;
+
+  if (!h4RadioChecked) {
+    total -= 50; 
+    isH4PenaltyActive = true;
+    
+    // UI auf Rot / Missing setzen
+    if(h4Card) h4Card.style.borderColor = "#ff3333";
+    if(h4Status) { h4Status.textContent = "MISSING"; h4Status.style.color = "#ff3333"; }
+    if(h4Mult) { h4Mult.textContent = "-50 PTS"; h4Mult.style.color = "#ff3333"; }
+    if(h4Desc) h4Desc.textContent = "Kein HL/LH bestätigt (Pflicht!)";
+  } else {
+    // UI auf Grün / Confirmed setzen
+    if(h4Card) h4Card.style.borderColor = "#44ff88";
+    if(h4Status) { h4Status.textContent = "CONFIRMED"; h4Status.style.color = "#44ff88"; }
+    if(h4Mult) { h4Mult.textContent = "OK"; h4Mult.style.color = "#44ff88"; }
+    if(h4Desc) h4Desc.textContent = "4H Struktur-Vorgabe erfüllt.";
   }
 
-  if (aoiTotal === 0) {
-    totalValue.textContent = "❌";
-    totalText.innerHTML = `<div>Missing AOI</div>`;
-    totalValue.style.color = "#ff5050";
-    syncFloatingScore("❌", "Missing AOI", "#ff5050");
-    return;
-  }
-
-  // TOTAL (Base Score)
-  let total =
-    confGroups.weekly +
-    confGroups.daily +
-    confGroups.h4 +
-    confGroups.intraday +
-    confGroups.entry;
-
-  // 🔴 MAJOR NEWS RISK MULTIPLIER
+  // 4. NEWS RISK Abzug (-20)
   const majorNews = document.getElementById("majorNews");
-  if (majorNews && majorNews.checked) {
-    total = total - 40;
-  }
+  if (majorNews && majorNews.checked) total -= 40; 
 
+  // Score deckeln
   if (total > 200) total = 200;
 
-  totalValue.textContent = total + "%";
-
+  // 5. FINALES UI STYLING (Die "Ehrliche" Skala)
+  totalValue.textContent = Math.round(total) + "%"; 
   const L = getLevelData(total);
 
-  scoreBox.className = "conf-total-box " + L.class;
-  totalValue.style.color = L.color;
+  if (total < 0) {
+    totalValue.style.color = "#ff3333";
+    scoreBox.className = "conf-total-box lvl0";
+    totalText.innerHTML = `<div style="color:#ff3333; font-weight:bold;">❌ INVALID SETUP</div>`;
+  } else {
+    // Nutzt die Farbe des Scores (auch wenn 4H fehlt)
+    totalValue.style.color = L.color;
+    scoreBox.className = "conf-total-box " + L.class;
 
-  totalText.innerHTML = `
-    <div>${L.label}</div>
-    <small style="opacity:0.75; font-size:12px;">${L.sub}</small>
-  `;
+    let warningHtml = isH4PenaltyActive 
+      ? `<div style="color:#ffcc00; font-weight:bold; font-size:12px; margin-top:2px;">⚠️ 4H BIAS MISSING (-50)</div>` 
+      : "";
 
-  syncFloatingScore(total + "%", L.label, L.color);
+    totalText.innerHTML = `
+      <div style="font-weight:bold;">${L.label}</div>
+      ${warningHtml}
+      <small style="opacity:0.75; display:block; margin-top:2px;">${L.sub}</small>
+    `;
+  }
+
+  syncFloatingScore(
+    Math.round(total) + "%", 
+    isH4PenaltyActive ? `MISSING 4H (${L.label})` : L.label, 
+    total < 0 ? "#ff3333" : L.color
+  );
 }
-
 /* ============================================================
    🔥 MINI-FLOATING SCORE – SYNC
    ============================================================ */
