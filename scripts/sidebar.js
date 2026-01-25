@@ -23,7 +23,6 @@ const MENU = {
   dashboard: {
     title: "Dashboard",
     items: [
-	{ label: "TradeLog", panel: "panel-trade-log" },
       { label: "Dashboard", panel: "panel-dashboard" }
 	 
     ]
