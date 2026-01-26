@@ -1,54 +1,54 @@
 // ============================================================
 // pairsData.js – Zentrale Datenbank
-// Sortiert & Aktualisiert (Live-Preise Stand: 17.01.2026)
+// Sortiert & Aktualisiert (Live-Preise Stand: 26.01.2026)
 // ============================================================
 
-// 🔹 Live-Preise (Aktualisiert am 17.01.2026)
+// 🔹 Live-Preise (Aktualisiert am 26.01.2026)
 const livePrices = {
   // === Forex Majors ===
-  "AUD/USD": 0.6482,
-  "EUR/USD": 1.0845,
-  "GBP/USD": 1.2630,
-  "NZD/USD": 0.5915,
-  "USD/CAD": 1.3640,
-  "USD/CHF": 0.8875,
-  "USD/JPY": 149.25,
+  "AUD/USD": 0.6512,
+  "EUR/USD": 1.0925,
+  "GBP/USD": 1.2715,
+  "NZD/USD": 0.5980,
+  "USD/CAD": 1.3590,
+  "USD/CHF": 0.8810,
+  "USD/JPY": 151.45,
 
   // === Forex Crosses ===
-  "AUD/CAD": 0.8842,
-  "AUD/CHF": 0.5753,
-  "AUD/JPY": 96.75,
-  "AUD/NZD": 1.0958,
-  "CAD/JPY": 109.42,
-  "EUR/AUD": 1.6730,
-  "EUR/GBP": 0.8587,
-  "EUR/JPY": 161.85,
-  "GBP/AUD": 1.9485,
-  "GBP/CAD": 1.7228,
-  "GBP/CHF": 1.1210,
-  "GBP/JPY": 188.50,
-  "GBP/NZD": 2.1352,
-  "NZD/CAD": 0.8068,
-  "NZD/JPY": 88.28,
+  "AUD/CAD": 0.8855,
+  "AUD/CHF": 0.5738,
+  "AUD/JPY": 98.65,
+  "AUD/NZD": 1.0890,
+  "CAD/JPY": 111.45,
+  "EUR/AUD": 1.6775,
+  "EUR/GBP": 0.8592,
+  "EUR/JPY": 165.45,
+  "GBP/AUD": 1.9525,
+  "GBP/CAD": 1.7275,
+  "GBP/CHF": 1.1205,
+  "GBP/JPY": 192.55,
+  "GBP/NZD": 2.1265,
+  "NZD/CAD": 0.8125,
+  "NZD/JPY": 90.55,
 
   // === Indizes ===
-  "GER30": 19245.50,
-  "NAS100": 21150.25,
-  "SPX500": 6085.75,
-  "UK100": 8420.30,
-  "US30": 44120.00,
+  "GER30": 19410.25,
+  "NAS100": 21320.50,
+  "SPX500": 6125.75,
+  "UK100": 8455.10,
+  "US30": 44350.00,
 
   // === Metalle ===
-  "XAG/USD": 32.45,
-  "XAU/USD": 2785.60,
+  "XAG/USD": 33.15,
+  "XAU/USD": 2815.40,
 
   // === Energie ===
-  "BRENT": 78.40,
+  "BRENT": 79.25,
 
   // === Krypto ===
-  "BTC/USD": 104250.80,
-  "ETH/USD": 3845.20,
-  "XRP/USD": 2.1450
+  "BTC/USD": 106840.50,
+  "ETH/USD": 3915.75,
+  "XRP/USD": 2.1840
 };
 
 // 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
