@@ -1,54 +1,53 @@
 // ============================================================
 // pairsData.js – Zentrale Datenbank
-// Sortiert & Aktualisiert (Live-Preise Stand: 26.01.2026)
+// Sortiert & Aktualisiert (Live-Preise Stand: 17.01.2026)
 // ============================================================
 
-// 🔹 Live-Preise (Aktualisiert am 26.01.2026)
+// 🔹 Live-Preise
 const livePrices = {
-  // === Forex Majors ===
-  "AUD/USD": 0.6512,
-  "EUR/USD": 1.0925,
-  "GBP/USD": 1.2715,
-  "NZD/USD": 0.5980,
-  "USD/CAD": 1.3590,
-  "USD/CHF": 0.8810,
-  "USD/JPY": 151.45,
+// === Forex Majors & Minors ===
+"EUR/USD": 1.1476,
+"GBP/USD": 1.3300,
+"AUD/USD": 0.7016,
+"NZD/USD": 0.5808,
+"USD/CHF": 0.7900,
+"USD/CAD": 1.3739,
+"USD/JPY": 159.72,
 
-  // === Forex Crosses ===
-  "AUD/CAD": 0.8855,
-  "AUD/CHF": 0.5738,
-  "AUD/JPY": 98.65,
-  "AUD/NZD": 1.0890,
-  "CAD/JPY": 111.45,
-  "EUR/AUD": 1.6775,
-  "EUR/GBP": 0.8592,
-  "EUR/JPY": 165.45,
-  "GBP/AUD": 1.9525,
-  "GBP/CAD": 1.7275,
-  "GBP/CHF": 1.1205,
-  "GBP/JPY": 192.55,
-  "GBP/NZD": 2.1265,
-  "NZD/CAD": 0.8125,
-  "NZD/JPY": 90.55,
+// === Crosses (Forex) ===
+"EUR/JPY": 182.71,
+"GBP/JPY": 211.21,
+"AUD/JPY": 112.06,
+"CAD/JPY": 116.25,
+"NZD/JPY": 91.18,
+"EUR/GBP": 0.8600,
+"AUD/CAD": 0.9665,
+"GBP/CAD": 1.7228,
+"GBP/CHF": 1.0500,
+"NZD/CAD": 0.7832,
+"AUD/NZD": 1.2260,
+"GBP/AUD": 1.9485,
+"AUD/CHF": 0.5511,
+"EUR/AUD": 1.6334,
 
-  // === Indizes ===
-  "GER30": 19410.25,
-  "NAS100": 21320.50,
-  "SPX500": 6125.75,
-  "UK100": 8455.10,
-  "US30": 44350.00,
+// === Indizes ===
+"US30": 46916.84,
+"NAS100": 24680.32,
+"SPX500": 6698.92,
+"GER40": 23591.39,
+"UK100": 10334.88,
 
-  // === Metalle ===
-  "XAG/USD": 33.15,
-  "XAU/USD": 2815.40,
+// === Metalle ===
+"XAU/USD": 5001.96,
+"XAG/USD": 80.66,
 
-  // === Energie ===
-  "BRENT": 79.25,
+// === Energie ===
+"BRENT": 101.48,
 
-  // === Krypto ===
-  "BTC/USD": 106840.50,
-  "ETH/USD": 3915.75,
-  "XRP/USD": 2.1840
+// === Krypto ===
+"BTC/USD": 73597.97,
+"ETH/USD": 2292.68,
+"XRP/USD": 1.4869
 };
 
 // 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
