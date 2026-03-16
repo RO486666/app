@@ -552,24 +552,26 @@
   <!-- ============================================================
        WEEKLY
        ============================================================ -->
-  <div class="tf-card">
+ <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">WEEKLY</div>
       <div class="tf-score" id="sum_weekly">0%</div>
     </div>
     <div class="tf-sub">0% confluence</div>
 
-    <!-- Trend -->
     <h4 class="tf-section-title">Trend</h4>
     <label><span>Trend</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="weekly" data-points="10">
     </label>
 
-    <!-- AOI -->
     <h4 class="tf-section-title">At AOI / Rejection</h4>
 
     <label><span>At AOI / Rejected</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="aoi" data-group2="weekly" data-points="10">
+    </label>
+
+    <label><span>Weekly POC / Value Area (VAH/VAL)</span> <span class="pts">+5%</span>
+      <input type="checkbox" class="conf-check" data-group="weekly" data-points="5">
     </label>
 
     <label><span>Touching EMA</span> <span class="pts">+5%</span>
@@ -584,7 +586,6 @@
       <input type="checkbox" class="conf-check" data-group="weekly" data-points="10">
     </label>
 
-
     <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="weekly" data-points="10">
     </label>
@@ -594,7 +595,7 @@
   <!-- ============================================================
        DAILY
        ============================================================ -->
-  <div class="tf-card">
+ <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">DAILY</div>
       <div class="tf-score" id="sum_daily">0%</div>
@@ -612,6 +613,10 @@
       <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
     </label>
 
+    <label><span>Daily POC / High Volume Rejection</span> <span class="pts">+10%</span>
+      <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
+    </label>
+
     <label><span>Touching EMA</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="daily" data-points="5">
     </label>
@@ -624,7 +629,7 @@
       <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
     </label>
 	
-	   <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+10%</span>
+	<label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
     </label>
 
@@ -634,18 +639,21 @@
   <!-- ============================================================
        4H
        ============================================================ -->
-  <div class="tf-card">
+ <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">4H</div>
       <div class="tf-score" id="sum_h4">0%</div>
     </div>
     <div class="tf-sub">0% confluence</div>
 
-    <h4 class="tf-section-title">Trend</h4>
+    <h4 class="tf-section-title">Trend & Volume Area</h4>
     <label><span>Trend</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="h4" data-points="5">
     </label>
 
+    <label><span>4H Value Area Kante (VAH/VAL)</span> <span class="pts">+7%</span>
+      <input type="checkbox" class="conf-check" data-group="h4" data-points="7">
+    </label>
 
     <h4 class="tf-section-title">At AOI / Rejection</h4>
 
@@ -656,21 +664,22 @@
     <label><span>Touching EMA</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="h4" data-points="5">
     </label>
-
-
-	
-	   <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+8%</span>
+    
+    <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+8%</span>
       <input type="checkbox" class="conf-check" data-group="h4" data-points="8">
     </label>
 
-  
-    <h4 class="tf-section-title">Structure</h4>
+    <h4 class="tf-section-title">Structure & Footprint</h4>
     <label><span>4H HL (Buy)</span> <span class="pts">+10%</span>
       <input type="radio" name="h4_htf" class="conf-check" data-group="h4" data-points="10">
     </label>
 
     <label><span>4H LH (Sell)</span> <span class="pts">+10%</span>
       <input type="radio" name="h4_htf" class="conf-check" data-group="h4" data-points="10">
+    </label>
+
+    <label><span>FP: Absorption / Aggressive Imbalance</span> <span class="pts">+10%</span>
+      <input type="checkbox" class="conf-check" data-group="h4" data-points="10">
     </label>
   </div>
   
@@ -688,30 +697,32 @@
   <!-- ============================================================
        2H / 1H / 30m
        ============================================================ -->
-  <div class="tf-card">
+ <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">2H / 1H / 30M</div>
       <div class="tf-score" id="sum_intraday">0%</div>
     </div>
     <div class="tf-sub">0% confluence</div>
 
-    <h4 class="tf-section-title">Trend</h4>
+    <h4 class="tf-section-title">Trend & Orderflow-Shift</h4>
     <label><span>Trend</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="intraday" data-points="5">
     </label>
-	
+    
+    <label><span>FP: Delta-Shift (Käufer/Verkäufer Wechsel)</span> <span class="pts">+5%</span>
+      <input type="checkbox" class="conf-check" data-group="intraday" data-points="5">
+    </label>
 
     <h4 class="tf-section-title">Structure</h4>
     <label><span>30M HL/LH</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="intraday" data-points="5">
     </label>
 	
-	<label><span>Touching EMA</span> <span class="pts">+5%</span>
+    <label><span>Touching EMA / Session POC</span> <span class="pts">+5%</span>
       <input type="checkbox" class="conf-check" data-group="intraday" data-points="5">
     </label>
 
-	
-	   <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+6%</span>
+    <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+6%</span>
       <input type="checkbox" class="conf-check" data-group="intraday" data-points="6">
     </label>
 	
@@ -724,11 +735,12 @@
        ============================================================ -->
   <div class="tf-card">
     <div class="tf-header">
-      <div class="tf-title">ENTRY SIGNALS</div>
+      <div class="tf-title">ENTRY SIGNALE</div>
       <div class="tf-score" id="sum_entry">0%</div>
     </div>
     <div class="tf-sub">0% confluence</div>
 
+    <h4 class="tf-section-title">Candle & Footprint</h4>
     <label><span>Engulfing 1H</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="entry" data-points="10">
     </label>
@@ -741,7 +753,11 @@
       <input type="checkbox" class="conf-check" data-group="entry" data-points="10">
     </label>
 	
-	 <label><span>LTF Structure Shift</span> <span class="pts">+10%</span>
+    <label><span>LTF Structure Shift</span> <span class="pts">+10%</span>
+      <input type="checkbox" class="conf-check" data-group="entry" data-points="10">
+    </label>
+
+    <label><span>FP: Stacked Imbalances / Finished Auction</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="entry" data-points="10">
     </label>
 
@@ -750,11 +766,11 @@
       <input type="checkbox" class="conf-check" data-group="entry" data-points="1">
     </label>
 
-    <label><span>SL Padding 5–7 pips</span> <span class="pts">+1%</span>
+    <label><span>SL Padding 5–7 pips (Hinter LVN)</span> <span class="pts">+1%</span>
       <input type="checkbox" class="conf-check" data-group="entry" data-points="1">
     </label>
 
-    <label><span>TP am Strukturpunkt</span> <span class="pts">+1%</span>
+    <label><span>TP am Strukturpunkt / POC</span> <span class="pts">+1%</span>
       <input type="checkbox" class="conf-check" data-group="entry" data-points="1">
     </label>
 
@@ -1157,12 +1173,8 @@
 </section>
 
 
-    <!-- ============================================================
-         📜 REGELN PANEL
-       ============================================================ -->
-  <section id="panel-rules" class="panel hidden">
+<section id="panel-rules" class="panel hidden">
 
-  <!-- Toggle-Box -->
   <div class="rules-toggle" onclick="toggleRules()">
     🚀 <strong>Setup-Regeln anzeigen / ausblenden</strong>
   </div>
@@ -1178,9 +1190,7 @@
         </button>
       </div>
 
-            <!-- ========== SWING ========== -->
             <div id="swingRules">
-              <!-- Seite 1 -->
               <div id="rulePageSwing1">
                 <strong>Grundregeln für Entry & Struktur</strong><br /><br />
 
@@ -1188,6 +1198,7 @@
                   <strong>AOI-Zone wählen:</strong><br />
                   Ein Entry (Kauf/Verkauf) darf nur an einer Weekly- oder
                   Daily-AOI stattfinden.<br />
+                  <strong>Volume Profile Check:</strong> Bevorzugt an POC, VAH/VAL oder High Volume Nodes (HVN).<br />
                   → Alle Timeframes darunter (H4 und kleiner) dienen
                   ausschließlich zur Entry-Bestätigung.
                   <br /><br />
@@ -1196,11 +1207,12 @@
                   <ul style="margin-left: 20px; list-style: disc;">
                     <li>Strukturpunkt</li>
                     <li>EMA</li>
-                    <li>AOI</li>
+                    <li>AOI / <strong>Volume Profile Levels (POC, VAH, VAL)</strong></li>
                     <li>Runder psychologischer Level (00 / 50)</li>
                     <li>
                       Weekly Rejection Candle (sichtbar im Weekly oder Daily)
                     </li>
+                    <li><strong>Footprint-Bestätigung:</strong> Sichtbare Absorption oder Delta-Flip</li>
                   </ul>
                   <br />
 
@@ -1209,21 +1221,22 @@
                     <li>Buy nur bei einem bestätigten Higher Low (HL) im 4H</li>
                     <li>Sell nur bei einem bestätigten Lower High (LH) im 4H</li>
                     <li>
-                      Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI
-                      (Support/Resistance)
+                      Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI 
+                      <strong>+ Aggressive Imbalances im Footprint</strong>
                     </li>
                   </ul>
                   <br />
 
                   <strong>Entry-Prozess nach HL/LH:</strong><br />
                   Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift
-                  (15M–1H) beobachtet und mit dem höheren TF abgeglichen
-                  werden.
+                  (15M–1H) beobachtet, mit dem höheren TF abgeglichen und 
+                  im <strong>Footprint (Delta/Volume)</strong> validiert werden.
                   <br /><br />
 
                   <strong>Nach dem Struktur-Shift (15M, 30M, 1H):</strong>
                   <ul style="margin-left: 20px; list-style: disc;">
                     <li>Suche nach einer Engulfing-Candle im 1H / 2H / 4H</li>
+                    <li><strong>Volume-Bestätigung:</strong> Ansteigendes Volumen beim Shift</li>
                     <li>Je höher der TF, desto stärker die Bestätigung</li>
                   </ul>
                 </ul>
@@ -1236,7 +1249,7 @@
                     Der SL muss an dem Punkt gesetzt werden, an dem die
                     Handelsidee vollständig ungültig wird.<br />
                     → Alternativ am Top/Bottom des Struktur-Shifts (15M, 30M,
-                    1H), mit 5–7 Pips Sicherheitsabstand.
+                    1H), mit 5–7 Pips Sicherheitsabstand (hinter <strong>Low Volume Nodes/LVN</strong>).
                   </li>
                   <br />
 
@@ -1244,19 +1257,18 @@
                     <strong>Take-Profit:</strong>
                     <ul style="margin-left: 20px; list-style: disc;">
                       <li>
-                        Wenn Entry an Weekly AOI → TP1 am Strukturpunkt
-                        (Kerzenkörper des HH/LL)
+                        Wenn Entry an Weekly AOI → TP1 am Strukturpunkt (HH/LL) 
+                        oder <strong>nächsten Volume POC</strong>.
                       </li>
                       <li>
-                        Wenn Entry an Daily AOI → TP1 am Strukturpunkt
-                        (Kerzenkörper des HH/LL)
+                        Wenn Entry an Daily AOI → TP1 am Strukturpunkt (HH/LL)
+                        oder <strong>nächsten Volume POC</strong>.
                       </li>
                     </ul>
                   </li>
                 </ul>
               </div>
 
-              <!-- Seite 2 -->
               <div id="rulePageSwing2" style="display: none;">
                 <strong>Confluence-Regeln für Long / Short</strong><br /><br />
 
@@ -1270,16 +1282,16 @@
                     </ul>
                     Bewertungsstufen:
                     <ul style="margin-left: 20px; list-style: disc;">
-                      <li>1 = Markt oben (weit weg von AOI)</li>
-                      <li>2 = Auf dem Weg zur AOI</li>
-                      <li>3 = In der AOI</li>
+                      <li>1 = Markt oben (weit weg von AOI / POC)</li>
+                      <li>2 = Auf dem Weg zur AOI / Volume Area</li>
+                      <li>3 = In der AOI / am POC</li>
                     </ul>
                   </li>
                   <br />
 
                   <li>
                     <strong>Struktur-Retest (HTF):</strong><br />
-                    Weekly retestet vorherigen Strukturpunkt
+                    Weekly retestet vorherigen Strukturpunkt oder <strong>VAH/VAL</strong>.
                   </li>
                   <br />
 
@@ -1287,9 +1299,8 @@
                     <strong>Daily Rejection:</strong>
                     <ul style="margin-left: 20px; list-style: disc;">
                       <li>Rejection an AOI</li>
-                      <li>
-                        Rejection an rundem psychologischen Level (00 / 50)
-                      </li>
+                      <li>Rejection an rundem psychologischen Level (00 / 50)</li>
+                      <li><strong>Footprint:</strong> Delta-Divergenz erkennbar</li>
                     </ul>
                   </li>
                   <br />
@@ -1299,6 +1310,7 @@
                     <ul style="margin-left: 20px; list-style: disc;">
                       <li>Warten auf HL / LH</li>
                       <li>Struktur-Shift auf 15M / 30M / 1H</li>
+                      <li>Bestätigung durch <strong>Stacked Imbalances</strong></li>
                     </ul>
                   </li>
                   <br />
@@ -1306,40 +1318,36 @@
                   <li>
                     <strong>Entry-Signal:</strong><br />
                     Bestätigung durch bullisches oder bärisches Candle-Muster
-                    (1H / 2H / 4H)
+                    (1H / 2H / 4H) + <strong>Finished Auction</strong> im Footprint.
                   </li>
                   <br />
 
                   <li>
                     <strong>Set and Forget:</strong><br />
                     Nach Entry nicht eingreifen – Setup vertrauen, kein
-                    Nachjustieren
+                    Nachjustieren.
                   </li>
                 </ol>
               </div>
             </div>
 
-            <!-- ========== DAY ========== -->
             <div id="dayRules" style="display: none;">
-              <!-- Seite 1 Day -->
               <div id="rulePageDay1">
-                <strong
-                  >Grundregeln für Entry & Struktur (Day-Trading)</strong
-                ><br /><br />
+                <strong>Grundregeln für Entry & Struktur (Day-Trading)</strong><br /><br />
 
                 <ul style="margin-left: 20px;">
                   <strong>AOI-Zone wählen:</strong><br />
                   Ein Entry darf nur an einer Daily- oder 4H-AOI stattfinden.<br />
+                  <strong>Session Volume:</strong> Fokus auf <strong>Session-POC</strong> oder VAL/VAH des Vortags.<br />
                   → 1H/15M dienen ausschließlich zur Entry-Bestätigung.
                   <br /><br />
 
                   <strong>Kein Entry ohne Rejection von:</strong>
                   <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Strukturpunkt</li>
-                    <li>EMA</li>
-                    <li>AOI</li>
+                    <li>Strukturpunkt / EMA / AOI</li>
+                    <li><strong>Volume-Profile:</strong> Rejection vom Session-POC</li>
                     <li>Runder psychologischer Level (00 / 50)</li>
-                    <li>Daily/4H Rejection Candle</li>
+                    <li>Daily/4H Rejection Candle + <strong>Footprint Absorption</strong></li>
                   </ul>
                   <br />
 
@@ -1347,123 +1355,31 @@
                   <ul style="margin-left: 20px; list-style: disc;">
                     <li>Buy: bestätigtes HL im 1H oder 4H</li>
                     <li>Sell: bestätigtes LH im 1H oder 4H</li>
-                    <li>
-                      Oder potenzielles HL/LH mit Engulfing an einer AOI
-                    </li>
+                    <li>Oder potenzielles HL/LH mit Engulfing + <strong>Imbalance</strong></li>
                   </ul>
                   <br />
 
                   <strong>Entry-Prozess nach HL/LH:</strong><br />
-                  Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift
-                  (15M–1H) beobachtet und mit dem höheren TF (4H/D1)
-                  abgeglichen werden.
-                  <br /><br />
-
-                  <strong>Nach dem Struktur-Shift (15M/1H):</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Suche nach einer Engulfing-Candle im 1H oder 4H</li>
-                  </ul>
-                </ul>
-                <br />
-
-                <strong>Stop-Loss & Take-Profit Regeln</strong><br /><br />
-                <ul style="margin-left: 20px; list-style: disc;">
-                  <li>
-                    <strong>Stop-Loss:</strong><br />
-                    SL am Punkt setzen, wo die Handelsidee ungültig wird.<br />
-                    → Alternativ am Top/Bottom des Struktur-Shifts (15M/1H),
-                    mit 3–5 Pips Sicherheitsabstand.
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Take-Profit:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>
-                        Wenn Entry an 4H AOI → TP1 am nächsten 1H/4H
-                        Strukturpunkt
-                      </li>
-                      <li>
-                        Wenn Entry an Daily AOI → TP1 am Daily Strukturpunkt
-                      </li>
-                    </ul>
-                  </li>
+                  Struktur-Shift (15M–1H) mit <strong>Delta-Überhang</strong> im Footprint abgleichen.
                 </ul>
               </div>
 
-              <!-- Seite 2 Day -->
               <div id="rulePageDay2" style="display: none;">
-                <strong
-                  >Confluence-Regeln für Long / Short (Day-Trading)</strong
-                ><br /><br />
+                <strong>Confluence-Regeln für Long / Short (Day-Trading)</strong><br /><br />
 
                 <ol style="margin-left: 20px;">
-                  <li>
-                    <strong>Markt-Bias Bewertung:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>Daily Bullish/Bearish: Wert 1–3</li>
-                      <li>4H Bullish/Bearish: Wert 1–3</li>
-                      <li>1H Bullish/Bearish: Wert 1–3</li>
-                    </ul>
-                    Bewertungsstufen:
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>1 = Markt oben (weit weg von AOI)</li>
-                      <li>2 = Auf dem Weg zur AOI</li>
-                      <li>3 = In der AOI</li>
-                    </ul>
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Struktur-Retest:</strong><br />
-                    4H retestet vorherigen Strukturpunkt
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Rejection:</strong><br />
-                    Daily/4H Rejection an AOI oder psychologischem Level
-                    (00/50)
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Strukturaufbau:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>Warten auf HL / LH</li>
-                      <li>Struktur-Shift auf 15M oder 1H</li>
-                    </ul>
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Entry-Signal:</strong><br />
-                    Bestätigung durch Candle-Muster (15M/1H)
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Set and Forget:</strong><br />
-                    Nach Entry nicht eingreifen – Setup vertrauen
-                  </li>
+                  <li><strong>Markt-Bias Bewertung:</strong> (Daily, 4H, 1H)</li>
+                  <li><strong>Struktur-Retest:</strong> 4H retestet Strukturpunkt / POC.</li>
+                  <li><strong>Rejection:</strong> Daily/4H Rejection an AOI oder Volume Edge.</li>
+                  <li><strong>Strukturaufbau:</strong> Shift auf 15M/1H + <strong>Aggressive Buyers/Sellers</strong>.</li>
+                  <li><strong>Entry-Signal:</strong> Candle-Muster + <strong>Footprint Imbalance</strong>.</li>
+                  <li><strong>Set and Forget:</strong> Setup vertrauen.</li>
                 </ol>
               </div>
             </div>
 
-            <div
-              style="
-                margin-top: 20px;
-                display: flex;
-                justify-content: space-between;
-              "
-            >
-              <button
-                onclick="showPage(1)"
-                id="prevPageBtn"
-                style="display: none;"
-              >
-                ⬅️ Zurück
-              </button>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+              <button onclick="showPage(1)" id="prevPageBtn" style="display: none;">⬅️ Zurück</button>
               <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
             </div>
 
@@ -1471,7 +1387,6 @@
           </div>
         </div>
       </section>
-	  
 	  
 
 
