@@ -22,7 +22,7 @@ function switchPlanMode() {
 // 🗂 Speicher für Trades
 let trades = JSON.parse(localStorage.getItem("tradeHistory") || "[]");
 
-// 📊 Steuerberechnung (ohne Auto-Speichern)
+// 📊 Steuerberechnung (Präzise CFD-Abgeltungsteuer)
 function berechneSteuern() {
   const jahresEinkommen = parseFloat(document.getElementById("jahresEinkommen").value) || 0;
   const tradingGewinn = parseFloat(document.getElementById("gewinnBetrag").value) || 0;
@@ -41,28 +41,37 @@ function berechneSteuern() {
     return;
   }
 
-  // 👉 Steuersatz nach Einkommen
   const gesamtEinkommen = jahresEinkommen + tradingGewinn;
-  let estSatz = 0.25;
-  if (gesamtEinkommen <= 11000) estSatz = 0.0;
-  else if (gesamtEinkommen <= 62000) estSatz = 0.30;
-  else if (gesamtEinkommen <= 277000) estSatz = 0.42;
-  else estSatz = 0.45;
 
-  // 👉 Steuerberechnung (Einkommensteuer als Basis)
-  let est = tradingGewinn * estSatz;
-  const kirche = mitKirche ? est * 0.09 : 0;
-  const soli = mitSoli ? est * 0.055 : 0;
+  // 👉 Freibetrag einrechnen
+  const sparerPauschbetrag = 1000.00;
+  const zuVersteuern = Math.max(0, tradingGewinn - sparerPauschbetrag);
+
+  // 👉 CFD Abgeltungsteuer-Berechnung unter Berücksichtigung des Kirchensteuerprivilegs
+  let kaufstSatz = 0.25; // 25% Flat-Tax
+  let soliSatz = mitSoli ? 0.055 : 0;
+  let kistSatz = mitKirche ? 0.09 : 0;
+
+  // Mathematisch exakte Formel für effektive Steuersätze mit Kirchensteueranrechnung
+  let divisor = 1 + (kistSatz * 0.25);
+  let effKaufstSatz = kaufstSatz / divisor;
+  let effKistSatz = (kaufstSatz * kistSatz) / divisor;
+  let effSoliSatz = (kaufstSatz * soliSatz) / divisor;
+
+  let est = zuVersteuern * effKaufstSatz;
+  let kirche = zuVersteuern * effKistSatz;
+  let soli = zuVersteuern * effSoliSatz;
   let steuerlast = est + kirche + soli;
 
-  // 👉 Vorauszahlung NUR auf Einkommensteuer (nicht auf Kirche + Soli)
+  // 👉 Liquiditäts-Reserve (Vorauszahlung) als freiwilliger Puffer für Folgetrades
   let reserve = 0;
   if (mitReserve) {
-    reserve = est; // nur die ESt als Vorauszahlung fürs nächste Jahr
+    reserve = steuerlast; // Puffer in Höhe der Steuerschuld
   }
 
+  // Korrektur: Die Reserve schmälert NICHT das reale Netto dieses Jahres, da sie Vermögen bleibt.
+  const netto = tradingGewinn - steuerlast;
   const gesamtZuruecklegen = steuerlast + reserve;
-  const netto = tradingGewinn - gesamtZuruecklegen;
 
   // Auto-Übertragung in Netto-Planer
   document.getElementById("nettoBrutto").value = tradingGewinn.toFixed(2);
@@ -73,18 +82,19 @@ function berechneSteuern() {
 
   // 👉 Ausgabe
   ausgabe.innerHTML = `
-    📈 <strong>Trading-Gewinn:</strong> ${tradingGewinn.toFixed(2)} €<br>
+    📈 <strong>Trading-Gewinn (CFD):</strong> ${tradingGewinn.toFixed(2)} €<br>
     💼 <strong>Jahreseinkommen (Job):</strong> ${jahresEinkommen.toFixed(2)} €<br>
-    ⚖️ <strong>Gesamteinkommen:</strong> ${gesamtEinkommen.toFixed(2)} €<br>
-    ➡️ <strong>Steuersatz:</strong> ${(estSatz * 100).toFixed(1)} %<br><br>
-    💸 <strong>Einkommensteuer:</strong> ${est.toFixed(2)} €<br>
-    ${mitKirche ? `✝️ Kirchensteuer: ${kirche.toFixed(2)} €<br>` : ""}
-    ${mitSoli ? `💣 Soli: ${soli.toFixed(2)} €<br>` : ""}
-    ${mitReserve ? `💥 Vorauszahlung (nur ESt): ${reserve.toFixed(2)} €<br>` : ""}
+    ⚖️ <strong>Gesamteinkommen (Info):</strong> ${gesamtEinkommen.toFixed(2)} €<br>
+    ➡️ <strong>Steuersatz (Flat-Tax):</strong> 25.0 % (zzgl. Soli/KiSt)<br><br>
+    💸 <strong>Abgeltungsteuer:</strong> ${est.toFixed(2)} € ${zuVersteuern < tradingGewinn ? `<em>(nach 1k Freibetrag)</em>` : ""}<br>
+    ${mitKirche ? `✝️ Kirchensteuer (angerechnet): ${kirche.toFixed(2)} €<br>` : ""}
+    ${mitSoli ? `💣 Solidaritätszuschlag: ${soli.toFixed(2)} €<br>` : ""}
+    ${mitReserve ? `💥 Empfohlene Liquiditätsreserve: ${reserve.toFixed(2)} €<br>` : ""}
 
     <hr>
-    📦 <strong>Gesamt zurücklegen (Steuer + ggf. Vorauszahlung):</strong> ${gesamtZuruecklegen.toFixed(2)} €<br>
-    💰 <strong>Verfügbarer Netto-Gewinn (nach Steuer + Vorauszahlung):</strong> ${netto.toFixed(2)} €<br><br>
+    📦 <strong>Gesamte Steuerlast (Anlage KAP):</strong> ${steuerlast.toFixed(2)} €<br>
+    💰 <strong>Verfügbares Reales Netto:</strong> ${netto.toFixed(2)} €<br>
+    ${mitReserve ? `<small style="color:#aaa;">ℹ️ Bei Abzug der optionalen Reserve verbleiben temporär: ${(netto - reserve).toFixed(2)} €</small><br><br>` : "<br>"}
 
     <button onclick='speichereTrade(${tradingGewinn}, ${steuerlast}, ${reserve}, ${netto})' 
       style="padding:10px 15px; border:none; border-radius:8px; background:#00aa44; color:#fff; font-weight:bold; cursor:pointer;">
@@ -92,8 +102,6 @@ function berechneSteuern() {
     </button>
   `;
   ausgabe.style.color = "#0f0";
-
-  //document.getElementById("gewinnBetrag").value = "";
 }
 
 // 💾 Manuelles Speichern
@@ -186,7 +194,6 @@ function berechneNettoPlan() {
   const entnommen = parseFloat(document.getElementById("nettoEntnommen").value);
   const ausgabe = document.getElementById("nettoAusgabe");
 
-  // 👉 Einheitliches Styling aktivieren
   ausgabe.className = "result-box";
   ausgabe.style.display = "block";
 
@@ -196,30 +203,34 @@ function berechneNettoPlan() {
     return;
   }
 
-  // Netto nach Steuer & Reserve
-  const netto = brutto - steuer - reserve;
-  const differenz = entnommen - netto;
+  // Korrektur: Das tatsächliche Netto berechnet sich rein aus Brutto abzüglich Steuer.
+  const netto = brutto - steuer;
+  
+  // Für das Budgeting (Verfügbarkeit auf dem Girokonto) ziehen wir den gewählten Puffer ab
+  const verfuegbaresBudget = netto - reserve;
+  const differenz = entnommen - verfuegbaresBudget;
 
   if (differenz > 0) {
     ausgabe.innerHTML = `
-      📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
-      💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
-      🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
-      ⚠️ Du hast <strong>${differenz.toFixed(2)} €</strong> zu viel entnommen.<br>
-      💡 Empfehlung: Beim nächsten Gewinn mindestens <strong>${differenz.toFixed(2)} €</strong> zurücklegen.
+      📦 Reales Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>
+      💸 Abzüge: ${steuer.toFixed(2)} € Abgeltungsteuer<br>
+      🛡️ Puffer-Reserve auf Konto belassen: ${reserve.toFixed(2)} €<br>
+      🏦 Zur Entnahme geplant: ${entnommen.toFixed(2)} €<br><br>
+      ⚠️ Warnung: Du entnimmst <strong>${differenz.toFixed(2)} €</strong> mehr als dein sicheres Budget erlaubt.<br>
+      💡 Empfehlung: Reduziere die Entnahme oder passe deine Liquidität an.
     `;
     ausgabe.classList.add("risk-high");
   } else {
     ausgabe.innerHTML = `
-      📦 Netto-Gewinn (nach Steuer + Reserve): <strong>${netto.toFixed(2)} €</strong><br>
-      💸 Abzüge: ${steuer.toFixed(2)} € Steuer + ${reserve.toFixed(2)} € Reserve<br>
-      🏦 Entnommen: ${entnommen.toFixed(2)} €<br><br>
-      ✅ Entnahme im Rahmen. Kein Ausgleich nötig.
+      📦 Reales Netto-Gewinn (nach Steuer): <strong>${netto.toFixed(2)} €</strong><br>
+      💸 Abzüge: ${steuer.toFixed(2)} € Abgeltungsteuer<br>
+      🛡️ Puffer-Reserve auf Konto belassen: ${reserve.toFixed(2)} €<br>
+      🏦 Zur Entnahme geplant: ${entnommen.toFixed(2)} €<br><br>
+      ✅ Entnahme im grünen Bereich. Die gewählte Reserve ist gesichert.
     `;
     ausgabe.classList.add("risk-low");
   }
 
-  // 💾 Netto-Auswertung speichern
   localStorage.setItem("nettoPlanMemory", JSON.stringify({
     brutto, steuer, reserve, entnommen, differenz,
     timestamp: new Date().toISOString()
