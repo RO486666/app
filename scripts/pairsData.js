@@ -49,20 +49,10 @@ const livePrices = {
 "XRP/USD": 0.5850
 };
 
-// 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
+// 🔸 Pip-/Point-Werte in EUR pro Einheitsbewegung (1 Standard-Lot)
+// Werte angepasst an 1 TradingView-Point/Pip-Eingabe
 const pipValues = {
-  // === INDIZES (SPX, NAS, US30) ===
-  "SPX500": 0.0086, 
-  "NAS100": 0.0086, 
-  "US30": 0.0086,   
-  "GER30": 0.01,     
-  "UK100": 0.011,
-
-  // === METALLE (Gold) ===
-  "XAU/USD": 0.86,  
-  "XAG/USD": 0.43,
-
-  // === FOREX (Währungen) ===
+  // === FOREX (Währungen: 1 Pip = 0.0001 bzw. 0.01 JPY) ===
   "AUD/USD": 8.60, "EUR/USD": 8.60, "GBP/USD": 8.60, "NZD/USD": 8.60,
   "USD/CAD": 8.60, "USD/CHF": 8.60, "USD/JPY": 8.50,
   "AUD/CAD": 8.60, "AUD/CHF": 8.60, "AUD/JPY": 8.50, "AUD/NZD": 8.60,
@@ -70,18 +60,29 @@ const pipValues = {
   "GBP/AUD": 8.60, "GBP/CAD": 8.60, "GBP/CHF": 8.60, "GBP/JPY": 8.50,
   "GBP/NZD": 8.60, "NZD/CAD": 8.60, "NZD/JPY": 8.50,
 
+  // === INDIZES (1 Point = 1.0 Punkt) ===
+  "SPX500": 0.86, 
+  "NAS100": 0.86, 
+  "US30": 0.86,   
+  "GER40": 1.00,     
+  "UK100": 1.10,
+
+  // === METALLE ===
+  // 1 Point in TradingView = 0.01$ Preisbewegung
+  // Bei 1 Lot (100 Oz Gold) = 1.00$ Gegenwert ≈ 0.86 €
+  "XAU/USD": 0.86,  
+  // Bei 1 Lot (5000 Oz Silber) = 50.00$ Gegenwert pro $1.00 Movement = 0.50$ pro 0.01 Point ≈ 0.43 €
+  "XAG/USD": 0.43,
+
+  // === ENERGIE ===
+  "BRENT": 0.86,
+
   // === KRYPTO ===
-  "BTC/USD": 1,
-  "ETH/USD": 0.1,
-  "XRP/USD": 0.0001,
-
-  // Metalle (Redundant entries from original file kept as instructed)
-  "XAG/USD": 0.09,
-  "XAU/USD": 0.086,
-
-  // Energie
-  "BRENT": 0.1
+  "BTC/USD": 0.86,
+  "ETH/USD": 0.86,
+  "XRP/USD": 86.00
 };
+
 
 // 🔸 Kontraktgrößen
 const basisWerte = {
