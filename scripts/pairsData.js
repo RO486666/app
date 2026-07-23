@@ -1,52 +1,53 @@
 // ============================================================
 // pairsData.js – Zentrale Datenbank
-// Sortiert & Aktualisiert (Live-Preise Stand: 14.07.2026)
+// Sortiert & Aktualisiert (Live-Preise Stand: 23.07.2026)
 // ============================================================
 
 // 🔹 Live-Preise
 const livePrices = {
-"EUR/USD": 1.1050,
-"GBP/USD": 1.2850,
-"AUD/USD": 0.6680,
-"NZD/USD": 0.6050,
-"USD/CHF": 0.8820,
-"USD/CAD": 1.3610,
-"USD/JPY": 152.40,
+  // === Forex Majors ===
+  "AUD/USD": 0.7018,
+  "EUR/USD": 1.1413,
+  "GBP/USD": 1.3388,
+  "NZD/USD": 0.5819,
+  "USD/CAD": 1.4064,
+  "USD/CHF": 0.8132,
+  "USD/JPY": 163.05,
 
-// === Crosses (Forex) ===
-"EUR/JPY": 168.40,
-"GBP/JPY": 195.80,
-"AUD/JPY": 101.80,
-"CAD/JPY": 111.90,
-"NZD/JPY": 92.20,
-"EUR/GBP": 0.8590,
-"AUD/CAD": 0.9090,
-"GBP/CAD": 1.7480,
-"GBP/CHF": 1.1330,
-"NZD/CAD": 0.8230,
-"AUD/NZD": 1.1040,
-"GBP/AUD": 1.9230,
-"AUD/CHF": 0.5890,
-"EUR/AUD": 1.6540,
+  // === Forex Crosses ===
+  "AUD/CAD": 0.9870,
+  "AUD/CHF": 0.5707,
+  "AUD/JPY": 114.43,
+  "AUD/NZD": 1.2061,
+  "CAD/JPY": 115.94,
+  "EUR/AUD": 1.6263,
+  "EUR/GBP": 0.8525,
+  "EUR/JPY": 186.09,
+  "GBP/AUD": 1.9077,
+  "GBP/CAD": 1.8826,
+  "GBP/CHF": 1.0886,
+  "GBP/JPY": 218.29,
+  "NZD/CAD": 0.8183,
+  "NZD/JPY": 94.87,
 
-// === Indizes ===
-"US30": 41200.00,
-"NAS100": 19800.00,
-"SPX500": 5520.00,
-"GER40": 18450.00,
-"UK100": 8250.00,
+  // === Indizes ===
+  "GER40": 18450.00,
+  "NAS100": 19800.00,
+  "SPX500": 5520.00,
+  "UK100": 8250.00,
+  "US30": 41200.00,
 
-// === Metalle ===
-"XAU/USD": 2350.00,
-"XAG/USD": 29.50,
+  // === Metalle ===
+  "XAG/USD": 59.85,
+  "XAU/USD": 4127.80,
 
-// === Energie ===
-"BRENT": 82.50,
+  // === Energie ===
+  "BRENT": 82.50,
 
-// === Krypto ===
-"BTC/USD": 64250.00,
-"ETH/USD": 3450.00,
-"XRP/USD": 0.5850
+  // === Krypto ===
+  "BTC/USD": 64250.00,
+  "ETH/USD": 3450.00,
+  "XRP/USD": 0.5850
 };
 
 // 🔸 Pip-/Point-Werte in EUR pro Einheitsbewegung (1 Standard-Lot)
