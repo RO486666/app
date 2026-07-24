@@ -20,11 +20,11 @@ const btnSettings = document.getElementById("btnSettings");
 // MENU DEFINITIONEN
 // ===============================
 const MENU = {
-  dashboard: {
-    title: "Dashboard",
+ dashboard: {
+    title: "Dashboard & Stats",
     items: [
-      { label: "Dashboard", panel: "panel-dashboard" }
-	 
+      { label: "Dashboard", panel: "panel-dashboard" },
+      { label: "📊 Trading Journal", panel: "panel-journal" } // ✅ Nahtlose Integration
     ]
   },
   tools: {
