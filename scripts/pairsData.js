@@ -1,68 +1,59 @@
 // ============================================================
 // pairsData.js – Zentrale Datenbank
-// Sortiert & Aktualisiert (Live-Preise Stand: 14.07.2026)
+// Sortiert & Aktualisiert (Live-Preise Stand: 23.07.2026)
 // ============================================================
 
 // 🔹 Live-Preise
 const livePrices = {
-"EUR/USD": 1.1050,
-"GBP/USD": 1.2850,
-"AUD/USD": 0.6680,
-"NZD/USD": 0.6050,
-"USD/CHF": 0.8820,
-"USD/CAD": 1.3610,
-"USD/JPY": 152.40,
+  // === Forex Majors ===
+  "AUD/USD": 0.7018,
+  "EUR/USD": 1.1413,
+  "GBP/USD": 1.3388,
+  "NZD/USD": 0.5819,
+  "USD/CAD": 1.4064,
+  "USD/CHF": 0.8132,
+  "USD/JPY": 163.05,
 
-// === Crosses (Forex) ===
-"EUR/JPY": 168.40,
-"GBP/JPY": 195.80,
-"AUD/JPY": 101.80,
-"CAD/JPY": 111.90,
-"NZD/JPY": 92.20,
-"EUR/GBP": 0.8590,
-"AUD/CAD": 0.9090,
-"GBP/CAD": 1.7480,
-"GBP/CHF": 1.1330,
-"NZD/CAD": 0.8230,
-"AUD/NZD": 1.1040,
-"GBP/AUD": 1.9230,
-"AUD/CHF": 0.5890,
-"EUR/AUD": 1.6540,
+  // === Forex Crosses ===
+  "AUD/CAD": 0.9870,
+  "AUD/CHF": 0.5707,
+  "AUD/JPY": 114.43,
+  "AUD/NZD": 1.2061,
+  "CAD/JPY": 115.94,
+  "EUR/AUD": 1.6263,
+  "EUR/GBP": 0.8525,
+  "EUR/JPY": 186.09,
+  "GBP/AUD": 1.9077,
+  "GBP/CAD": 1.8826,
+  "GBP/CHF": 1.0886,
+  "GBP/JPY": 218.29,
+  "NZD/CAD": 0.8183,
+  "NZD/JPY": 94.87,
 
-// === Indizes ===
-"US30": 41200.00,
-"NAS100": 19800.00,
-"SPX500": 5520.00,
-"GER40": 18450.00,
-"UK100": 8250.00,
+  // === Indizes ===
+  "GER40": 18450.00,
+  "NAS100": 19800.00,
+  "SPX500": 5520.00,
+  "UK100": 8250.00,
+  "US30": 41200.00,
 
-// === Metalle ===
-"XAU/USD": 2350.00,
-"XAG/USD": 29.50,
+  // === Metalle ===
+  "XAG/USD": 59.85,
+  "XAU/USD": 4127.80,
 
-// === Energie ===
-"BRENT": 82.50,
+  // === Energie ===
+  "BRENT": 82.50,
 
-// === Krypto ===
-"BTC/USD": 64250.00,
-"ETH/USD": 3450.00,
-"XRP/USD": 0.5850
+  // === Krypto ===
+  "BTC/USD": 64250.00,
+  "ETH/USD": 3450.00,
+  "XRP/USD": 0.5850
 };
 
-// 🔸 Pip-Werte (Der "Zauber-Faktor" für TradingView-Eingaben)
+// 🔸 Pip-/Point-Werte in EUR pro Einheitsbewegung (1 Standard-Lot)
+// Werte angepasst an 1 TradingView-Point/Pip-Eingabe
 const pipValues = {
-  // === INDIZES (SPX, NAS, US30) ===
-  "SPX500": 0.0086, 
-  "NAS100": 0.0086, 
-  "US30": 0.0086,   
-  "GER30": 0.01,     
-  "UK100": 0.011,
-
-  // === METALLE (Gold) ===
-  "XAU/USD": 0.86,  
-  "XAG/USD": 0.43,
-
-  // === FOREX (Währungen) ===
+  // === FOREX (Währungen: 1 Pip = 0.0001 bzw. 0.01 JPY) ===
   "AUD/USD": 8.60, "EUR/USD": 8.60, "GBP/USD": 8.60, "NZD/USD": 8.60,
   "USD/CAD": 8.60, "USD/CHF": 8.60, "USD/JPY": 8.50,
   "AUD/CAD": 8.60, "AUD/CHF": 8.60, "AUD/JPY": 8.50, "AUD/NZD": 8.60,
@@ -70,18 +61,29 @@ const pipValues = {
   "GBP/AUD": 8.60, "GBP/CAD": 8.60, "GBP/CHF": 8.60, "GBP/JPY": 8.50,
   "GBP/NZD": 8.60, "NZD/CAD": 8.60, "NZD/JPY": 8.50,
 
+  // === INDIZES (1 Point = 1.0 Punkt) ===
+  "SPX500": 0.86, 
+  "NAS100": 0.86, 
+  "US30": 0.86,   
+  "GER40": 1.00,     
+  "UK100": 1.10,
+
+  // === METALLE ===
+  // 1 Point in TradingView = 0.01$ Preisbewegung
+  // Bei 1 Lot (100 Oz Gold) = 1.00$ Gegenwert ≈ 0.86 €
+  "XAU/USD": 0.86,  
+  // Bei 1 Lot (5000 Oz Silber) = 50.00$ Gegenwert pro $1.00 Movement = 0.50$ pro 0.01 Point ≈ 0.43 €
+  "XAG/USD": 0.43,
+
+  // === ENERGIE ===
+  "BRENT": 0.86,
+
   // === KRYPTO ===
-  "BTC/USD": 1,
-  "ETH/USD": 0.1,
-  "XRP/USD": 0.0001,
-
-  // Metalle (Redundant entries from original file kept as instructed)
-  "XAG/USD": 0.09,
-  "XAU/USD": 0.086,
-
-  // Energie
-  "BRENT": 0.1
+  "BTC/USD": 0.86,
+  "ETH/USD": 0.86,
+  "XRP/USD": 86.00
 };
+
 
 // 🔸 Kontraktgrößen
 const basisWerte = {
