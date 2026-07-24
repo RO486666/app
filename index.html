@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="CSS/star.css" />
   <link rel="stylesheet" href="CSS/crypto.css">
   <link rel="stylesheet" href="CSS/jornal.css">
+  <link rel="stylesheet" href="CSS/jornaltrade.css">
   <link rel="stylesheet" href="CSS/session.css" />
   <link rel="stylesheet" href="CSS/posmax.css" />
   <link rel="stylesheet" href="CSS/Rechner.css" />
@@ -466,6 +467,239 @@
 
 </section>
 
+<section id="panel-journal" class="panel hidden">
+  
+<div class="journal-stats-grid">
+  
+  <!-- Karte 1: Win Rate -->
+  <div class="kpi-card">
+    <div class="kpi-title">
+      <span>Win Rate</span>
+      <span>🎯</span>
+    </div>
+    <div id="journalWinRate" class="kpi-value">0%</div>
+    <div class="kpi-sub">
+      <span id="journalTradeCount" class="chip">0 Trades gesamt</span>
+    </div>
+  </div>
+
+  <!-- Karte 2: Gesamt Profit / Loss -->
+  <div class="kpi-card">
+    <div class="kpi-title">
+      <span>Gesamt Profit/Loss</span>
+      <span>💸</span>
+    </div>
+    <div id="journalTotalPnL" class="kpi-value">+0,00 €</div>
+    <div class="kpi-sub">
+      <span id="journalProfitFactor" class="chip">Profit Factor: 0.00</span>
+    </div>
+  </div>
+
+  <!-- Karte 3: NEU -> Ø Win / Ø Loss (Durchschnitt pro Trade) -->
+  <div class="kpi-card">
+    <div class="kpi-title">
+      <span>Ø Win / Ø Loss</span>
+      <span>📊</span>
+    </div>
+    <div id="journalAvgMetrics" class="kpi-value" style="font-size: 20px;">
+      <span class="pnl-profit">+0,00 €</span> / <span class="pnl-loss">-0,00 €</span>
+    </div>
+    <div class="kpi-sub">
+      <span id="journalMaxStreak" class="chip">Max Win Streak: 0</span>
+    </div>
+  </div>
+
+<!-- TradeZella Style Widget: Avg Win/Loss Trade -->
+<div class="kpi-card">
+  <div class="kpi-title">
+    <span>Avg Win / Loss Trade</span>
+    <span>⚖️</span>
+  </div>
+
+  <div style="display: flex; align-items: baseline; gap: 8px; margin: 6px 0;">
+    <!-- Ratio (Große Zahl wie 3.60) -->
+    <div id="jAvgRatioVal" class="kpi-value" style="margin: 0;">0.00</div>
+  </div>
+
+  <!-- Visuelle Ratio-Bar -->
+  <div class="ratio-bar-container">
+    <div id="jAvgRatioBarWin" class="ratio-bar-win" style="width: 50%;"></div>
+    <div id="jAvgRatioBarLoss" class="ratio-bar-loss" style="width: 50%;"></div>
+  </div>
+
+  <!-- Beträge unter dem Balken -->
+  <div class="ratio-bar-labels">
+    <span id="jAvgWinVal" class="pnl-profit">+0,00 €</span>
+    <span id="jAvgLossVal" class="pnl-loss">-0,00 €</span>
+  </div>
+</div>
+
+</div>
+
+  <!-- CHARTS SECTION -->
+  <div class="journal-charts-wrapper">
+    <div class="chart-container wide-chart">
+      <h4 class="box-heading">📈 Equity-Kurve (Kapitalverlauf)</h4>
+      <div class="chart-canvas-wrapper">
+        <canvas id="chartEquity"></canvas>
+      </div>
+    </div>
+    <div class="journal-charts-subgrid">
+      <div class="chart-container">
+        <h4 class="box-heading">🎯 Win/Loss</h4>
+        <div class="chart-canvas-wrapper">
+          <canvas id="chartWinLoss"></canvas>
+        </div>
+      </div>
+      <div class="chart-container">
+        <h4 class="box-heading">💱 Performance</h4>
+        <div class="chart-canvas-wrapper">
+          <canvas id="chartPairs"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR SECTION -->
+  <div class="journal-calendar-section">
+    <div class="calendar-box">
+      <div class="calendar-header">
+        <button onclick="changeMonth(-1)">◀</button>
+        <h4 id="calendarMonthYear">Juli 2026</h4>
+        <button onclick="changeMonth(1)">▶</button>
+      </div>
+      <div class="calendar-weekdays">
+        <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+
+    <!-- 📅 DYNAMIC DAY DRILLDOWN PANEL -->
+    <div id="journalDayDetails" style="display:none; border-top:1px solid var(--line); margin-top: 14px;">
+      
+      <div class="panel-head">
+        <div class="panel-title">
+          <span class="chip" style="background:rgba(255,255,255,0.06);">Tag: <strong id="dayDetailsLabel">–</strong></span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="chip">Net: <strong id="dayDetailsNet">0.00 €</strong></span>
+          <span class="chip">Trades: <strong id="dayDetailsTrades">0</strong></span>
+          <span class="chip">Win%: <strong id="dayDetailsWin">0%</strong></span>
+          <button class="btn-add-trade-trigger" type="button" onclick="openTradeModal()">➕ Trade eintragen</button>
+          <button class="btn" id="btnClearDay" type="button" onclick="resetCalendarFilter()">Clear Filter</button>
+        </div>
+      </div>
+
+      <div class="table-scroll-container">
+        <table class="journal-table">
+          <thead>
+            <tr>
+              <th>Zeit</th>
+              <th>Asset</th>
+              <th>Richtung</th>
+              <th>Lots</th>
+              <th>PnL</th>
+              <th>Session</th>
+              <th>Confluence</th>
+              <th>Notizen</th>
+              <th>Aktion</th>
+            </tr>
+          </thead>
+          <tbody id="dayTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TIMEZONE CONTROLS -->
+    <div class="calendar-controls" style="margin-top: 14px;">
+      <h4 class="box-heading">🌐 Zeitachsen-Shift</h4>
+      <p class="tz-hint">Konvertiere die Anzeigezeiten deiner Trades instant in die Ziel-Session:</p>
+      
+      <div class="timezone-switch-grid">
+        <button id="tz-local" class="btn-tz active" onclick="switchJournalTimezone('local')">🏠 Lokal (System)</button>
+        <button id="tz-ny" class="btn-tz" onclick="switchJournalTimezone('EST')">🗽 New York (EST)</button>
+        <button id="tz-utc" class="btn-tz" onclick="switchJournalTimezone('UTC')">🌐 UTC / GMT</button>
+      </div>
+
+      <div class="selected-day-status" id="selectedDayStatus">🟢 Zeige alle Trades</div>
+      <button id="resetCalendarFilterBtn" class="clear-journal-btn full-width-btn hidden-element" onclick="resetCalendarFilter()">🔄 Filter aufheben</button>
+    </div>
+  </div>
+
+<!-- 🔲 TRADE ENTRY MODAL (POPUP + BLUR BACKDROP) -->
+<div id="tradeModalOverlay" class="modal-overlay" onclick="closeTradeModalOnBackdrop(event)">
+  <div class="modal-content">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h4 class="box-heading" style="margin:0;">✍️ Trade erfassen (<span id="modalDateLabel">Datum</span>)</h4>
+      <button type="button" class="btn-modal-close" onclick="closeTradeModal()">✕</button>
+    </div>
+
+    <!-- Formular -->
+    <form id="journalForm" onsubmit="addJournalTrade(event)">
+      <div class="form-grid">
+        
+        <label>💱 Paar / Asset
+          <input type="text" id="jFormPair" list="journalPairsDatalist" placeholder="z.B. XAUUSD" autocomplete="off" required />
+          <datalist id="journalPairsDatalist"></datalist>
+        </label>
+        
+        <label>↕️ Richtung
+          <select id="jFormDirection">
+            <option value="BUY">BUY (Long)</option>
+            <option value="SELL">SELL (Short)</option>
+          </select>
+        </label>
+        
+        <label>📦 Lots / Größe
+          <input type="number" id="jFormLots" step="0.01" min="0.01" placeholder="0.10" required />
+        </label>
+        
+        <label>💸 Gewinn / Verlust (€)
+          <input type="number" id="jFormPnL" step="0.01" placeholder="150.50 oder -50.00" required />
+        </label>
+        
+        <label>⏱️ Trading-Session
+          <select id="jFormSession">
+            <option value="Frankfurt/London">Frankfurt / London</option>
+            <option value="New York">New York</option>
+            <option value="Asien/Tokyo">Asien / Tokyo</option>
+            <option value="Crypto 24/7">Crypto 24/7</option>
+          </select>
+        </label>
+        
+        <label>🧠 Confluence Score (%)
+          <input type="number" id="jFormConfluence" min="0" max="100" placeholder="75" />
+        </label>
+        
+        <label class="full-width-label">📝 Setup-Notizen & Fehleranalyse
+          <textarea id="jFormNotes" rows="3" placeholder="Struktur-Shift auf 15M bestätigt..."></textarea>
+        </label>
+
+        <!-- Screenshots Upload -->
+        <div class="full-width-label">
+          <label style="display: block; margin-bottom: 6px;">📸 Chart-Screenshots (Setup / Ausführung)</label>
+          <input type="file" id="jFormImages" accept="image/*" multiple onchange="handleImageUpload(event)" style="display:none;" />
+          <button type="button" class="btn" onclick="document.getElementById('jFormImages').click()">
+            📤 Bilder auswählen
+          </button>
+          
+          <!-- Vorschau-Grid direkt unter dem Upload-Button -->
+          <div id="formImagePreview" class="image-preview-grid" style="margin-top: 10px;"></div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons (Immer am Ende des Formulars) -->
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="submit" id="btnSubmitForm" class="btn-journal-submit" style="flex:1;">💾 Trade speichern</button>
+        <button type="button" class="btn" onclick="closeTradeModal()">Abbrechen</button>
+      </div>
+    </form>
+
+  </div>
+</div>
 
 <section id="panel-settings-dst" class="panel hidden">
   <div class="dst-popup">
@@ -534,6 +768,10 @@
     </div>
   </div>
 </section>
+
+
+
+
 
 
 
