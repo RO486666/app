@@ -263,74 +263,68 @@ body {
 #panel-journal .journal-charts-wrapper {
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
-  grid-template-rows: minmax(130px, auto) minmax(130px, auto);
   gap: 14px;
   margin-bottom: 16px;
+  align-items: stretch;
 }
 
-/* Links: Haupt-Chart (Equity) spannt über 2 Zeilen */
-#panel-journal .journal-charts-wrapper > .chart-container:first-child {
-  grid-column: 1;
-  grid-row: 1 / span 1;
+#panel-journal .journal-charts-subgrid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Base Container Styling */
+#panel-journal .chart-container {
   display: flex;
   flex-direction: column;
+  background: #110f16 !important;
+  position: relative;
+}
+
+/* Spezifischer Verlauf für die Equity-Kurve */
+#panel-journal .wide-chart {
   background: linear-gradient(160deg, #110f16 0%, #0a080e 100%) !important;
-  min-height: 0;
 }
 
-/* Rechts Oben: Win/Loss Donut */
-#panel-journal .journal-charts-wrapper > .chart-container:nth-child(2) {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  background: #110f16 !important;
-  min-height: 0;
+/* Überschriften Styling in den Chart-Boxen */
+#panel-journal .box-heading {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 12px 0;
+  font-weight: 800;
+  padding: 0;
 }
 
-/* Rechts Unten: Performance Bar */
-#panel-journal .journal-charts-wrapper > .chart-container:nth-child(3) {
-  grid-column: 2;
-  grid-row: 2;
-  display: flex;
-  flex-direction: column;
-  background: #110f16 !important;
-  min-height: 0;
-}
-
-/* Alle Chart-Bodys strikt flexibel & begrenzt halten */
-#panel-journal .chart-body {
-  flex: 1;
+/* 🔥 DER FIX FÜR DAS WACHSTUMS-PROBLEM DER CHARTS 🔥 */
+/* Zwingt Chart.js in ein festes Korsett, aus dem es nicht ausbrechen kann */
+#panel-journal .chart-canvas-wrapper {
   position: relative !important;
   width: 100%;
-  height: 100%;
-  min-height: 120px;
-  padding: 10px;
-  box-sizing: border-box;
-  overflow: hidden;
+  flex-grow: 1;
 }
 
-/* Canvas richtet sich starr nach dem Container */
+/* Absolute Höhen vorgeben, damit das Layout beim Neuladen stabil bleibt */
+#panel-journal .wide-chart .chart-canvas-wrapper {
+  height: 360px; 
+}
+
+#panel-journal .journal-charts-subgrid .chart-canvas-wrapper {
+  height: 150px; 
+}
+
+/* Der Canvas wird absolut über den fixierten Wrapper gespannt */
 #panel-journal canvas {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* Responsive Ansicht für kleine Bildschirme */
-@media (max-width: 1024px) {
-  #panel-journal .journal-charts-wrapper {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-  
-  #panel-journal .journal-charts-wrapper > .chart-container:first-child,
-  #panel-journal .journal-charts-wrapper > .chart-container:nth-child(2),
-  #panel-journal .journal-charts-wrapper > .chart-container:nth-child(3) {
-    grid-column: 1;
-    grid-row: auto;
-  }
-}
 /* ------------------------------------------------------------
    ✍️ INPUT ELEMENTS & FORM GRID (SCOPED AUF MODAL & JOURNAL FORM)
    ------------------------------------------------------------ */
@@ -568,7 +562,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(5, 5, 8, 0.8);
+  background: rgba(5, 5, 8, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 99999;
@@ -593,6 +587,8 @@ body {
   border-radius: 12px;
   width: 100%;
   max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 24px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 24px rgba(153, 51, 255, 0.15);
   transform: scale(0.92);
@@ -793,27 +789,7 @@ body {
   display: none !important;
 }
 
-/* ------------------------------------------------------------
-   ✨ ANIMATIONEN & RESPONSIVENESS
-   ------------------------------------------------------------ */
-@keyframes fadeInSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media(max-width: 980px) {
-  .journal-charts-wrapper { 
-    grid-template-columns: 1fr; 
-  }
-}
-
-/* Fix für dunkle Dropdown-Optionen im Journal Modal */
+/* Dropdown Options Dark Fix */
 #tradeModalOverlay select option {
   background-color: #110f16 !important;
   color: #f5f5f7 !important;
@@ -826,4 +802,150 @@ body {
 #tradeModalOverlay select option:checked {
   background-color: #6d28d9 !important;
   color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------
+   ✨ ANIMATIONEN
+   ------------------------------------------------------------ */
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   📱 MOBILE RESPONSIVE OPTIMIZATIONS (TABLETS & SMARTPHONES)
+   ------------------------------------------------------------ */
+@media (max-width: 980px) {
+  #panel-journal .journal-charts-wrapper { 
+    grid-template-columns: 1fr; 
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 6px;
+  }
+
+  #panel-journal {
+    padding-top: 12px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    gap: 12px;
+  }
+
+  /* Formular-Grid komplett einspaltig auf Handys */
+  #tradeModalOverlay .form-grid,
+  .journal-form-box .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  /* Modal-Optimierung für Smartphones */
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-content {
+    padding: 16px;
+    max-height: 92vh;
+    border-radius: 10px;
+  }
+
+  /* Tagesdetail-Anpassung (Button + Datum voll sichtbar) */
+  #journalDayDetails .panel-head,
+  #journalDayDetails > div:first-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .btn-add-trade-trigger {
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Kalender-Anpassungen */
+  .calendar-weekdays {
+    gap: 2px;
+    padding: 8px 4px 0;
+    font-size: 10px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+    padding: 8px 4px 12px;
+  }
+
+  .calendar-day {
+    min-height: 52px;
+    padding: 4px 5px;
+    border-radius: 5px;
+  }
+
+  .calendar-day .day-number {
+    font-size: 11px;
+  }
+
+  .calendar-day .day-pnl,
+  .calendar-day .day-trades-count {
+    font-size: 9px;
+  }
+
+  /* Timezone Switches & Buttons full width */
+  .timezone-switch-grid {
+    flex-wrap: wrap;
+  }
+
+  .btn-tz {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   🖤 DATEPICKER STYLING (DARK THEME NATIVE OVERRIDES)
+   ============================================================ */
+
+/* Chrome/Edge Datepicker Popup in den Dark Mode zwingen */
+input[type="date"] {
+    color-scheme: dark; 
+    color: transparent; /* Versteckt den Standard-Text, wir nutzen den h4 Header */
+}
+
+/* Kalender-Icon invertieren (falls sichtbar) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Safari spezifisch: Schriftfarbe auf hell setzen */
+::-webkit-datetime-edit-fields-wrapper,
+::-webkit-datetime-edit-text,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-year-field {
+    color: #e0e0e0;
+}
+
+/* Sehr kleine Displays (z.B. iPhone SE, alte Androids) */
+@media (max-width: 420px) {
+  .calendar-weekdays {
+    display: none; /* Blendet Wochentage-Header auf Winz-Bildschirmen für Platz aus */
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2-spaltiges Kartenlayout auf kleinsten Handys für perfekte Lesbarkeit */
+    gap: 6px;
+  }
+
+  .calendar-day {
+    min-height: 60px;
+  }
 }
