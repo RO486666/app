@@ -452,6 +452,25 @@ function initCalendar() {
 function changeMonth(direction) {
   currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
   initCalendar();
+  updateJournalUI(); // <--- Das hier sorgt dafür, dass sich die Performance-Balken anpassen
+}
+
+function jumpToExactDate(dateString) {
+  if (!dateString) return;
+  
+  // Der native Datepicker liefert das Format YYYY-MM-DD
+  const [year, month, day] = dateString.split('-');
+  
+  // Setze das zentrale Kalenderdatum auf den gewählten Monat und Tag
+  currentCalendarDate = new Date(year, parseInt(month) - 1, day);
+  
+  // Kalender neu rendern
+  initCalendar();
+  updateJournalUI();
+  
+  // Direkt den ausgewählten Tag im Kalender fokussieren und filtern[cite: 2]
+  const formattedDate = `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+  filterByDate(formattedDate);
 }
 
 function filterByDate(dateStr) {
@@ -775,32 +794,125 @@ function renderJournalCharts() {
 
   const cronTrades = [...journalTrades].reverse();
 
-  // 1. Equity-Kurve (Kapitalverlauf über Zeit)
+  // 1. Equity-Kurve (INFINITY MODE - GEPATCHT FÜR DEEP MINUS)
   const canvasEquity = document.getElementById("chartEquity");
   if (canvasEquity) {
     const ctx = canvasEquity.getContext("2d");
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, APEX_COLORS.primaryGlow);
-    gradient.addColorStop(1, "rgba(109, 40, 217, 0.0)");
 
     let runningPnL = 0;
+    const equityData = cronTrades.map(t => { runningPnL += t.pnl; return runningPnL; });
+
+    const dynamicPointRadius = equityData.length > 80 ? 0 : 2;
+
     chartInstances.equity = new Chart(ctx, {
       type: "line",
       data: {
         labels: cronTrades.map((_, i) => `T${i + 1}`),
         datasets: [{
-          data: cronTrades.map(t => { runningPnL += t.pnl; return runningPnL; }),
-          borderColor: APEX_COLORS.primary,
-          backgroundColor: gradient,
+          data: equityData,
           borderWidth: 2,
-          pointRadius: 2,
-          pointHoverRadius: 6,
-          pointBackgroundColor: APEX_COLORS.primary,
-          fill: true,
-          tension: 0.2
+          pointRadius: dynamicPointRadius,
+          pointHoverRadius: 4,
+          fill: 'origin',
+          tension: 0.1,
+
+          // 🟢/🔴 Dynamische Linienfarbe
+          borderColor: (context) => {
+            const chart = context.chart;
+            const { ctx, chartArea, scales } = chart;
+            
+            if (!chartArea || !scales.y) {
+              const dummy = ctx.createLinearGradient(0, 0, 0, 1);
+              dummy.addColorStop(0, APEX_COLORS.win);
+              dummy.addColorStop(1, APEX_COLORS.win);
+              return dummy;
+            }
+
+            const yZero = scales.y.getPixelForValue(0);
+            const top = chartArea.top;
+            const bottom = chartArea.bottom;
+            const range = bottom - top;
+
+            let zeroRatio = range > 0 ? (yZero - top) / range : 0.5;
+            zeroRatio = Math.max(0, Math.min(1, zeroRatio));
+
+            const gradientLine = ctx.createLinearGradient(0, top, 0, bottom);
+            gradientLine.addColorStop(0, APEX_COLORS.win);
+            gradientLine.addColorStop(zeroRatio, APEX_COLORS.win);
+            gradientLine.addColorStop(zeroRatio, APEX_COLORS.loss);
+            gradientLine.addColorStop(1, APEX_COLORS.loss);
+            
+            return gradientLine;
+          },
+
+          // 🟢/🔴 Dynamische Glow-Füllung (Fix für transparente Minus-Zonen)
+          backgroundColor: (context) => {
+            const chart = context.chart;
+            const { ctx, chartArea, scales } = chart;
+            
+            if (!chartArea || !scales.y) {
+              const dummy = ctx.createLinearGradient(0, 0, 0, 1);
+              dummy.addColorStop(0, "rgba(16, 185, 129, 0.50)");
+              dummy.addColorStop(1, "rgba(16, 185, 129, 0.10)");
+              return dummy;
+            }
+
+            const yZero = scales.y.getPixelForValue(0);
+            const top = chartArea.top;
+            const bottom = chartArea.bottom;
+            const range = bottom - top;
+
+            let zeroRatio = range > 0 ? (yZero - top) / range : 0.5;
+            zeroRatio = Math.max(0, Math.min(1, zeroRatio));
+
+            const gradientFill = ctx.createLinearGradient(0, top, 0, bottom);
+            
+            // PLUS-BEREICH: Startet bei 0.60, bladet zur 0-Linie auf minimal 0.15 aus
+            gradientFill.addColorStop(0, "rgba(16, 185, 129, 0.60)");
+            gradientFill.addColorStop(zeroRatio, "rgba(16, 185, 129, 0.15)");
+            
+            // MINUS-BEREICH: Startet an 0-Linie sichtbar (0.15) und wird nach unten tiefrot (0.60)
+            gradientFill.addColorStop(zeroRatio, "rgba(244, 63, 94, 0.15)");
+            gradientFill.addColorStop(1, "rgba(244, 63, 94, 0.60)");
+            
+            return gradientFill;
+          },
+
+          pointBackgroundColor: (context) => {
+            const val = context.raw;
+            return val >= 0 ? APEX_COLORS.win : APEX_COLORS.loss;
+          }
         }]
       },
-      options: apexChartOptions
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: { 
+          legend: { display: false }, 
+          tooltip: { 
+            backgroundColor: APEX_COLORS.bg, 
+            titleColor: '#fff', 
+            bodyColor: APEX_COLORS.textMuted, 
+            borderColor: APEX_COLORS.grid, 
+            borderWidth: 1, 
+            padding: 10, 
+            displayColors: false, 
+            cornerRadius: 8 
+          } 
+        },
+        scales: { 
+          x: { display: false }, 
+          y: { 
+            grid: { color: APEX_COLORS.grid }, 
+            border: { display: false }, 
+            ticks: { color: APEX_COLORS.textMuted, font: { size: 10 } } 
+          } 
+        }
+      }
     });
   }
 
@@ -831,15 +943,26 @@ function renderJournalCharts() {
     });
   }
 
-  // 3. Tages-Performance (Gruppiert nach Datum statt einzelnen Trades)
+// 3. Tages-Performance (Monatsansicht synchron zum Kalender)
   const canvasPairs = document.getElementById("chartPairs");
   if (canvasPairs) {
-    const dailyPerf = {};
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+    // 1. Array für alle Tage des Monats vorbereiten (1 bis 28/30/31)
+    const dailyPerf = {};
+    for (let i = 1; i <= daysInMonth; i++) {
+      dailyPerf[i.toString().padStart(2, '0')] = 0;
+    }
+
+    // 2. Trades filtern und auf die Tage des aktuellen Kalendermonats aufteilen
     cronTrades.forEach(t => {
-      const date = new Date(t.timestamp);
-      const dateKey = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.`;
-      dailyPerf[dateKey] = (dailyPerf[dateKey] || 0) + t.pnl;
+      const d = new Date(t.timestamp);
+      if (d.getFullYear() === year && d.getMonth() === month) {
+        const dayKey = d.getDate().toString().padStart(2, '0');
+        dailyPerf[dayKey] += t.pnl;
+      }
     });
 
     const labels = Object.keys(dailyPerf);
@@ -851,13 +974,221 @@ function renderJournalCharts() {
         labels: labels,
         datasets: [{
           data: dataValues,
-          backgroundColor: dataValues.map(v => v >= 0 ? APEX_COLORS.winGlow : APEX_COLORS.lossGlow),
-          borderColor: dataValues.map(v => v >= 0 ? APEX_COLORS.win : APEX_COLORS.loss),
+          // Leere Tage (0€) bekommen einen sehr dezenten grauen Balken, Plus Grün, Minus Rot
+          backgroundColor: dataValues.map(v => v > 0 ? APEX_COLORS.winGlow : (v < 0 ? APEX_COLORS.lossGlow : "rgba(255,255,255,0.02)")),
+          borderColor: dataValues.map(v => v > 0 ? APEX_COLORS.win : (v < 0 ? APEX_COLORS.loss : "rgba(255,255,255,0.05)")),
           borderWidth: 1,
           borderRadius: 4
         }]
       },
-      options: apexChartOptions
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: APEX_COLORS.bg,
+            titleColor: '#fff',
+            bodyColor: APEX_COLORS.textMuted,
+            borderColor: APEX_COLORS.grid,
+            borderWidth: 1,
+            padding: 10,
+            displayColors: false,
+            cornerRadius: 8,
+            callbacks: {
+              // Tooltip zeigt volles Datum an (z.B. 15.07.2026) statt nur "15"
+              title: (ctx) => `${ctx[0].label}.${String(month + 1).padStart(2, '0')}.${year}`,
+              label: (ctx) => formatCurrency(ctx.raw)
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: APEX_COLORS.textMuted, font: { size: 10 } } },
+          y: { grid: { color: APEX_COLORS.grid }, border: { display: false }, ticks: { color: APEX_COLORS.textMuted, font: { size: 10 } } }
+        }
+      }
     });
   }
 }
+
+/* ============================================================
+   📥 AUTOMATIC MT5 IMPORT ENGINE
+   ============================================================ */
+function openMT5ImportModal() {
+  const overlay = document.getElementById("mt5ImportModalOverlay");
+  if (overlay) {
+    overlay.classList.add("active");
+    document.getElementById("mt5ImportCodeInput").value = "";
+  }
+}
+
+function closeMT5ImportModal() {
+  const overlay = document.getElementById("mt5ImportModalOverlay");
+  if (overlay) {
+    overlay.classList.remove("active");
+  }
+}
+
+function executeMT5Import() {
+  const rawInput = document.getElementById("mt5ImportCodeInput").value.trim();
+  if (!rawInput) {
+    alert("⚠️ Bitte füge zuerst den Code ein!");
+    return;
+  }
+
+  try {
+    const importedTrades = JSON.parse(rawInput);
+    if (!Array.isArray(importedTrades)) {
+      throw new Error("Format ungültig, es muss ein Array sein.");
+    }
+
+    let addedCount = 0;
+    
+    // Prüfen und nur Trades hinzufügen, die noch nicht existieren (Duplikatschutz)
+    importedTrades.forEach(newTrade => {
+      const exists = journalTrades.some(t => t.id === newTrade.id);
+      if (!exists) {
+        journalTrades.push(newTrade);
+        addedCount++;
+      }
+    });
+
+    if (addedCount > 0) {
+      // Nach Datum sortieren (neueste zuerst)
+      journalTrades.sort((a, b) => b.timestamp - a.timestamp);
+      
+      saveJournalData(); // Speichert in LocalStorage und aktualisiert die App UI
+      closeMT5ImportModal();
+      alert(`✅ Erfolgreich ${addedCount} neue Trades in dein Journal importiert!`);
+    } else {
+      alert("ℹ️ Keine neuen Trades gefunden. Alle Trades in diesem Code sind bereits in deinem Journal vorhanden.");
+      closeMT5ImportModal();
+    }
+
+  } catch (e) {
+    alert("❌ Fehler beim Einlesen des Codes. Achte darauf, dass du den kompletten JSON-Block von mir kopiert hast.\n\nFehler: " + e.message);
+  }
+}
+
+
+/* ============================================================
+   🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX)
+   ============================================================ */
+
+let currentDevBias = 'positive'; 
+
+function injectDevTools() {
+  const devContainer = document.createElement('div');
+  devContainer.id = "alphaosDevTools";
+  
+  devContainer.style.cssText = "position: fixed; bottom: 20px; left: 20px; background: rgba(13, 13, 18, 0.95); border: 1px solid #f43f5e; padding: 12px; border-radius: 8px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2); backdrop-filter: blur(4px);";
+
+  devContainer.innerHTML = `
+    <!-- ZEILE 1: TREND -->
+    <div style="display: flex; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+      <strong style="color: #94a3b8; font-size: 11px; font-family: sans-serif; width: 65px;">📉 TREND:</strong>
+      <button id="devBtnNeg" onclick="setDevBias('negative')" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Negativ</button>
+      <button id="devBtnNeu" onclick="setDevBias('neutral')" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Mittig</button>
+      <button id="devBtnPos" onclick="setDevBias('positive')" style="background: #110f16; border: 1px solid #10b981; color: #10b981; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Positiv</button>
+    </div>
+    
+    <!-- ZEILE 2: ACTION -->
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <strong style="color: #f43f5e; font-size: 11px; font-family: sans-serif; width: 65px;">⚙️ ACTION:</strong>
+      <button onclick="generateRandomTrades(50)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 50</button>
+      <button onclick="generateRandomTrades(100)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 100</button>
+      <button onclick="generateRandomTrades(500)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 500</button>
+      
+      <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.2); margin: 0 4px;"></div>
+      
+      <button onclick="clearJournal()" style="background: rgba(244, 63, 94, 0.1); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;" title="Gesamtes Journal löschen">🗑️</button>
+    </div>
+  `;
+  document.body.appendChild(devContainer);
+}
+
+window.setDevBias = function(bias) {
+  currentDevBias = bias;
+  
+  const bNeg = document.getElementById('devBtnNeg');
+  const bNeu = document.getElementById('devBtnNeu');
+  const bPos = document.getElementById('devBtnPos');
+  
+  [bNeg, bNeu, bPos].forEach(b => {
+    if(b) {
+      b.style.borderColor = "rgba(255,255,255,0.2)";
+      b.style.color = "#fff";
+    }
+  });
+
+  if (bias === 'negative' && bNeg) {
+    bNeg.style.borderColor = "#f43f5e"; bNeg.style.color = "#f43f5e";
+  } else if (bias === 'neutral' && bNeu) {
+    bNeu.style.borderColor = "#94a3b8"; bNeu.style.color = "#94a3b8";
+  } else if (bias === 'positive' && bPos) {
+    bPos.style.borderColor = "#10b981"; bPos.style.color = "#10b981";
+  }
+};
+
+function generateRandomTrades(count) {
+  const pairs = ["EURUSD", "GBPUSD", "XAUUSD", "BTCUSD", "NAS100", "US30", "GER40"];
+  const sessions = ["London", "New York", "Asia"];
+  const directions = ["BUY", "SELL"];
+
+  // Startzeitpunkt ermitteln
+  let lastTimestamp = Date.now() - (count * 8 * 60 * 60 * 1000); // Fallback: Startet in der Vergangenheit
+  
+  // Wenn schon Trades existieren, nehmen wir den NEUESTEN Trade als Startpunkt
+  if (journalTrades.length > 0) {
+    lastTimestamp = journalTrades[0].timestamp; 
+  }
+
+  for (let i = 0; i < count; i++) {
+    // Pro Trade exakt 8 Stunden weitergehen + minimale Zufallsabweichung (Minuten)
+    lastTimestamp += (8 * 60 * 60 * 1000) + Math.floor(Math.random() * 1000 * 60 * 45);
+
+    let isWin;
+    let randomPnL = 0;
+
+    if (currentDevBias === 'positive') {
+      isWin = Math.random() > 0.35; 
+      randomPnL = isWin ? (Math.random() * 600 + 50) : (Math.random() * -300 - 20);
+    } else if (currentDevBias === 'negative') {
+      isWin = Math.random() > 0.65;
+      randomPnL = isWin ? (Math.random() * 300 + 20) : (Math.random() * -600 - 50); 
+    } else {
+      isWin = Math.random() > 0.50; 
+      randomPnL = isWin ? (Math.random() * 400 + 20) : (Math.random() * -400 - 20); 
+    }
+
+    const newTrade = {
+      id: "dev_" + lastTimestamp + "_" + Math.floor(Math.random() * 10000),
+      timestamp: lastTimestamp,
+      pair: pairs[Math.floor(Math.random() * pairs.length)],
+      direction: directions[Math.floor(Math.random() * directions.length)],
+      lots: parseFloat((Math.random() * 4.9 + 0.1).toFixed(2)),
+      pnl: parseFloat(randomPnL.toFixed(2)),
+      session: sessions[Math.floor(Math.random() * sessions.length)],
+      confluence: Math.floor(Math.random() * 40 + 60),
+      notes: `Test-Trade (${currentDevBias})`,
+      images: []
+    };
+
+    journalTrades.push(newTrade);
+  }
+
+  // Korrekt absteigend sortieren (neueste zuerst)
+  journalTrades.sort((a, b) => b.timestamp - a.timestamp);
+  
+  // Speichern und UI updaten
+  saveJournalData(); 
+  
+  console.log(`[DEV] ${count} Trades perfekt über Zeit verteilt. Trend: ${currentDevBias.toUpperCase()}`);
+}
+
+// Injektion bei Laden
+document.addEventListener("DOMContentLoaded", () => {
+  if (!document.getElementById("alphaosDevTools")) {
+    injectDevTools();
+  }
+});
