@@ -552,7 +552,7 @@
         </div>
       </div>
       <div class="chart-container">
-        <h4 class="box-heading">💱 Performance</h4>
+        <h4 class="box-heading">💱 Monthly Performance</h4>
         <div class="chart-canvas-wrapper">
           <canvas id="chartPairs"></canvas>
         </div>
@@ -560,12 +560,23 @@
     </div>
   </div>
 
-  <!-- CALENDAR SECTION -->
+<!-- CALENDAR SECTION -->
   <div class="journal-calendar-section">
     <div class="calendar-box">
       <div class="calendar-header">
         <button onclick="changeMonth(-1)">◀</button>
-        <h4 id="calendarMonthYear">Juli 2026</h4>
+        
+        <!-- Klickbarer Header mit überlagertem, unsichtbarem Datepicker -->
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+          <h4 id="calendarMonthYear" style="cursor: pointer; margin: 0;" onclick="document.getElementById('calDatePicker').showPicker()" title="Exaktes Datum wählen">Juli 2026</h4>
+          <input 
+            type="date" 
+            id="calDatePicker" 
+            style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; pointer-events: none;" 
+            onchange="jumpToExactDate(this.value)" 
+          />
+        </div>
+
         <button onclick="changeMonth(1)">▶</button>
       </div>
       <div class="calendar-weekdays">
@@ -697,9 +708,14 @@
         <button type="button" class="btn" onclick="closeTradeModal()">Abbrechen</button>
       </div>
     </form>
+	
+	
 
   </div>
 </div>
+</section>
+
+
 
 <section id="panel-settings-dst" class="panel hidden">
   <div class="dst-popup">
@@ -872,6 +888,7 @@
     </label>
 
   </div>
+
 
 
   <!-- ============================================================
