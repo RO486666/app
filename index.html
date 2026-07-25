@@ -1719,13 +1719,82 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/app/sw.js') // Pfad zu deiner Service Worker Datei
-        .then(registration => {
-          console.log('AlphaOS Service Worker angemeldet mit Scope:', registration.scope);
+      navigator.serviceWorker.register('/app/sw.js')
+        .then(reg => {
+          console.log('AlphaOS Service Worker angemeldet.');
+
+          // Wartet auf neue Versionen des Service Workers
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              // Wenn der neue Worker installiert ist und bereits ein alter existiert -> Update ist da!
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdatePopup(newWorker);
+              }
+            });
+          });
         })
-        .catch(err => {
-          console.log('Service Worker Anmeldung fehlgeschlagen:', err);
-        });
+        .catch(err => console.log('Service Worker Anmeldung fehlgeschlagen:', err));
+
+      // Sobald der neue Service Worker übernimmt, Seite hart neu laden, um Cache zu flushen
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    });
+  }
+
+  // Baut das In-App Popup auf, sobald ein Update erkannt wurde
+  function showUpdatePopup(worker) {
+    const popup = document.createElement('div');
+    popup.id = 'alphaUpdatePopup';
+    popup.style.cssText = `
+      position: fixed; 
+      bottom: 24px; 
+      right: 24px; 
+      background: #110f16; 
+      border: 1px solid #9933ff; 
+      padding: 18px; 
+      border-radius: 8px; 
+      z-index: 100000; 
+      box-shadow: 0 12px 32px rgba(0,0,0,0.8), 0 0 14px rgba(153, 51, 255, 0.2); 
+      color: #fff; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px;
+      font-family: sans-serif;
+      animation: fadeInSlideDown 0.3s ease-out forwards;
+    `;
+    
+    popup.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:20px;">🚀</span>
+        <strong style="font-size:14px; text-transform:uppercase; letter-spacing:0.5px;">System-Update verfügbar</strong>
+      </div>
+      <span style="font-size:12px; color:#aaa;">Neue Funktionen oder Layouts wurden geladen.</span>
+      <button id="btnUpdateApp" style="
+        background: linear-gradient(135deg, rgba(153, 51, 255, 0.3) 0%, rgba(109, 40, 217, 0.2) 100%);
+        border: 1px solid rgba(153, 51, 255, 0.5);
+        color: #fff; 
+        padding: 10px; 
+        border-radius: 6px; 
+        font-weight: 800; 
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 11px;
+        transition: 0.2s;
+      ">Jetzt aktualisieren</button>
+    `;
+    
+    document.body.appendChild(popup);
+
+    // Klick-Logik: Schließt Popup und triggert den Skip-Waiting Befehl in der sw.js
+    const btn = document.getElementById('btnUpdateApp');
+    btn.addEventListener('click', () => {
+      btn.innerText = "Lade...";
+      worker.postMessage('SKIP_WAITING'); 
     });
   }
 </script>
