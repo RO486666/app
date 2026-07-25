@@ -2,7 +2,7 @@
 title AlphaOS Live-Radar
 color 0b
 
-:: Erstellt ein sauberes Skript im temporaeren Windows-Ordner, um Parser-Abstuerze zu blockieren
+:: Erstellt ein sauberes Skript im temporaeren Windows-Ordner
 set "PS_FILE=%temp%\alpha_radar.ps1"
 
 echo $folder = (Get-Item .).FullName > "%PS_FILE%"
@@ -21,8 +21,8 @@ echo         if ($file -match "\\.git" -or $file -match "sw\.js" -or $file -matc
 echo         Write-Host "`n[!] Aenderung in: $file" -ForegroundColor Yellow >> "%PS_FILE%"
 echo         Start-Sleep -Seconds 3 >> "%PS_FILE%"
 echo         Write-Host "Feuere update.bat ab..." -ForegroundColor Green >> "%PS_FILE%"
-::       HIER IST DER FIX: "^< NUL" simuliert automatisch den Tastendruck fuer das 'pause' in der update.bat
-echo         cmd.exe /c "update.bat ^< NUL" >> "%PS_FILE%"
+::       HIER IST DER FIX: PowerShell schickt ein echtes Leerzeichen in die update.bat, um das "pause" zu vernichten.
+echo         " " ^| cmd.exe /c update.bat >> "%PS_FILE%"
 echo         Write-Host "`n[OK] Radar scannt wieder..." -ForegroundColor Cyan >> "%PS_FILE%"
 echo     } >> "%PS_FILE%"
 echo } >> "%PS_FILE%"
