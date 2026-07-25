@@ -1071,18 +1071,33 @@ function executeMT5Import() {
 }
 
 /* ============================================================
-   📂 DIRECT JSON FILE IMPORT (MT5 DRAG & DROP INTEGRATION)
+   📂 DIRECT JSON FILE IMPORT (ROBUST & MOBIL-OPTIMIERT)
    ============================================================ */
 function importMT5JsonFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target?.files?.[0];
+  if (!file) {
+    alert("⚠️ Keine Datei ausgewählt.");
+    return;
+  }
 
   const reader = new FileReader();
+
+  // Fehlerbehandlung für mobile Dateisysteme
+  reader.onerror = function(evt) {
+    alert("❌ Fehler beim Lesen der Datei auf dem Mobilgerät! Code: " + evt.target.error.code);
+  };
+
   reader.onload = function(e) {
     try {
-      const importedData = JSON.parse(e.target.result);
+      const textContent = e.target.result;
       
-      // Prüfe ob Daten vorliegen (Unterstützt flaches Array oder getaggtes Objekt)
+      if (!textContent || textContent.trim() === "") {
+        alert("⚠️ Die gewählte Datei ist leer.");
+        return;
+      }
+
+      // JSON parsen
+      const importedData = JSON.parse(textContent);
       const rawTrades = Array.isArray(importedData) ? importedData : (importedData.trades || []);
 
       if (!rawTrades.length) {
@@ -1093,23 +1108,22 @@ function importMT5JsonFile(event) {
       let newCount = 0;
 
       rawTrades.forEach(item => {
-        // Falls vom Python-Skript bereits formatiert
-        const tradeId = item.id || ("tr_mt5_" + Math.random().toString(36).substr(2, 9));
+        // Eindeutige ID-Generierung zur Vermeidung von Mobil-Konflikten
+        const tradeId = item.id || ("tr_mt5_" + (item.timestamp || Date.now()));
         
-        // Duplikatschutz
         const exists = journalTrades.some(t => t.id === tradeId);
         
         if (!exists) {
           journalTrades.push({
             id: tradeId,
-            timestamp: item.timestamp || Date.now(),
+            timestamp: typeof item.timestamp === "number" ? item.timestamp : Date.now(),
             pair: (item.pair || item.symbol || "XAUUSD").toUpperCase(),
             direction: (item.direction || item.type || "BUY").toUpperCase().includes("BUY") ? "BUY" : "SELL",
             lots: parseFloat(item.lots || item.volume || 0.10),
             pnl: parseFloat(item.pnl || item.profit || 0.0),
             session: item.session || "New York",
             confluence: item.confluence || 75,
-            notes: item.notes || "MT5 Importierte Position",
+            notes: item.notes || "MT5 Import",
             images: item.images || []
           });
           newCount++;
@@ -1117,28 +1131,29 @@ function importMT5JsonFile(event) {
       });
 
       if (newCount > 0) {
-        // Sortiere Trades chronologisch (neueste oben)
+        // Trades chronologisch sortieren
         journalTrades.sort((a, b) => b.timestamp - a.timestamp);
         
-        saveJournalData(); // Speichert in LocalStorage & aktualisiert Charts + Kalender
+        // In LocalStorage speichern und UI aktualisieren
+        saveJournalData();
+        
         alert(`✅ Erfolgreich ${newCount} Trades aus '${file.name}' importiert!`);
       } else {
-        alert("ℹ️ Diese Trades sind bereits im Journal enthalten.");
+        alert("ℹ️ Diese Trades befinden sich bereits im Journal.");
       }
 
     } catch (err) {
-      console.error("Import Fehler:", err);
-      alert("❌ Fehler beim Lesen der JSON-Datei. Stelle sicher, dass es sich um eine gültige JSON handelt.");
+      console.error("Mobil Import Fehler:", err);
+      alert("❌ Format-Fehler! Stelle sicher, dass du die 'journal_import.json' und nicht die rohe MT5 HTML/CSV gewählt hast.\n\nDetails: " + err.message);
+    } finally {
+      // Input zurücksetzen, damit dieselbe Datei auf dem Handy erneut angetippt werden kann
+      event.target.value = "";
     }
-    
-    // Input zurücksetzen, damit dieselbe Datei erneut gewählt werden kann
-    event.target.value = "";
   };
 
-  reader.readAsText(file);
+  // Explizit als UTF-8 lesen (wichtig für Android-Dateimanager)
+  reader.readAsText(file, "UTF-8");
 }
-
-
 /* ============================================================
    🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX & MOBILE-HIDDEN)
    ============================================================ */
