@@ -857,18 +857,63 @@ body {
     border-radius: 10px;
   }
 
-  /* Tagesdetail-Anpassung (Button + Datum voll sichtbar) */
-  #journalDayDetails .panel-head,
-  #journalDayDetails > div:first-child {
+  /* 🔥 OPTIMIERUNG: Tagesdetail-Header (Datum + KPIs) für Mobile 🔥 */
+  #journalDayDetails .panel-head {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 10px !important;
+    gap: 12px !important;
+    padding: 14px 12px !important;
   }
 
-  .btn-add-trade-trigger {
+  /* Die Metriken (Net, Trades, Win%) in ein 2-Spalten-Grid zwingen */
+  #journalDayDetails .panel-head > div:nth-child(2) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; 
+    gap: 8px !important;
+    width: 100%;
+  }
+
+  /* Chips (Metriken) zentrieren und vertikal stapeln */
+  #journalDayDetails .panel-head .chip {
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Buttons über die volle Breite ziehen für leichtes Tippen */
+  .btn-add-trade-trigger,
+  #btnClearDay {
+    grid-column: 1 / -1; 
     width: 100% !important;
     text-align: center !important;
     box-sizing: border-box !important;
+    padding: 12px !important; 
+  }
+
+  /* 🔥 OPTIMIERUNG: Tabelle im Tagesdetail scrollbar & kompakter 🔥 */
+  .table-scroll-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; 
+    margin: 0 -14px; /* Zieht die Tabelle bis zum Rand der Box für mehr Platz */
+    padding: 0 14px;
+  }
+
+  .journal-table th, 
+  .journal-table td {
+    padding: 12px 10px; /* Bessere Touch-Größe für die Reihen */
+    font-size: 12px; 
+  }
+
+  /* Weniger wichtige Spalten auf kleinen Handys ausblenden, um horizontales Scrollen zu minimieren */
+  .journal-table th:nth-child(1), /* Zeit ausblenden */
+  .journal-table td:nth-child(1),
+  .journal-table th:nth-child(6), /* Session ausblenden */
+  .journal-table td:nth-child(6) {
+    display: none; 
   }
 
   /* Kalender-Anpassungen */
@@ -906,6 +951,22 @@ body {
   .btn-tz {
     flex: 1;
     text-align: center;
+  }
+}
+
+/* Sehr kleine Displays (z.B. iPhone SE) */
+@media (max-width: 420px) {
+  .calendar-weekdays {
+    display: none; 
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2-spaltiges Kartenlayout für maximale Lesbarkeit */
+    gap: 6px;
+  }
+
+  .calendar-day {
+    min-height: 60px;
   }
 }
 
