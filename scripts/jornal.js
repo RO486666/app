@@ -1072,12 +1072,22 @@ function executeMT5Import() {
 
 
 /* ============================================================
-   🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX)
+   🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX & MOBILE-HIDDEN)
    ============================================================ */
 
 let currentDevBias = 'positive'; 
 
 function injectDevTools() {
+  // 1. Media Query injizieren, um das Panel auf Mobile auszublenden
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @media (max-width: 768px) {
+      #alphaosDevTools { display: none !important; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 2. Dev-Container aufbauen
   const devContainer = document.createElement('div');
   devContainer.id = "alphaosDevTools";
   
@@ -1136,7 +1146,7 @@ function generateRandomTrades(count) {
   const directions = ["BUY", "SELL"];
 
   // Startzeitpunkt ermitteln
-  let lastTimestamp = Date.now() - (count * 8 * 60 * 60 * 1000); // Fallback: Startet in der Vergangenheit
+  let lastTimestamp = Date.now() - (count * 8 * 60 * 60 * 1000); 
   
   // Wenn schon Trades existieren, nehmen wir den NEUESTEN Trade als Startpunkt
   if (journalTrades.length > 0) {
@@ -1144,7 +1154,6 @@ function generateRandomTrades(count) {
   }
 
   for (let i = 0; i < count; i++) {
-    // Pro Trade exakt 8 Stunden weitergehen + minimale Zufallsabweichung (Minuten)
     lastTimestamp += (8 * 60 * 60 * 1000) + Math.floor(Math.random() * 1000 * 60 * 45);
 
     let isWin;
@@ -1177,10 +1186,7 @@ function generateRandomTrades(count) {
     journalTrades.push(newTrade);
   }
 
-  // Korrekt absteigend sortieren (neueste zuerst)
   journalTrades.sort((a, b) => b.timestamp - a.timestamp);
-  
-  // Speichern und UI updaten
   saveJournalData(); 
   
   console.log(`[DEV] ${count} Trades perfekt über Zeit verteilt. Trend: ${currentDevBias.toUpperCase()}`);
