@@ -1,4 +1,4 @@
-const CACHE_NAME = "alphaos-mobile-final-v1";
+const CACHE_NAME = "alphaos-v20260725-123330";
 
 // ✅ KORRIGIERT: Nur die Basis-Dateien cachen. 
 // Keine CSS/JS Dateien hier angeben, wenn man sich beim Pfad unsicher ist!
@@ -9,7 +9,7 @@ const urlsToCache = [
 
 // 1. Installieren (Mit Sicherheitsnetz)
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Zwingt das Handy, den neuen SW sofort zu nehmen
+  // Das aggressive skipWaiting wurde hier entfernt, damit das Popup funktioniert
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       // .catch verhindert, dass der Service Worker abstürzt, wenn eine Datei fehlt!
@@ -71,5 +71,12 @@ self.addEventListener("message", (event) => {
   const { title, options } = event.data || {};
   if (title) {
     self.registration.showNotification(title, options);
+  }
+});
+
+// Wartet auf den Befehl vom Update-Popup, um den alten Worker zu kicken
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });
