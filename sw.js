@@ -1,4 +1,4 @@
-const CACHE_NAME = "alphaos-v20260725-124332";
+const CACHE_NAME = "alphaos-v20260725-124548";
 
 // ✅ KORRIGIERT: Nur die Basis-Dateien cachen. 
 // Keine CSS/JS Dateien hier angeben, wenn man sich beim Pfad unsicher ist!

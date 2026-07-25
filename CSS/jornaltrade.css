@@ -817,7 +817,6 @@ body {
     transform: translateY(0);
   }
 }
-
 /* ------------------------------------------------------------
    📱 MOBILE RESPONSIVE OPTIMIZATIONS (TABLETS & SMARTPHONES)
    ------------------------------------------------------------ */
@@ -865,7 +864,6 @@ body {
     padding: 14px 12px !important;
   }
 
-  /* Die Metriken (Net, Trades, Win%) in ein 2-Spalten-Grid zwingen */
   #journalDayDetails .panel-head > div:nth-child(2) {
     display: grid !important;
     grid-template-columns: 1fr 1fr; 
@@ -873,7 +871,6 @@ body {
     width: 100%;
   }
 
-  /* Chips (Metriken) zentrieren und vertikal stapeln */
   #journalDayDetails .panel-head .chip {
     text-align: center;
     padding: 8px 4px;
@@ -884,7 +881,6 @@ body {
     background: rgba(255, 255, 255, 0.05);
   }
 
-  /* Buttons über die volle Breite ziehen für leichtes Tippen */
   .btn-add-trade-trigger,
   #btnClearDay {
     grid-column: 1 / -1; 
@@ -894,65 +890,26 @@ body {
     padding: 12px !important; 
   }
 
-  /* 🔥 OPTIMIERUNG: Tabelle im Tagesdetail scrollbar & kompakter 🔥 */
   .table-scroll-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; 
-    margin: 0 -14px; /* Zieht die Tabelle bis zum Rand der Box für mehr Platz */
+    margin: 0 -14px; 
     padding: 0 14px;
   }
 
   .journal-table th, 
   .journal-table td {
-    padding: 12px 10px; /* Bessere Touch-Größe für die Reihen */
+    padding: 12px 10px; 
     font-size: 12px; 
   }
 
-  /* Weniger wichtige Spalten auf kleinen Handys ausblenden, um horizontales Scrollen zu minimieren */
-  .journal-table th:nth-child(1), /* Zeit ausblenden */
+  .journal-table th:nth-child(1), 
   .journal-table td:nth-child(1),
-  .journal-table th:nth-child(6), /* Session ausblenden */
+  .journal-table th:nth-child(6), 
   .journal-table td:nth-child(6) {
     display: none; 
   }
 
-  /* 🔥 Kalender-Anpassungen: 7 Tage nebeneinander auf Mobile erzwingen 🔥 */
-  .calendar-weekdays {
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
-    gap: 2px;
-    padding: 8px 2px 0;
-    font-size: 9px;
-  }
-
-  .calendar-grid {
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
-    gap: 2px;
-    padding: 8px 2px 12px;
-  }
-
-  .calendar-day {
-    min-height: 46px;
-    padding: 2px;
-    border-radius: 4px;
-  }
-
-  /* Tag-Nummer oben rechts (z.B. 15) exakt positionieren */
-  .calendar-day .cal-day-num {
-    font-size: 9px !important;
-    top: 2px !important;
-    right: 4px !important;
-  }
-
-  /* Die Metriken (PnL / Trades) im Kalender-Kästchen auf Mobile verkleinern */
-  .calendar-day > div {
-    font-size: 8px !important;
-    padding: 14px 2px 2px !important;
-    line-height: 1.1 !important;
-  }
-
-  /* Timezone Switches & Buttons full width */
   .timezone-switch-grid {
     flex-wrap: wrap;
   }
@@ -961,14 +918,10 @@ body {
     flex: 1;
     text-align: center;
   }
-}
 
-/* ============================================================
-   🔥 ABSOLUTER OVERRIDE FÜR DEN MOBILE KALENDER 🔥
-   (Bricht die Regeln der mobile.css mit Gewalt auf 7 Spalten)
-   ============================================================ */
-@media (max-width: 600px) {
-  /* Wochentage erzwingen */
+  /* ============================================================
+     🔥 ABSOLUTER OVERRIDE FÜR DEN MOBILE KALENDER (IMMER 7 SPALTEN) 🔥
+     ============================================================ */
   .journal-calendar-section .calendar-weekdays {
     display: grid !important;
     grid-template-columns: repeat(7, 1fr) !important;
@@ -977,7 +930,6 @@ body {
     font-size: 9px !important;
   }
 
-  /* Grid gnadenlos auf 7 Spalten zwingen (ID-Selektor schlägt alles) */
   #calendarGrid.calendar-grid {
     display: grid !important;
     grid-template-columns: repeat(7, 1fr) !important;
@@ -985,21 +937,18 @@ body {
     padding: 8px 2px 12px !important;
   }
 
-  /* Tages-Kästchen auf Handy-Größe pressen */
   #calendarGrid .calendar-day {
     min-height: 46px !important;
     padding: 2px !important;
     border-radius: 4px !important;
   }
 
-  /* Datum (Zahl) Millimeter-genau platzieren */
   #calendarGrid .calendar-day .cal-day-num {
     font-size: 9px !important;
     top: 2px !important;
     right: 4px !important;
   }
 
-  /* Profit/Trades Mikro-Schrift */
   #calendarGrid .calendar-day > div {
     font-size: 7.5px !important;
     padding: 14px 2px 2px !important;
@@ -1007,44 +956,23 @@ body {
   }
 }
 
-
 /* ============================================================
    🖤 DATEPICKER STYLING (DARK THEME NATIVE OVERRIDES)
    ============================================================ */
-
-/* Chrome/Edge Datepicker Popup in den Dark Mode zwingen */
 input[type="date"] {
     color-scheme: dark; 
-    color: transparent; /* Versteckt den Standard-Text, wir nutzen den h4 Header */
+    color: transparent;
 }
 
-/* Kalender-Icon invertieren (falls sichtbar) */
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
 }
 
-/* Safari spezifisch: Schriftfarbe auf hell setzen */
 ::-webkit-datetime-edit-fields-wrapper,
 ::-webkit-datetime-edit-text,
 ::-webkit-datetime-edit-month-field,
 ::-webkit-datetime-edit-day-field,
 ::-webkit-datetime-edit-year-field {
     color: #e0e0e0;
-}
-
-/* Sehr kleine Displays (z.B. iPhone SE, alte Androids) */
-@media (max-width: 420px) {
-  .calendar-weekdays {
-    display: none; /* Blendet Wochentage-Header auf Winz-Bildschirmen für Platz aus */
-  }
-
-  .calendar-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2-spaltiges Kartenlayout auf kleinsten Handys für perfekte Lesbarkeit */
-    gap: 6px;
-  }
-
-  .calendar-day {
-    min-height: 60px;
-  }
 }
