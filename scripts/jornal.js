@@ -1070,6 +1070,74 @@ function executeMT5Import() {
   }
 }
 
+/* ============================================================
+   📂 DIRECT JSON FILE IMPORT (MT5 DRAG & DROP INTEGRATION)
+   ============================================================ */
+function importMT5JsonFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      
+      // Prüfe ob Daten vorliegen (Unterstützt flaches Array oder getaggtes Objekt)
+      const rawTrades = Array.isArray(importedData) ? importedData : (importedData.trades || []);
+
+      if (!rawTrades.length) {
+        alert("⚠️ Keine gültigen Trades in der Datei gefunden.");
+        return;
+      }
+
+      let newCount = 0;
+
+      rawTrades.forEach(item => {
+        // Falls vom Python-Skript bereits formatiert
+        const tradeId = item.id || ("tr_mt5_" + Math.random().toString(36).substr(2, 9));
+        
+        // Duplikatschutz
+        const exists = journalTrades.some(t => t.id === tradeId);
+        
+        if (!exists) {
+          journalTrades.push({
+            id: tradeId,
+            timestamp: item.timestamp || Date.now(),
+            pair: (item.pair || item.symbol || "XAUUSD").toUpperCase(),
+            direction: (item.direction || item.type || "BUY").toUpperCase().includes("BUY") ? "BUY" : "SELL",
+            lots: parseFloat(item.lots || item.volume || 0.10),
+            pnl: parseFloat(item.pnl || item.profit || 0.0),
+            session: item.session || "New York",
+            confluence: item.confluence || 75,
+            notes: item.notes || "MT5 Importierte Position",
+            images: item.images || []
+          });
+          newCount++;
+        }
+      });
+
+      if (newCount > 0) {
+        // Sortiere Trades chronologisch (neueste oben)
+        journalTrades.sort((a, b) => b.timestamp - a.timestamp);
+        
+        saveJournalData(); // Speichert in LocalStorage & aktualisiert Charts + Kalender
+        alert(`✅ Erfolgreich ${newCount} Trades aus '${file.name}' importiert!`);
+      } else {
+        alert("ℹ️ Diese Trades sind bereits im Journal enthalten.");
+      }
+
+    } catch (err) {
+      console.error("Import Fehler:", err);
+      alert("❌ Fehler beim Lesen der JSON-Datei. Stelle sicher, dass es sich um eine gültige JSON handelt.");
+    }
+    
+    // Input zurücksetzen, damit dieselbe Datei erneut gewählt werden kann
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
+
 
 /* ============================================================
    🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX & MOBILE-HIDDEN)

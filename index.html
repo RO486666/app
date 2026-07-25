@@ -621,6 +621,9 @@
       </div>
     </div>
 
+
+
+
     <!-- TIMEZONE CONTROLS -->
     <div class="calendar-controls" style="margin-top: 14px;">
       <h4 class="box-heading">🌐 Zeitachsen-Shift</h4>
@@ -636,6 +639,14 @@
       <button id="resetCalendarFilterBtn" class="clear-journal-btn full-width-btn hidden-element" onclick="resetCalendarFilter()">🔄 Filter aufheben</button>
     </div>
   </div>
+  
+  <!-- 📥 MT5 FILE IMPORT BUTTON -->
+<div style="margin-top: 15px;">
+  <button type="button" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(109, 40, 217, 0.4), rgba(16, 185, 129, 0.3)); border: 1px solid var(--accent); color: #fff; font-weight: bold; padding: 12px; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('mt5FileInput').click()">
+    📥 journal_import.json laden
+  </button>
+  <input type="file" id="mt5FileInput" accept=".json" style="display: none;" onchange="importMT5JsonFile(event)" />
+</div>
 
 <!-- 🔲 TRADE ENTRY MODAL (POPUP + BLUR BACKDROP) -->
 <div id="tradeModalOverlay" class="modal-overlay" onclick="closeTradeModalOnBackdrop(event)">
