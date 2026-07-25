@@ -964,6 +964,51 @@ body {
 }
 
 /* ============================================================
+   🔥 ABSOLUTER OVERRIDE FÜR DEN MOBILE KALENDER 🔥
+   (Bricht die Regeln der mobile.css mit Gewalt auf 7 Spalten)
+   ============================================================ */
+@media (max-width: 600px) {
+  /* Wochentage erzwingen */
+  .journal-calendar-section .calendar-weekdays {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 2px !important;
+    padding: 8px 2px 0 !important;
+    font-size: 9px !important;
+  }
+
+  /* Grid gnadenlos auf 7 Spalten zwingen (ID-Selektor schlägt alles) */
+  #calendarGrid.calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 2px !important;
+    padding: 8px 2px 12px !important;
+  }
+
+  /* Tages-Kästchen auf Handy-Größe pressen */
+  #calendarGrid .calendar-day {
+    min-height: 46px !important;
+    padding: 2px !important;
+    border-radius: 4px !important;
+  }
+
+  /* Datum (Zahl) Millimeter-genau platzieren */
+  #calendarGrid .calendar-day .cal-day-num {
+    font-size: 9px !important;
+    top: 2px !important;
+    right: 4px !important;
+  }
+
+  /* Profit/Trades Mikro-Schrift */
+  #calendarGrid .calendar-day > div {
+    font-size: 7.5px !important;
+    padding: 14px 2px 2px !important;
+    line-height: 1.1 !important;
+  }
+}
+
+
+/* ============================================================
    🖤 DATEPICKER STYLING (DARK THEME NATIVE OVERRIDES)
    ============================================================ */
 
