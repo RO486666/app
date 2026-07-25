@@ -1454,7 +1454,7 @@
   <div class="rules-fire-wrapper">
     <div id="rulesBox" class="stats-box rules-box" style="display:none;">
       
-      <strong class="rules-title">📜 Rules of Rules – Deutsch</strong><br><br>
+      <strong class="rules-title">📜 Rules of Rules – Price Action & Volume Profile</strong><br><br>
 
       <div class="rules-mode-switch">
         <button id="switchModeBtn" onclick="switchMode()">
@@ -1462,204 +1462,181 @@
         </button>
       </div>
 
-            <div id="swingRules">
-              <div id="rulePageSwing1">
-                <strong>Grundregeln für Entry & Struktur</strong><br /><br />
+      <!-- SWING TRADING RULES -->
+      <div id="swingRules">
+        <!-- PAGE 1: ENTRY & STRUKTUR -->
+        <div id="rulePageSwing1">
+          <strong>Grundregeln für Entry & Struktur (Swing)</strong><br /><br />
 
-                <ul style="margin-left: 20px;">
-                  <strong>AOI-Zone wählen:</strong><br />
-                  Ein Entry (Kauf/Verkauf) darf nur an einer Weekly- oder
-                  Daily-AOI stattfinden.<br />
-                  <strong>Volume Profile Check:</strong> Bevorzugt an POC, VAH/VAL oder High Volume Nodes (HVN).<br />
-                  → Alle Timeframes darunter (H4 und kleiner) dienen
-                  ausschließlich zur Entry-Bestätigung.
-                  <br /><br />
+          <ul style="margin-left: 20px;">
+            <strong>1. Zonen-Definition (HTF Volume & Price Action):</strong><br />
+            Ein Entry ist nur valide an einer Weekly- oder Daily-AOI in Kombination mit Schlüssel-Volume-Levels:
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li><strong>Volume Profile:</strong> High Volume Nodes (HVN), Composite POC, VAH/VAL.</li>
+              <li><strong>Untergeordnete TFs (H4/H1):</strong> Dienen ausschließlich der Entry-Bestätigung & Signal-Validierung.</li>
+            </ul>
+            <br />
 
-                  <strong>Kein Entry ohne Rejection von:</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Strukturpunkt</li>
-                    <li>EMA</li>
-                    <li>AOI / <strong>Volume Profile Levels (POC, VAH, VAL)</strong></li>
-                    <li>Runder psychologischer Level (00 / 50)</li>
-                    <li>
-                      Weekly Rejection Candle (sichtbar im Weekly oder Daily)
-                    </li>
-                    <li><strong>Footprint-Bestätigung:</strong> Sichtbare Absorption oder Delta-Flip</li>
-                  </ul>
-                  <br />
+            <strong>2. Pflicht-Rejection & Kerzen-Bestätigung:</strong><br />
+            Kein Entry ohne sichtbare Ablehnung an der Zone. Mindestens 2 Confluences zwingend erforderlich:
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li>HTF-Strukturpunkt / EMA / Psychologischer Level (00 / 50)</li>
+              <li>Rejection an Volume Profile Boundaries (VAH/VAL/POC)</li>
+              <li><strong>Sichtbare Kerzen-Absorption:</strong> Lange Dochte/Lunte an der Zone mit hohem Kerzen-Volumen (Preis wird zügig zurückgewiesen)</li>
+              <li><strong>Exhaustion Candle:</strong> Kleine Kerzenkörper mit schrumpfendem Volumen vor dem Wendepunkt</li>
+            </ul>
+            <br />
 
-                  <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Buy nur bei einem bestätigten Higher Low (HL) im 4H</li>
-                    <li>Sell nur bei einem bestätigten Lower High (LH) im 4H</li>
-                    <li>
-                      Alternativ: Potenzielles HL/LH mit Engulfing an einer AOI 
-                      <strong>+ Aggressive Imbalances im Footprint</strong>
-                    </li>
-                  </ul>
-                  <br />
+            <strong>3. Pflichtbedingungen für Market-Structure-Entry:</strong>
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li><strong>Buy:</strong> Bestätigtes Higher Low (HL) im 4H</li>
+              <li><strong>Sell:</strong> Bestätigtes Lower High (LH) im 4H</li>
+              <li><strong>Aggressives Setup:</strong> Potenzielles HL/LH mit Engulfing-Candle an AOI + hohes Volumen auf der Ausbruchskerze</li>
+            </ul>
+            <br />
 
-                  <strong>Entry-Prozess nach HL/LH:</strong><br />
-                  Sobald ein HL oder LH gebildet wird, muss ein Struktur-Shift
-                  (15M–1H) beobachtet, mit dem höheren TF abgeglichen und 
-                  im <strong>Footprint (Delta/Volume)</strong> validiert werden.
-                  <br /><br />
+            <strong>4. Execution-Prozess (15M–1H Execution Frame):</strong><br />
+            Nach HL/LH-Bildung muss ein Struktur-Shift auf 15M–1H erfolgen:
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li>Volume-Spike am Volumen-Indikator beim Ausbruch</li>
+              <li>Bestätigung durch Engulfing-Candle (1H / 2H / 4H)</li>
+              <li>Kerzenschlusskurs klar außerhalb der Rejection-Zone</li>
+            </ul>
+          </ul>
+          <br />
 
-                  <strong>Nach dem Struktur-Shift (15M, 30M, 1H):</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Suche nach einer Engulfing-Candle im 1H / 2H / 4H</li>
-                    <li><strong>Volume-Bestätigung:</strong> Ansteigendes Volumen beim Shift</li>
-                    <li>Je höher der TF, desto stärker die Bestätigung</li>
-                  </ul>
-                </ul>
-                <br />
-
-                <strong>Stop-Loss & Take-Profit Regeln</strong><br /><br />
-                <ul style="margin-left: 20px; list-style: disc;">
-                  <li>
-                    <strong>Stop-Loss:</strong><br />
-                    Der SL muss an dem Punkt gesetzt werden, an dem die
-                    Handelsidee vollständig ungültig wird.<br />
-                    → Alternativ am Top/Bottom des Struktur-Shifts (15M, 30M,
-                    1H), mit 5–7 Pips Sicherheitsabstand (hinter <strong>Low Volume Nodes/LVN</strong>).
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Take-Profit:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>
-                        Wenn Entry an Weekly AOI → TP1 am Strukturpunkt (HH/LL) 
-                        oder <strong>nächsten Volume POC</strong>.
-                      </li>
-                      <li>
-                        Wenn Entry an Daily AOI → TP1 am Strukturpunkt (HH/LL)
-                        oder <strong>nächsten Volume POC</strong>.
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-
-              <div id="rulePageSwing2" style="display: none;">
-                <strong>Confluence-Regeln für Long / Short</strong><br /><br />
-
-                <ol style="margin-left: 20px;">
-                  <li>
-                    <strong>Markt-Bias Bewertung:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>Weekly Bullish/Bearish: Wert 1–3</li>
-                      <li>Daily Bullish/Bearish: Wert 1–3</li>
-                      <li>4H Bullish/Bearish: Wert 1–3</li>
-                    </ul>
-                    Bewertungsstufen:
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>1 = Markt oben (weit weg von AOI / POC)</li>
-                      <li>2 = Auf dem Weg zur AOI / Volume Area</li>
-                      <li>3 = In der AOI / am POC</li>
-                    </ul>
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Struktur-Retest (HTF):</strong><br />
-                    Weekly retestet vorherigen Strukturpunkt oder <strong>VAH/VAL</strong>.
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Daily Rejection:</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>Rejection an AOI</li>
-                      <li>Rejection an rundem psychologischen Level (00 / 50)</li>
-                      <li><strong>Footprint:</strong> Delta-Divergenz erkennbar</li>
-                    </ul>
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Strukturaufbau (LTF):</strong>
-                    <ul style="margin-left: 20px; list-style: disc;">
-                      <li>Warten auf HL / LH</li>
-                      <li>Struktur-Shift auf 15M / 30M / 1H</li>
-                      <li>Bestätigung durch <strong>Stacked Imbalances</strong></li>
-                    </ul>
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Entry-Signal:</strong><br />
-                    Bestätigung durch bullisches oder bärisches Candle-Muster
-                    (1H / 2H / 4H) + <strong>Finished Auction</strong> im Footprint.
-                  </li>
-                  <br />
-
-                  <li>
-                    <strong>Set and Forget:</strong><br />
-                    Nach Entry nicht eingreifen – Setup vertrauen, kein
-                    Nachjustieren.
-                  </li>
-                </ol>
-              </div>
-            </div>
-
-            <div id="dayRules" style="display: none;">
-              <div id="rulePageDay1">
-                <strong>Grundregeln für Entry & Struktur (Day-Trading)</strong><br /><br />
-
-                <ul style="margin-left: 20px;">
-                  <strong>AOI-Zone wählen:</strong><br />
-                  Ein Entry darf nur an einer Daily- oder 4H-AOI stattfinden.<br />
-                  <strong>Session Volume:</strong> Fokus auf <strong>Session-POC</strong> oder VAL/VAH des Vortags.<br />
-                  → 1H/15M dienen ausschließlich zur Entry-Bestätigung.
-                  <br /><br />
-
-                  <strong>Kein Entry ohne Rejection von:</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Strukturpunkt / EMA / AOI</li>
-                    <li><strong>Volume-Profile:</strong> Rejection vom Session-POC</li>
-                    <li>Runder psychologischer Level (00 / 50)</li>
-                    <li>Daily/4H Rejection Candle + <strong>Footprint Absorption</strong></li>
-                  </ul>
-                  <br />
-
-                  <strong>Pflichtbedingungen für Buy/Sell Entry:</strong>
-                  <ul style="margin-left: 20px; list-style: disc;">
-                    <li>Buy: bestätigtes HL im 1H oder 4H</li>
-                    <li>Sell: bestätigtes LH im 1H oder 4H</li>
-                    <li>Oder potenzielles HL/LH mit Engulfing + <strong>Imbalance</strong></li>
-                  </ul>
-                  <br />
-
-                  <strong>Entry-Prozess nach HL/LH:</strong><br />
-                  Struktur-Shift (15M–1H) mit <strong>Delta-Überhang</strong> im Footprint abgleichen.
-                </ul>
-              </div>
-
-              <div id="rulePageDay2" style="display: none;">
-                <strong>Confluence-Regeln für Long / Short (Day-Trading)</strong><br /><br />
-
-                <ol style="margin-left: 20px;">
-                  <li><strong>Markt-Bias Bewertung:</strong> (Daily, 4H, 1H)</li>
-                  <li><strong>Struktur-Retest:</strong> 4H retestet Strukturpunkt / POC.</li>
-                  <li><strong>Rejection:</strong> Daily/4H Rejection an AOI oder Volume Edge.</li>
-                  <li><strong>Strukturaufbau:</strong> Shift auf 15M/1H + <strong>Aggressive Buyers/Sellers</strong>.</li>
-                  <li><strong>Entry-Signal:</strong> Candle-Muster + <strong>Footprint Imbalance</strong>.</li>
-                  <li><strong>Set and Forget:</strong> Setup vertrauen.</li>
-                </ol>
-              </div>
-            </div>
-
-            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-              <button onclick="showPage(1)" id="prevPageBtn" style="display: none;">⬅️ Zurück</button>
-              <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
-            </div>
-
-            <div class="fire-particles"></div>
-          </div>
+          <strong>Stop-Loss & Take-Profit Management</strong><br /><br />
+          <ul style="margin-left: 20px; list-style: disc;">
+            <li>
+              <strong>Stop-Loss:</strong><br />
+              Hinter das Kerzen-Tief/Hoch des Rejection-Wick ODER hinter den Struktur-Shift (15M–1H) legen.
+              <br />
+              → <em>Volume-Absicherung:</em> SL immer hinter eine <strong>Low Volume Node (LVN)</strong> oder außerhalb des Value Areas platzieren (+ 5–7 Pips Puffer).
+            </li>
+            <br />
+            <li>
+              <strong>Take-Profit:</strong>
+              <ul style="margin-left: 20px; list-style: disc;">
+                <li><strong>Weekly AOI Entry:</strong> TP1 am nächsten HTF-Strukturpunkt oder ungetesteten Volume POC (Naked POC).</li>
+                <li><strong>Daily AOI Entry:</strong> TP1 an der nächsten Opposing Value Area / Volume HVN.</li>
+              </ul>
+            </li>
+          </ul>
         </div>
-      </section>
-	  
+
+        <!-- PAGE 2: CONFLUENCE SCORE -->
+        <div id="rulePageSwing2" style="display: none;">
+          <strong>Confluence-Checkliste für Swing-Trades</strong><br /><br />
+
+          <ol style="margin-left: 20px;">
+            <li>
+              <strong>Markt-Bias Bewertung (Scoring 1–3):</strong>
+              <ul style="margin-left: 20px; list-style: disc;">
+                <li>Weekly, Daily, 4H Trend-Alignment</li>
+                <li>1 = Niemandsland (im HVN-Zentrum, weit von AOI entfernt)</li>
+                <li>2 = Auf dem Weg zur AOI / Volume Profile Boundary</li>
+                <li>3 = Direkt in der AOI / an starker Volume Node (POC/VAH/VAL)</li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <strong>HTF Structural Retest:</strong><br />
+              Retest alter Key-Levels, VAH/VAL oder ungetesteter Point of Control (nPOC).
+            </li>
+            <br />
+            <li>
+              <strong>Volume & Kerzen Confirmation:</strong>
+              <ul style="margin-left: 20px; list-style: disc;">
+                <li>Lange Dochte/Lunte (Rejection Wick) direkt an der AOI</li>
+                <li>Volume Spike am normalen Volumen-Indikator bei der Ablehnung</li>
+                <li>Deutlicher Kerzenschlusskurs in Trendrichtung (z. B. Engulfing)</li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <strong>LTF-Strukturaufbau:</strong>
+              <ul style="margin-left: 20px; list-style: disc;">
+                <li>Bruch der Mikrostruktur (15M–1H Shift)</li>
+                <li>Momentum-Kerzen ohne lange Gegendochte</li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <strong>Execution & Disziplin:</strong><br />
+              Signal-Candle-Close zwingend abwarten.
+            </li>
+            <br />
+            <li>
+              <strong>Set and Forget:</strong><br />
+              Trade platziert? Chart schließen. Setup vertrauen, kein ständiges Eingreifen.
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- DAY TRADING RULES -->
+      <div id="dayRules" style="display: none;">
+        <!-- PAGE 1: ENTRY & STRUKTUR -->
+        <div id="rulePageDay1">
+          <strong>Grundregeln für Entry & Struktur (Day-Trading)</strong><br /><br />
+
+          <ul style="margin-left: 20px;">
+            <strong>1. AOI & Session-Volume-Profile:</strong><br />
+            Entry-Fokus liegt auf Daily- / 4H-AOIs kombiniert mit Intraday-Volume-Levels:
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li><strong>Session POC:</strong> Aktueller oder vorheriger Session-POC (Asia/London/NY)</li>
+              <li><strong>Value Area:</strong> VAH/VAL der gestrigen Session (Prior Day VA)</li>
+              <li>→ 15M/5M dienen als reines Execution-Timeframe.</li>
+            </ul>
+            <br /><br />
+
+            <strong>2. Kerzen-Rejection & Volumen-Filter:</strong><br />
+            Kein Day-Trade ohne sichtbare Kerzen-Rejection:
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li>Rejection an Session-POC, VAL/VAH oder runder Zahl (00/50)</li>
+              <li><strong>Sichtbare Kerzen-Absorption:</strong> Fehlgeschlagener Ausbruchsversuch mit langem Docht + hohem Volumen-Balken</li>
+              <li>Strong Close / Engulfing Candle aus der Zone heraus</li>
+            </ul>
+            <br />
+
+            <strong>3. Structural Conditions:</strong>
+            <ul style="margin-left: 20px; list-style: disc;">
+              <li><strong>Buy:</strong> Bestätigtes HL im 1H oder 15M an einer Session-Volume-Kante</li>
+              <li><strong>Sell:</strong> Bestätigtes LH im 1H oder 15M an einer Session-Volume-Kante</li>
+              <li><strong>Aggressiv:</strong> Strong Momentum Candle nach Rejection-Wick</li>
+            </ul>
+            <br />
+
+            <strong>4. Execution Process:</strong><br />
+            Struktur-Shift auf 5M–15M nach Wende-Kerze. Einstieg bei Retest der Ausbruchs-Kerze oder des LVN.
+          </ul>
+        </div>
+
+        <!-- PAGE 2: CONFLUENCE CHECKLIST -->
+        <div id="rulePageDay2" style="display: none;">
+          <strong>Confluence-Regeln für Day-Trading</strong><br /><br />
+
+          <ol style="margin-left: 20px;">
+            <li><strong>Intraday-Bias:</strong> Daily/4H Richtung + Session-Kontext (z. B. London Breakout / NY Reversal).</li>
+            <li><strong>Volume Profile Confluence:</strong> Preis reagiert auf Session POC, Prior Day VAH/VAL oder HVN-Edges.</li>
+            <li><strong>Kerzen-Check:</strong> Langer Docht an der Zonen-Kante mit hohem Kerzenvolumen.</li>
+            <li><strong>LTF Shift:</strong> Shift im 5M–15M durch impulsive Kerze in Trendrichtung.</li>
+            <li><strong>Entry-Execution:</strong> Einstieg nach Kerzenschluss oder am leichten Retest. SL hinter das Kerzen-Tief/Hoch setzen.</li>
+            <li><strong>Set & Forget / Target:</strong> TP1 an der gegenüberliegenden Value Area Kante oder Session POC.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- NAVIGATION -->
+      <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+        <button onclick="showPage(1)" id="prevPageBtn" style="display: none;">⬅️ Zurück</button>
+        <button onclick="showPage(2)" id="nextPageBtn">Weiter ➡️</button>
+      </div>
+
+      <div class="fire-particles"></div>
+    </div>
+  </div>
+</section>
 
 
 
