@@ -767,7 +767,7 @@ function updateYearHeatmap() {
       }
     }
   };
-
+//
   applyResponsiveHeatmap();
   window.removeEventListener("resize", applyResponsiveHeatmap);
   window.addEventListener("resize", applyResponsiveHeatmap);
