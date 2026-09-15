@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-const CACHE_NAME = "alphaos-v20260915-171414";
+const CACHE_NAME = "alphaos-v20260915-172748";
 =======
-const CACHE_NAME = "alphaos-v20260915-171414";
+const CACHE_NAME = "alphaos-v20260915-172748";
 >>>>>>> 5bc13beafbfadf000a49433493c6dc634bdc795b
 
 // ✅ KORRIGIERT: Nur die Basis-Dateien cachen. 

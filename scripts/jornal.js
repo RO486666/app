@@ -81,7 +81,7 @@ function loadJournalData() {
   if (stored) {
     try { 
       journalTrades = JSON.parse(stored); 
-      autoFixJournalSessions(); // Korrigiert bestehende Trades auf London/NY/Asia
+      autoFixJournalSessions();
     } catch (e) { 
       console.error("Fehler beim Laden des Journals:", e);
       journalTrades = []; 
@@ -396,6 +396,7 @@ function initCalendar() {
   let grossWin = 0;
   let grossLoss = 0;
   let tradeCount = 0;
+  const tradingDaysSet = new Set();
 
   journalTrades.forEach(t => {
     if (!t.timestamp) return;
@@ -405,12 +406,14 @@ function initCalendar() {
       if (p > 0) grossWin += p;
       else if (p < 0) grossLoss += Math.abs(p);
       tradeCount++;
+      tradingDaysSet.add(d.toDateString());
     }
   });
 
   const netPnL = grossWin - grossLoss;
   const turnover = grossWin + grossLoss;
   const marginPct = turnover > 0 ? (netPnL / turnover) * 100 : 0;
+  const activeTradingDays = tradingDaysSet.size;
 
   const isProfit = netPnL > 0;
   const isLoss = netPnL < 0;
@@ -428,8 +431,12 @@ function initCalendar() {
   const headerEl = document.getElementById("calendarMonthYear");
   if (headerEl) {
     headerEl.innerHTML = `
-      <span>${monthNames[month]} ${year}</span>
-      <span class="calendar-month-badge ${badgeClass}">${sign}${marginPct.toFixed(1)}%</span>
+      <div class="calendar-header-meta">
+        <span class="cal-month-title">${monthNames[month]} ${year}</span>
+        <span class="calendar-month-badge ${badgeClass}">${sign}${marginPct.toFixed(1)}%</span>
+        <span class="calendar-stat-pill ${badgeClass}">${sign}${formatCurrency(netPnL)}</span>
+        <span class="calendar-stat-pill is-days">${activeTradingDays} ${activeTradingDays === 1 ? 'Tag' : 'Tage'}</span>
+      </div>
     `;
   }
 
@@ -737,7 +744,6 @@ function updateYearHeatmap() {
     barEl.innerHTML = chipsHTML;
   }
 
-  // Automatischer Breakpoint-Switch
   const applyResponsiveHeatmap = () => {
     const containerWidth = box.clientWidth || window.innerWidth;
     if (containerWidth < 980) {
@@ -1204,70 +1210,145 @@ function renderJournalCharts() {
     });
   }
 
-  // 3. Tages-Performance
+// 3. Tages-Performance (CYBER NEON EDITION MIT GRADIENT & ANIMATION)
   const canvasPairs = document.getElementById("chartPairs");
   if (canvasPairs) {
+    const ctx = canvasPairs.getContext("2d");
     const year = currentCalendarDate.getFullYear();
     const month = currentCalendarDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     const dailyPerf = {};
+    const labels = [];
     for (let i = 1; i <= daysInMonth; i++) {
-      dailyPerf[i.toString().padStart(2, '0')] = 0;
+      dailyPerf[i] = 0;
+      labels.push(i);
     }
 
-    cronTrades.forEach(t => {
+    journalTrades.forEach(t => {
+      if (!t.timestamp) return;
       const d = new Date(t.timestamp);
       if (d.getFullYear() === year && d.getMonth() === month) {
-        const dayKey = d.getDate().toString().padStart(2, '0');
-        dailyPerf[dayKey] += t.pnl;
+        const day = d.getDate();
+        if (dailyPerf[day] !== undefined) {
+          dailyPerf[day] += Number(t.pnl || 0);
+        }
       }
     });
 
-    const labels = Object.keys(dailyPerf);
-    const dataValues = Object.values(dailyPerf);
+    const dataValues = labels.map(day => dailyPerf[day]);
 
-    chartInstances.pairs = new Chart(canvasPairs.getContext("2d"), {
+    // Canvas-Farbverläufe für satte Neon-Balken
+    const createBarGradients = (chartArea) => {
+      const top = chartArea ? chartArea.top : 0;
+      const bottom = chartArea ? chartArea.bottom : 160;
+
+      const greenGrad = ctx.createLinearGradient(0, top, 0, bottom);
+      greenGrad.addColorStop(0, "rgba(0, 230, 118, 0.85)");
+      greenGrad.addColorStop(1, "rgba(0, 230, 118, 0.20)");
+
+      const redGrad = ctx.createLinearGradient(0, top, 0, bottom);
+      redGrad.addColorStop(0, "rgba(255, 82, 82, 0.20)");
+      redGrad.addColorStop(1, "rgba(255, 82, 82, 0.85)");
+
+      return { greenGrad, redGrad };
+    };
+
+    chartInstances.pairs = new Chart(ctx, {
       type: "bar",
       data: {
         labels: labels,
         datasets: [{
           data: dataValues,
-          backgroundColor: dataValues.map(v => v > 0 ? APEX_COLORS.winGlow : (v < 0 ? APEX_COLORS.lossGlow : "rgba(255,255,255,0.02)")),
-          borderColor: dataValues.map(v => v > 0 ? APEX_COLORS.win : (v < 0 ? APEX_COLORS.loss : "rgba(255,255,255,0.05)")),
-          borderWidth: 1,
-          borderRadius: 4
+          backgroundColor: (context) => {
+            const chart = context.chart;
+            const { chartArea } = chart;
+            const val = context.raw;
+            if (val === 0) return "rgba(255, 255, 255, 0.02)";
+            if (!chartArea) return val > 0 ? "#00e676" : "#ff5252";
+
+            const { greenGrad, redGrad } = createBarGradients(chartArea);
+            return val > 0 ? greenGrad : redGrad;
+          },
+          borderColor: dataValues.map(v => 
+            v > 0 ? "#00e676" : (v < 0 ? "#ff5252" : "transparent")
+          ),
+          borderWidth: 1.5,
+          borderRadius: 4,
+          borderSkipped: false,
+          hoverBorderColor: "#ffffff",
+          hoverBorderWidth: 2,
+          barPercentage: 0.9,
+          categoryPercentage: 0.95
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+          duration: 750,
+          easing: "easeOutQuart"
+        },
+        interaction: {
+          mode: "index",
+          intersect: false
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: APEX_COLORS.bg,
-            titleColor: '#fff',
-            bodyColor: APEX_COLORS.textMuted,
-            borderColor: APEX_COLORS.grid,
+            backgroundColor: "#0d0d12",
+            titleColor: "#ffffff",
+            titleFont: { size: 11, weight: "800" },
+            bodyColor: "#94a3b8",
+            borderColor: "rgba(153, 51, 255, 0.4)",
             borderWidth: 1,
             padding: 10,
             displayColors: false,
             cornerRadius: 8,
             callbacks: {
-              title: (ctx) => `${ctx[0].label}.${String(month + 1).padStart(2, '0')}.${year}`,
-              label: (ctx) => formatCurrency(ctx.raw)
+              title: (ctx) => `Tag ${ctx[0].label} (${currentCalendarDate.toLocaleDateString("de-DE", { month: "long", year: "numeric" })})`,
+              label: (ctx) => {
+                const val = ctx.raw;
+                if (val === 0) return "Keine Trades";
+                return ` ${val > 0 ? '+' : ''}${formatCurrency(val)}`;
+              }
             }
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { color: APEX_COLORS.textMuted, font: { size: 10 } } },
-          y: { grid: { color: APEX_COLORS.grid }, border: { display: false }, ticks: { color: APEX_COLORS.textMuted, font: { size: 10 } } }
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: "#94a3b8",
+              font: { size: 10, weight: "800" },
+              callback: function(val, index) {
+                const dayNum = index + 1;
+                if (dayNum === 1 || dayNum % 5 === 0 || dayNum === daysInMonth) {
+                  return dayNum;
+                }
+                return "";
+              },
+              maxRotation: 0,
+              autoSkip: false
+            }
+          },
+          y: {
+            grid: {
+              color: (context) => context.tick.value === 0 ? "rgba(153, 51, 255, 0.45)" : "rgba(255, 255, 255, 0.05)",
+              lineWidth: (context) => context.tick.value === 0 ? 1.5 : 1
+            },
+            border: { display: false },
+            ticks: {
+              color: "#94a3b8",
+              font: { size: 10, weight: "700" },
+              callback: (val) => `${val} €`
+            }
+          }
         }
       }
     });
   }
-}
-
+ }
 /* ============================================================
    📥 AUTOMATIC MT5 IMPORT ENGINE
    ============================================================ */
@@ -1303,7 +1384,6 @@ function executeMT5Import() {
     importedTrades.forEach(newTrade => {
       const exists = journalTrades.some(t => t.id === newTrade.id);
       if (!exists) {
-        // Automatische Session-Erkennung statt statischem New York
         const tradeTime = newTrade.timestamp || Date.now();
         if (!newTrade.session || newTrade.session === "New York") {
           newTrade.session = detectSessionFromTimestamp(tradeTime);
@@ -1366,7 +1446,6 @@ function importMT5JsonFile(event) {
         if (!exists) {
           const tradeTime = typeof item.timestamp === "number" ? item.timestamp : Date.now();
           
-          // Korrekte Session-Erkennung für Importe
           const recognizedSession = (item.session && item.session !== "New York") 
             ? item.session 
             : detectSessionFromTimestamp(tradeTime);

@@ -1021,25 +1021,46 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ============================================================
-   ⚡ FETTES PROZENT-BADGE MIT INTENSIVEM NEON-PULS
+   ⚡ KALENDER-HEADER: CYBER-STAT BADGES (PROZENT, NETTO € & TAGE)
    ============================================================ */
-.calendar-month-badge {
-  display: inline-flex !important;
+
+/* Wrapper für alle Status-Elemente im Kalender-Kopf */
+.calendar-header-meta {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 14px;
-  padding: 5px 14px !important;
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  letter-spacing: 1px;
-  border-radius: 8px !important;
+  gap: 10px;
+  flex-wrap: wrap;
   vertical-align: middle;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
-/* Status-Leuchtpunkt */
+.cal-month-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+/* Basis für alle Badges */
+.calendar-month-badge,
+.calendar-stat-pill {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.6px;
+  border-radius: 8px !important;
+  vertical-align: middle;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Status-Leuchtpunkt für das Prozent-Badge */
 .calendar-month-badge::before {
   content: "";
   display: inline-block;
@@ -1050,29 +1071,68 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 0 8px currentColor;
 }
 
-/* Grünes Badge */
-.calendar-month-badge.is-profit {
+/* 🟢 PROFIT-STATUS (Prozent & Euro) */
+.calendar-month-badge.is-profit,
+.calendar-stat-pill.is-profit {
   color: #00e676 !important;
-  background: rgba(0, 230, 118, 0.16) !important;
+  background: rgba(0, 230, 118, 0.14) !important;
   border: 1.5px solid #00e676 !important;
-  box-shadow: 0 0 20px rgba(0, 230, 118, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  text-shadow: 0 0 10px rgba(0, 230, 118, 0.6) !important;
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  text-shadow: 0 0 8px rgba(0, 230, 118, 0.5) !important;
 }
 
-/* Rotes Badge */
-.calendar-month-badge.is-loss {
+/* 🔴 VERLUST-STATUS (Prozent & Euro) */
+.calendar-month-badge.is-loss,
+.calendar-stat-pill.is-loss {
   color: #ff5252 !important;
-  background: rgba(255, 82, 82, 0.16) !important;
+  background: rgba(255, 82, 82, 0.14) !important;
   border: 1.5px solid #ff5252 !important;
-  box-shadow: 0 0 20px rgba(255, 82, 82, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  text-shadow: 0 0 10px rgba(255, 82, 82, 0.6) !important;
+  box-shadow: 0 0 16px rgba(255, 82, 82, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  text-shadow: 0 0 8px rgba(255, 82, 82, 0.5) !important;
 }
 
-/* Neutrales Badge */
-.calendar-month-badge.is-neutral {
+/* ⚪ NEUTRALER STATUS */
+.calendar-month-badge.is-neutral,
+.calendar-stat-pill.is-neutral {
   color: #94a3b8 !important;
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: none !important;
+}
+
+/* 🟣 TRADING-TAGE BADGE (Im Cyber-Purple-Look) */
+.calendar-stat-pill.is-days {
+  color: #d1d5db !important;
+  background: rgba(153, 51, 255, 0.16) !important;
+  border: 1.5px solid rgba(153, 51, 255, 0.5) !important;
+  box-shadow: 0 0 14px rgba(153, 51, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.calendar-stat-pill.is-days::before {
+  content: "📅";
+  font-size: 11px;
+}
+
+/* ============================================================
+   📱 RESPONSIVE FEINSCHLIFF FÜR DEN KALENDER-KOPF
+   ============================================================ */
+@media (max-width: 650px) {
+  .calendar-header-meta {
+    gap: 6px;
+  }
+  
+  .cal-month-title {
+    width: 100%;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .calendar-month-badge,
+  .calendar-stat-pill {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+  }
 }
 
 /* ============================================================
@@ -1341,3 +1401,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 3px;
   white-space: nowrap;
 }
+
