@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-const CACHE_NAME = "alphaos-v20260915-172748";
-=======
-const CACHE_NAME = "alphaos-v20260915-172748";
->>>>>>> 5bc13beafbfadf000a49433493c6dc634bdc795b
+const CACHE_NAME = "alphaos-v20260915-173325";
 
 // ✅ KORRIGIERT: Nur die Basis-Dateien cachen. 
-// Keine CSS/JS Dateien hier angeben, wenn man sich beim Pfad unsicher ist!
 const urlsToCache = [
   "./",
   "./index.html"
@@ -13,11 +8,9 @@ const urlsToCache = [
 
 // 1. Installieren (Mit Sicherheitsnetz)
 self.addEventListener('install', event => {
-  // Das aggressive skipWaiting wurde hier entfernt, damit das Popup funktioniert
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // .catch verhindert, dass der Service Worker abstürzt, wenn eine Datei fehlt!
-      return cache.addAll(urlsToCache).catch(err => console.log("Caching Warnung (nicht schlimm):", err));
+      return cache.addAll(urlsToCache).catch(err => console.log("Caching Warnung:", err));
     })
   );
 });
@@ -43,44 +36,34 @@ self.addEventListener("activate", (event) => {
           }
         })
       )
-    ).then(() => self.clients.claim()) // Sofort die Kontrolle übernehmen
+    ).then(() => self.clients.claim())
   );
 });
 
-// ==========================================
-// 🔔 PUSH NOTIFICATION LOGIK (Robust)
-// ==========================================
-
+// 🔔 PUSH NOTIFICATION & MESSAGES
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
-      // 1. Prüfen ob App schon offen ist
       for (const client of clientList) {
-        // Wir suchen nach "app", das ist sicherer als "/"
         if (client.url.includes("app") && "focus" in client) {
           return client.focus();
         }
       }
-      // 2. Wenn nicht, neu öffnen
       if (clients.openWindow) {
-        return clients.openWindow("/app/");
+        return clients.openWindow("./");
       }
     })
   );
 });
 
-// Empfängt Befehle direkt vom Dashboard (z.B. für Tests)
 self.addEventListener("message", (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
   const { title, options } = event.data || {};
   if (title) {
     self.registration.showNotification(title, options);
-  }
-});
-
-// Wartet auf den Befehl vom Update-Popup, um den alten Worker zu kicken
-self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
   }
 });
