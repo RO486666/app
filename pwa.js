@@ -1,83 +1,111 @@
 // =========================================================
-// 🚀 SERVICE WORKER & NOTIFICATIONS
+// 🚀 SERVICE WORKER & NOTIFICATIONS (ALPHAOS EDITION)
 // =========================================================
 
-let lastNotifiedSession = null; // Merkt sich, wofür wir schon gepiept haben
+let lastNotifiedSession = null;
 
-// 1. Service Worker registrieren
+// 1. Service Worker registrieren + UPDATE-DETECTOR
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/app/sw.js", { scope: "/app/" }) // Pfad muss stimmen!
-      .then(reg => console.log("✅ SW registriert:", reg.scope))
+      .register("./sw.js") // Relativer Pfad funktioniert lokal und auf GitHub Pages
+      .then(reg => {
+        console.log("✅ SW registriert:", reg.scope);
+
+        // Sucht sofort aktiv nach der neuen Version aus der Update.bat
+        reg.update();
+
+        // Prüft bei jedem Tab-Fokus, ob ein Update hochgeladen wurde
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") {
+            reg.update();
+          }
+        });
+
+        // 🔔 UPDATE-TRIGGER: Wenn Update.bat einen neuen Cache-Namen erzeugt hat
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+
+          newWorker.addEventListener("statechange", () => {
+            // Neuer Service Worker ist fertig heruntergeladen und wartet
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              
+              // System-Push-Banner für das Update feuern
+              sendNotification(
+                "⚡ AlphaOS Update verfügbar!",
+                "Neueste Version geladen. Die App wird jetzt aktualisiert..."
+              );
+
+              // Alten Worker sofort ablösen
+              newWorker.postMessage("SKIP_WAITING");
+            }
+          });
+        });
+      })
       .catch(err => console.error("❌ SW Fehler:", err));
+  });
+
+  // Sobald der neue Service Worker die Kontrolle übernimmt -> Seite neu laden
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 
-// 2. Permission beim Start abfragen (Wichtig für Mobile!)
+// 2. Permission beim Start abfragen
 document.addEventListener("DOMContentLoaded", () => {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    // Button oder automatischer Request
+  if ("Notification" in window && Notification.permission === "default") {
     Notification.requestPermission().then(permission => {
       if (permission === "granted") {
         console.log("🔐 Benachrichtigungen erlaubt!");
-        // Test-Notification senden, um zu prüfen ob es geht
-        new Notification("TradeMind aktiviert", { body: "Benachrichtigungen sind an." });
       }
     });
   }
 });
 
-// 3. Die eigentliche Sendefunktion (über Service Worker für Android Stabilität)
+// 3. Universelle Sendefunktion für Sessions & Updates
 function sendNotification(title, body) {
-  if (Notification.permission === "granted") {
-    navigator.serviceWorker.getRegistration().then(reg => {
-      if (reg) {
-        reg.showNotification(title, {
-          body: body,
-          icon: "/app/icon-192.png", // Stelle sicher, dass das Icon existiert!
-          vibrate: [200, 100, 200],  // Bzz-Bzz-Bzz
-          tag: "session-alert",      // Verhindert Notification-Spam
-          renotify: true             // Vibriert auch wenn alte Notification noch da ist
-        });
-      } else {
-        // Fallback falls SW nicht bereit (z.B. Desktop)
-        new Notification(title, { body: body });
-      }
-    });
-  }
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg) {
+      reg.showNotification(title, {
+        body: body,
+        icon: "./icon-192.png",
+        badge: "./icon-192.png",
+        vibrate: [200, 100, 200],
+        tag: "alphaos-alert",
+        renotify: true
+      });
+    } else {
+      new Notification(title, { body: body, icon: "./icon-192.png" });
+    }
+  });
 }
 
-// 4. ⏰ DER CHECK-LOOP (Das Herzstück)
-// Prüft jede Minute, ob eine Session aktiv ist und wir noch nicht gewarnt haben
+// 4. ⏰ SESSION CHECK-LOOP
 setInterval(() => {
-  // Wir greifen auf deine Funktionen aus session.js zu
-  // Stelle sicher, dass session.js VOR pwa.js im HTML geladen wird!
-  
-  if (typeof getCurrentSessions !== "function") return; 
+  if (typeof getCurrentSessions !== "function" || typeof getMinutesNow !== "function") return;
 
   const minutes = getMinutesNow();
   const activeSessions = getCurrentSessions(minutes);
 
-  if (activeSessions.length > 0) {
+  if (activeSessions && activeSessions.length > 0) {
     const currentSessionName = activeSessions[0].name;
 
-    // Wenn wir diese Session noch nicht gemeldet haben -> FEUER!
     if (lastNotifiedSession !== currentSessionName) {
-      
-      // Spezialfall Killzone (klingt wichtiger)
       const isKillzone = currentSessionName.includes("Killzone");
-      const title = isKillzone ? `🔥 ${currentSessionName} START!` : `🔔 ${currentSessionName} hat begonnen`;
-      const msg = "Prüfe deine Levels und Setup-Regeln.";
+      const title = isKillzone ? `🔥 ${currentSessionName} START!` : `🔔 ${currentSessionName} gestartet`;
+      const msg = "Prüfe deine Setups und Confluences.";
 
       sendNotification(title, msg);
-      
-      // Merken, damit es nicht jede Minute bimmelt
       lastNotifiedSession = currentSessionName;
     }
   } else {
-    // Reset wenn keine Session, damit beim nächsten Start wieder geklingelt wird
     lastNotifiedSession = null;
   }
-
-}, 60000); // Checkt alle 60 Sekunden
+}, 60000);
