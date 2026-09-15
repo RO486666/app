@@ -634,21 +634,18 @@ function showDayDetails(dateStr) {
 }
 
 /* ============================================================
-   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (AUTO-INJECT)
+   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (AUTO-RESPONSIVE FIX)
    ============================================================ */
 function updateYearHeatmap() {
   const currentYear = currentCalendarDate.getFullYear();
   const activeMonth = currentCalendarDate.getMonth();
   const shortMonths = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
-  // 1. Prüfen ob Container existiert, sonst automatisch vor .calendar-box einfügen
+  // 1. Box suchen oder erzeugen
   let box = document.getElementById("yearHeatmapBox");
   if (!box) {
     const calBox = document.querySelector(".calendar-box");
-    if (!calBox) {
-      console.warn("⚠️ .calendar-box nicht gefunden – Heatmap kann nicht platziert werden.");
-      return;
-    }
+    if (!calBox) return;
     box = document.createElement("div");
     box.id = "yearHeatmapBox";
     box.className = "year-heatmap-box";
@@ -690,7 +687,7 @@ function updateYearHeatmap() {
     }
   });
 
-  // 3. Jahres-% errechnen
+  // 3. Gesamt-Jahresperformance berechnen
   const yearNet = yearWin - yearLoss;
   const yearTurnover = yearWin + yearLoss;
   const yearMarginPct = yearTurnover > 0 ? (yearNet / yearTurnover) * 100 : 0;
@@ -704,7 +701,7 @@ function updateYearHeatmap() {
     badgeEl.innerText = `${yearSign}${yearMarginPct.toFixed(1)}%`;
   }
 
-  // 4. Monats-Kacheln rendern
+  // 4. Monats-Kacheln bauen
   let chipsHTML = "";
   monthsData.forEach((m, idx) => {
     const net = m.win - m.loss;
@@ -727,14 +724,54 @@ function updateYearHeatmap() {
   if (barEl) {
     barEl.innerHTML = chipsHTML;
   }
-}
 
-// Direktsprung bei Klick auf einen Monat
-window.selectMonthFromHeatmap = function(monthIndex) {
-  currentCalendarDate.setMonth(monthIndex);
-  initCalendar();
-  updateJournalUI();
-};
+  // 5. 🔥 HARD-OVERRIDE FIX FÜR SCHMALE SCREENS & SPLIT-SCREEN 🔥
+  const applyResponsiveHeatmap = () => {
+    const containerWidth = box.clientWidth || window.innerWidth;
+    if (containerWidth < 980) {
+      box.style.flexDirection = "column";
+      box.style.alignItems = "stretch";
+      box.style.gap = "10px";
+      
+      const leftPart = box.querySelector(".year-heatmap-left");
+      if (leftPart) {
+        leftPart.style.display = "flex";
+        leftPart.style.justifyContent = "space-between";
+        leftPart.style.width = "100%";
+      }
+
+      if (barEl) {
+        // Zwingend 2 Reihen à 6 Monate: Jan-Jun oben, Jul-Dez unten
+        barEl.style.display = "grid";
+        barEl.style.gridTemplateColumns = "repeat(6, 1fr)";
+        barEl.style.gap = "6px";
+        barEl.style.width = "100%";
+      }
+    } else {
+      box.style.flexDirection = "row";
+      box.style.alignItems = "center";
+      box.style.gap = "16px";
+      
+      const leftPart = box.querySelector(".year-heatmap-left");
+      if (leftPart) {
+        leftPart.style.display = "flex";
+        leftPart.style.justifyContent = "flex-start";
+        leftPart.style.width = "auto";
+      }
+
+      if (barEl) {
+        // Desktop: 12 Monate in einer Reihe
+        barEl.style.display = "grid";
+        barEl.style.gridTemplateColumns = "repeat(12, 1fr)";
+        barEl.style.gap = "6px";
+      }
+    }
+  };
+
+  applyResponsiveHeatmap();
+  window.removeEventListener("resize", applyResponsiveHeatmap);
+  window.addEventListener("resize", applyResponsiveHeatmap);
+}
 
 /* ============================================================
    🔗 EXTERNAL BRIDGES
