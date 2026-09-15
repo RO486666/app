@@ -1076,31 +1076,34 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ============================================================
-   🗓️ JAHRES-HEATMAP LEISTE (MAXI-EDITION: VOLLBREITE & GROSS)
+   🗓️ JAHRES-HEATMAP LEISTE (FIX: VOLLSTÄNDIGE 12 MONATE)
    ============================================================ */
 .year-heatmap-box {
   background: #110f16 !important;
   border: 1px solid rgba(153, 51, 255, 0.25) !important;
   border-radius: 10px !important;
-  padding: 14px 18px !important;
+  padding: 12px 16px !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
   margin-bottom: 14px;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  overflow: hidden;
 }
 
-/* Linker Bereich: Großes Jahr + Fettes Badge */
+/* Linker Bereich: Jahr + Prozent Badge */
 .year-heatmap-left {
   display: flex;
   align-items: center;
-  gap: 12px;
-  white-space: nowrap;
+  gap: 10px;
+  flex-shrink: 0; /* Verhindert, dass der linke Block zusammengedrückt wird */
 }
 
 .year-title {
-  font-size: 18px !important;
+  font-size: 17px !important;
   font-weight: 900;
   color: #ffffff;
   letter-spacing: 1px;
@@ -1109,8 +1112,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .year-badge {
   display: inline-flex;
   align-items: center;
-  padding: 6px 14px !important;
-  font-size: 14px !important;
+  padding: 5px 12px !important;
+  font-size: 13px !important;
   font-weight: 900;
   border-radius: 8px;
   letter-spacing: 0.8px;
@@ -1136,20 +1139,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-/* 12-Monats Grid: Nutzt den gesamten verfügbaren Platz rechts */
+/* Monats-Grid Basis (Volle Desktop-Breite) */
 .year-months-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 8px;
-  flex: 1; /* Nimmt die komplette Restbreite ein */
-  max-width: none !important; /* Entfernt die 650px-Bremse */
+  gap: 6px;
+  flex: 1;
+  min-width: 0; /* Wichtig: Verhindert Überlauf über den Container */
 }
 
-/* Die Monats-Kacheln selbst: deutlich massiver */
+/* Die Monats-Kacheln */
 .year-month-chip {
-  padding: 10px 0 !important; /* Deutlich höher */
+  padding: 8px 0 !important;
   text-align: center;
-  font-size: 12px !important; /* Größere Schrift */
+  font-size: 11px !important;
   font-weight: 900 !important;
   text-transform: uppercase;
   border-radius: 6px;
@@ -1157,6 +1160,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   user-select: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
+  min-width: 0;
 }
 
 .year-month-chip:hover {
@@ -1164,14 +1168,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: brightness(1.2);
 }
 
-/* Aktiver Monat */
 .year-month-chip.is-active-month {
   outline: 2px solid #9933ff;
   box-shadow: 0 0 14px rgba(153, 51, 255, 0.7);
   transform: scale(1.04);
 }
 
-/* Kachel-Farben */
 .year-month-chip.chip-profit {
   color: #00e676 !important;
   background: rgba(0, 230, 118, 0.14) !important;
@@ -1188,6 +1190,45 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #64748b !important;
   background: rgba(255, 255, 255, 0.04) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ============================================================
+   📱 RESPONSIVE: SCHALTET BEI SPLITSCREEN / MOBILE UM (<= 980px)
+   ============================================================ */
+@media (max-width: 980px) {
+  .year-heatmap-box {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+
+  .year-heatmap-left {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  /* 2 Reihen à 6 Monate: Jan-Jun oben, Jul-Dez unten */
+  .year-months-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .year-month-chip {
+    padding: 9px 0 !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .year-month-chip {
+    padding: 7px 0 !important;
+    font-size: 10px !important;
+  }
+  .year-months-grid {
+    gap: 4px !important;
+  }
 }
 
 /* ============================================================
