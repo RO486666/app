@@ -23,7 +23,7 @@ const MENU = {
  dashboard: {
     title: "Dashboard & Stats",
     items: [
-      { label: "Dashboard", panel: "panel-dashboard" },
+
       { label: "📊 Trading Journal", panel: "panel-journal" } // ✅ Nahtlose Integration
     ]
   },
@@ -32,14 +32,13 @@ const MENU = {
     items: [
       { label: "Rechner", panel: "calc-pos" },
       { label: "Steuern / Netto", panel: "calc-taxpro" },
-      { label: "Pair Profil", panel: "calc-pairProfile" }
+      
     ]
   },
   rules: {
     title: "Regeln & Wissen",
     items: [
       { label: "Regeln", panel: "panel-rules" },
-      { label: "Theorie-Test", panel: "panel-quiz" },
       { label: "Confluence", panel: "panel-confluence" }
     ]
   },

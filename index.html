@@ -423,51 +423,8 @@
   <!-- ======================= -->
   <main id="mainContent">
 
-   <!-- DASHBOARD PANEL -->
-<section id="panel-dashboard" class="panel">
-  <div class="dashboard-tactical-box">
 
-    
-    <h3>🏠 Dashboard</h3>
-
-    <div id="weeklyPairPlan"></div>
-
-  </div>
-  
-  <button class="clear-all-btn" onclick="clearAllWeeklyPairs()">
-  CLEAR ALL
-</button>
-
-<!-- ========================= -->
-<!-- 💾 DASHBOARD BACKUP BOX -->
-<!-- ========================= -->
-<div class="dashboard-backup-box">
-
-  <h4>💾 Backup & Restore</h4>
-
-  <button class="backup-btn backup-export" onclick="exportLocalBackup()">
-    📤 Export (lokal)
-  </button>
-
-  <button class="backup-btn backup-import"
-          onclick="document.getElementById('importFile').click()">
-    📥 Import (lokal)
-  </button>
-
-  <input
-    id="importFile"
-    type="file"
-    accept="application/json"
-    style="display:none"
-    onchange="importLocalBackup(this.files[0])"
-  />
-
-</div>
-
-
-</section>
-
-<section id="panel-journal" class="panel hidden">
+<section id="panel-journal" class="panel">
   
 <div class="journal-stats-grid">
   
@@ -536,6 +493,8 @@
 
 </div>
 
+
+
   <!-- CHARTS SECTION -->
   <div class="journal-charts-wrapper">
     <div class="chart-container wide-chart">
@@ -545,12 +504,40 @@
       </div>
     </div>
     <div class="journal-charts-subgrid">
+     <!-- DOUBLE DONUT DASHBOARD -->
       <div class="chart-container">
-        <h4 class="box-heading">🎯 Win/Loss</h4>
-        <div class="chart-canvas-wrapper">
-          <canvas id="chartWinLoss"></canvas>
+        <div class="donut-twin-box">
+          
+          <!-- DONUT 1: WIN / LOSS -->
+          <div class="donut-sub-container">
+            <h4 class="box-heading" style="margin-bottom: 4px;">🎯 Win / Loss</h4>
+            <div class="donut-canvas-holder">
+              <canvas id="chartWinLoss"></canvas>
+              <div class="donut-center-badge">
+                <span id="centerWinRateVal" class="donut-center-val">0%</span>
+                <span class="donut-center-sub">Win Rate</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CYBER TRENNER -->
+          <div class="donut-divider"></div>
+
+          <!-- DONUT 2: PROFIT NACH RICHTUNG -->
+          <div class="donut-sub-container">
+            <h4 class="box-heading" style="margin-bottom: 4px;">⚡ Profit-Dominanz</h4>
+            <div class="donut-canvas-holder">
+              <canvas id="chartLongShort"></canvas>
+              <div class="donut-center-badge">
+                <span id="centerDominanceVal" class="donut-center-val" style="color: #38bdf8;">0%</span>
+                <span id="centerDominanceSub" class="donut-center-sub">Long</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
       <div class="chart-container">
         <h4 class="box-heading">💱 Monthly Performance</h4>
         <div class="chart-canvas-wrapper">
@@ -559,12 +546,25 @@
       </div>
     </div>
   </div>
+  
+  
 
 <!-- CALENDAR SECTION -->
   <div class="journal-calendar-section">
+
+    <!-- 🗓️ JAHRES-HEATMAP LEISTE (DIREKT ÜBER DEM KALENDER) -->
+    <div id="yearHeatmapBox" class="year-heatmap-box">
+      <div class="year-heatmap-left">
+        <span id="yearSummaryLabel" class="year-title">2026</span>
+        <span id="yearPerformanceBadge" class="year-badge is-neutral">0.0%</span>
+      </div>
+      <div id="yearMonthsBar" class="year-months-grid"></div>
+    </div>
+
+    <!-- 📅 HAUPT-KALENDER -->
     <div class="calendar-box">
       <div class="calendar-header">
-        <button onclick="changeMonth(-1)">◀</button>
+        <button type="button" onclick="changeMonth(-1)">◀</button>
         
         <!-- Klickbarer Header mit überlagertem, unsichtbarem Datepicker -->
         <div style="position: relative; display: flex; align-items: center; justify-content: center;">
@@ -577,7 +577,7 @@
           />
         </div>
 
-        <button onclick="changeMonth(1)">▶</button>
+        <button type="button" onclick="changeMonth(1)">▶</button>
       </div>
       <div class="calendar-weekdays">
         <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
@@ -585,6 +585,7 @@
       <div id="calendarGrid" class="calendar-grid"></div>
     </div>
 
+   
     <!-- 📅 DYNAMIC DAY DRILLDOWN PANEL -->
     <div id="journalDayDetails" style="display:none; border-top:1px solid var(--line); margin-top: 14px;">
       
@@ -1116,67 +1117,9 @@
     Load Trade
   </button>
 </div>
-
-
-
-
-
-
 </section>
 
-   <!-- ============================================================
-         📊 PAIR PROFILE PANEL
-       ============================================================ -->
-    <section id="calc-pairProfile" class="panel hidden">
-        <div class="stats-box" id="pairProfileBox">
-          <h3 style="margin-top: 0; margin-bottom: 10px;">
-            📊 Pair-Profil
-            <span
-              style="
-                font-size: 12px;
-                color: #aaa;
-                display: block;
-                margin-top: 4px;
-              "
-            >
-              Statisches Wissensprofil pro Trading-Paar – Daten aus deiner
-              pairsData.js
-            </span>
-          </h3>
-
-          <label for="pairProfileSymbol">💱 Trading-Paar wählen:</label>
-
-
-    
-
-    <div class="pair-select-wrapper">
-      <select id="pairProfileSymbol">
-        <option value="">– Bitte Paar wählen –</option>
-      </select>
-    </div>
-
-    <div id="pairProfileBasics" style="margin-top: 10px; font-size: 14px;">
-      <strong>Basis-Daten:</strong>
-      <div style="margin-top: 6px;">
-        <div>📌 Symbol: <span id="pairProfileSymbolLabel">–</span></div>
-        <div>💰 Aktueller Preis: <span id="pairProfilePrice">–</span></div>
-        <div>📏 Pip-Wert (1 Lot): <span id="pairProfilePip">–</span></div>
-        <div>📦 Kontraktgröße: <span id="pairProfileContract">–</span></div>
-      </div>
-    </div>
-
-    <div id="pairProfileBehavior" style="margin-top: 15px; font-size: 14px; line-height: 1.5;">
-      <strong>Verhalten & Charakteristik:</strong>
-      <p id="pairProfileText" style="margin-top: 6px; color: #ddd;"></p>
-    </div>
-
-    <div id="pairProfileNotes" style="margin-top: 15px; font-size: 13px; color: #ccc;">
-      <strong>Setup-Notizen:</strong>
-      <ul id="pairProfileNotesList" style="margin-top: 6px; padding-left: 18px;"></ul>
-    </div>
-
-  </div>
-</section>
+  
 
     <!-- ============================================================
          📄 STEUER/NETTO PLANER
@@ -1642,25 +1585,7 @@
 
 
 
-    <!-- ============================================================
-         🧠 THEORIE-TEST (QUIZ)
-       ============================================================ -->
-    <section id="panel-quiz" class="panel hidden">
 
-      <h3>🧠 Theorie-Test</h3>
-      <p>Starte deinen Quiz, um dein Wissen zu testen.</p>
-
-      <button id="btn-calc-quiz">🧠 Theorie-Test starten</button>
-
-      <div id="quizOverlay" class="quiz-overlay hidden">
-        <div class="quiz-modal">
-          <button class="quiz-close" onclick="closeQuiz()">✖</button>
-          <h2>🧠 Theorie-Test</h2>
-          <div id="quizContent"></div>
-        </div>
-      </div>
-
-    </section>
 
   </main>
   

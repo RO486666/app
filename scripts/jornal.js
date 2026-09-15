@@ -26,6 +26,7 @@ const APEX_COLORS = {
 document.addEventListener("DOMContentLoaded", () => {
   loadJournalData();
   initCalendar();
+  updateYearHeatmap();
   initJournalPairsAutocomplete();
 });
 
@@ -362,9 +363,51 @@ function initCalendar() {
   const year = currentCalendarDate.getFullYear();
   const month = currentCalendarDate.getMonth();
   const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-  
-  document.getElementById("calendarMonthYear").innerText = `${monthNames[month]} ${year}`;
 
+  // 1. Monats-Statistik berechnen
+  let grossWin = 0;
+  let grossLoss = 0;
+  let tradeCount = 0;
+
+  journalTrades.forEach(t => {
+    if (!t.timestamp) return;
+    const d = new Date(t.timestamp);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      const p = Number(t.pnl || 0);
+      if (p > 0) grossWin += p;
+      else if (p < 0) grossLoss += Math.abs(p);
+      tradeCount++;
+    }
+  });
+
+  const netPnL = grossWin - grossLoss;
+  const turnover = grossWin + grossLoss;
+  const marginPct = turnover > 0 ? (netPnL / turnover) * 100 : 0;
+
+  const isProfit = netPnL > 0;
+  const isLoss = netPnL < 0;
+  const sign = isProfit ? "+" : "";
+
+  const badgeClass = isProfit ? "is-profit" : (isLoss ? "is-loss" : "is-neutral");
+  const monthThemeClass = isProfit ? "month-profit" : (isLoss ? "month-loss" : "month-neutral");
+
+  // 2. Gesamten Kalender-Container dynamisch stylen
+  const calendarContainer = document.querySelector(".calendar-box") || grid.closest(".calendar-box");
+  if (calendarContainer) {
+    calendarContainer.classList.remove("month-profit", "month-loss", "month-neutral");
+    calendarContainer.classList.add(monthThemeClass);
+  }
+
+  // 3. Header setzen
+  const headerEl = document.getElementById("calendarMonthYear");
+  if (headerEl) {
+    headerEl.innerHTML = `
+      <span>${monthNames[month]} ${year}</span>
+      <span class="calendar-month-badge ${badgeClass}">${sign}${marginPct.toFixed(1)}%</span>
+    `;
+  }
+
+  // 3. Kalender-Raster aufbauen
   const firstDay = new Date(year, month, 1);
   const start = new Date(firstDay);
   const dayOfWeek = firstDay.getDay();
@@ -447,6 +490,7 @@ function initCalendar() {
     dayBox.onclick = () => filterByDate(currentString);
     grid.appendChild(dayBox);
   }
+  updateYearHeatmap();
 }
 
 function changeMonth(direction) {
@@ -588,6 +632,109 @@ function showDayDetails(dateStr) {
   wrap.style.display = "block";
   wrap.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
+/* ============================================================
+   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (AUTO-INJECT)
+   ============================================================ */
+function updateYearHeatmap() {
+  const currentYear = currentCalendarDate.getFullYear();
+  const activeMonth = currentCalendarDate.getMonth();
+  const shortMonths = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+
+  // 1. Prüfen ob Container existiert, sonst automatisch vor .calendar-box einfügen
+  let box = document.getElementById("yearHeatmapBox");
+  if (!box) {
+    const calBox = document.querySelector(".calendar-box");
+    if (!calBox) {
+      console.warn("⚠️ .calendar-box nicht gefunden – Heatmap kann nicht platziert werden.");
+      return;
+    }
+    box = document.createElement("div");
+    box.id = "yearHeatmapBox";
+    box.className = "year-heatmap-box";
+    box.innerHTML = `
+      <div class="year-heatmap-left">
+        <span id="yearSummaryLabel" class="year-title"></span>
+        <span id="yearPerformanceBadge" class="year-badge is-neutral">0.0%</span>
+      </div>
+      <div id="yearMonthsBar" class="year-months-grid"></div>
+    `;
+    calBox.parentNode.insertBefore(box, calBox);
+  }
+
+  const titleEl = document.getElementById("yearSummaryLabel");
+  const badgeEl = document.getElementById("yearPerformanceBadge");
+  const barEl = document.getElementById("yearMonthsBar");
+
+  if (titleEl) titleEl.innerText = `${currentYear}`;
+
+  // 2. Daten für alle 12 Monate sammeln
+  const monthsData = Array.from({ length: 12 }, () => ({ win: 0, loss: 0, count: 0 }));
+  let yearWin = 0;
+  let yearLoss = 0;
+
+  journalTrades.forEach(t => {
+    if (!t.timestamp) return;
+    const d = new Date(t.timestamp);
+    if (d.getFullYear() === currentYear) {
+      const m = d.getMonth();
+      const p = Number(t.pnl || 0);
+      if (p > 0) {
+        monthsData[m].win += p;
+        yearWin += p;
+      } else if (p < 0) {
+        monthsData[m].loss += Math.abs(p);
+        yearLoss += Math.abs(p);
+      }
+      monthsData[m].count++;
+    }
+  });
+
+  // 3. Jahres-% errechnen
+  const yearNet = yearWin - yearLoss;
+  const yearTurnover = yearWin + yearLoss;
+  const yearMarginPct = yearTurnover > 0 ? (yearNet / yearTurnover) * 100 : 0;
+  const isYearProfit = yearNet > 0;
+  const isYearLoss = yearNet < 0;
+  const yearSign = isYearProfit ? "+" : "";
+  const yearBadgeClass = isYearProfit ? "is-profit" : (isYearLoss ? "is-loss" : "is-neutral");
+
+  if (badgeEl) {
+    badgeEl.className = `year-badge ${yearBadgeClass}`;
+    badgeEl.innerText = `${yearSign}${yearMarginPct.toFixed(1)}%`;
+  }
+
+  // 4. Monats-Kacheln rendern
+  let chipsHTML = "";
+  monthsData.forEach((m, idx) => {
+    const net = m.win - m.loss;
+    let colorClass = "chip-neutral";
+    if (m.count > 0) {
+      colorClass = net > 0 ? "chip-profit" : (net < 0 ? "chip-loss" : "chip-neutral");
+    }
+    const isActive = idx === activeMonth ? "is-active-month" : "";
+    const titleText = `${shortMonths[idx]}: ${m.count} Trades (${net >= 0 ? '+' : ''}${formatCurrency(net)})`;
+
+    chipsHTML += `
+      <div class="year-month-chip ${colorClass} ${isActive}" 
+           title="${titleText}" 
+           onclick="selectMonthFromHeatmap(${idx})">
+        ${shortMonths[idx]}
+      </div>
+    `;
+  });
+
+  if (barEl) {
+    barEl.innerHTML = chipsHTML;
+  }
+}
+
+// Direktsprung bei Klick auf einen Monat
+window.selectMonthFromHeatmap = function(monthIndex) {
+  currentCalendarDate.setMonth(monthIndex);
+  initCalendar();
+  updateJournalUI();
+};
 
 /* ============================================================
    🔗 EXTERNAL BRIDGES
@@ -916,29 +1063,133 @@ function renderJournalCharts() {
     });
   }
 
-  // 2. Win / Loss Donut
+// 2. Win/Loss & Direction-Dominance Donuts (GESAMT-JOURNAL STATISTIK)
   const canvasWinLoss = document.getElementById("chartWinLoss");
+  const canvasLongShort = document.getElementById("chartLongShort");
+
+  // Nutzt 100% aller Trades aus dem gesamten Journal
+  const targetDataSet = journalTrades;
+
+  // Chart 1: Gesamt Wins vs. Losses
   if (canvasWinLoss) {
-    const wins = journalTrades.filter(t => t.pnl > 0).length;
-    const losses = journalTrades.filter(t => t.pnl <= 0).length;
-    
+    const wins = targetDataSet.filter(t => t.pnl > 0).length;
+    const losses = targetDataSet.filter(t => t.pnl <= 0).length;
+    const totalWL = wins + losses;
+    const winRatePct = totalWL > 0 ? ((wins / totalWL) * 100).toFixed(1) : "0.0";
+
+    // Center Badge: Exakt synchron zu deiner oberen KPI-Card
+    const centerWinEl = document.getElementById("centerWinRateVal");
+    if (centerWinEl) {
+      centerWinEl.innerText = `${winRatePct}%`;
+      centerWinEl.style.color = Number(winRatePct) >= 50 ? "#00e676" : "#ff5252";
+    }
+
     chartInstances.winloss = new Chart(canvasWinLoss.getContext("2d"), {
       type: "doughnut",
       data: {
-        labels: ["Wins", "Losses"],
+        labels: [`Wins (${wins})`, `Loss (${losses})`],
         datasets: [{
-          data: [wins, losses],
-          backgroundColor: [APEX_COLORS.win, APEX_COLORS.loss],
+          data: totalWL === 0 ? [1] : [wins, losses],
+          backgroundColor: totalWL === 0 
+            ? ["rgba(255,255,255,0.06)"] 
+            : ["#00e676", "#ff5252"],
           borderWidth: 2,
-          borderColor: APEX_COLORS.bg,
+          borderColor: "#0d0d12",
+          hoverBorderColor: "#fff",
           hoverOffset: 4
         }]
       },
       options: {
-        responsive: true, 
-        maintainAspectRatio: false, 
-        cutout: '75%',
-        plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "76%",
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 900,
+          easing: "easeOutQuart"
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: { boxWidth: 8, font: { size: 9, weight: "700" }, padding: 6, color: "#94a3b8" }
+          },
+          tooltip: {
+            enabled: totalWL > 0,
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${ctx.raw} (${totalWL > 0 ? ((ctx.raw / totalWL) * 100).toFixed(1) : 0}%)`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Chart 2: Gesamt Profit nach Richtung (Long = Grün, Short = Rot)
+  if (canvasLongShort) {
+    const longWins = targetDataSet.filter(t => (t.direction || "").toUpperCase() === "BUY" && t.pnl > 0).length;
+    const shortWins = targetDataSet.filter(t => (t.direction || "").toUpperCase() === "SELL" && t.pnl > 0).length;
+    const totalDirectionWins = longWins + shortWins;
+
+    const isLongDominant = longWins >= shortWins;
+    const domPct = totalDirectionWins > 0 
+      ? Math.round(((isLongDominant ? longWins : shortWins) / totalDirectionWins) * 100) 
+      : 0;
+
+    const centerDomValEl = document.getElementById("centerDominanceVal");
+    const centerDomSubEl = document.getElementById("centerDominanceSub");
+
+    if (centerDomValEl && centerDomSubEl) {
+      if (totalDirectionWins === 0) {
+        centerDomValEl.innerText = "0%";
+        centerDomValEl.style.color = "#94a3b8";
+        centerDomSubEl.innerText = "Kein Profit";
+      } else {
+        centerDomValEl.innerText = `${domPct}%`;
+        centerDomValEl.style.color = isLongDominant ? "#00e676" : "#ff5252";
+        centerDomSubEl.innerText = isLongDominant ? "Long Win" : "Short Win";
+      }
+    }
+
+    chartInstances.longshort = new Chart(canvasLongShort.getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: [`Long (${longWins})`, `Short (${shortWins})`],
+        datasets: [{
+          data: totalDirectionWins === 0 ? [1] : [longWins, shortWins],
+          backgroundColor: totalDirectionWins === 0 
+            ? ["rgba(255,255,255,0.06)"] 
+            : ["#00e676", "#ff5252"],
+          borderWidth: 2,
+          borderColor: "#0d0d12",
+          hoverBorderColor: "#fff",
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "76%",
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 900,
+          easing: "easeOutQuart"
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: { boxWidth: 8, font: { size: 9, weight: "700" }, padding: 6, color: "#94a3b8" }
+          },
+          tooltip: {
+            enabled: totalDirectionWins > 0,
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${ctx.raw} (${totalDirectionWins > 0 ? ((ctx.raw / totalDirectionWins) * 100).toFixed(1) : 0}%)`
+            }
+          }
+        }
       }
     });
   }

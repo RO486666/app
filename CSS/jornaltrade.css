@@ -976,3 +976,327 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 ::-webkit-datetime-edit-year-field {
     color: #e0e0e0;
 }
+
+/* ============================================================
+   💎 DYNAMISCHES KALENDER-THEME (VOLLE FLÄCHE + NEON GLOW)
+   ============================================================ */
+
+/* Basis-Transition für weichen Farbwechsel beim Umschalten */
+#panel-journal .calendar-box {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative;
+}
+
+/* 🟢 PROFITABLER MONAT: Grüner Verlauf + Cyber-Glow */
+#panel-journal .calendar-box.month-profit {
+  background: radial-gradient(circle at 50% 0%, rgba(0, 230, 118, 0.12) 0%, rgba(17, 15, 22, 0.98) 75%) !important;
+  border-color: rgba(0, 230, 118, 0.45) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 230, 118, 0.15) !important;
+}
+
+#panel-journal .calendar-box.month-profit .panel-head,
+#panel-journal .calendar-box.month-profit .calendar-header {
+  border-bottom-color: rgba(0, 230, 118, 0.25) !important;
+  background: linear-gradient(180deg, rgba(0, 230, 118, 0.08) 0%, rgba(0, 0, 0, 0.2) 100%) !important;
+}
+
+/* 🔴 VERLUST-MONAT: Roter Verlauf + Alarm-Glow */
+#panel-journal .calendar-box.month-loss {
+  background: radial-gradient(circle at 50% 0%, rgba(255, 82, 82, 0.12) 0%, rgba(17, 15, 22, 0.98) 75%) !important;
+  border-color: rgba(255, 82, 82, 0.45) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 82, 82, 0.15) !important;
+}
+
+#panel-journal .calendar-box.month-loss .panel-head,
+#panel-journal .calendar-box.month-loss .calendar-header {
+  border-bottom-color: rgba(255, 82, 82, 0.25) !important;
+  background: linear-gradient(180deg, rgba(255, 82, 82, 0.08) 0%, rgba(0, 0, 0, 0.2) 100%) !important;
+}
+
+/* ⚪ NEUTRALER MONAT (Keine Trades / Ausgeglichen) */
+#panel-journal .calendar-box.month-neutral {
+  background: #110f16 !important;
+  border-color: var(--purple-glow) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ============================================================
+   ⚡ FETTES PROZENT-BADGE MIT INTENSIVEM NEON-PULS
+   ============================================================ */
+.calendar-month-badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-left: 14px;
+  padding: 5px 14px !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px;
+  border-radius: 8px !important;
+  vertical-align: middle;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Status-Leuchtpunkt */
+.calendar-month-badge::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Grünes Badge */
+.calendar-month-badge.is-profit {
+  color: #00e676 !important;
+  background: rgba(0, 230, 118, 0.16) !important;
+  border: 1.5px solid #00e676 !important;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.6) !important;
+}
+
+/* Rotes Badge */
+.calendar-month-badge.is-loss {
+  color: #ff5252 !important;
+  background: rgba(255, 82, 82, 0.16) !important;
+  border: 1.5px solid #ff5252 !important;
+  box-shadow: 0 0 20px rgba(255, 82, 82, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  text-shadow: 0 0 10px rgba(255, 82, 82, 0.6) !important;
+}
+
+/* Neutrales Badge */
+.calendar-month-badge.is-neutral {
+  color: #94a3b8 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ============================================================
+   🗓️ JAHRES-HEATMAP LEISTE (MAXI-EDITION: VOLLBREITE & GROSS)
+   ============================================================ */
+.year-heatmap-box {
+  background: #110f16 !important;
+  border: 1px solid rgba(153, 51, 255, 0.25) !important;
+  border-radius: 10px !important;
+  padding: 14px 18px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  margin-bottom: 14px;
+}
+
+/* Linker Bereich: Großes Jahr + Fettes Badge */
+.year-heatmap-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.year-title {
+  font-size: 18px !important;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.year-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px !important;
+  font-size: 14px !important;
+  font-weight: 900;
+  border-radius: 8px;
+  letter-spacing: 0.8px;
+}
+
+.year-badge.is-profit {
+  color: #00e676 !important;
+  background: rgba(0, 230, 118, 0.16) !important;
+  border: 1.5px solid #00e676 !important;
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.35) !important;
+}
+
+.year-badge.is-loss {
+  color: #ff5252 !important;
+  background: rgba(255, 82, 82, 0.16) !important;
+  border: 1.5px solid #ff5252 !important;
+  box-shadow: 0 0 16px rgba(255, 82, 82, 0.35) !important;
+}
+
+.year-badge.is-neutral {
+  color: #94a3b8 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 12-Monats Grid: Nutzt den gesamten verfügbaren Platz rechts */
+.year-months-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
+  flex: 1; /* Nimmt die komplette Restbreite ein */
+  max-width: none !important; /* Entfernt die 650px-Bremse */
+}
+
+/* Die Monats-Kacheln selbst: deutlich massiver */
+.year-month-chip {
+  padding: 10px 0 !important; /* Deutlich höher */
+  text-align: center;
+  font-size: 12px !important; /* Größere Schrift */
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+}
+
+.year-month-chip:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+/* Aktiver Monat */
+.year-month-chip.is-active-month {
+  outline: 2px solid #9933ff;
+  box-shadow: 0 0 14px rgba(153, 51, 255, 0.7);
+  transform: scale(1.04);
+}
+
+/* Kachel-Farben */
+.year-month-chip.chip-profit {
+  color: #00e676 !important;
+  background: rgba(0, 230, 118, 0.14) !important;
+  border-color: rgba(0, 230, 118, 0.45) !important;
+}
+
+.year-month-chip.chip-loss {
+  color: #ff5252 !important;
+  background: rgba(255, 82, 82, 0.14) !important;
+  border-color: rgba(255, 82, 82, 0.45) !important;
+}
+
+.year-month-chip.chip-neutral {
+  color: #64748b !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ============================================================
+   ⚡ CYBER TWIN-DONUTS: GLOW & CENTER BADGES (REIN CSS)
+   ============================================================ */
+.donut-twin-box {
+  display: flex;
+  gap: 14px;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.donut-sub-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+}
+
+.donut-sub-container .box-heading {
+  align-self: flex-start;
+  margin-bottom: 2px;
+}
+
+/* Cyber-Trennlinie */
+.donut-divider {
+  width: 1px;
+  height: 75%;
+  background: linear-gradient(180deg, transparent 0%, rgba(153, 51, 255, 0.4) 50%, transparent 100%);
+  margin: 0 4px;
+}
+
+/* Halterung für Canvas & Badge */
+.donut-canvas-holder {
+  position: relative;
+  width: 100%;
+  max-width: 180px;
+  height: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Weicher, getrennter Richtungs-Glow direkt hinter den Ringen (Kein Gelbstich) */
+.donut-canvas-holder::before {
+  content: "";
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  filter: blur(12px);
+  /* Links Grün-Aura (Longs/Wins), Rechts Rot-Aura (Shorts/Losses) */
+  background: linear-gradient(135deg, rgba(0, 230, 118, 0.6) 0%, rgba(255, 82, 82, 0.6) 100%);
+}
+
+.donut-canvas-holder canvas {
+  position: relative !important;
+  z-index: 1;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Scharfe Konturierung ohne gelbe Überlagerung */
+#chartWinLoss,
+#chartLongShort {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+  transition: filter 0.3s ease;
+}
+
+/* Dynamischer Text exakt im Donut-Loch */
+.donut-center-badge {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.donut-center-val {
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+.donut-center-sub {
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-top: 3px;
+  white-space: nowrap;
+}
