@@ -31,6 +31,49 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ============================================================
+   ⏱️ ERWEITERTE SESSION-ERKENNUNG (INKL. OVERLAP-PHASE)
+   ============================================================ */
+function detectSessionFromTimestamp(timestamp) {
+  const d = new Date(timestamp);
+  const hour = d.getHours();
+  const minute = d.getMinutes();
+  const timeVal = hour + minute / 60;
+
+  // 14:30 bis 17:00 Uhr -> Overlap: Frankfurt/London & New York gleichzeitig
+  if (timeVal >= 14.5 && timeVal < 17.0) {
+    return "Frankfurt/London & New York";
+  }
+  // 08:00 bis 14:30 Uhr -> Frankfurt / London
+  else if (timeVal >= 8.0 && timeVal < 14.5) {
+    return "Frankfurt/London";
+  }
+  // 17:00 bis 22:00 Uhr -> Nur New York (nach London-Schluss)
+  else if (timeVal >= 17.0 && timeVal < 22.0) {
+    return "New York";
+  }
+  // Restliche Zeit -> Asien / Tokyo
+  return "Asien/Tokyo";
+}
+
+// Repariert bestehende Trades im Speicher automatisch
+function autoFixJournalSessions() {
+  let changed = false;
+  journalTrades.forEach(t => {
+    if (!t.timestamp) return;
+    const realSession = detectSessionFromTimestamp(t.timestamp);
+    if (t.session !== realSession) {
+      t.session = realSession;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    localStorage.setItem("alphaos_journal_trades", JSON.stringify(journalTrades));
+    console.log("✅ Sessions für alle bestehenden Trades erfolgreich korrigiert!");
+  }
+}
+
+/* ============================================================
    💾 CORE DATA MANAGEMENT
    ============================================================ */
 function loadJournalData() {
@@ -38,6 +81,7 @@ function loadJournalData() {
   if (stored) {
     try { 
       journalTrades = JSON.parse(stored); 
+      autoFixJournalSessions(); // Korrigiert bestehende Trades auf London/NY/Asia
     } catch (e) { 
       console.error("Fehler beim Laden des Journals:", e);
       journalTrades = []; 
@@ -63,10 +107,6 @@ function saveJournalData() {
 /* ============================================================
    📸 SCREENSHOT & IMAGE HANDLING (BASE64 CONVERSION)
    ============================================================ */
-
-/**
- * Konvertiert hochgeladene Dateien in Base64 Strings zur dauerhaften Speicherung
- */
 function handleImageUpload(event) {
   const files = Array.from(event.target.files || []);
   if (!files.length) return;
@@ -94,9 +134,6 @@ function handleImageUpload(event) {
   event.target.value = "";
 }
 
-/**
- * Rendert die Vorschau der ausgewählten Bilder im Formular-Modal
- */
 function renderFormImagePreview() {
   const previewGrid = document.getElementById("formImagePreview");
   if (!previewGrid) return;
@@ -116,17 +153,11 @@ function renderFormImagePreview() {
   });
 }
 
-/**
- * Entfernt ein hochgeladenes Bild aus dem temporären Array vor dem Speichern
- */
 function removeFormImage(index) {
   currentUploadedImages.splice(index, 1);
   renderFormImagePreview();
 }
 
-/**
- * Öffnet ein Bild in Großansicht (Modal/Lightbox)
- */
 function openLightbox(imgSrc) {
   let lightbox = document.getElementById("globalLightbox");
   if (!lightbox) {
@@ -248,7 +279,6 @@ function addJournalTrade(event) {
   }
 
   if (idInput) {
-    // EDIT
     const index = journalTrades.findIndex(t => t.id === idInput);
     if (index !== -1) {
       Object.assign(journalTrades[index], {
@@ -259,7 +289,6 @@ function addJournalTrade(event) {
       });
     }
   } else {
-    // NEW
     journalTrades.push({
       id: "tr_" + Date.now(),
       timestamp: targetTimestamp,
@@ -364,7 +393,6 @@ function initCalendar() {
   const month = currentCalendarDate.getMonth();
   const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
-  // 1. Monats-Statistik berechnen
   let grossWin = 0;
   let grossLoss = 0;
   let tradeCount = 0;
@@ -391,14 +419,12 @@ function initCalendar() {
   const badgeClass = isProfit ? "is-profit" : (isLoss ? "is-loss" : "is-neutral");
   const monthThemeClass = isProfit ? "month-profit" : (isLoss ? "month-loss" : "month-neutral");
 
-  // 2. Gesamten Kalender-Container dynamisch stylen
   const calendarContainer = document.querySelector(".calendar-box") || grid.closest(".calendar-box");
   if (calendarContainer) {
     calendarContainer.classList.remove("month-profit", "month-loss", "month-neutral");
     calendarContainer.classList.add(monthThemeClass);
   }
 
-  // 3. Header setzen
   const headerEl = document.getElementById("calendarMonthYear");
   if (headerEl) {
     headerEl.innerHTML = `
@@ -407,7 +433,6 @@ function initCalendar() {
     `;
   }
 
-  // 3. Kalender-Raster aufbauen
   const firstDay = new Date(year, month, 1);
   const start = new Date(firstDay);
   const dayOfWeek = firstDay.getDay();
@@ -496,23 +521,15 @@ function initCalendar() {
 function changeMonth(direction) {
   currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
   initCalendar();
-  updateJournalUI(); // <--- Das hier sorgt dafür, dass sich die Performance-Balken anpassen
+  updateJournalUI();
 }
 
 function jumpToExactDate(dateString) {
   if (!dateString) return;
-  
-  // Der native Datepicker liefert das Format YYYY-MM-DD
   const [year, month, day] = dateString.split('-');
-  
-  // Setze das zentrale Kalenderdatum auf den gewählten Monat und Tag
   currentCalendarDate = new Date(year, parseInt(month) - 1, day);
-  
-  // Kalender neu rendern
   initCalendar();
   updateJournalUI();
-  
-  // Direkt den ausgewählten Tag im Kalender fokussieren und filtern[cite: 2]
   const formattedDate = `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
   filterByDate(formattedDate);
 }
@@ -551,7 +568,6 @@ function resetCalendarFilter() {
   if (wrap) wrap.style.display = "none";
 
   closeTradeModal();
-  
   initCalendar();
   updateJournalUI();
 }
@@ -634,14 +650,13 @@ function showDayDetails(dateStr) {
 }
 
 /* ============================================================
-   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (AUTO-RESPONSIVE FIX)
+   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (RESPONSIVE FIX)
    ============================================================ */
 function updateYearHeatmap() {
   const currentYear = currentCalendarDate.getFullYear();
   const activeMonth = currentCalendarDate.getMonth();
   const shortMonths = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
-  // 1. Box suchen oder erzeugen
   let box = document.getElementById("yearHeatmapBox");
   if (!box) {
     const calBox = document.querySelector(".calendar-box");
@@ -665,7 +680,6 @@ function updateYearHeatmap() {
 
   if (titleEl) titleEl.innerText = `${currentYear}`;
 
-  // 2. Daten für alle 12 Monate sammeln
   const monthsData = Array.from({ length: 12 }, () => ({ win: 0, loss: 0, count: 0 }));
   let yearWin = 0;
   let yearLoss = 0;
@@ -687,7 +701,6 @@ function updateYearHeatmap() {
     }
   });
 
-  // 3. Gesamt-Jahresperformance berechnen
   const yearNet = yearWin - yearLoss;
   const yearTurnover = yearWin + yearLoss;
   const yearMarginPct = yearTurnover > 0 ? (yearNet / yearTurnover) * 100 : 0;
@@ -701,7 +714,6 @@ function updateYearHeatmap() {
     badgeEl.innerText = `${yearSign}${yearMarginPct.toFixed(1)}%`;
   }
 
-  // 4. Monats-Kacheln bauen
   let chipsHTML = "";
   monthsData.forEach((m, idx) => {
     const net = m.win - m.loss;
@@ -725,7 +737,7 @@ function updateYearHeatmap() {
     barEl.innerHTML = chipsHTML;
   }
 
-  // 5. 🔥 HARD-OVERRIDE FIX FÜR SCHMALE SCREENS & SPLIT-SCREEN 🔥
+  // Automatischer Breakpoint-Switch
   const applyResponsiveHeatmap = () => {
     const containerWidth = box.clientWidth || window.innerWidth;
     if (containerWidth < 980) {
@@ -741,7 +753,6 @@ function updateYearHeatmap() {
       }
 
       if (barEl) {
-        // Zwingend 2 Reihen à 6 Monate: Jan-Jun oben, Jul-Dez unten
         barEl.style.display = "grid";
         barEl.style.gridTemplateColumns = "repeat(6, 1fr)";
         barEl.style.gap = "6px";
@@ -760,18 +771,23 @@ function updateYearHeatmap() {
       }
 
       if (barEl) {
-        // Desktop: 12 Monate in einer Reihe
         barEl.style.display = "grid";
         barEl.style.gridTemplateColumns = "repeat(12, 1fr)";
         barEl.style.gap = "6px";
       }
     }
   };
-//
+
   applyResponsiveHeatmap();
   window.removeEventListener("resize", applyResponsiveHeatmap);
   window.addEventListener("resize", applyResponsiveHeatmap);
 }
+
+window.selectMonthFromHeatmap = function(monthIndex) {
+  currentCalendarDate.setMonth(monthIndex);
+  initCalendar();
+  updateJournalUI();
+};
 
 /* ============================================================
    🔗 EXTERNAL BRIDGES
@@ -791,7 +807,6 @@ function initJournalPairsAutocomplete() {
 /* ============================================================
    🖥️ RENDERING CORE: UI & PREMIUM CHARTS
    ============================================================ */
-
 function updateJournalUI() {
   calculateJournalKPIs();
   renderJournalCharts();
@@ -802,7 +817,6 @@ function calculateJournalKPIs() {
   const countEl = document.getElementById("journalTradeCount");
   if (countEl) countEl.innerText = `${total} Trades gesamt`;
 
-  // --- STANDARDWERTE FÜR 0 TRADES ---
   if (total === 0) {
     const winRateEl = document.getElementById("journalWinRate");
     if (winRateEl) winRateEl.innerText = "0%";
@@ -849,7 +863,6 @@ function calculateJournalKPIs() {
     return;
   }
 
-  // --- BERECHNUNG SCHLEIFE ---
   let wins = 0;
   let losses = 0;
   let grossProfits = 0;
@@ -875,35 +888,29 @@ function calculateJournalKPIs() {
     }
   });
 
-  // 1. Win Rate
   const winRate = ((wins / total) * 100).toFixed(1);
   const winRateEl = document.getElementById("journalWinRate");
   if (winRateEl) winRateEl.innerText = `${winRate}%`;
 
-  // 2. Gesamt Profit / Loss
   const pnlEl = document.getElementById("journalTotalPnL");
   if (pnlEl) {
     pnlEl.innerText = `${totalPnL >= 0 ? "+" : ""}${formatCurrency(totalPnL)}`;
     pnlEl.className = `kpi-value ${totalPnL >= 0 ? 'pnl-profit' : 'pnl-loss'}`;
   }
 
-  // 3. Profit Factor
   const profitFactor = grossLosses === 0 ? grossProfits.toFixed(2) : (grossProfits / grossLosses).toFixed(2);
   const pfEl = document.getElementById("journalProfitFactor");
   if (pfEl) pfEl.innerText = `Profit Factor: ${profitFactor}`;
 
-  // 4. Ø Win / Ø Loss Berechnungen
   const avgWin = wins > 0 ? grossProfits / wins : 0;
   const avgLoss = losses > 0 ? grossLosses / losses : 0;
   const ratio = avgLoss > 0 ? (avgWin / avgLoss) : (avgWin > 0 ? avgWin : 0);
 
-  // Fallback altes Format
   const avgEl = document.getElementById("journalAvgMetrics");
   if (avgEl) {
     avgEl.innerHTML = `<span class="pnl-profit">+${formatCurrency(avgWin)}</span> / <span class="pnl-loss">-${formatCurrency(avgLoss)}</span>`;
   }
 
-  // TradeZella-Style Widget
   const ratioValEl = document.getElementById("jAvgRatioVal");
   if (ratioValEl) ratioValEl.innerText = ratio.toFixed(2);
 
@@ -928,7 +935,6 @@ function calculateJournalKPIs() {
   if (winValEl) winValEl.innerText = `+${formatCurrency(avgWin)}`;
   if (lossValEl) lossValEl.innerText = `-${formatCurrency(avgLoss)}`;
 
-  // 5. Expectancy & Payoff Ratio
   const winProb = wins / total;
   const lossProb = losses / total;
   const expectancy = (winProb * avgWin) - (lossProb * avgLoss);
@@ -978,14 +984,13 @@ function renderJournalCharts() {
 
   const cronTrades = [...journalTrades].reverse();
 
-  // 1. Equity-Kurve (INFINITY MODE - GEPATCHT FÜR DEEP MINUS)
+  // 1. Equity-Kurve
   const canvasEquity = document.getElementById("chartEquity");
   if (canvasEquity) {
     const ctx = canvasEquity.getContext("2d");
 
     let runningPnL = 0;
     const equityData = cronTrades.map(t => { runningPnL += t.pnl; return runningPnL; });
-
     const dynamicPointRadius = equityData.length > 80 ? 0 : 2;
 
     chartInstances.equity = new Chart(ctx, {
@@ -999,8 +1004,6 @@ function renderJournalCharts() {
           pointHoverRadius: 4,
           fill: 'origin',
           tension: 0.1,
-
-          // 🟢/🔴 Dynamische Linienfarbe
           borderColor: (context) => {
             const chart = context.chart;
             const { ctx, chartArea, scales } = chart;
@@ -1025,11 +1028,8 @@ function renderJournalCharts() {
             gradientLine.addColorStop(zeroRatio, APEX_COLORS.win);
             gradientLine.addColorStop(zeroRatio, APEX_COLORS.loss);
             gradientLine.addColorStop(1, APEX_COLORS.loss);
-            
             return gradientLine;
           },
-
-          // 🟢/🔴 Dynamische Glow-Füllung (Fix für transparente Minus-Zonen)
           backgroundColor: (context) => {
             const chart = context.chart;
             const { ctx, chartArea, scales } = chart;
@@ -1050,18 +1050,12 @@ function renderJournalCharts() {
             zeroRatio = Math.max(0, Math.min(1, zeroRatio));
 
             const gradientFill = ctx.createLinearGradient(0, top, 0, bottom);
-            
-            // PLUS-BEREICH: Startet bei 0.60, bladet zur 0-Linie auf minimal 0.15 aus
             gradientFill.addColorStop(0, "rgba(16, 185, 129, 0.60)");
             gradientFill.addColorStop(zeroRatio, "rgba(16, 185, 129, 0.15)");
-            
-            // MINUS-BEREICH: Startet an 0-Linie sichtbar (0.15) und wird nach unten tiefrot (0.60)
             gradientFill.addColorStop(zeroRatio, "rgba(244, 63, 94, 0.15)");
             gradientFill.addColorStop(1, "rgba(244, 63, 94, 0.60)");
-            
             return gradientFill;
           },
-
           pointBackgroundColor: (context) => {
             const val = context.raw;
             return val >= 0 ? APEX_COLORS.win : APEX_COLORS.loss;
@@ -1071,10 +1065,7 @@ function renderJournalCharts() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
+        interaction: { mode: 'index', intersect: false },
         plugins: { 
           legend: { display: false }, 
           tooltip: { 
@@ -1100,21 +1091,17 @@ function renderJournalCharts() {
     });
   }
 
-// 2. Win/Loss & Direction-Dominance Donuts (GESAMT-JOURNAL STATISTIK)
+  // 2. Win/Loss & Direction-Dominance Donuts (GESAMT-JOURNAL STATISTIK)
   const canvasWinLoss = document.getElementById("chartWinLoss");
   const canvasLongShort = document.getElementById("chartLongShort");
-
-  // Nutzt 100% aller Trades aus dem gesamten Journal
   const targetDataSet = journalTrades;
 
-  // Chart 1: Gesamt Wins vs. Losses
   if (canvasWinLoss) {
     const wins = targetDataSet.filter(t => t.pnl > 0).length;
     const losses = targetDataSet.filter(t => t.pnl <= 0).length;
     const totalWL = wins + losses;
     const winRatePct = totalWL > 0 ? ((wins / totalWL) * 100).toFixed(1) : "0.0";
 
-    // Center Badge: Exakt synchron zu deiner oberen KPI-Card
     const centerWinEl = document.getElementById("centerWinRateVal");
     if (centerWinEl) {
       centerWinEl.innerText = `${winRatePct}%`;
@@ -1127,9 +1114,7 @@ function renderJournalCharts() {
         labels: [`Wins (${wins})`, `Loss (${losses})`],
         datasets: [{
           data: totalWL === 0 ? [1] : [wins, losses],
-          backgroundColor: totalWL === 0 
-            ? ["rgba(255,255,255,0.06)"] 
-            : ["#00e676", "#ff5252"],
+          backgroundColor: totalWL === 0 ? ["rgba(255,255,255,0.06)"] : ["#00e676", "#ff5252"],
           borderWidth: 2,
           borderColor: "#0d0d12",
           hoverBorderColor: "#fff",
@@ -1140,12 +1125,7 @@ function renderJournalCharts() {
         responsive: true,
         maintainAspectRatio: false,
         cutout: "76%",
-        animation: {
-          animateRotate: true,
-          animateScale: true,
-          duration: 900,
-          easing: "easeOutQuart"
-        },
+        animation: { animateRotate: true, animateScale: true, duration: 900, easing: "easeOutQuart" },
         plugins: {
           legend: {
             display: true,
@@ -1195,9 +1175,7 @@ function renderJournalCharts() {
         labels: [`Long (${longWins})`, `Short (${shortWins})`],
         datasets: [{
           data: totalDirectionWins === 0 ? [1] : [longWins, shortWins],
-          backgroundColor: totalDirectionWins === 0 
-            ? ["rgba(255,255,255,0.06)"] 
-            : ["#00e676", "#ff5252"],
+          backgroundColor: totalDirectionWins === 0 ? ["rgba(255,255,255,0.06)"] : ["#00e676", "#ff5252"],
           borderWidth: 2,
           borderColor: "#0d0d12",
           hoverBorderColor: "#fff",
@@ -1208,12 +1186,7 @@ function renderJournalCharts() {
         responsive: true,
         maintainAspectRatio: false,
         cutout: "76%",
-        animation: {
-          animateRotate: true,
-          animateScale: true,
-          duration: 900,
-          easing: "easeOutQuart"
-        },
+        animation: { animateRotate: true, animateScale: true, duration: 900, easing: "easeOutQuart" },
         plugins: {
           legend: {
             display: true,
@@ -1231,20 +1204,18 @@ function renderJournalCharts() {
     });
   }
 
-// 3. Tages-Performance (Monatsansicht synchron zum Kalender)
+  // 3. Tages-Performance
   const canvasPairs = document.getElementById("chartPairs");
   if (canvasPairs) {
     const year = currentCalendarDate.getFullYear();
     const month = currentCalendarDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // 1. Array für alle Tage des Monats vorbereiten (1 bis 28/30/31)
     const dailyPerf = {};
     for (let i = 1; i <= daysInMonth; i++) {
       dailyPerf[i.toString().padStart(2, '0')] = 0;
     }
 
-    // 2. Trades filtern und auf die Tage des aktuellen Kalendermonats aufteilen
     cronTrades.forEach(t => {
       const d = new Date(t.timestamp);
       if (d.getFullYear() === year && d.getMonth() === month) {
@@ -1262,7 +1233,6 @@ function renderJournalCharts() {
         labels: labels,
         datasets: [{
           data: dataValues,
-          // Leere Tage (0€) bekommen einen sehr dezenten grauen Balken, Plus Grün, Minus Rot
           backgroundColor: dataValues.map(v => v > 0 ? APEX_COLORS.winGlow : (v < 0 ? APEX_COLORS.lossGlow : "rgba(255,255,255,0.02)")),
           borderColor: dataValues.map(v => v > 0 ? APEX_COLORS.win : (v < 0 ? APEX_COLORS.loss : "rgba(255,255,255,0.05)")),
           borderWidth: 1,
@@ -1284,7 +1254,6 @@ function renderJournalCharts() {
             displayColors: false,
             cornerRadius: 8,
             callbacks: {
-              // Tooltip zeigt volles Datum an (z.B. 15.07.2026) statt nur "15"
               title: (ctx) => `${ctx[0].label}.${String(month + 1).padStart(2, '0')}.${year}`,
               label: (ctx) => formatCurrency(ctx.raw)
             }
@@ -1331,35 +1300,35 @@ function executeMT5Import() {
     }
 
     let addedCount = 0;
-    
-    // Prüfen und nur Trades hinzufügen, die noch nicht existieren (Duplikatschutz)
     importedTrades.forEach(newTrade => {
       const exists = journalTrades.some(t => t.id === newTrade.id);
       if (!exists) {
+        // Automatische Session-Erkennung statt statischem New York
+        const tradeTime = newTrade.timestamp || Date.now();
+        if (!newTrade.session || newTrade.session === "New York") {
+          newTrade.session = detectSessionFromTimestamp(tradeTime);
+        }
         journalTrades.push(newTrade);
         addedCount++;
       }
     });
 
     if (addedCount > 0) {
-      // Nach Datum sortieren (neueste zuerst)
       journalTrades.sort((a, b) => b.timestamp - a.timestamp);
-      
-      saveJournalData(); // Speichert in LocalStorage und aktualisiert die App UI
+      saveJournalData();
       closeMT5ImportModal();
       alert(`✅ Erfolgreich ${addedCount} neue Trades in dein Journal importiert!`);
     } else {
       alert("ℹ️ Keine neuen Trades gefunden. Alle Trades in diesem Code sind bereits in deinem Journal vorhanden.");
       closeMT5ImportModal();
     }
-
   } catch (e) {
-    alert("❌ Fehler beim Einlesen des Codes. Achte darauf, dass du den kompletten JSON-Block von mir kopiert hast.\n\nFehler: " + e.message);
+    alert("❌ Fehler beim Einlesen des Codes. Details: " + e.message);
   }
 }
 
 /* ============================================================
-   📂 DIRECT JSON FILE IMPORT (ROBUST & MOBIL-OPTIMIERT)
+   📂 DIRECT JSON FILE IMPORT
    ============================================================ */
 function importMT5JsonFile(event) {
   const file = event.target?.files?.[0];
@@ -1369,8 +1338,6 @@ function importMT5JsonFile(event) {
   }
 
   const reader = new FileReader();
-
-  // Fehlerbehandlung für mobile Dateisysteme
   reader.onerror = function(evt) {
     alert("❌ Fehler beim Lesen der Datei auf dem Mobilgerät! Code: " + evt.target.error.code);
   };
@@ -1378,13 +1345,11 @@ function importMT5JsonFile(event) {
   reader.onload = function(e) {
     try {
       const textContent = e.target.result;
-      
       if (!textContent || textContent.trim() === "") {
         alert("⚠️ Die gewählte Datei ist leer.");
         return;
       }
 
-      // JSON parsen
       const importedData = JSON.parse(textContent);
       const rawTrades = Array.isArray(importedData) ? importedData : (importedData.trades || []);
 
@@ -1394,22 +1359,26 @@ function importMT5JsonFile(event) {
       }
 
       let newCount = 0;
-
       rawTrades.forEach(item => {
-        // Eindeutige ID-Generierung zur Vermeidung von Mobil-Konflikten
         const tradeId = item.id || ("tr_mt5_" + (item.timestamp || Date.now()));
-        
         const exists = journalTrades.some(t => t.id === tradeId);
         
         if (!exists) {
+          const tradeTime = typeof item.timestamp === "number" ? item.timestamp : Date.now();
+          
+          // Korrekte Session-Erkennung für Importe
+          const recognizedSession = (item.session && item.session !== "New York") 
+            ? item.session 
+            : detectSessionFromTimestamp(tradeTime);
+
           journalTrades.push({
             id: tradeId,
-            timestamp: typeof item.timestamp === "number" ? item.timestamp : Date.now(),
+            timestamp: tradeTime,
             pair: (item.pair || item.symbol || "XAUUSD").toUpperCase(),
             direction: (item.direction || item.type || "BUY").toUpperCase().includes("BUY") ? "BUY" : "SELL",
             lots: parseFloat(item.lots || item.volume || 0.10),
             pnl: parseFloat(item.pnl || item.profit || 0.0),
-            session: item.session || "New York",
+            session: recognizedSession,
             confluence: item.confluence || 75,
             notes: item.notes || "MT5 Import",
             images: item.images || []
@@ -1419,37 +1388,29 @@ function importMT5JsonFile(event) {
       });
 
       if (newCount > 0) {
-        // Trades chronologisch sortieren
         journalTrades.sort((a, b) => b.timestamp - a.timestamp);
-        
-        // In LocalStorage speichern und UI aktualisieren
         saveJournalData();
-        
         alert(`✅ Erfolgreich ${newCount} Trades aus '${file.name}' importiert!`);
       } else {
         alert("ℹ️ Diese Trades befinden sich bereits im Journal.");
       }
-
     } catch (err) {
       console.error("Mobil Import Fehler:", err);
-      alert("❌ Format-Fehler! Stelle sicher, dass du die 'journal_import.json' und nicht die rohe MT5 HTML/CSV gewählt hast.\n\nDetails: " + err.message);
+      alert("❌ Format-Fehler! Details: " + err.message);
     } finally {
-      // Input zurücksetzen, damit dieselbe Datei auf dem Handy erneut angetippt werden kann
       event.target.value = "";
     }
   };
 
-  // Explizit als UTF-8 lesen (wichtig für Android-Dateimanager)
   reader.readAsText(file, "UTF-8");
 }
-/* ============================================================
-   🛠️ DEV TOOLS: RANDOM TRADE GENERATOR (V5 - KALENDER-FIX & MOBILE-HIDDEN)
-   ============================================================ */
 
+/* ============================================================
+   🛠️ DEV TOOLS: RANDOM TRADE GENERATOR
+   ============================================================ */
 let currentDevBias = 'positive'; 
 
 function injectDevTools() {
-  // 1. Media Query injizieren, um das Panel auf Mobile auszublenden
   const style = document.createElement('style');
   style.innerHTML = `
     @media (max-width: 768px) {
@@ -1458,30 +1419,23 @@ function injectDevTools() {
   `;
   document.head.appendChild(style);
 
-  // 2. Dev-Container aufbauen
   const devContainer = document.createElement('div');
   devContainer.id = "alphaosDevTools";
-  
   devContainer.style.cssText = "position: fixed; bottom: 20px; left: 20px; background: rgba(13, 13, 18, 0.95); border: 1px solid #f43f5e; padding: 12px; border-radius: 8px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2); backdrop-filter: blur(4px);";
 
   devContainer.innerHTML = `
-    <!-- ZEILE 1: TREND -->
     <div style="display: flex; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
       <strong style="color: #94a3b8; font-size: 11px; font-family: sans-serif; width: 65px;">📉 TREND:</strong>
       <button id="devBtnNeg" onclick="setDevBias('negative')" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Negativ</button>
       <button id="devBtnNeu" onclick="setDevBias('neutral')" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Mittig</button>
       <button id="devBtnPos" onclick="setDevBias('positive')" style="background: #110f16; border: 1px solid #10b981; color: #10b981; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">Positiv</button>
     </div>
-    
-    <!-- ZEILE 2: ACTION -->
     <div style="display: flex; gap: 10px; align-items: center;">
       <strong style="color: #f43f5e; font-size: 11px; font-family: sans-serif; width: 65px;">⚙️ ACTION:</strong>
       <button onclick="generateRandomTrades(50)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 50</button>
       <button onclick="generateRandomTrades(100)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 100</button>
       <button onclick="generateRandomTrades(500)" style="background: #110f16; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;">+ 500</button>
-      
       <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.2); margin: 0 4px;"></div>
-      
       <button onclick="clearJournal()" style="background: rgba(244, 63, 94, 0.1); border: 1px solid #f43f5e; color: #f43f5e; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 11px; transition: 0.2s;" title="Gesamtes Journal löschen">🗑️</button>
     </div>
   `;
@@ -1490,7 +1444,6 @@ function injectDevTools() {
 
 window.setDevBias = function(bias) {
   currentDevBias = bias;
-  
   const bNeg = document.getElementById('devBtnNeg');
   const bNeu = document.getElementById('devBtnNeu');
   const bPos = document.getElementById('devBtnPos');
@@ -1513,13 +1466,9 @@ window.setDevBias = function(bias) {
 
 function generateRandomTrades(count) {
   const pairs = ["EURUSD", "GBPUSD", "XAUUSD", "BTCUSD", "NAS100", "US30", "GER40"];
-  const sessions = ["London", "New York", "Asia"];
   const directions = ["BUY", "SELL"];
 
-  // Startzeitpunkt ermitteln
   let lastTimestamp = Date.now() - (count * 8 * 60 * 60 * 1000); 
-  
-  // Wenn schon Trades existieren, nehmen wir den NEUESTEN Trade als Startpunkt
   if (journalTrades.length > 0) {
     lastTimestamp = journalTrades[0].timestamp; 
   }
@@ -1534,36 +1483,32 @@ function generateRandomTrades(count) {
       isWin = Math.random() > 0.35; 
       randomPnL = isWin ? (Math.random() * 600 + 50) : (Math.random() * -300 - 20);
     } else if (currentDevBias === 'negative') {
-      isWin = Math.random() > 0.65;
+      isWin = Math.random() > 0.65; 
       randomPnL = isWin ? (Math.random() * 300 + 20) : (Math.random() * -600 - 50); 
     } else {
       isWin = Math.random() > 0.50; 
       randomPnL = isWin ? (Math.random() * 400 + 20) : (Math.random() * -400 - 20); 
     }
 
-    const newTrade = {
+    journalTrades.push({
       id: "dev_" + lastTimestamp + "_" + Math.floor(Math.random() * 10000),
       timestamp: lastTimestamp,
       pair: pairs[Math.floor(Math.random() * pairs.length)],
       direction: directions[Math.floor(Math.random() * directions.length)],
       lots: parseFloat((Math.random() * 4.9 + 0.1).toFixed(2)),
       pnl: parseFloat(randomPnL.toFixed(2)),
-      session: sessions[Math.floor(Math.random() * sessions.length)],
+      session: detectSessionFromTimestamp(lastTimestamp),
       confluence: Math.floor(Math.random() * 40 + 60),
       notes: `Test-Trade (${currentDevBias})`,
       images: []
-    };
-
-    journalTrades.push(newTrade);
+    });
   }
 
   journalTrades.sort((a, b) => b.timestamp - a.timestamp);
   saveJournalData(); 
-  
-  console.log(`[DEV] ${count} Trades perfekt über Zeit verteilt. Trend: ${currentDevBias.toUpperCase()}`);
+  console.log(`[DEV] ${count} Trades generiert. Trend: ${currentDevBias.toUpperCase()}`);
 }
 
-// Injektion bei Laden
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("alphaosDevTools")) {
     injectDevTools();
