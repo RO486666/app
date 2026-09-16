@@ -1,13 +1,14 @@
-const CACHE_NAME = "alphaos-v20260916-075519";
+const CACHE_NAME = "alphaos-v20260916-080037";
 
-// ✅ KORRIGIERT: Nur die Basis-Dateien cachen. 
+// Basis-Dateien cachen (ohne Datenfeeds)
 const urlsToCache = [
   "./",
   "./index.html"
 ];
 
-// 1. Installieren (Mit Sicherheitsnetz)
+// 1. Installieren
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Neue Version sofort erzwingen
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(urlsToCache).catch(err => console.log("Caching Warnung:", err));
@@ -15,8 +16,23 @@ self.addEventListener('install', event => {
   );
 });
 
-// 2. Fetch (Offline Modus)
+// 2. Fetch-Handler mit Network-First Bypass für Trading-Feeds
 self.addEventListener("fetch", (event) => {
+  const reqUrl = event.request.url;
+
+  // WICHTIG: MT5-Datenfeed NIEMALS aus dem alten Cache laden!
+  if (reqUrl.includes("journal_data.js") || reqUrl.includes("journal_import.json")) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Standard-Cache für statische App-Dateien
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
@@ -24,7 +40,7 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// 3. Aufräumen (Alte Versionen löschen)
+// 3. Aufräumen (Alte Versionen sofort löschen)
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
