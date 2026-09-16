@@ -641,25 +641,10 @@
     </div>
   </div>
   
-<div style="display: flex; justify-content: center; margin: 15px 0;">
-  <button id="btnSyncMT5" type="button" style="
-    background: linear-gradient(135deg, #6d28d9, #4f46e5);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(109, 40, 217, 0.35);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  ">
-    <span id="syncSpinner">🔄</span> MT5 LIVE-DATEN AKTUALISIEREN
-  </button>
-</div>
+  <label class="auto-sync-toggle" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; background: rgba(109, 40, 217, 0.15); border: 1px solid rgba(109, 40, 217, 0.4); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #fff; user-select: none;">
+  <input type="checkbox" id="chkAutoSyncFeed" onchange="toggleAutoSyncMode(this)" style="accent-color: #10b981; width: 15px; height: 15px; cursor: pointer;">
+  <span>🔄 MT5 Live-Sync erzwingen (Überschreibt Manuell)</span>
+</label>
   
   <!-- 📥 MT5 FILE IMPORT BUTTON -->
 <div style="margin-top: 15px;">
