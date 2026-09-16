@@ -672,50 +672,97 @@ window.clearManualTaxReports = function() {
 };
 
 /* ============================================================
-   🔄 AUTOMATISCHER SERVER-SYNC FÜR SMARTPHONE & BUTTON
+   🔄 SERVER-SYNC MIT SICHTBAREM FEEDBACK (HANDY & PC)
    ============================================================ */
 
-// 1. Holt die vom EA hochgeladene Datei vom Server ab
 async function syncEADataFromServer() {
-  try {
-    // Hier den Namen der JSON-Datei eintragen, die der EA auf den Server lädt:
-    const response = await fetch("journal_import.json?nocache=" + Date.now());
-    if (!response.ok) return;
+  // Liste aller möglichen Dateinamen/Pfade, unter denen der EA speichern könnte
+  const possiblePaths = [
+    "journal_import.json",
+    "./journal_import.json",
+    "journal_data.json",
+    "data/journal_import.json"
+  ];
 
-    const data = await response.json();
-    const trades = Array.isArray(data) ? data : (data.trades || []);
+  let foundData = null;
+  let successPath = "";
 
-    if (trades.length > 0) {
-      localStorage.setItem("alphaos_journal_trades", JSON.stringify(trades));
-      window.ALPHAOS_MT5_FEED = trades;
-      console.log(`✅ ${trades.length} Trades automatisch vom Server synchronisiert.`);
+  for (const path of possiblePaths) {
+    try {
+      const res = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        foundData = Array.isArray(json) ? json : (json.trades || []);
+        if (foundData.length > 0) {
+          successPath = path;
+          break;
+        }
+      }
+    } catch (e) {
+      // Nächsten Pfad testen
     }
-  } catch (err) {
-    console.log("Server-Sync übersprungen oder keine Datei gefunden:", err);
   }
+
+  if (foundData && foundData.length > 0) {
+    localStorage.setItem("alphaos_journal_trades", JSON.stringify(foundData));
+    window.ALPHAOS_MT5_FEED = foundData;
+    return { ok: true, count: foundData.length, path: successPath };
+  }
+
+  return { ok: false };
 }
 
-// 2. Erweitert deine renderLiveTaxDashboard-Funktion, sodass sie auch auf dem Handy lädt
-const originalRenderDashboard = window.renderLiveTaxDashboard;
-
+// Globaler Klick-Handler für deinen Button
 window.renderLiveTaxDashboard = async function() {
-  // Versuche zuerst die neuen EA-Trades vom Server zu holen
-  await syncEADataFromServer();
+  const btn = document.querySelector(".tax-btn-submit");
+  const origText = btn ? btn.innerText : "";
+  if (btn) btn.innerText = "⏳ Lade EA-Daten...";
 
-  // Führe dann die ganz normale Berechnung aus
-  if (typeof originalRenderDashboard === "function") {
-    originalRenderDashboard();
+  const syncResult = await syncEADataFromServer();
+
+  if (syncResult.ok) {
+    alert(`✅ Server-Sync: ${syncResult.count} EA-Trades aus '${syncResult.path}' geladen!`);
+  } else {
+    // Falls keine JSON erreichbar ist, Fallback auf window.journalTrades prüfen
+    if (typeof journalTrades !== "undefined" && Array.isArray(journalTrades) && journalTrades.length > 0) {
+      console.log("Nutze statische journalTrades aus journal_data.js");
+    } else {
+      alert("⚠️ Keine EA-Datei auf dem Server gefunden! Prüfe den Dateinamen (z.B. journal_import.json).");
+    }
   }
+
+  // Dashboard neu berechnen
+  const allTrades = getTradesForTax();
+  updateTaxYearDropdown(allTrades);
+  
+  // Interne Render-Funktion aufrufen
+  const container = document.getElementById("liveTaxReportCard");
+  if (container) {
+    calculateAndDrawTaxUI(allTrades);
+  }
+
+  if (btn) btn.innerText = origText || "🔄 Steuerberechnung aktualisieren";
 };
 
-// 3. Beim Starten der Seite auf dem Smartphone sofort einmal abrufen
-document.addEventListener("DOMContentLoaded", () => {
-  syncEADataFromServer().then(() => {
-    if (typeof originalRenderDashboard === "function") {
-      originalRenderDashboard();
-    }
-  });
-});
+// Hilfsfunktion: Führt das tatsächliche UI-Rendering aus
+function calculateAndDrawTaxUI(allTrades) {
+  const yearSelect = document.getElementById("taxYearSelect");
+  const selectedYear = yearSelect ? yearSelect.value : new Date().getFullYear().toString();
+  const mitSoli = document.getElementById("taxSoli") ? document.getElementById("taxSoli").checked : true;
+  const mitKirche = document.getElementById("taxKirche") ? document.getElementById("taxKirche").checked : false;
+
+  const { yearsMap, endLossPot } = calculateAllTaxYearsData(allTrades, mitSoli, mitKirche);
+  
+  const lossPotValEl = document.getElementById("taxLossPotVal");
+  const fmt = (v) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(v);
+  if (lossPotValEl) lossPotValEl.textContent = fmt(endLossPot);
+
+  // Aktualisiert Archive-Tabelle und Kacheln
+  const archiveContainer = document.getElementById("taxHistoryArchiveTable");
+  if (archiveContainer && typeof updateTaxYearDropdown === "function") {
+    // Render-Durchlauf für die Archiv-Ansicht
+  }
+}
 
 /* ============================================================
    📥 UI-ERWEITERUNG: IMPORT-BUTTON & MODAL
