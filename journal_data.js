@@ -1,4 +1,4 @@
-[
+window.ALPHAOS_MT5_FEED = [
     {
         "id": "mt5_86122439",
         "timestamp": 1789413946000,
@@ -6287,3 +6287,4 @@
         "notes": "MT5 Deal #54848076",
         "images": []
     }
+];
