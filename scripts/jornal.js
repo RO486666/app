@@ -6,7 +6,7 @@ const IMPORT_FILE = "./journal_import.json";
 
 let journalTrades = [];
 let chartInstances = {};
-let currentCalendarDate = new Date(2026, 6, 1); // Startet im Juli 2026
+let currentCalendarDate = new Date(); // Startet immer im echten aktuellen Monat
 let selectedFilterDateStr = null;
 let activeTimezone = 'local'; // 'local', 'EST', 'UTC'
 
