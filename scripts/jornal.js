@@ -1,12 +1,10 @@
 // ============================================================
-// 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MODAL & AUTO-SYNC
+// 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MANUAL SYNC TRIGGER
 // ============================================================
-
-const IMPORT_FILE = "./journal_import.json";
 
 let journalTrades = [];
 let chartInstances = {};
-let currentCalendarDate = new Date(2026, 6, 1); // Startet im Juli 2026
+let currentCalendarDate = new Date(); // Startet dynamisch im aktuellen Monat
 let selectedFilterDateStr = null;
 let activeTimezone = 'local'; // 'local', 'EST', 'UTC'
 
@@ -76,79 +74,95 @@ function autoFixJournalSessions() {
 }
 
 /* ============================================================
-   💾 CORE DATA MANAGEMENT & AUTO-SYNC TOGGLE
+   🔄 MT5 MANUAL TRIGGER SYNC (BUTTON EXECUTION)
    ============================================================ */
 
-function isAutoSyncActive() {
-  return localStorage.getItem("alphaos_auto_sync_active") === "true";
-}
+async function manualSyncMT5() {
+  const btn = document.getElementById("btnSyncMT5");
+  const spinner = document.getElementById("syncSpinner");
 
-// Lädt die frischen MT5-Trades direkt per dynamischem Script-Tag
-async function fetchFreshMT5Data() {
-  return new Promise((resolve) => {
-    // Altes Script entfernen, falls vorhanden
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.6";
+  }
+  if (spinner) {
+    spinner.style.display = "inline-block";
+    spinner.style.transform = "rotate(360deg)";
+    spinner.style.transition = "transform 0.5s ease";
+  }
+
+  try {
+    // 1. Altes Script-Tag entfernen
     const oldScript = document.getElementById("dynamicMT5Script");
     if (oldScript) oldScript.remove();
 
-    const script = document.createElement("script");
-    script.id = "dynamicMT5Script";
-    script.src = `./journal_data.js?t=${Date.now()}`;
-    script.onload = () => {
-      if (window.ALPHAOS_MT5_FEED && Array.isArray(window.ALPHAOS_MT5_FEED)) {
-        journalTrades = [...window.ALPHAOS_MT5_FEED];
-        autoFixJournalSessions();
-        localStorage.setItem("alphaos_journal_trades", JSON.stringify(journalTrades));
-        console.log("⚡ [AlphaOS] Live-Feed synchronisiert:", journalTrades.length, "Trades");
-      }
-      resolve();
-    };
-    script.onerror = () => {
-      console.warn("⚠️ journal_data.js konnte nicht geladen werden.");
-      resolve();
-    };
-    document.head.appendChild(script);
-  });
-}
+    // 2. Frische Datei mit Zeitstempel anfordern
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.id = "dynamicMT5Script";
+      script.src = `./journal_data.js?t=${Date.now()}`;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
 
-async function loadJournalData() {
-  const syncEnabled = isAutoSyncActive();
-  const chkEl = document.getElementById("chkAutoSyncFeed");
-  if (chkEl) chkEl.checked = syncEnabled;
-
-  if (syncEnabled) {
-    // Holt bei jedem Neuladen automatisch die frische Datei ohne Klick
-    await fetchFreshMT5Data();
-  } else {
-    // Nur im manuellen Modus: Alten Stand aus localStorage laden
-    const stored = localStorage.getItem("alphaos_journal_trades");
-    if (stored) {
-      try {
-        journalTrades = JSON.parse(stored);
-        autoFixJournalSessions();
-      } catch (e) {
-        journalTrades = [];
-      }
+    // 3. Überprüfen und in Journal laden
+    if (window.ALPHAOS_MT5_FEED && Array.isArray(window.ALPHAOS_MT5_FEED)) {
+      journalTrades = [...window.ALPHAOS_MT5_FEED];
+      autoFixJournalSessions();
+      saveJournalData();
+      updateJournalUI();
+      initCalendar();
+      console.log(`✅ [AlphaOS] Synchronisation erfolgreich: ${journalTrades.length} Trades aktiv.`);
+    } else {
+      alert("⚠️ Keine gültigen Trades in journal_data.js gefunden.");
+    }
+  } catch (err) {
+    console.error("Sync-Fehler:", err);
+    alert("❌ Fehler beim Laden von journal_data.js. Läuft die Überwachung noch?");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }
+    if (spinner) {
+      spinner.style.transform = "rotate(0deg)";
+      spinner.style.transition = "none";
     }
   }
+}
+
+function loadJournalData() {
+  const stored = localStorage.getItem("alphaos_journal_trades");
+  if (stored) {
+    try {
+      journalTrades = JSON.parse(stored);
+      autoFixJournalSessions();
+    } catch (e) {
+      journalTrades = [];
+    }
+  } else if (window.ALPHAOS_MT5_FEED && Array.isArray(window.ALPHAOS_MT5_FEED)) {
+    journalTrades = [...window.ALPHAOS_MT5_FEED];
+    autoFixJournalSessions();
+    saveJournalData();
+  }
 
   updateJournalUI();
   initCalendar();
 }
 
-async function toggleAutoSyncMode(checkbox) {
-  const enable = checkbox.checked;
-  localStorage.setItem("alphaos_auto_sync_active", enable ? "true" : "false");
-
-  if (enable) {
-    journalTrades = [];
-    localStorage.removeItem("alphaos_journal_trades");
-    await fetchFreshMT5Data();
-  } else {
-    console.log("ℹ️ Live-Sync deaktiviert. Manueller Modus aktiv.");
+function saveJournalData() {
+  try {
+    localStorage.setItem("alphaos_journal_trades", JSON.stringify(journalTrades));
+  } catch (e) {
+    if (e.name === 'QuotaExceededError') {
+      alert("⚠️ Speicherlimit im Browser erreicht! Bitte lösche ältere Trades oder komprimiere Bilder.");
+    } else {
+      console.error("Fehler beim Speichern:", e);
+    }
   }
-
   updateJournalUI();
-  initCalendar();
+  initCalendar(); 
 }
 
 /* ============================================================
@@ -1397,7 +1411,7 @@ function renderJournalCharts() {
 }
 
 /* ============================================================
-   📥 AUTOMATIC MT5 IMPORT ENGINE
+   📥 AUTOMATIC MT5 IMPORT ENGINE (CODE PASTE FALLBACK)
    ============================================================ */
 function openMT5ImportModal() {
   const overlay = document.getElementById("mt5ImportModalOverlay");
