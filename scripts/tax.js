@@ -672,6 +672,52 @@ window.clearManualTaxReports = function() {
 };
 
 /* ============================================================
+   🔄 AUTOMATISCHER SERVER-SYNC FÜR SMARTPHONE & BUTTON
+   ============================================================ */
+
+// 1. Holt die vom EA hochgeladene Datei vom Server ab
+async function syncEADataFromServer() {
+  try {
+    // Hier den Namen der JSON-Datei eintragen, die der EA auf den Server lädt:
+    const response = await fetch("journal_import.json?nocache=" + Date.now());
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const trades = Array.isArray(data) ? data : (data.trades || []);
+
+    if (trades.length > 0) {
+      localStorage.setItem("alphaos_journal_trades", JSON.stringify(trades));
+      window.ALPHAOS_MT5_FEED = trades;
+      console.log(`✅ ${trades.length} Trades automatisch vom Server synchronisiert.`);
+    }
+  } catch (err) {
+    console.log("Server-Sync übersprungen oder keine Datei gefunden:", err);
+  }
+}
+
+// 2. Erweitert deine renderLiveTaxDashboard-Funktion, sodass sie auch auf dem Handy lädt
+const originalRenderDashboard = window.renderLiveTaxDashboard;
+
+window.renderLiveTaxDashboard = async function() {
+  // Versuche zuerst die neuen EA-Trades vom Server zu holen
+  await syncEADataFromServer();
+
+  // Führe dann die ganz normale Berechnung aus
+  if (typeof originalRenderDashboard === "function") {
+    originalRenderDashboard();
+  }
+};
+
+// 3. Beim Starten der Seite auf dem Smartphone sofort einmal abrufen
+document.addEventListener("DOMContentLoaded", () => {
+  syncEADataFromServer().then(() => {
+    if (typeof originalRenderDashboard === "function") {
+      originalRenderDashboard();
+    }
+  });
+});
+
+/* ============================================================
    📥 UI-ERWEITERUNG: IMPORT-BUTTON & MODAL
    ============================================================ */
 
