@@ -1,4 +1,4 @@
-const CACHE_NAME = "alphaos-v20260916-080851";
+const CACHE_NAME = "alphaos-v20260916-081008";
 
 // Basis-Dateien cachen (ohne Datenfeeds)
 const urlsToCache = [

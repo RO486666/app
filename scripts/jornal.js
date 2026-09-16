@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initCalendar();
   updateYearHeatmap();
   initJournalPairsAutocomplete();
+
+  // Sicherheits-Listener für den Button
+  const syncBtn = document.getElementById("btnSyncMT5");
+  if (syncBtn) {
+    syncBtn.addEventListener("click", window.manualSyncMT5);
+  }
 });
 
 /* ============================================================
@@ -74,10 +80,9 @@ function autoFixJournalSessions() {
 }
 
 /* ============================================================
-   🔄 MT5 MANUAL TRIGGER SYNC (BUTTON EXECUTION)
+   🔄 MT5 MANUAL TRIGGER SYNC (GLOBAL WINDOW FUNCTION)
    ============================================================ */
-
-async function manualSyncMT5() {
+window.manualSyncMT5 = async function() {
   const btn = document.getElementById("btnSyncMT5");
   const spinner = document.getElementById("syncSpinner");
 
@@ -92,11 +97,11 @@ async function manualSyncMT5() {
   }
 
   try {
-    // 1. Altes Script-Tag entfernen
+    // 1. Altes Skript-Element entfernen
     const oldScript = document.getElementById("dynamicMT5Script");
     if (oldScript) oldScript.remove();
 
-    // 2. Frische Datei mit Zeitstempel anfordern
+    // 2. Frische journal_data.js per Script-Tag anfordern
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.id = "dynamicMT5Script";
@@ -106,20 +111,24 @@ async function manualSyncMT5() {
       document.head.appendChild(script);
     });
 
-    // 3. Überprüfen und in Journal laden
+    // 3. Daten aus Feed in das Journal einspeisen
     if (window.ALPHAOS_MT5_FEED && Array.isArray(window.ALPHAOS_MT5_FEED)) {
       journalTrades = [...window.ALPHAOS_MT5_FEED];
       autoFixJournalSessions();
       saveJournalData();
-      updateJournalUI();
+
+      currentCalendarDate = new Date();
       initCalendar();
-      console.log(`✅ [AlphaOS] Synchronisation erfolgreich: ${journalTrades.length} Trades aktiv.`);
+      updateJournalUI();
+      updateYearHeatmap();
+
+      alert(`✅ Synchronisiert! ${journalTrades.length} Trades aktiv.`);
     } else {
-      alert("⚠️ Keine gültigen Trades in journal_data.js gefunden.");
+      alert("⚠️ journal_data.js geladen, aber window.ALPHAOS_MT5_FEED ist leer oder ungültig.");
     }
   } catch (err) {
     console.error("Sync-Fehler:", err);
-    alert("❌ Fehler beim Laden von journal_data.js. Läuft die Überwachung noch?");
+    alert("❌ Fehler beim Nachladen von journal_data.js. Prüfe, ob die Datei im 'app'-Ordner liegt.");
   } finally {
     if (btn) {
       btn.disabled = false;
@@ -130,7 +139,7 @@ async function manualSyncMT5() {
       spinner.style.transition = "none";
     }
   }
-}
+};
 
 function loadJournalData() {
   const stored = localStorage.getItem("alphaos_journal_trades");
@@ -775,7 +784,7 @@ function updateYearHeatmap() {
   const isYearProfit = yearNet > 0;
   const isYearLoss = yearNet < 0;
   const yearSign = isYearProfit ? "+" : "";
-  const yearBadgeClass = isYearProfit ? "is-profit" : (isYearLoss ? "is-loss" : "is-neutral");
+  const yearBadgeClass = isYearProfit ? "is-profit" : (isYearLoss ? "is-neutral");
 
   if (badgeEl) {
     badgeEl.className = `year-badge ${yearBadgeClass}`;
@@ -862,7 +871,7 @@ window.selectMonthFromHeatmap = function(monthIndex) {
 window.assignConfluenceToTrade = function ({ symbol, score }) {
   if (!symbol) return;
   if (document.getElementById("jFormPair")) document.getElementById("jFormPair").value = symbol.toUpperCase();
-  if (document.getElementById("jFormConfluence")) document.getElementById("jFormConfluence").value = score;
+  if (document.getElementById("jFormConfluence")) document.getElementById("jFormConfluence")) document.getElementById("jFormConfluence").value = score;
 };
 
 function initJournalPairsAutocomplete() {
