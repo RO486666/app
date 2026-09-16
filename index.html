@@ -8,15 +8,14 @@
   <link rel="stylesheet" href="CSS/sidebar.css" />
   <link rel="stylesheet" href="CSS/dashboard.css" />
   <link rel="stylesheet" href="CSS/star.css" />
-  <link rel="stylesheet" href="CSS/crypto.css">
-  <link rel="stylesheet" href="CSS/jornal.css">
-  <link rel="stylesheet" href="CSS/jornaltrade.css">
+  <link rel="stylesheet" href="CSS/crypto.css" />
+  <link rel="stylesheet" href="CSS/jornal.css" />
+  <link rel="stylesheet" href="CSS/jornaltrade.css" />
   <link rel="stylesheet" href="CSS/session.css" />
   <link rel="stylesheet" href="CSS/posmax.css" />
   <link rel="stylesheet" href="CSS/Rechner.css" />
   <link rel="stylesheet" href="CSS/tax.css" />
   <link rel="stylesheet" href="CSS/rules.css" />
-  <link rel="stylesheet" href="CSS/jornal.css" />
   <link rel="stylesheet" href="CSS/quiz.css" />
   <link rel="stylesheet" href="CSS/checklist.css" />
 
@@ -326,8 +325,6 @@
         animation: none;
       }
     }
-
- 
   </style>
 
   <!-- 📱 Mobile Stylesheet -->
@@ -343,9 +340,7 @@
   <button id="btnDash" class="side-icon" data-menu="dashboard">🏠</button>
   <button id="btnTools" class="side-icon" data-menu="tools">🧮</button>
   <button id="btnRules" class="side-icon" data-menu="rules">📜</button>
-  <!-- ⚙️ SETTINGS -->
   <button id="btnSettings" class="side-icon side-settings" data-menu="settings">⚙️</button>
-
 </div>
 
 <!-- =========================== -->
@@ -366,10 +361,6 @@
 
   <!-- 🎨 Session-Hintergrund -->
   <div id="sessionBackgroundOverlay"></div>
-  
-
-
-
 
   <!-- 🕒 Session-Zeit -->
   <div class="ticker" id="sessionText">Session-Zeit: 00:00</div>
@@ -424,7 +415,6 @@
   <!-- ======================= -->
   <main id="mainContent">
 
-
 <section id="panel-journal" class="panel">
   
 <div class="journal-stats-grid">
@@ -475,7 +465,6 @@
   </div>
 
   <div style="display: flex; align-items: baseline; gap: 8px; margin: 6px 0;">
-    <!-- Ratio (Große Zahl wie 3.60) -->
     <div id="jAvgRatioVal" class="kpi-value" style="margin: 0;">0.00</div>
   </div>
 
@@ -493,8 +482,6 @@
 </div>
 
 </div>
-
-
 
   <!-- CHARTS SECTION -->
   <div class="journal-charts-wrapper">
@@ -547,8 +534,6 @@
       </div>
     </div>
   </div>
-  
-  
 
 <!-- CALENDAR SECTION -->
   <div class="journal-calendar-section">
@@ -567,7 +552,6 @@
       <div class="calendar-header">
         <button type="button" onclick="changeMonth(-1)">◀</button>
         
-        <!-- Klickbarer Header mit überlagertem, unsichtbarem Datepicker -->
         <div style="position: relative; display: flex; align-items: center; justify-content: center;">
           <h4 id="calendarMonthYear" style="cursor: pointer; margin: 0;" onclick="document.getElementById('calDatePicker').showPicker()" title="Exaktes Datum wählen">Juli 2026</h4>
           <input 
@@ -586,7 +570,6 @@
       <div id="calendarGrid" class="calendar-grid"></div>
     </div>
 
-   
     <!-- 📅 DYNAMIC DAY DRILLDOWN PANEL -->
     <div id="journalDayDetails" style="display:none; border-top:1px solid var(--line); margin-top: 14px;">
       
@@ -623,9 +606,6 @@
       </div>
     </div>
 
-
-
-
     <!-- TIMEZONE CONTROLS -->
     <div class="calendar-controls" style="margin-top: 14px;">
       <h4 class="box-heading">🌐 Zeitachsen-Shift</h4>
@@ -643,125 +623,128 @@
   </div>
   
   <label class="auto-sync-toggle" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; background: rgba(109, 40, 217, 0.15); border: 1px solid rgba(109, 40, 217, 0.4); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #fff; user-select: none;">
-  <input type="checkbox" id="chkAutoSyncFeed" onchange="toggleAutoSyncMode(this)" style="accent-color: #10b981; width: 15px; height: 15px; cursor: pointer;">
-  <span>🔄 MT5 Live-Sync erzwingen (Überschreibt Manuell)</span>
-</label>
+    <input type="checkbox" id="chkAutoSyncFeed" onchange="toggleAutoSyncMode(this)" style="accent-color: #10b981; width: 15px; height: 15px; cursor: pointer;">
+    <span>🔄 MT5 Live-Sync erzwingen (Überschreibt Manuell)</span>
+  </label>
   
   <!-- 📥 MT5 FILE IMPORT BUTTON -->
-<div style="margin-top: 15px;">
-  <button type="button" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(109, 40, 217, 0.4), rgba(16, 185, 129, 0.3)); border: 1px solid var(--accent); color: #fff; font-weight: bold; padding: 12px; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('mt5FileInput').click()">
-    📥 journal_import.json laden
-  </button>
- <input 
-  type="file" 
-  id="mt5FileInput" 
-  accept="*/*" 
-  onchange="importMT5JsonFile(event)" 
-  style="display: block; width: 100%; padding: 12px; margin: 10px 0; background: #1a1a24; color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;"
-/>
-</div>
+  <div style="margin-top: 15px;">
+    <button type="button" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(109, 40, 217, 0.4), rgba(16, 185, 129, 0.3)); border: 1px solid var(--accent); color: #fff; font-weight: bold; padding: 12px; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('mt5FileInput').click()">
+      📥 journal_import.json laden
+    </button>
+    <input 
+      type="file" 
+      id="mt5FileInput" 
+      accept="*/*" 
+      onchange="importMT5JsonFile(event)" 
+      style="display: block; width: 100%; padding: 12px; margin: 10px 0; background: #1a1a24; color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;"
+    />
+  </div>
 
-<!-- 🔲 TRADE ENTRY MODAL (POPUP + BLUR BACKDROP) -->
-<div id="tradeModalOverlay" class="modal-overlay" onclick="closeTradeModalOnBackdrop(event)">
-  <div class="modal-content">
-    
-    <!-- Modal Header -->
-    <div class="modal-header">
-      <h4 class="box-heading" style="margin:0;">✍️ Trade erfassen (<span id="modalDateLabel">Datum</span>)</h4>
-      <button type="button" class="btn-modal-close" onclick="closeTradeModal()">✕</button>
-    </div>
+  <!-- 🔲 TRADE ENTRY MODAL (POPUP + BLUR BACKDROP) -->
+  <div id="tradeModalOverlay" class="modal-overlay" onclick="closeTradeModalOnBackdrop(event)">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="box-heading" style="margin:0;">✍️ Trade erfassen (<span id="modalDateLabel">Datum</span>)</h4>
+        <button type="button" class="btn-modal-close" onclick="closeTradeModal()">✕</button>
+      </div>
 
-    <!-- Formular -->
-    <form id="journalForm" onsubmit="addJournalTrade(event)">
-      <div class="form-grid">
-        
-        <label>💱 Paar / Asset
-          <input type="text" id="jFormPair" list="journalPairsDatalist" placeholder="z.B. XAUUSD" autocomplete="off" required />
-          <datalist id="journalPairsDatalist"></datalist>
-        </label>
-        
-        <label>↕️ Richtung
-          <select id="jFormDirection">
-            <option value="BUY">BUY (Long)</option>
-            <option value="SELL">SELL (Short)</option>
-          </select>
-        </label>
-        
-        <label>📦 Lots / Größe
-          <input type="number" id="jFormLots" step="0.01" min="0.01" placeholder="0.10" required />
-        </label>
-        
-        <label>💸 Gewinn / Verlust (€)
-          <input type="number" id="jFormPnL" step="0.01" placeholder="150.50 oder -50.00" required />
-        </label>
-        
-        <label>⏱️ Trading-Session
-          <select id="jFormSession">
-            <option value="Frankfurt/London">Frankfurt / London</option>
-            <option value="New York">New York</option>
-            <option value="Asien/Tokyo">Asien / Tokyo</option>
-            <option value="Crypto 24/7">Crypto 24/7</option>
-          </select>
-        </label>
-        
-        <label>🧠 Confluence Score (%)
-          <input type="number" id="jFormConfluence" min="0" max="100" placeholder="75" />
-        </label>
-        
-        <label class="full-width-label">📝 Setup-Notizen & Fehleranalyse
-          <textarea id="jFormNotes" rows="3" placeholder="Struktur-Shift auf 15M bestätigt..."></textarea>
-        </label>
-
-        <!-- Screenshots Upload -->
-        <div class="full-width-label">
-          <label style="display: block; margin-bottom: 6px;">📸 Chart-Screenshots (Setup / Ausführung)</label>
-          <input type="file" id="jFormImages" accept="image/*" multiple onchange="handleImageUpload(event)" style="display:none;" />
-          <button type="button" class="btn" onclick="document.getElementById('jFormImages').click()">
-            📤 Bilder auswählen
-          </button>
+      <!-- Formular -->
+      <form id="journalForm" onsubmit="addJournalTrade(event)">
+        <div class="form-grid">
           
-          <!-- Vorschau-Grid direkt unter dem Upload-Button -->
-          <div id="formImagePreview" class="image-preview-grid" style="margin-top: 10px;"></div>
+          <label>💱 Paar / Asset
+            <input type="text" id="jFormPair" list="journalPairsDatalist" placeholder="z.B. XAUUSD" autocomplete="off" required />
+            <datalist id="journalPairsDatalist"></datalist>
+          </label>
+          
+          <label>↕️ Richtung
+            <select id="jFormDirection">
+              <option value="BUY">BUY (Long)</option>
+              <option value="SELL">SELL (Short)</option>
+            </select>
+          </label>
+          
+          <label>📦 Lots / Größe
+            <input type="number" id="jFormLots" step="0.01" min="0.01" placeholder="0.10" required />
+          </label>
+          
+          <label>💸 Gewinn / Verlust (€)
+            <input type="number" id="jFormPnL" step="0.01" placeholder="150.50 oder -50.00" required />
+          </label>
+          
+          <label>⏱️ Trading-Session
+            <select id="jFormSession">
+              <option value="Frankfurt/London">Frankfurt / London</option>
+              <option value="New York">New York</option>
+              <option value="Asien/Tokyo">Asien / Tokyo</option>
+              <option value="Crypto 24/7">Crypto 24/7</option>
+            </select>
+          </label>
+          
+          <label>🧠 Confluence Score (%)
+            <input type="number" id="jFormConfluence" min="0" max="100" placeholder="75" />
+          </label>
+          
+          <label class="full-width-label">📝 Setup-Notizen & Fehleranalyse
+            <textarea id="jFormNotes" rows="3" placeholder="Struktur-Shift auf 15M bestätigt..."></textarea>
+          </label>
+
+          <!-- Screenshots Upload -->
+          <div class="full-width-label">
+            <label style="display: block; margin-bottom: 6px;">📸 Chart-Screenshots (Setup / Ausführung)</label>
+            <input type="file" id="jFormImages" accept="image/*" multiple onchange="handleImageUpload(event)" style="display:none;" />
+            <button type="button" class="btn" onclick="document.getElementById('jFormImages').click()">
+              📤 Bilder auswählen
+            </button>
+            
+            <div id="formImagePreview" class="image-preview-grid" style="margin-top: 10px;"></div>
+          </div>
+
         </div>
 
-      </div>
-
-      <!-- Action Buttons (Immer am Ende des Formulars) -->
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button type="submit" id="btnSubmitForm" class="btn-journal-submit" style="flex:1;">💾 Trade speichern</button>
-        <button type="button" class="btn" onclick="closeTradeModal()">Abbrechen</button>
-      </div>
-    </form>
-	
-	
-
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" id="btnSubmitForm" class="btn-journal-submit" style="flex:1;">💾 Trade speichern</button>
+          <button type="button" class="btn" onclick="closeTradeModal()">Abbrechen</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+
+  <!-- 📥 MT5 CODE MODAL (FÜR CODE IMPORT AUS JORNAL.JS) -->
+  <div id="mt5ImportModalOverlay" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h4 class="box-heading" style="margin: 0;">📥 MT5 JSON-Code Import</h4>
+        <button type="button" class="btn-modal-close" onclick="closeMT5ImportModal()">✕</button>
+      </div>
+      <div style="padding: 10px 0;">
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">Füge den JSON-Array-Code aus deinem MT5-Skript hier ein:</p>
+        <textarea id="mt5ImportCodeInput" rows="8" style="width: 100%; background: #111; color: #00ffcc; border: 1px solid #333; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 11px;" placeholder='[{"id":"123","pair":"XAUUSD","pnl":50.0,...}]'></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="button" class="btn" style="flex: 1; background: #10b981; color: #000; font-weight: bold;" onclick="executeMT5Import()">⚡ Importieren</button>
+        <button type="button" class="btn" onclick="closeMT5ImportModal()">Schließen</button>
+      </div>
+    </div>
+  </div>
+
 </section>
-
-
 
 <section id="panel-settings-dst" class="panel hidden">
   <div class="dst-popup">
-    
-    <!-- ❌ CLOSE -->
     <button class="dst-close" aria-label="Close">✕</button>
-
     <h3>🌍 Zeitmodus</h3>
-
     <div class="dst-switch">
       <button data-dst="auto">AUTO</button>
       <button data-dst="winter">MEZ</button>
       <button data-dst="summer">MESZ</button>
     </div>
-
     <p id="dstInfo"></p>
   </div>
 </section>
-
-
-
-
 
 <section id="panel-settings-notify" class="panel hidden">
   <div class="stats-box" style="max-width: 400px; margin: 50px auto; position: relative; background: #111; padding: 20px; border-radius: 12px; border: 1px solid #333;">
@@ -809,28 +792,14 @@
   </div>
 </section>
 
-
-
-
-
-
-
-
-
-
-    <!-- ============================================================
-         🧠 CONFLUENCE CHECKLIST PANEL
-       ============================================================ -->
-    <section id="panel-confluence" class="panel hidden">
- <!-- ======================================
-     🔥 BODY CONTENT (NEW PerfectTrade Style)
-     ====================================== -->
+<!-- ============================================================
+     🧠 CONFLUENCE CHECKLIST PANEL
+     ============================================================ -->
+<section id="panel-confluence" class="panel hidden">
 <div class="conf-body-content">
 
-  <!-- ============================================================
-       WEEKLY
-       ============================================================ -->
- <div class="tf-card">
+  <!-- WEEKLY -->
+  <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">WEEKLY</div>
       <div class="tf-score" id="sum_weekly">0%</div>
@@ -869,11 +838,8 @@
     </label>
   </div>
 
-
-  <!-- ============================================================
-       DAILY
-       ============================================================ -->
- <div class="tf-card">
+  <!-- DAILY -->
+  <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">DAILY</div>
       <div class="tf-score" id="sum_daily">0%</div>
@@ -907,18 +873,13 @@
       <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
     </label>
 	
-	<label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+10%</span>
+    <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+10%</span>
       <input type="checkbox" class="conf-check" data-group="daily" data-points="10">
     </label>
-
   </div>
 
-
-
-  <!-- ==========================================================
-       4H
-       ============================================================ -->
- <div class="tf-card">
+  <!-- 4H -->
+  <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">4H</div>
       <div class="tf-score" id="sum_h4">0%</div>
@@ -962,21 +923,19 @@
     </label>
   </div>
   
-<div id="h4ValidationCard" class="tf-card" style="transition: 0.3s;">
-  <div class="tf-header">
-    <div class="tf-title">4H VALIDATION</div>
-    <div id="h4ValidationStatus" class="tf-score">MISSING</div>
+  <div id="h4ValidationCard" class="tf-card" style="transition: 0.3s;">
+    <div class="tf-header">
+      <div class="tf-title">4H VALIDATION</div>
+      <div id="h4ValidationStatus" class="tf-score">MISSING</div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+      <span id="h4ValidationText">Kein HL/LH bestätigt (Pflicht!)</span>
+      <strong id="h4MultiplierDisplay" style="font-size: 18px;">×0.50</strong>
+    </div>
   </div>
-  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
-    <span id="h4ValidationText">Kein HL/LH bestätigt (Pflicht!)</span>
-    <strong id="h4MultiplierDisplay" style="font-size: 18px;">×0.50</strong>
-  </div>
-</div>
 
-  <!-- ============================================================
-       2H / 1H / 30m
-       ============================================================ -->
- <div class="tf-card">
+  <!-- 2H / 1H / 30m -->
+  <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">2H / 1H / 30M</div>
       <div class="tf-score" id="sum_intraday">0%</div>
@@ -1004,14 +963,9 @@
     <label><span>Break & Retest / Head & Shoulders Pattern</span> <span class="pts">+6%</span>
       <input type="checkbox" class="conf-check" data-group="intraday" data-points="6">
     </label>
-	
   </div>
- 
 
-
-  <!-- ============================================================
-       ENTRY SIGNALS
-       ============================================================ -->
+  <!-- ENTRY SIGNALS -->
   <div class="tf-card">
     <div class="tf-header">
       <div class="tf-title">ENTRY SIGNALE</div>
@@ -1052,80 +1006,60 @@
     <label><span>TP am Strukturpunkt / POC</span> <span class="pts">+1%</span>
       <input type="checkbox" class="conf-check" data-group="entry" data-points="1">
     </label>
-
   </div>
   
+  <!-- MAJOR NEWS RISK -->
+  <div class="tf-card tf-news">
+    <div class="tf-header">
+      <div class="tf-title" style="color:#ff5555;">MAJOR NEWS</div>
+      <div class="tf-score" style="color:#ff5555;">RISK</div>
+    </div>
+
+    <div class="tf-sub" style="color:rgba(255,80,80,0.8);">
+      Externe Ereignisse mit massivem Einfluss auf Struktur & Volatilität
+    </div>
+
+    <label class="news-check">
+      <span>
+        🔴 Major News – Paar direkt betroffen<br>
+        <small style="opacity:0.75;">(z. B. FOMC, CPI, NFP, Zinsentscheid)</small>
+      </span>
+      <span class="pts" style="color:#ff5555;">×0.60</span>
+      <input type="checkbox" id="majorNews" class="conf-check">
+    </label>
+  </div>
   
-  <!-- ============================================================
-     🔴 MAJOR NEWS RISK
-     ============================================================ -->
-<div class="tf-card tf-news">
-  <div class="tf-header">
-    <div class="tf-title" style="color:#ff5555;">MAJOR NEWS</div>
-    <div class="tf-score" style="color:#ff5555;">RISK</div>
+  <div class="conf-summary">
+    <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
+
+    <div class="conf-summary-grid">
+      <div class="conf-box"><span>Weekly</span><strong id="summary_val_weekly">0%</strong></div>
+      <div class="conf-box"><span>Daily</span><strong id="summary_val_daily">0%</strong></div>
+      <div class="conf-box"><span>4H</span><strong id="summary_val_h4">0%</strong></div>
+      <div class="conf-box"><span>2H / 1H / 30m</span><strong id="summary_val_intraday">0%</strong></div>
+      <div class="conf-box"><span>Entry</span><strong id="summary_val_entry">0%</strong></div>
+    </div>
+
+    <div id="confTotalBox" class="conf-total-box">
+      <div>Total Overall Score</div>
+      <div id="confTotalValue" class="conf-total-value">0%</div>
+      <div id="confTotalText" class="conf-total-text">Low Confluence</div>
+    </div>
   </div>
 
-  <div class="tf-sub" style="color:rgba(255,80,80,0.8);">
-    Externe Ereignisse mit massivem Einfluss auf Struktur & Volatilität
+  <div id="floatingScore" class="floating-score">
+    <div class="score-content">
+      <span id="floatingScoreValue">0%</span>
+      <span id="floatingScoreLabel">No Trade</span>
+    </div>
   </div>
 
-  <label class="news-check">
-    <span>
-      🔴 Major News – Paar direkt betroffen<br>
-      <small style="opacity:0.75;">
-        (z. B. FOMC, CPI, NFP, Zinsentscheid)
-      </small>
-    </span>
-
-    <span class="pts" style="color:#ff5555;">×0.60</span>
-
-  <input
-  type="checkbox"
-  id="majorNews"
-  class="conf-check"
->
-
-  </label>
-</div>
-
-  
-<div class="conf-summary">
-  <h3 style="margin:0; font-size:16px;">Confluence Summary</h3>
-
-  <div class="conf-summary-grid">
-    <div class="conf-box"><span>Weekly</span><strong id="sum_weekly">0%</strong></div>
-    <div class="conf-box"><span>Daily</span><strong id="sum_daily">0%</strong></div>
-    <div class="conf-box"><span>4H</span><strong id="sum_h4">0%</strong></div>
-    <div class="conf-box"><span>2H / 1H / 30m</span><strong id="sum_intraday">0%</strong></div>
-    <div class="conf-box"><span>Entry</span><strong id="sum_entry">0%</strong></div>
+  <div class="conf-save-wrap">
+    <button class="conf-save-btn" onclick="saveConfluence()">Save Trade</button>
+    <button class="conf-load-btn" onclick="loadConfluenceFromDashboard()">Load Trade</button>
   </div>
-
-  <div id="confTotalBox" class="conf-total-box">
-    <div>Total Overall Score</div>
-    <div id="confTotalValue" class="conf-total-value">0%</div>
-    <div id="confTotalText" class="conf-total-text">Low Confluence</div>
-  </div>
-</div>
-
-<div id="floatingScore" class="floating-score">
-  <div class="score-content">
-    <span id="floatingScoreValue">0%</span>
-    <span id="floatingScoreLabel">No Trade</span>
-  </div>
-</div>
-
-<div class="conf-save-wrap">
-  <button class="conf-save-btn" onclick="saveConfluence()">
-    Save Trade
-  </button>
-
-  <button class="conf-load-btn" onclick="loadConfluenceFromDashboard()">
-    Load Trade
-  </button>
 </div>
 </section>
-
-  
 
 <!-- ============================================================
      📄 STEUER / ANLAGE KAP LIVE DASHBOARD (§ 20 EStG + ARCHIV)
@@ -1170,7 +1104,7 @@
     <div id="liveTaxReportCard"></div>
 
     <!-- Trigger Button -->
-    <button type="button" class="tax-btn-submit" onclick="renderLiveTaxDashboard()">
+    <button type="button" class="tax-btn-submit" onclick="triggerTaxSyncAndRender()">
       🔄 Steuerberechnung aktualisieren
     </button>
 
@@ -1191,194 +1125,142 @@
   </div>
 </section>
 
+<!-- ============================================================
+     📐 POSITION SIZE RECHNER
+     ============================================================ -->
+<section id="calc-pos" class="panel hidden">
 
-    <!-- ============================================================
-         📐 POSITION SIZE RECHNER
-       ============================================================ -->
-    <section id="calc-pos" class="panel hidden">
+  <h3>📐 Position Size Rechner</h3>
 
-      <h3>📐 Position Size Rechner</h3>
+  <!-- Normaler Positionsgrößenrechner -->
+  <div id="pos-mode-main" class="stats-box sub-box">
+    <label for="accountSize">📦 Kontogröße (€):</label>
+    <input type="number" id="accountSize" placeholder="z. B. 1000" />
 
-     <!-- Normaler Positionsgrößenrechner -->
-        <div id="pos-mode-main" class="stats-box sub-box">
+    <label for="riskPercent">⚠️ Risiko in %:</label>
+    <input type="number" id="riskPercent" placeholder="z. B. 1" step="0.1" />
 
-          <label for="accountSize">📦 Kontogröße (€):</label>
-          <input
-            type="number"
-            id="accountSize"
-            placeholder="z. B. 1000"
-          />
+    <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
+    <input type="number" id="stopLossPips" placeholder="z. B. 20" />
 
-          <label for="riskPercent">⚠️ Risiko in %:</label>
-          <input
-            type="number"
-            id="riskPercent"
-            placeholder="z. B. 1"
-            step="0.1"
-          />
+    <label for="symbolSelector">💱 Trading-Paar:</label>
+    <select id="symbolSelector"></select>
 
-          <label for="stopLossPips">🛑 Stop-Loss (in Pips):</label>
-          <input
-            type="number"
-            id="stopLossPips"
-            placeholder="z. B. 20"
-          />
+    <label for="leverage">⚙️ Hebel:</label>
+    <input type="number" id="leverage" value="500" min="1" />
 
-          <label for="symbolSelector">💱 Trading-Paar:</label>
-          <select id="symbolSelector"></select>
+    <button onclick="calculatePositionSize()">📐 Berechnen</button>
+    <div id="positionSizeResult" class="result-box"></div>
 
-          <label for="leverage">⚙️ Hebel:</label>
-          <input type="number" id="leverage" value="500" min="1" />
-
-          <button onclick="calculatePositionSize()">📐 Berechnen</button>
-          <div id="positionSizeResult" class="result-box"></div>
-
-          <button
-            onclick="switchPosMode('max')"
-            style="margin-top: 15px; width: 100%;"
-          >
-            🔁 Zu Max-Positions-Rechner
-          </button>
-          <button
-            onclick="switchPosMode('pips')"
-            style="margin-top: 10px; width: 100%;"
-          >
-            🔁 Zu Pip-Rechner
-          </button>
-        </div>
-
-      <!-- MAX_POS_MODE -->
-      <div id="pos-mode-max" class="stats-box sub-box hidden">
-
-             <label for="maxposAccountSize">📦 Kontogröße (€):</label>
-          <input
-            type="number"
-            id="maxposAccountSize"
-            placeholder="z. B. 1000"
-          />
-
-          <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
-          <input
-            type="number"
-            id="maxposRiskPercent"
-            placeholder="z. B. 1"
-            step="0.1"
-          />
-
-          <label for="maxposSymbol">💱 Trading-Paar:</label>
-          <select id="maxposSymbol"></select>
-
-          <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
-          <input
-            type="number"
-            id="maxposStopLoss"
-            placeholder="z. B. 20"
-          />
-
-          <label for="maxposLeverage">⚙️ Hebel:</label>
-          <input type="number" id="maxposLeverage" value="500" min="1" />
-
-          <label for="lotMain">📏 Lotgröße (Pflicht):</label>
-          <input
-            type="number"
-            id="lotMain"
-            step="0.01"
-            placeholder="z. B. 0.10"
-          />
-
-          <label for="lotAlt">📏 Alternative Lotgröße (optional):</label>
-          <input
-            type="number"
-            id="lotAlt"
-            step="0.01"
-            placeholder="z. B. 0.25"
-          />
-
-          <button onclick="calculateMaxPositions()">📏 Berechnen</button>
-          <div id="maxposResults" class="result-box"></div>
-
-        <button onclick="switchPosMode('main')" style="margin-top: 15px;">
-          🔁 Zurück
-        </button>
-      </div>
-
-     <!-- PIP MODE -->
-<div id="pos-mode-pips" class="stats-box sub-box hidden">
-
-  <label>💱 Symbol:</label>
-  <select id="pipSymbolSelector"></select>
-
-  <label>📦 Lots:</label>
-  <input type="number" id="lots" value="0.01" step="0.01" />
-
-  <label>🛑 Stop-Loss (Pips):</label>
-  <input type="number" id="slPips" placeholder="z. B. 20" />
-
-  <label>🎯 TP1 (Pips):</label>
-  <input type="number" id="tp1Pips" placeholder="z. B. 50" />
-
-  <label>🎯 TP2 (Pips):</label>
-  <input type="number" id="tp2Pips" placeholder="z. B. 80" />
-
-  <label>🎯 TP3 (Pips):</label>
-  <input type="number" id="tp3Pips" placeholder="z. B. 100" />
-
-  <button onclick="calculatePipsByLots()">📏 Berechnen</button>
-
-  <div id="pipResult" class="result-box"></div>
-
-  <!-- ========================== -->
-  <!-- 🔁 SWAP-RECHNER BUTTON -->
-  <!-- ========================== -->
-  <button id="openSwapBtn" style="margin-top: 15px; width: 100%;">
-    🔁 Optimaler Swap-Rechner
-  </button>
-
-  <!-- ========================== -->
-  <!-- 🔁 SWAP-RECHNER BOX (HIDDEN) -->
-  <!-- ========================== -->
-  <div id="swapBox" class="stats-box sub-box hidden" style="margin-top: 15px;">
-
-    <h3 style="text-align:center;">🔁 Optimaler Swap-Rechner</h3>
-
-    <div class="grid">
-      <label>
-        Swap Long (pro Tag in Pips/Punkten)
-        <input id="swapLongPts" type="text" placeholder="z. B. -3.96">
-      </label>
-
-      <label>
-        Swap Short (pro Tag in Pips/Punkten)
-        <input id="swapShortPts" type="text" placeholder="z. B. -2.36">
-      </label>
-
-      <label class="row">
-        <input id="swapTripleDay" type="checkbox" checked>
-        Mittwoch 3× (FX-Standard)
-      </label>
-
-      <label class="row">
-        <input id="swapShowWeek" type="checkbox" checked>
-        Woche (Mo–Fr) anzeigen
-      </label>
-
-      <button id="swapCalcBtn" type="button">Swap berechnen</button>
-    </div>
-
-    <div id="swapResult" class="result-box" style="display:none;"></div>
-
-    <button id="closeSwapBtn" style="margin-top: 10px; width: 100%;">
-      ⬅️ Swap-Rechner schließen
+    <button onclick="switchPosMode('max')" style="margin-top: 15px; width: 100%;">
+      🔁 Zu Max-Positions-Rechner
+    </button>
+    <button onclick="switchPosMode('pips')" style="margin-top: 10px; width: 100%;">
+      🔁 Zu Pip-Rechner
     </button>
   </div>
 
-  <button onclick="switchPosMode('main')" style="margin-top: 15px; width: 100%;">
-    🔁 Zurück
-  </button>
-</div>
+  <!-- MAX_POS_MODE -->
+  <div id="pos-mode-max" class="stats-box sub-box hidden">
+    <label for="maxposAccountSize">📦 Kontogröße (€):</label>
+    <input type="number" id="maxposAccountSize" placeholder="z. B. 1000" />
+
+    <label for="maxposRiskPercent">⚠️ Risiko in % pro Trade:</label>
+    <input type="number" id="maxposRiskPercent" placeholder="z. B. 1" step="0.1" />
+
+    <label for="maxposSymbol">💱 Trading-Paar:</label>
+    <select id="maxposSymbol"></select>
+
+    <label for="maxposStopLoss">🛑 Stop-Loss (in Pips):</label>
+    <input type="number" id="maxposStopLoss" placeholder="z. B. 20" />
+
+    <label for="maxposLeverage">⚙️ Hebel:</label>
+    <input type="number" id="maxposLeverage" value="500" min="1" />
+
+    <label for="lotMain">📏 Lotgröße (Pflicht):</label>
+    <input type="number" id="lotMain" step="0.01" placeholder="z. B. 0.10" />
+
+    <label for="lotAlt">📏 Alternative Lotgröße (optional):</label>
+    <input type="number" id="lotAlt" step="0.01" placeholder="z. B. 0.25" />
+
+    <button onclick="calculateMaxPositions()">📏 Berechnen</button>
+    <div id="maxposResults" class="result-box"></div>
+
+    <button onclick="switchPosMode('main')" style="margin-top: 15px;">
+      🔁 Zurück
+    </button>
+  </div>
+
+  <!-- PIP MODE -->
+  <div id="pos-mode-pips" class="stats-box sub-box hidden">
+    <label>💱 Symbol:</label>
+    <select id="pipSymbolSelector"></select>
+
+    <label>📦 Lots:</label>
+    <input type="number" id="lots" value="0.01" step="0.01" />
+
+    <label>🛑 Stop-Loss (Pips):</label>
+    <input type="number" id="slPips" placeholder="z. B. 20" />
+
+    <label>🎯 TP1 (Pips):</label>
+    <input type="number" id="tp1Pips" placeholder="z. B. 50" />
+
+    <label>🎯 TP2 (Pips):</label>
+    <input type="number" id="tp2Pips" placeholder="z. B. 80" />
+
+    <label>🎯 TP3 (Pips):</label>
+    <input type="number" id="tp3Pips" placeholder="z. B. 100" />
+
+    <button onclick="calculatePipsByLots()">📏 Berechnen</button>
+    <div id="pipResult" class="result-box"></div>
+
+    <button id="openSwapBtn" style="margin-top: 15px; width: 100%;">
+      🔁 Optimaler Swap-Rechner
+    </button>
+
+    <div id="swapBox" class="stats-box sub-box hidden" style="margin-top: 15px;">
+      <h3 style="text-align:center;">🔁 Optimaler Swap-Rechner</h3>
+
+      <div class="grid">
+        <label>
+          Swap Long (pro Tag in Pips/Punkten)
+          <input id="swapLongPts" type="text" placeholder="z. B. -3.96">
+        </label>
+
+        <label>
+          Swap Short (pro Tag in Pips/Punkten)
+          <input id="swapShortPts" type="text" placeholder="z. B. -2.36">
+        </label>
+
+        <label class="row">
+          <input id="swapTripleDay" type="checkbox" checked>
+          Mittwoch 3× (FX-Standard)
+        </label>
+
+        <label class="row">
+          <input id="swapShowWeek" type="checkbox" checked>
+          Woche (Mo–Fr) anzeigen
+        </label>
+
+        <button id="swapCalcBtn" type="button">Swap berechnen</button>
+      </div>
+
+      <div id="swapResult" class="result-box" style="display:none;"></div>
+
+      <button id="closeSwapBtn" style="margin-top: 10px; width: 100%;">
+        ⬅️ Swap-Rechner schließen
+      </button>
+    </div>
+
+    <button onclick="switchPosMode('main')" style="margin-top: 15px; width: 100%;">
+      🔁 Zurück
+    </button>
+  </div>
 </section>
 
-
+<!-- ============================================================
+     📜 RULES PANEL
+     ============================================================ -->
 <section id="panel-rules" class="panel hidden">
 
   <div class="rules-toggle" onclick="toggleRules()">
@@ -1572,22 +1454,14 @@
   </div>
 </section>
 
-
-
-
-
-
-
   </main>
-  
-  
+</div>
 
 <!-- ============================================================
-     JS IMPORTS (alle deine originalen Scripts)
+     JS IMPORTS (Geordnete Reihenfolge für stabile Datenübergabe)
    ============================================================ -->
 <script src="scripts/pairProfileData.js"></script>
 <script src="scripts/pairsData.js"></script>
-
 <script src="scripts/sidebar.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1599,8 +1473,18 @@
 <script src="scripts/screen.js"></script>
 <script src="scripts/background-session.js"></script>
 <script src="scripts/exportinport.js"></script>
-<script src="./journal_data.js"></script>
 
+<!-- TRADE-DATEN ZUERST INITIALISIEREN -->
+<script src="./journal_data.js"></script>
+<script src="imageStorage.js"></script>
+<script src="scripts/dashboard.js"></script>
+<script src="scripts/ticker.js"></script>
+
+<!-- JOURNAL-ENGINE (Stellt window.journalTrades bereit) -->
+<script src="scripts/jornal.js"></script>
+
+<!-- TAX ENGINE (Kann jetzt sofort auf journalTrades zugreifen) -->
+<script src="scripts/tax.js"></script>
 
 <script src="scripts/pairProfile.js"></script>
 <script src="scripts/posmax.js"></script>
@@ -1610,11 +1494,6 @@
 <script src="scripts/checklist.js"></script>
 
 <script src="scripts/dawn.js"></script>
-<script src="imageStorage.js"></script>
-<script src="scripts/dashboard.js"></script>
-<script src="scripts/ticker.js"></script>
-<script src="scripts/jornal.js"></script>
-<script src="scripts/tax.js"></script>
 <script src="scripts/pwa.js"></script>
 <script src="scripts/rules.js"></script>
 <script type="module" src="pocketbase-init.js"></script>
@@ -1622,10 +1501,8 @@
 <script src="scripts/quiz.js"></script>
 <script src="scripts/quiz-db.js"></script>
 
-
 <!-- ============================================================
-     ⚡ NEW SIDEBAR v0.2 — HYBRID LOGIK
-     (Icons öffnen Drawer, Unterpunkte öffnen Panels)
+     ⚡ SERVICE WORKER LOGIK
    ============================================================ -->
 <script>
   if ('serviceWorker' in navigator) {
@@ -1634,11 +1511,9 @@
         .then(reg => {
           console.log('AlphaOS Service Worker angemeldet.');
 
-          // Wartet auf neue Versionen des Service Workers
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
-              // Wenn der neue Worker installiert ist und bereits ein alter existiert -> Update ist da!
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 showUpdatePopup(newWorker);
               }
@@ -1647,7 +1522,6 @@
         })
         .catch(err => console.log('Service Worker Anmeldung fehlgeschlagen:', err));
 
-      // Sobald der neue Service Worker übernimmt, Seite hart neu laden, um Cache zu flushen
       let refreshing;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (refreshing) return;
@@ -1657,7 +1531,6 @@
     });
   }
 
-  // Baut das In-App Popup auf, sobald ein Update erkannt wurde
   function showUpdatePopup(worker) {
     const popup = document.createElement('div');
     popup.id = 'alphaUpdatePopup';
@@ -1701,7 +1574,6 @@
     
     document.body.appendChild(popup);
 
-    // Klick-Logik: Schließt Popup und triggert den Skip-Waiting Befehl in der sw.js
     const btn = document.getElementById('btnUpdateApp');
     btn.addEventListener('click', () => {
       btn.innerText = "Lade...";
@@ -1709,8 +1581,6 @@
     });
   }
 </script>
-
-
 
 </body>
 </html>
