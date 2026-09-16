@@ -2,6 +2,8 @@
 // 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MODAL & AUTO-SYNC
 // ============================================================
 
+const IMPORT_FILE = "./journal_import.json"; // <--- HIERHIN!
+
 let journalTrades = [];
 let chartInstances = {};
 let currentCalendarDate = new Date(2026, 6, 1); // Startet im Juli 2026
