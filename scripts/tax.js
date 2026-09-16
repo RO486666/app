@@ -86,8 +86,7 @@ function calculateAllTaxYearsData(allTrades, mitSoli, mitKirche) {
     let grossLosses = 0;
     let tradeCount = 0;
 
-    // 1. Automatische Trades vom EA / Journal / MT5-Feed für dieses Jahr auswerten
-    // (Synthetische 'manual_'-Einträge filtern wir hier raus, damit nichts doppelt zählt)
+    // 1. Trades auswerten (manuelle 'manual_'-Einträge ausfiltern)
     const liveTradesOfYear = allTrades.filter(t => 
       t.timestamp && 
       new Date(t.timestamp).getFullYear() === year &&
@@ -101,7 +100,7 @@ function calculateAllTaxYearsData(allTrades, mitSoli, mitKirche) {
       else if (p < 0) grossLosses += Math.abs(p);
     });
 
-    // 2. Falls für dieses Jahr zusätzlich manuelle/externe HTML-Reports vorliegen: DAZU ADDIEREN
+    // 2. Falls HTML-Reports vorliegen: addieren
     if (manualReports[year]) {
       const rep = manualReports[year];
       grossProfits += Number(rep.grossProfits || 0);
@@ -186,7 +185,7 @@ function renderLiveTaxDashboard() {
     updateTaxYearDropdown(allTrades);
   }
 
-  const selectedYear = yearSelect ? yearSelect.value : new Date().getFullYear().toString();
+  const selectedYear = yearSelect && yearSelect.value ? yearSelect.value : new Date().getFullYear().toString();
   const mitSoli = document.getElementById("taxSoli") ? document.getElementById("taxSoli").checked : true;
   const mitKirche = document.getElementById("taxKirche") ? document.getElementById("taxKirche").checked : false;
 
@@ -484,20 +483,77 @@ window.selectYearFromArchive = function(yearStr) {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+/* ============================================================
+   🔄 SERVER-SYNC
+   ============================================================ */
+async function syncEADataFromServer() {
+  const possiblePaths = [
+    "journal_import.json",
+    "./journal_import.json",
+    "journal_data.json",
+    "data/journal_import.json"
+  ];
+
+  let foundData = null;
+  let successPath = "";
+
+  for (const path of possiblePaths) {
+    try {
+      const res = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        foundData = Array.isArray(json) ? json : (json.trades || []);
+        if (foundData.length > 0) {
+          successPath = path;
+          break;
+        }
+      }
+    } catch (e) {
+      // Ignorieren und nächsten Pfad prüfen
+    }
+  }
+
+  if (foundData && foundData.length > 0) {
+    localStorage.setItem("alphaos_journal_trades", JSON.stringify(foundData));
+    window.ALPHAOS_MT5_FEED = foundData;
+    return { ok: true, count: foundData.length, path: successPath };
+  }
+
+  return { ok: false };
+}
+
+// Globaler Klick-Handler für deinen Button
+window.triggerTaxSyncAndRender = async function() {
+  const btn = document.querySelector(".tax-btn-submit");
+  const origText = btn ? btn.innerText : "";
+  if (btn) btn.innerText = "⏳ Lade EA-Daten...";
+
+  const syncResult = await syncEADataFromServer();
+
+  if (syncResult.ok) {
+    console.log(`✅ Server-Sync: ${syncResult.count} EA-Trades aus '${syncResult.path}' geladen!`);
+  } else {
+    console.log("ℹ️ Keine Remote-JSON gefunden. Nutze lokale Daten aus Journal/Storage.");
+  }
+
   const allTrades = getTradesForTax();
   updateTaxYearDropdown(allTrades);
   renderLiveTaxDashboard();
-  if (typeof injectTaxDevPanel === "function") {
-    injectTaxDevPanel();
-  }
-});
 
+  if (btn) btn.innerText = origText || "🔄 Steuerberechnung aktualisieren";
+};
+
+// Aliase für Abwärtskompatibilität
+window.renderLiveTaxDashboardTrigger = window.triggerTaxSyncAndRender;
+window.recalculateTaxDashboard = function() {
+  const allTrades = getTradesForTax();
+  updateTaxYearDropdown(allTrades);
+  renderLiveTaxDashboard();
+};
 
 /* ============================================================
-   📥 MULTI-ACCOUNT REPORT PARSER (STRIKTE TRENNUNG & AGGREGATION)
+   📥 MULTI-ACCOUNT REPORT PARSER
    ============================================================ */
-
 window.processUploadedTaxReport = function() {
   const fileInput = document.getElementById("importFileField");
   if (!fileInput.files || fileInput.files.length === 0) {
@@ -509,8 +565,7 @@ window.processUploadedTaxReport = function() {
   const reader = new FileReader();
 
   reader.onload = function(e) {
-    const htmlContent = e.target.result;
-    parseAndStoreAccountReport(htmlContent, file.name);
+    parseAndStoreAccountReport(e.target.result, file.name);
   };
 
   reader.readAsText(file);
@@ -520,7 +575,6 @@ function parseAndStoreAccountReport(html, fileName) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
 
-  // 1. Eindeutige Account-Kennung auslesen (damit Konten nicht kollidieren)
   let accountId = fileName;
   const metaStrip = doc.querySelector(".meta-strip");
   if (metaStrip) {
@@ -560,15 +614,12 @@ function parseAndStoreAccountReport(html, fileName) {
     let grossLoss = 0;
     let netPnL = 0;
 
-    // Echte Deals des Jahres zählen
     const rows = section.querySelectorAll("tbody tr");
     const tradeCount = rows.length;
 
-    // Werte aus der KAP Box lesen
     const summaryDiv = section.querySelector("div[style*='background']");
     if (summaryDiv) {
       const text = summaryDiv.textContent;
-      
       const winMatch = text.match(/Brutto-Gewinne:\s*\+?([-\d\.,]+)/i);
       if (winMatch) grossProfit = parseGermanFloat(winMatch[1]);
 
@@ -579,16 +630,11 @@ function parseAndStoreAccountReport(html, fileName) {
       if (netMatch) netPnL = parseGermanFloat(netMatch[1]);
     }
 
-    // Fallback auf Footer falls KAP-Box fehlt
     if (netPnL === 0) {
       const tfootCell = section.querySelector("tfoot tr td:last-child");
-      if (tfootCell) {
-        netPnL = parseGermanFloat(tfootCell.textContent);
-      }
+      if (tfootCell) netPnL = parseGermanFloat(tfootCell.textContent);
     }
 
-    // Der Clou: Brutto-Verluste so anpassen, dass (Brutto-Gewinn - Brutto-Verlust) 
-    // exakt auf den Cent dem Nettoergebnis inklusive Kosten/Swap entspricht!
     if (netPnL !== 0) {
       grossLoss = Math.round((grossProfit - netPnL) * 100) / 100;
     }
@@ -600,24 +646,17 @@ function parseAndStoreAccountReport(html, fileName) {
     };
   });
 
-  // Account eindeutig speichern (überschreibt bestehende Daten dieses Kontos, anstatt sie zu verdoppeln)
   storedAccounts[accountId] = accountData;
   localStorage.setItem("alphaos_multi_accounts", JSON.stringify(storedAccounts));
 
-  // Alle Konten aggregieren
   rebuildManualReportsFromMultiAccounts();
 
   const allTrades = getTradesForTax();
-  if (typeof updateTaxYearDropdown === "function") {
-    updateTaxYearDropdown(allTrades);
-  }
+  updateTaxYearDropdown(allTrades);
+  renderLiveTaxDashboard();
 
   alert(`✅ Account [${accountId}] erfolgreich synchronisiert!`);
   closeTaxImportModal();
-  
-  if (typeof renderLiveTaxDashboard === "function") {
-    renderLiveTaxDashboard();
-  }
 }
 
 function rebuildManualReportsFromMultiAccounts() {
@@ -661,113 +700,15 @@ window.clearManualTaxReports = function() {
   closeTaxImportModal();
 
   const allTrades = getTradesForTax();
-  if (typeof updateTaxYearDropdown === "function") {
-    updateTaxYearDropdown(allTrades);
-  }
-  if (typeof renderLiveTaxDashboard === "function") {
-    renderLiveTaxDashboard();
-  }
-
-  alert("☢️ Hard Reset erfolgreich! Alle Reports wurden restlos gelöscht.");
-};
-
-/* ============================================================
-   🔄 SERVER-SYNC MIT SICHTBAREM FEEDBACK (HANDY & PC)
-   ============================================================ */
-
-async function syncEADataFromServer() {
-  // Liste aller möglichen Dateinamen/Pfade, unter denen der EA speichern könnte
-  const possiblePaths = [
-    "journal_import.json",
-    "./journal_import.json",
-    "journal_data.json",
-    "data/journal_import.json"
-  ];
-
-  let foundData = null;
-  let successPath = "";
-
-  for (const path of possiblePaths) {
-    try {
-      const res = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
-      if (res.ok) {
-        const json = await res.json();
-        foundData = Array.isArray(json) ? json : (json.trades || []);
-        if (foundData.length > 0) {
-          successPath = path;
-          break;
-        }
-      }
-    } catch (e) {
-      // Nächsten Pfad testen
-    }
-  }
-
-  if (foundData && foundData.length > 0) {
-    localStorage.setItem("alphaos_journal_trades", JSON.stringify(foundData));
-    window.ALPHAOS_MT5_FEED = foundData;
-    return { ok: true, count: foundData.length, path: successPath };
-  }
-
-  return { ok: false };
-}
-
-// Globaler Klick-Handler für deinen Button
-window.renderLiveTaxDashboard = async function() {
-  const btn = document.querySelector(".tax-btn-submit");
-  const origText = btn ? btn.innerText : "";
-  if (btn) btn.innerText = "⏳ Lade EA-Daten...";
-
-  const syncResult = await syncEADataFromServer();
-
-  if (syncResult.ok) {
-    alert(`✅ Server-Sync: ${syncResult.count} EA-Trades aus '${syncResult.path}' geladen!`);
-  } else {
-    // Falls keine JSON erreichbar ist, Fallback auf window.journalTrades prüfen
-    if (typeof journalTrades !== "undefined" && Array.isArray(journalTrades) && journalTrades.length > 0) {
-      console.log("Nutze statische journalTrades aus journal_data.js");
-    } else {
-      alert("⚠️ Keine EA-Datei auf dem Server gefunden! Prüfe den Dateinamen (z.B. journal_import.json).");
-    }
-  }
-
-  // Dashboard neu berechnen
-  const allTrades = getTradesForTax();
   updateTaxYearDropdown(allTrades);
-  
-  // Interne Render-Funktion aufrufen
-  const container = document.getElementById("liveTaxReportCard");
-  if (container) {
-    calculateAndDrawTaxUI(allTrades);
-  }
+  renderLiveTaxDashboard();
 
-  if (btn) btn.innerText = origText || "🔄 Steuerberechnung aktualisieren";
+  alert("☢️ Hard Reset erfolgreich! Alle Reports wurden gelöscht.");
 };
 
-// Hilfsfunktion: Führt das tatsächliche UI-Rendering aus
-function calculateAndDrawTaxUI(allTrades) {
-  const yearSelect = document.getElementById("taxYearSelect");
-  const selectedYear = yearSelect ? yearSelect.value : new Date().getFullYear().toString();
-  const mitSoli = document.getElementById("taxSoli") ? document.getElementById("taxSoli").checked : true;
-  const mitKirche = document.getElementById("taxKirche") ? document.getElementById("taxKirche").checked : false;
-
-  const { yearsMap, endLossPot } = calculateAllTaxYearsData(allTrades, mitSoli, mitKirche);
-  
-  const lossPotValEl = document.getElementById("taxLossPotVal");
-  const fmt = (v) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(v);
-  if (lossPotValEl) lossPotValEl.textContent = fmt(endLossPot);
-
-  // Aktualisiert Archive-Tabelle und Kacheln
-  const archiveContainer = document.getElementById("taxHistoryArchiveTable");
-  if (archiveContainer && typeof updateTaxYearDropdown === "function") {
-    // Render-Durchlauf für die Archiv-Ansicht
-  }
-}
-
 /* ============================================================
-   📥 UI-ERWEITERUNG: IMPORT-BUTTON & MODAL
+   📥 MODAL UI
    ============================================================ */
-
 function injectTaxImportUI() {
   const headerControls = document.querySelector(".tax-header-controls");
   if (!headerControls || document.getElementById("taxImportBtn")) return;
@@ -796,7 +737,7 @@ function openTaxImportModal() {
         <button type="button" class="tax-modal-close" onclick="closeTaxImportModal()">&times;</button>
       </div>
       <div style="font-size: 11px; color: #8c95a1; margin-bottom: 14px; line-height: 1.5;">
-        Wähle die exportierte HTML-Report-Datei deines Accounts aus. Das System erkennt das Konto automatisch und summiert es fehlerfrei über alle Jahre.
+        Wähle die exportierte HTML-Report-Datei deines Accounts aus. Das System summiert es fehlerfrei über alle Jahre.
       </div>
       <div class="tax-modal-input-group">
         <label>HTML-Report Datei wählen:</label>
@@ -817,26 +758,22 @@ window.closeTaxImportModal = function() {
   if (modal) modal.remove();
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(injectTaxImportUI, 200);
-});
-
-// Globaler Klick-Handler für den Aktualisieren-Button
-window.recalculateTaxDashboard = function() {
+/* ============================================================
+   🚀 INITIALISIERUNG
+   ============================================================ */
+function initTaxModule() {
   const allTrades = getTradesForTax();
-  if (typeof updateTaxYearDropdown === "function") {
-    updateTaxYearDropdown(allTrades);
-  }
-  if (typeof renderLiveTaxDashboard === "function") {
-    renderLiveTaxDashboard();
-  }
-};
+  updateTaxYearDropdown(allTrades);
+  renderLiveTaxDashboard();
+  setTimeout(injectTaxImportUI, 200);
 
-// Falls der Button im HTML eine ID hat (z. B. "taxRecalcBtn"):
-document.addEventListener("DOMContentLoaded", () => {
-  const recalcBtn = document.getElementById("taxRecalcBtn") || 
-                    document.querySelector("button[onclick*='STEUERBERECHNUNG']");
-  if (recalcBtn) {
-    recalcBtn.onclick = window.recalculateTaxDashboard;
+  if (typeof injectTaxDevPanel === "function") {
+    injectTaxDevPanel();
   }
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initTaxModule);
+} else {
+  initTaxModule();
+}
