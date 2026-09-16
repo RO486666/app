@@ -89,28 +89,18 @@ async function loadJournalData() {
   const chkEl = document.getElementById("chkAutoSyncFeed");
   if (chkEl) chkEl.checked = syncEnabled;
 
-  // Modus 1: Auto-Sync ist aktiv -> Holt nur die Server-Datei
-  if (syncEnabled) {
-    try {
-      const response = await fetch(`${IMPORT_FILE}?t=${Date.now()}`);
-      if (response.ok) {
-        const importedTrades = await response.json();
-        if (Array.isArray(importedTrades)) {
-          journalTrades = importedTrades;
-          autoFixJournalSessions();
-          saveJournalData();
-          updateJournalUI();
-          initCalendar();
-          console.log("⚡ [AlphaOS] Auto-Sync aktiv: Daten komplett aus journal_import.json geladen.");
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn("Auto-Sync Fehler:", e);
-    }
+  // Wenn MT5 Live-Sync aktiv ist und die Datei Daten geliefert hat
+  if (syncEnabled && window.ALPHAOS_MT5_FEED && Array.isArray(window.ALPHAOS_MT5_FEED)) {
+    journalTrades = window.ALPHAOS_MT5_FEED;
+    autoFixJournalSessions();
+    saveJournalData();
+    updateJournalUI();
+    initCalendar();
+    console.log("⚡ [AlphaOS] Live-Feed direkt aus lokaler Datei geladen!");
+    return;
   }
 
-  // Modus 2: Manueller Modus (Fallback auf gespeicherten Stand)
+  // Fallback: Manueller Speicher
   const stored = localStorage.getItem("alphaos_journal_trades");
   if (stored) {
     try {
