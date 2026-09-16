@@ -727,3 +727,23 @@ window.closeTaxImportModal = function() {
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(injectTaxImportUI, 200);
 });
+
+// Globaler Klick-Handler für den Aktualisieren-Button
+window.recalculateTaxDashboard = function() {
+  const allTrades = getTradesForTax();
+  if (typeof updateTaxYearDropdown === "function") {
+    updateTaxYearDropdown(allTrades);
+  }
+  if (typeof renderLiveTaxDashboard === "function") {
+    renderLiveTaxDashboard();
+  }
+};
+
+// Falls der Button im HTML eine ID hat (z. B. "taxRecalcBtn"):
+document.addEventListener("DOMContentLoaded", () => {
+  const recalcBtn = document.getElementById("taxRecalcBtn") || 
+                    document.querySelector("button[onclick*='STEUERBERECHNUNG']");
+  if (recalcBtn) {
+    recalcBtn.onclick = window.recalculateTaxDashboard;
+  }
+});
