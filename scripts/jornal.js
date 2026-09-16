@@ -2,7 +2,7 @@
 // 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MODAL & AUTO-SYNC
 // ============================================================
 
-const IMPORT_FILE = "./journal_import.json"; // <--- HIERHIN!
+const IMPORT_FILE = "./journal_import.json";
 
 let journalTrades = [];
 let chartInstances = {};
@@ -12,8 +12,6 @@ let activeTimezone = 'local'; // 'local', 'EST', 'UTC'
 
 // Temporärer Speicher für Base64-Strings während des Formular-Ausfüllens
 let currentUploadedImages = [];
-
-const IMPORT_FILE = "./journal_import.json";
 
 const APEX_COLORS = {
   primary: "#6d28d9",
