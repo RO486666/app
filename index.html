@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="CSS/session.css" />
   <link rel="stylesheet" href="CSS/posmax.css" />
   <link rel="stylesheet" href="CSS/Rechner.css" />
+  <link rel="stylesheet" href="CSS/tax.css" />
   <link rel="stylesheet" href="CSS/rules.css" />
   <link rel="stylesheet" href="CSS/jornal.css" />
   <link rel="stylesheet" href="CSS/quiz.css" />
@@ -1126,85 +1127,70 @@
 
   
 
-    <!-- ============================================================
-         📄 STEUER/NETTO PLANER
-       ============================================================ -->
-    <section id="calc-taxpro" class="panel hidden">
+<!-- ============================================================
+     📄 STEUER / ANLAGE KAP LIVE DASHBOARD (§ 20 EStG + ARCHIV)
+     ============================================================ -->
+<section id="calc-taxpro" class="panel hidden">
+  <div class="stats-box tax-wrapper">
+    
+    <!-- 1. LIVE VERLUSTTOPF BANNER GANZ OBEN -->
+    <div id="taxLossPotBanner" class="tax-banner-pot">
+      <div>
+        <div class="tax-banner-title">📉 Verrechenbarer Verlusttopf (§ 20 Abs. 6 EStG)</div>
+        <div class="tax-banner-sub">Wird automatisch mit künftigen Gewinnen steuermindernd verrechnet</div>
+      </div>
+      <div id="taxLossPotVal" class="tax-banner-val">0,00 €</div>
+    </div>
 
-        <div class="stats-box">
-          <label for="jahresEinkommen">💼 Jahresgehalt (9/5 Job, brutto €):</label>
-          <input type="number" id="jahresEinkommen" placeholder="z. B. 42000" />
+    <!-- Header mit Live-Schalter & Jahresauswahl -->
+    <div class="tax-header">
+      <h3 class="tax-title">
+        🏛️ Live Steuer- & Kapitalertragsnachweis
+      </h3>
+      <div class="tax-header-controls">
+        <span class="tax-label-muted">Aktives Jahr:</span>
+        <select id="taxYearSelect" class="tax-select" onchange="renderLiveTaxDashboard()">
+        </select>
+      </div>
+    </div>
 
-          <div id="steuerMode">
-            <label for="gewinnBetrag">📈 Trading-Gewinn (aktueller Gewinn €):</label>
-            <input
-              type="number"
-              id="gewinnBetrag"
-              placeholder="z. B. 500"
-            />
+    <!-- Steuereinstellungen Checkboxen -->
+    <div class="tax-checkbox-grid">
+      <label class="tax-checkbox-label">
+        <input type="checkbox" id="taxSoli" checked onchange="renderLiveTaxDashboard()">
+        <span>💣 Solidaritätszuschlag (5.5 %)</span>
+      </label>
+      <label class="tax-checkbox-label">
+        <input type="checkbox" id="taxKirche" onchange="renderLiveTaxDashboard()">
+        <span>✝️ Kirchensteuer (9 %)</span>
+      </label>
+    </div>
 
-            <label
-              ><input type="checkbox" id="kirchensteuer" />
-              ✝️ Kirchensteuer (9 %)</label
-            ><br />
-            <label
-              ><input type="checkbox" id="soliZuschlag" />
-              💣 Solidaritätszuschlag (5.5 %)</label
-            ><br />
-            <label
-              ><input type="checkbox" id="reserveZehn" />
-              💥 Komplette Vorauszahlung für nächstes Jahr</label
-            ><br />
+    <!-- Dynamischer Steuerbescheid & Intelligente Vorauszahlung -->
+    <div id="liveTaxReportCard"></div>
 
-            <button onclick="berechneSteuern()" class="tax-button">
-              📊 Steuer berechnen
-            </button>
-            <div id="steuerAusgabe"></div>
-          </div>
+    <!-- Trigger Button -->
+    <button type="button" class="tax-btn-submit" onclick="renderLiveTaxDashboard()">
+      🔄 Steuerberechnung aktualisieren
+    </button>
 
-          <!-- 🏦 Netto-Planer -->
-          <div id="nettoMode" style="display: none;">
-            <label for="nettoBrutto">📈 Brutto-Gewinn (€):</label>
-            <input
-              type="number"
-              id="nettoBrutto"
-              placeholder="z. B. 1000"
-            />
+    <!-- 2. STEUERBESCHEID-BIBLIOTHEK / JAHRES-ARCHIV UNTEN -->
+    <div class="tax-archive-wrapper">
+      <div class="tax-archive-header">
+        <h4 class="tax-title" style="font-size: 14px;">
+          📚 Steuerbescheid-Bibliothek (Historie)
+        </h4>
+        <span class="tax-label-muted">Klicke auf ein Jahr zum Anzeigen</span>
+      </div>
+      <div id="taxHistoryArchiveTable"></div>
+    </div>
 
-            <label for="nettoSteuer">💸 Steuerlast (€):</label>
-            <input
-              type="number"
-              id="nettoSteuer"
-              placeholder="z. B. 350"
-            />
+    <!-- 3. DEV PANEL CONTAINER -->
+    <div id="taxDevContainerMount"></div>
 
-            <label for="nettoReserve">💥 Reserve (€):</label>
-            <input
-              type="number"
-              id="nettoReserve"
-              placeholder="z. B. 250"
-            />
+  </div>
+</section>
 
-            <label for="nettoEntnommen">🏦 Tatsächlich entnommen (€):</label>
-            <input
-              type="number"
-              id="nettoEntnommen"
-              placeholder="z. B. 800"
-            />
-
-            <button onclick="berechneNettoPlan()" class="tax-button">
-              💸 Netto berechnen
-            </button>
-            <div id="nettoAusgabe"></div>
-          </div>
-
-          <div id="tradeTable" style="margin-top: 20px;"></div>
-
-          <button onclick="switchPlanMode()" id="planToggleBtn">
-            🔁 Zu Netto-Planer wechseln
-          </button>
-        </div>
-      </section>
 
     <!-- ============================================================
          📐 POSITION SIZE RECHNER
