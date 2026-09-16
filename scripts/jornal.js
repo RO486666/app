@@ -1,5 +1,5 @@
 // ============================================================
-// 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MODAL EDITION
+// 📊 ALPHAOS APEX TRADING JOURNAL ENGINE – MODAL & AUTO-SYNC
 // ============================================================
 
 let journalTrades = [];
@@ -10,6 +10,8 @@ let activeTimezone = 'local'; // 'local', 'EST', 'UTC'
 
 // Temporärer Speicher für Base64-Strings während des Formular-Ausfüllens
 let currentUploadedImages = [];
+
+const IMPORT_FILE = "./journal_import.json";
 
 const APEX_COLORS = {
   primary: "#6d28d9",
@@ -74,20 +76,86 @@ function autoFixJournalSessions() {
 }
 
 /* ============================================================
-   💾 CORE DATA MANAGEMENT
+   💾 CORE DATA MANAGEMENT & AUTO-SYNC TOGGLE
    ============================================================ */
-function loadJournalData() {
-  const stored = localStorage.getItem("alphaos_journal_trades");
-  if (stored) {
-    try { 
-      journalTrades = JSON.parse(stored); 
-      autoFixJournalSessions();
-    } catch (e) { 
-      console.error("Fehler beim Laden des Journals:", e);
-      journalTrades = []; 
+
+// Prüft beim Start, ob der Live-Sync-Haken aktiv war
+function isAutoSyncActive() {
+  return localStorage.getItem("alphaos_auto_sync_active") === "true";
+}
+
+async function loadJournalData() {
+  const syncEnabled = isAutoSyncActive();
+  const chkEl = document.getElementById("chkAutoSyncFeed");
+  if (chkEl) chkEl.checked = syncEnabled;
+
+  // Modus 1: Auto-Sync ist aktiv -> Holt nur die Server-Datei
+  if (syncEnabled) {
+    try {
+      const response = await fetch(`${IMPORT_FILE}?t=${Date.now()}`);
+      if (response.ok) {
+        const importedTrades = await response.json();
+        if (Array.isArray(importedTrades)) {
+          journalTrades = importedTrades;
+          autoFixJournalSessions();
+          saveJournalData();
+          updateJournalUI();
+          initCalendar();
+          console.log("⚡ [AlphaOS] Auto-Sync aktiv: Daten komplett aus journal_import.json geladen.");
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Auto-Sync Fehler:", e);
     }
   }
+
+  // Modus 2: Manueller Modus (Fallback auf gespeicherten Stand)
+  const stored = localStorage.getItem("alphaos_journal_trades");
+  if (stored) {
+    try {
+      journalTrades = JSON.parse(stored);
+      autoFixJournalSessions();
+    } catch (e) {
+      journalTrades = [];
+    }
+  }
+
   updateJournalUI();
+  initCalendar();
+}
+
+// Schalter-Funktion: Wird beim Klick auf die Checkbox gefeuert
+async function toggleAutoSyncMode(checkbox) {
+  const enable = checkbox.checked;
+  localStorage.setItem("alphaos_auto_sync_active", enable ? "true" : "false");
+
+  if (enable) {
+    // 1. Manuellen Kram komplett leeren
+    journalTrades = [];
+    localStorage.removeItem("alphaos_journal_trades");
+
+    // 2. Frische Datei direkt abrufen und setzen
+    try {
+      const response = await fetch(`${IMPORT_FILE}?t=${Date.now()}`);
+      if (response.ok) {
+        const importedTrades = await response.json();
+        if (Array.isArray(importedTrades)) {
+          journalTrades = importedTrades;
+          autoFixJournalSessions();
+          saveJournalData();
+          console.log("✅ Manuelle Einträge gelöscht & Live-Feed scharfgeschaltet!");
+        }
+      }
+    } catch (err) {
+      alert("⚠️ journal_import.json konnte nicht geladen werden.");
+    }
+  } else {
+    console.log("ℹ️ Live-Sync deaktiviert. Manueller Modus aktiv.");
+  }
+
+  updateJournalUI();
+  initCalendar();
 }
 
 function saveJournalData() {
@@ -657,7 +725,7 @@ function showDayDetails(dateStr) {
 }
 
 /* ============================================================
-   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-% (RESPONSIVE FIX)
+   🗓️ JAHRES-ÜBERSICHT: MINI-HEATMAP & JAHRES-%
    ============================================================ */
 function updateYearHeatmap() {
   const currentYear = currentCalendarDate.getFullYear();
@@ -1097,7 +1165,7 @@ function renderJournalCharts() {
     });
   }
 
-  // 2. Win/Loss & Direction-Dominance Donuts (GESAMT-JOURNAL STATISTIK)
+  // 2. Win/Loss & Direction-Dominance Donuts
   const canvasWinLoss = document.getElementById("chartWinLoss");
   const canvasLongShort = document.getElementById("chartLongShort");
   const targetDataSet = journalTrades;
@@ -1149,7 +1217,7 @@ function renderJournalCharts() {
     });
   }
 
-  // Chart 2: Gesamt Profit nach Richtung (Long = Grün, Short = Rot)
+  // Chart 2: Gesamt Profit nach Richtung
   if (canvasLongShort) {
     const longWins = targetDataSet.filter(t => (t.direction || "").toUpperCase() === "BUY" && t.pnl > 0).length;
     const shortWins = targetDataSet.filter(t => (t.direction || "").toUpperCase() === "SELL" && t.pnl > 0).length;
@@ -1210,7 +1278,7 @@ function renderJournalCharts() {
     });
   }
 
-// 3. Tages-Performance (CYBER NEON EDITION MIT GRADIENT & ANIMATION)
+  // 3. Tages-Performance
   const canvasPairs = document.getElementById("chartPairs");
   if (canvasPairs) {
     const ctx = canvasPairs.getContext("2d");
@@ -1238,7 +1306,6 @@ function renderJournalCharts() {
 
     const dataValues = labels.map(day => dailyPerf[day]);
 
-    // Canvas-Farbverläufe für satte Neon-Balken
     const createBarGradients = (chartArea) => {
       const top = chartArea ? chartArea.top : 0;
       const bottom = chartArea ? chartArea.bottom : 160;
@@ -1348,7 +1415,8 @@ function renderJournalCharts() {
       }
     });
   }
- }
+}
+
 /* ============================================================
    📥 AUTOMATIC MT5 IMPORT ENGINE
    ============================================================ */
