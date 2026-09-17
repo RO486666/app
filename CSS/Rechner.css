@@ -2,25 +2,20 @@
    🧮 GLOBAL CALCULATOR – OBSIDIAN & MANA THEME
    ============================================================ */
 
-/* Import der Fonts (falls noch nicht global vorhanden) */
+/* Import der Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap');
 
 /* Container Style - Die Obsidian-Platte */
 .calc-box,
 .stats-box,
 #calc-pairProfile,
-#calc-taxpro,
 #calc-swap,
 #calc-pos,
 .swap-visible {
-  /* Tiefes, dunkles Material */
   background: linear-gradient(145deg, #161a1e, #0e1114) !important;
-  
-  /* Feine Glas-Struktur */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   
-  /* Ränder: Oben hell (Licht), unten dunkel (Schatten) */
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.5) !important;
@@ -29,13 +24,12 @@
   padding: 24px !important;
   margin-top: 24px;
   
-  /* Edler Schatten */
   box-shadow: 
     0 20px 40px -10px rgba(0,0,0,0.8),
     0 0 20px rgba(0, 0, 0, 0.2) !important;
 
   color: #c0c6d0 !important;
-  font-family: 'Inter', sans-serif; /* Sehr gut lesbar für Zahlen */
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
   
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -46,7 +40,7 @@
 .stats-box:hover {
   box-shadow: 
     0 25px 50px -12px rgba(0,0,0,0.9),
-    0 0 25px rgba(0, 255, 255, 0.05) !important; /* Leichter blauer Glow */
+    0 0 25px rgba(0, 255, 255, 0.05) !important;
 }
 
 /* ===========================
@@ -56,7 +50,7 @@
 .stats-box h2,
 .swap-head,
 .calc-title {
-  font-family: 'Orbitron', sans-serif; /* Sci-Fi / Tech Look */
+  font-family: 'Orbitron', sans-serif;
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -65,7 +59,6 @@
   padding-bottom: 10px;
   font-weight: 700;
   
-  /* Leuchtende Trennlinie */
   border-bottom: 1px solid rgba(0, 255, 255, 0.15);
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
@@ -82,10 +75,9 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #8faab9; /* Kühles Grau-Blau */
+  color: #8faab9;
 }
 
-/* Inputs: Eingelassene Schlitze */
 .calc-box input[type="number"],
 .calc-box input[type="text"],
 .calc-box input[type="date"],
@@ -95,14 +87,13 @@
   width: 100%;
   padding: 12px 14px;
   
-  /* Reingedrückt (Inset) */
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(0, 0, 0, 0.5); /* Schatten oben innen */
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 6px;
   
   color: #fff;
-  font-family: 'Orbitron', monospace; /* Zahlen sehen techy aus */
+  font-family: 'Orbitron', monospace;
   font-size: 15px;
   font-weight: 500;
   letter-spacing: 1px;
@@ -111,7 +102,6 @@
   transition: all 0.25s ease;
 }
 
-/* Focus: Wenn man reinklickt, glüht es */
 .calc-box input:focus,
 .stats-box input:focus,
 .calc-box select:focus,
@@ -120,9 +110,9 @@
   border-color: rgba(0, 255, 255, 0.5);
   box-shadow: 
     inset 0 2px 5px rgba(0,0,0,0.5),
-    0 0 10px rgba(0, 255, 255, 0.15); /* Äußerer Glow */
+    0 0 10px rgba(0, 255, 255, 0.15);
   outline: none;
-  color: #00ffff; /* Text wird Neon-Blau */
+  color: #00ffff;
 }
 
 /* ===========================
@@ -143,12 +133,11 @@
   text-transform: uppercase;
   cursor: pointer;
 
-  /* Dunkles Metal / Stein */
   background: linear-gradient(180deg, #2b353f, #1a2026);
   color: #aaddff;
   
   border: 1px solid #4a5a6a;
-  border-top: 1px solid #7a8a9a; /* Highlight oben */
+  border-top: 1px solid #7a8a9a;
   border-radius: 6px;
 
   box-shadow: 
@@ -160,13 +149,12 @@
   overflow: hidden;
 }
 
-/* Hover Effekt */
 .calc-box button:hover,
 .stats-box button:hover,
 .swap-visible button:hover {
   background: linear-gradient(180deg, #35414d, #20272e);
   color: #fff;
-  border-color: #00ffff; /* Neon Rand */
+  border-color: #00ffff;
   text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
   box-shadow: 
     0 0 15px rgba(0, 255, 255, 0.2),
@@ -192,7 +180,6 @@
   width: 20px;
   height: 20px;
   
-  /* Slot im Stein */
   background: #0e1114;
   border: 1px solid #4a5a6a;
   border-radius: 4px;
@@ -206,14 +193,12 @@
   transition: all 0.2s ease;
 }
 
-/* Checkbox Hover */
 .calc-box input[type="checkbox"]:hover,
 .stats-box input[type="checkbox"]:hover {
   border-color: #89cff0;
   box-shadow: 0 0 8px rgba(137, 207, 240, 0.3);
 }
 
-/* Checkbox Checked (Aktiviert) */
 .calc-box input[type="checkbox"]:checked,
 .stats-box input[type="checkbox"]:checked {
   background: #002b36;
@@ -223,7 +208,6 @@
     inset 0 0 5px rgba(0, 255, 255, 0.2);
 }
 
-/* Das Häkchen (eher ein Leuchten) */
 .calc-box input[type="checkbox"]:checked::after,
 .stats-box input[type="checkbox"]:checked::after {
   content: "";
@@ -239,21 +223,14 @@
 }
 
 /* ============================================================
-   🔮 RESULT BOX – OBSIDIAN PROJECTION (Auto-Visible)
+   🔮 RESULT BOX – OBSIDIAN PROJECTION
    ============================================================ */
-
-/* Container */
 .result-box {
-  /* --- 🪄 MAGIC TRICK: --- */
-  /* Zeigt die Box an, aber versteckt sie, wenn sie leer ist */
   display: block; 
-  
-  /* --- STYLE (Obsidian Platte) --- */
   background: linear-gradient(145deg, #161a1e, #0e1114);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   
-  /* Obsidian Ränder */
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   border-bottom: 1px solid rgba(0, 0, 0, 0.6);
@@ -265,30 +242,25 @@
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.6;
-  color: #c0c6d0; /* Kühles Grau */
+  color: #c0c6d0;
   
-  /* Mystischer Glow */
   box-shadow: 
     0 20px 50px -10px rgba(0,0,0,0.8),
     0 0 25px rgba(0, 255, 255, 0.05);
     
-  /* Die Animation beim Erscheinen */
   animation: hologramPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 🔥 WICHTIG: Wenn die Box leer ist (kein Ergebnis), ist sie weg */
 .result-box:empty {
   display: none;
 }
 
-/* Headings / Accents - Neon statt Gold */
 .result-box strong {
-  color: #00ffff; /* Neon Cyan */
+  color: #00ffff;
   font-weight: 700;
   text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
 }
 
-/* Trennlinie als Laserstrahl */
 .result-box hr {
   border: none;
   height: 1px;
@@ -297,7 +269,7 @@
 }
 
 /* ===========================
-   ⚠️ RISK-BOX (Eingelassenes Display)
+   ⚠️ RISK-BOX
    =========================== */
 .risk-box {
   background: rgba(0, 0, 0, 0.4);
@@ -343,10 +315,6 @@
   text-shadow: none;
 }
 
-
-/* ===========================
-   🎨 RISK STEP BASE
-   =========================== */
 .result-box .risk-step {
   font-weight: 600;
   letter-spacing: 0.4px;
@@ -357,53 +325,39 @@
   letter-spacing: 0.5px;
 }
 
-
 /* ===========================
-   🎨 RISK COLORS – FULL SET
-   (passend zu low1 / low2 / mid1 / mid2 / high / extreme)
+   🎨 RISK COLORS
    =========================== */
-
-/* ✅ Empfohlen */
 .result-box .low1 {
   color: #00ff9d;
   text-shadow: 0 0 8px rgba(0,255,157,0.45);
 }
 
-/* 🟡 Riskant – Stufe 1 */
 .result-box .low2 {
   color: #66ffd0;
   text-shadow: 0 0 8px rgba(102,255,208,0.45);
 }
 
-/* 🟡 Riskant – Stufe 2 */
 .result-box .mid1 {
   color: #ffcc00;
   text-shadow: 0 0 8px rgba(255,204,0,0.45);
 }
 
-/* 🔥 Hoch */
 .result-box .mid2 {
   color: #ff8800;
   text-shadow: 0 0 9px rgba(255,136,0,0.5);
 }
 
-/* 🧮 Sehr hoch */
 .result-box .high {
   color: #ff6600;
   text-shadow: 0 0 9px rgba(255,102,0,0.55);
 }
 
-/* ⚠️ Extrem */
 .result-box .extreme {
   color: #ff3333;
   text-shadow: 0 0 10px rgba(255,51,51,0.65);
 }
 
-
-/* ===========================
-   ✨ OPTIONAL: Subtiler Glow-Hintergrund
-   (wirkt hochwertig, kein Billo-Neon)
-   =========================== */
 .result-box .risk-step {
   position: relative;
   overflow: hidden;
@@ -425,94 +379,40 @@
 }
 
 /* ===========================
-   🎯 PIP CALC – STOP & TP (CSS ONLY)
-   =========================== */
-
-/* ===========================
-   ⛔ STOP-LOSS (Warning Green → leicht gelblich)
+   🎯 PIP CALC – STOP & TP
    =========================== */
 .pip-box > .risk-box:nth-of-type(1) {
   border-left: 4px solid #7cff7c;
   color: #caffca;
-
-  background: linear-gradient(
-    135deg,
-    rgba(124, 255, 124, 0.08),
-    rgba(0, 0, 0, 0.45)
-  );
-
-  box-shadow:
-    inset 0 0 18px rgba(0, 0, 0, 0.8),
-    0 0 12px rgba(124, 255, 124, 0.15);
-
+  background: linear-gradient(135deg, rgba(124, 255, 124, 0.08), rgba(0, 0, 0, 0.45));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 0 12px rgba(124, 255, 124, 0.15);
   text-shadow: 0 0 6px rgba(124, 255, 124, 0.35);
 }
 
-/* ===========================
-   🎯 TP1 – Safe Green
-   =========================== */
 .pip-box > .risk-box:nth-of-type(2) {
   border-left: 4px solid #00ff9d;
   color: #00ff9d;
-
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 157, 0.12),
-    rgba(0, 0, 0, 0.45)
-  );
-
-  box-shadow:
-    inset 0 0 18px rgba(0, 0, 0, 0.8),
-    0 0 14px rgba(0, 255, 157, 0.25);
-
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.12), rgba(0, 0, 0, 0.45));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 255, 157, 0.25);
   text-shadow: 0 0 8px rgba(0, 255, 157, 0.55);
 }
 
-/* ===========================
-   🎯 TP2 – Strong Neon Green
-   =========================== */
 .pip-box > .risk-box:nth-of-type(3) {
   border-left: 4px solid #3dffb3;
   color: #3dffb3;
-
-  background: linear-gradient(
-    135deg,
-    rgba(61, 255, 179, 0.14),
-    rgba(0, 0, 0, 0.45)
-  );
-
-  box-shadow:
-    inset 0 0 18px rgba(0, 0, 0, 0.8),
-    0 0 18px rgba(61, 255, 179, 0.35);
-
+  background: linear-gradient(135deg, rgba(61, 255, 179, 0.14), rgba(0, 0, 0, 0.45));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 0 18px rgba(61, 255, 179, 0.35);
   text-shadow: 0 0 9px rgba(61, 255, 179, 0.65);
 }
 
-/* ===========================
-   🎯 TP3 – MAX PROFIT (Neon Mint Glow)
-   =========================== */
 .pip-box > .risk-box:nth-of-type(4) {
   border-left: 4px solid #00ffff;
   color: #00ffff;
-
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.16),
-    rgba(0, 0, 0, 0.45)
-  );
-
-  box-shadow:
-    inset 0 0 18px rgba(0, 0, 0, 0.8),
-    0 0 22px rgba(0, 255, 255, 0.45);
-
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.16), rgba(0, 0, 0, 0.45));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 0 22px rgba(0, 255, 255, 0.45);
   text-shadow: 0 0 12px rgba(0, 255, 255, 0.75);
 }
 
-
-
-/* ===========================
-   🎞️ ENTRY ANIMATION
-   =========================== */
 @keyframes hologramPop {
   from {
     opacity: 0;
@@ -526,27 +426,6 @@
   }
 }
 
-
-
-
-
-/* ===========================
-   ANIMATIONS
-   =========================== */
-@keyframes hologramFade {
-  from { 
-    opacity: 0; 
-    transform: translateY(10px) scale(0.98); 
-    filter: blur(4px);
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0) scale(1); 
-    filter: blur(0);
-  }
-}
-
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .result-box,
   .risk-box {
@@ -555,18 +434,10 @@
   }
 }
 
-
-
 /* ============================================================
    📊 PAIR PROFILE EXTENSION
-   (Passt sich perfekt an deine Obsidian/Mana Global CSS an)
    ============================================================ */
-
-/* 1. Container & Header Anpassung */
-/* Der Hauptcontainer #calc-pairProfile übernimmt bereits deine .calc-box Styles */
-
 #pairProfileBox h3 {
-  /* Nutzt deine Orbitron-Schrift */
   font-family: 'Orbitron', sans-serif;
   font-size: 1.1rem;
   color: #e0f0ff;
@@ -579,20 +450,16 @@
 }
 
 #pairProfileBox h3 span {
-  /* Der Untertitel */
   font-family: 'Inter', sans-serif;
   text-transform: none;
-  font-size: 0.75rem !important; /* Kleiner */
-  color: #8faab9 !important; /* Dein Label-Grau */
+  font-size: 0.75rem !important;
+  color: #8faab9 !important;
   letter-spacing: 0;
   margin-top: 6px;
   opacity: 0.8;
   font-weight: 400;
   text-shadow: none;
 }
-
-/* 2. Session Filter & Dropdown Styling */
-/* Wir erzwingen den "Inset"-Look deiner Inputs auch hier */
 
 #sessionFilterSelect,
 #pairProfileSymbol {
@@ -608,8 +475,7 @@
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
   transition: all 0.25s ease;
   cursor: pointer;
-  appearance: none; /* Entfernt Standard-Pfeil */
-  /* Custom Pfeil andeuten */
+  appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
   background-position: right 12px top 50%;
@@ -625,7 +491,6 @@
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
 }
 
-/* Container für den Filter (vom JS generiert) */
 #sessionFilterContainer {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -635,21 +500,19 @@
 }
 
 #sessionFilterContainer label {
-  margin: 0 !important; /* Reset margin */
+  margin: 0 !important;
   margin-right: 12px !important;
-  color: #00ffff !important; /* Neon Label */
+  color: #00ffff !important;
 }
 
-/* 3. Basis-Daten Grid (Das Dashboard) */
 #pairProfileBasics > div {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 Spalten */
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-top: 15px !important;
 }
 
 #pairProfileBasics > div > div {
-  /* Kachel-Look */
   background: linear-gradient(180deg, #1f252b, #15191d);
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 10px 14px;
@@ -661,7 +524,6 @@
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
-/* Die Werte in den Kacheln */
 #pairProfileBasics span {
   font-family: 'Orbitron', monospace;
   font-size: 1.1rem;
@@ -671,177 +533,156 @@
   text-shadow: 0 0 5px rgba(224, 240, 255, 0.2);
 }
 
-/* Speziell für Preise & Pips: Ein bisschen Neon */
 #pairProfilePrice, #pairProfilePip {
   color: #aaddff !important;
 }
 
 /* ============================================================
-   🚀 HUD DASHBOARD STYLING (Sci-Fi Look)
+   🚀 HUD DASHBOARD STYLING
    ============================================================ */
-
-/* 1. VERHALTEN & CHARAKTERISTIK (Terminal Style) */
 #pairProfileText {
-    background: #0f1114; /* Sehr dunkel */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-left: 3px solid #00ffff; /* Neon Balken */
-    color: #aaddff;
-    font-family: 'Consolas', 'Monaco', monospace; /* Tech Font */
-    font-size: 0.85rem;
-    line-height: 1.6;
-    padding: 15px;
-    border-radius: 4px;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-    position: relative;
-    overflow: hidden;
+  background: #0f1114;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #00ffff;
+  color: #aaddff;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Scanline Effekt (optional, sehr subtil) */
 #pairProfileText::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: rgba(0, 255, 255, 0.1);
-    animation: scanline 4s linear infinite;
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: rgba(0, 255, 255, 0.1);
+  animation: scanline 4s linear infinite;
+  pointer-events: none;
 }
-@keyframes scanline { 0% {top:0} 100% {top:100%} }
 
+@keyframes scanline { 
+  0% { top: 0; } 
+  100% { top: 100%; } 
+}
 
-/* 2. DAS GRID SYSTEM (Kacheln) */
 .notes-grid-container {
-    display: grid;
-    grid-template-columns: 1fr; /* Mobile: 1 Spalte */
-    gap: 16px;
-    margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
 }
-/* Ab Tablet: 2 Spalten */
+
 @media (min-width: 650px) {
-    .notes-grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .notes-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-
-/* 3. DIE DATEN-KARTEN (Cards) */
 .note-card {
-    background: rgba(22, 26, 30, 0.8); /* Semi-transparent */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Lichtkante oben */
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  background: rgba(22, 26, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Hover Effekt: Karte hebt sich ab */
 .note-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(0, 255, 255, 0.3);
-    box-shadow: 
-        0 10px 30px -10px rgba(0,0,0,0.8),
-        0 0 15px rgba(0, 255, 255, 0.05); /* Leichter Neon Glow */
+  transform: translateY(-4px);
+  border-color: rgba(0, 255, 255, 0.3);
+  box-shadow: 
+    0 10px 30px -10px rgba(0,0,0,0.8),
+    0 0 15px rgba(0, 255, 255, 0.05);
 }
 
-
-/* 4. CARD HEADER (Überschrift) */
 .card-header {
-    background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
-    padding: 10px 14px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    color: #8faab9;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+  padding: 10px 14px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #8faab9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
 }
 
-/* Die Icons im Header */
 .card-icon {
-    font-size: 1.1rem;
-    margin-right: 10px;
-    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.4));
+  font-size: 1.1rem;
+  margin-right: 10px;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.4));
 }
 
-
-/* 5. CARD CONTENT (Der Inhalt) */
 .card-content {
-    padding: 12px 14px;
-    font-size: 0.85rem;
-    color: #ccc;
-    line-height: 1.5;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.5;
 }
 
-/* Einzelne Datenzeile */
 .data-row {
-    margin-bottom: 8px;
-    position: relative;
-    padding-left: 14px;
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 14px;
 }
 .data-row:last-child { margin-bottom: 0; }
 
-/* Custom Bullet Point */
 .bullet {
-    position: absolute;
-    left: 0;
-    color: #00ffff;
-    font-weight: bold;
-    top: 0px;
+  position: absolute;
+  left: 0;
+  color: #00ffff;
+  font-weight: bold;
+  top: 0px;
 }
 
-
-/* 6. HIGHLIGHTS (Die Neon-Farben im Text) */
-
-/* Sessions (Blau/Cyan) */
 .hl-session {
-    color: #fff;
-    background: rgba(0, 255, 255, 0.15);
-    padding: 0 4px;
-    border-radius: 3px;
-    border: 1px solid rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 5px rgba(0,255,255,0.1);
+  color: #fff;
+  background: rgba(0, 255, 255, 0.15);
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 5px rgba(0,255,255,0.1);
 }
 
-/* Tech Terms (Gold/Gelb) */
 .hl-tech {
-    color: #ffcc00;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
+  color: #ffcc00;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
 }
 
-/* Danger Terms (Rot) */
 .hl-danger {
-    color: #ff4d4d;
-    font-weight: 600;
-    text-decoration: underline rgba(255, 77, 77, 0.5);
+  color: #ff4d4d;
+  font-weight: 600;
+  text-decoration: underline rgba(255, 77, 77, 0.5);
 }
 
-
-/* 7. GEFAHRZONEN KARTE SPEZIAL-STYLE */
 .note-card.danger-zone {
-    border-color: rgba(255, 50, 50, 0.3);
-    background: linear-gradient(145deg, rgba(40, 10, 10, 0.6), rgba(20, 10, 10, 0.8));
+  border-color: rgba(255, 50, 50, 0.3);
+  background: linear-gradient(145deg, rgba(40, 10, 10, 0.6), rgba(20, 10, 10, 0.8));
 }
 
 .note-card.danger-zone .card-header {
-    color: #ff4d4d;
-    border-bottom-color: rgba(255, 50, 50, 0.2);
+  color: #ff4d4d;
+  border-bottom-color: rgba(255, 50, 50, 0.2);
 }
 
 .note-card.danger-zone .card-icon {
-    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6));
+  filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.6));
 }
 
-/* Empty State */
 .empty-state {
-    padding: 20px;
-    text-align: center;
-    color: #555;
-    font-style: italic;
-    border: 1px dashed #333;
-    border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #555;
+  font-style: italic;
+  border: 1px dashed #333;
+  border-radius: 8px;
 }
