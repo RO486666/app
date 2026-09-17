@@ -18,7 +18,6 @@ function getTradesForTax() {
     trades = stored ? JSON.parse(stored) : [];
   }
 
-  // Manuelle Jahres-Reports (HTML Import) als Pseudo-Trades einspeisen
   const manualReports = JSON.parse(localStorage.getItem("alphaos_manual_tax_reports") || "{}");
   Object.values(manualReports).forEach(rep => {
     const midOfYear = new Date(rep.year, 5, 15).getTime();
@@ -71,7 +70,7 @@ function updateTaxYearDropdown(allTrades) {
 }
 
 /* ============================================================
-   🧮 JAHRESWEISE DURCHRECHNUNG (EA-TRADES + HTML-REPORTS VEREINT)
+   🧮 JAHRESWEISE DURCHRECHNUNG MIT DIREKT-REPORT INTEGRATION
    ============================================================ */
 function calculateAllTaxYearsData(allTrades, mitSoli, mitKirche) {
   const manualReports = JSON.parse(localStorage.getItem("alphaos_manual_tax_reports") || "{}");
@@ -86,7 +85,6 @@ function calculateAllTaxYearsData(allTrades, mitSoli, mitKirche) {
     let grossLosses = 0;
     let tradeCount = 0;
 
-    // 1. Trades auswerten (manuelle 'manual_'-Einträge ausfiltern)
     const liveTradesOfYear = allTrades.filter(t => 
       t.timestamp && 
       new Date(t.timestamp).getFullYear() === year &&
@@ -100,7 +98,6 @@ function calculateAllTaxYearsData(allTrades, mitSoli, mitKirche) {
       else if (p < 0) grossLosses += Math.abs(p);
     });
 
-    // 2. Falls HTML-Reports vorliegen: addieren
     if (manualReports[year]) {
       const rep = manualReports[year];
       grossProfits += Number(rep.grossProfits || 0);
@@ -324,11 +321,11 @@ function renderLiveTaxDashboard() {
       </div>
 
       ${d.isAllTimeSummary ? `
-        <div class="tax-ok-box" style="background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.3);">
-          <div style="color: #38bdf8; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; font-size: 11px;">
+        <div class="tax-ok-box tax-alltime-box">
+          <div class="tax-alltime-title">
             📊 Historische Gesamt-Zusammenfassung
           </div>
-          <div style="color: #cbd5e1; font-size: 11px;">
+          <div class="tax-alltime-desc">
             Summe aller berechneten Steuerlasten aus allen abgeschlossenen Jahren. Jeder Jahresfreibetrag wurde individuell berücksichtigt.
           </div>
         </div>
@@ -356,7 +353,7 @@ function renderLiveTaxDashboard() {
 
       <div class="tax-net-badge">
         <div>
-          <div class="tax-banner-title" style="color: #10b981;">Echtes freies Netto</div>
+          <div class="tax-banner-title tax-net-title">Echtes freies Netto</div>
           <div class="tax-banner-sub">Nach Steuer & Vorauszahlungspuffer</div>
         </div>
         <div class="tax-net-val ${d.trueFreeNetto >= 0 ? 'tax-val-win' : 'tax-val-loss'}">
@@ -375,13 +372,13 @@ function renderLiveTaxDashboard() {
         <table class="tax-archive-table tax-archive-table-desktop">
           <thead>
             <tr>
-              <th style="text-align: left;">Jahr</th>
+              <th class="tax-th-left">Jahr</th>
               <th>Trades</th>
               <th>Gewinn (P/L)</th>
               <th>Steuerlast</th>
               <th>Vorauszahlung</th>
               <th>Freies Netto</th>
-              <th style="text-align: center;">Aktion</th>
+              <th class="tax-th-center">Aktion</th>
             </tr>
           </thead>
           <tbody>
@@ -393,17 +390,17 @@ function renderLiveTaxDashboard() {
       const isSelected = selectedYear === yr.toString();
       tableHtml += `
         <tr class="${isSelected ? 'tax-archive-row-active' : ''}">
-          <td style="text-align: left; font-weight: 800; color: #fff;">${yr}</td>
+          <td class="tax-td-year">${yr}</td>
           <td class="tax-label-muted">${yData.tradeCount}</td>
-          <td style="font-weight: 700;" class="${yData.netTradingPnL >= 0 ? 'tax-val-win' : 'tax-val-loss'}">
+          <td class="tax-td-pnl ${yData.netTradingPnL >= 0 ? 'tax-val-win' : 'tax-val-loss'}">
             ${yData.netTradingPnL >= 0 ? '+' : ''}${fmt(yData.netTradingPnL)}
           </td>
           <td class="tax-val-loss">${fmt(yData.actualYearTax)}</td>
           <td class="tax-highlight-orange">${fmt(yData.nextYearAdvance)}</td>
-          <td style="font-weight: 800;" class="${yData.trueFreeNetto >= 0 ? 'tax-val-win' : 'tax-val-loss'}">
+          <td class="tax-td-netto ${yData.trueFreeNetto >= 0 ? 'tax-val-win' : 'tax-val-loss'}">
             ${fmt(yData.trueFreeNetto)}
           </td>
-          <td style="text-align: center;">
+          <td class="tax-td-action">
             <button type="button" onclick="selectYearFromArchive('${yr}')" class="tax-btn-view">
               ${isSelected ? 'Aktiv' : 'Ansehen'}
             </button>
@@ -458,7 +455,7 @@ function renderLiveTaxDashboard() {
             <span class="tax-label-muted">Vorauszahlung Folgejahr:</span>
             <strong class="tax-highlight-orange">${fmt(activeYearData.nextYearAdvance)}</strong>
           </div>
-          <div class="tax-lib-details-row" style="border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 6px; padding-top: 6px;">
+          <div class="tax-lib-details-row tax-lib-netto-row">
             <span class="tax-label-muted">Echtes freies Netto:</span>
             <strong class="${activeYearData.trueFreeNetto >= 0 ? 'tax-val-win' : 'tax-val-loss'}">${fmt(activeYearData.trueFreeNetto)}</strong>
           </div>
@@ -508,9 +505,7 @@ async function syncEADataFromServer() {
           break;
         }
       }
-    } catch (e) {
-      // Ignorieren und nächsten Pfad prüfen
-    }
+    } catch (e) {}
   }
 
   if (foundData && foundData.length > 0) {
@@ -522,7 +517,6 @@ async function syncEADataFromServer() {
   return { ok: false };
 }
 
-// Globaler Klick-Handler für deinen Button
 window.triggerTaxSyncAndRender = async function() {
   const btn = document.querySelector(".tax-btn-submit");
   const origText = btn ? btn.innerText : "";
@@ -543,7 +537,6 @@ window.triggerTaxSyncAndRender = async function() {
   if (btn) btn.innerText = origText || "🔄 Steuerberechnung aktualisieren";
 };
 
-// Aliase für Abwärtskompatibilität
 window.renderLiveTaxDashboardTrigger = window.triggerTaxSyncAndRender;
 window.recalculateTaxDashboard = function() {
   const allTrades = getTradesForTax();
@@ -731,21 +724,21 @@ function openTaxImportModal() {
   overlay.className = "tax-modal-overlay";
 
   overlay.innerHTML = `
-    <div class="tax-modal-card" style="max-width: 450px;">
+    <div class="tax-modal-card">
       <div class="tax-modal-header">
         <span>📄 Account-Report (HTML) importieren</span>
         <button type="button" class="tax-modal-close" onclick="closeTaxImportModal()">&times;</button>
       </div>
-      <div style="font-size: 11px; color: #8c95a1; margin-bottom: 14px; line-height: 1.5;">
+      <div class="tax-modal-hint">
         Wähle die exportierte HTML-Report-Datei deines Accounts aus. Das System summiert es fehlerfrei über alle Jahre.
       </div>
       <div class="tax-modal-input-group">
         <label>HTML-Report Datei wählen:</label>
-        <input type="file" id="importFileField" accept=".html,.htm" class="tax-modal-input" style="padding: 6px; cursor: pointer;" />
+        <input type="file" id="importFileField" accept=".html,.htm" class="tax-modal-input" />
       </div>
-      <div style="display: flex; gap: 8px; margin-top: 18px;">
-        <button type="button" class="tax-dev-btn-gen" onclick="processUploadedTaxReport()" style="flex: 1; padding: 10px;">⚡ Einlesen & Einpflegen</button>
-        <button type="button" class="tax-dev-btn-reset" onclick="clearManualTaxReports()" style="padding: 10px;">☢️ Hard Reset & Löschen</button>
+      <div class="tax-modal-btn-row">
+        <button type="button" class="tax-dev-btn-gen" onclick="processUploadedTaxReport()">⚡ Einlesen & Einpflegen</button>
+        <button type="button" class="tax-dev-btn-reset" onclick="clearManualTaxReports()">☢️ Hard Reset & Löschen</button>
       </div>
     </div>
   `;
