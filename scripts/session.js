@@ -913,6 +913,8 @@ function updateRealTimeBar() {
     // Sessions ermitteln
     const activeSessions = getCurrentSessions(minutes);
     const names = activeSessions.map(s => s.name);
+	
+	checkAndTriggerSessionPush(activeSessions);
 
     // Externe Hooks (Sicherheitscheck)
     if (typeof updateTabButtonColors === "function") updateTabButtonColors(names);
