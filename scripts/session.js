@@ -1143,40 +1143,26 @@ window.addEventListener("load", () => {
 let lastNotifiedActiveSession = null;
 
 function checkAndTriggerSessionPush(activeSessions) {
-  // Prüfen, ob Benachrichtigungen im Browser grundsätzlich erlaubt sind
-  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  // Wenn keine Session aktiv ist, Status zurücksetzen
+  if (!activeSessions || activeSessions.length === 0) {
+    lastNotifiedActiveSession = null;
+    return;
+  }
 
   const currentNames = activeSessions.map(s => s.name).join(", ");
   
   // Wenn sich die aktive Session im Vergleich zur letzten Prüfung geändert hat
-  if (currentNames && lastNotifiedActiveSession !== currentNames) {
+  if (lastNotifiedActiveSession !== currentNames) {
     const primarySession = activeSessions[0];
-    const isKillzone = primarySession.name.includes("Killzone");
     
-    const title = isKillzone 
-      ? `🔥 ${primarySession.name} START!` 
-      : `🔔 ${primarySession.name} gestartet`;
-    
-    const body = `Aktive Session gewechselt zu: ${currentNames}. Prüfe deine Setups.`;
-
-    // Senden über den Service Worker via postMessage
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.active.postMessage({
-          title: title,
-          options: {
-            body: body,
-            icon: "./icon-192.png",
-            vibrate: [200, 100, 200],
-            tag: "alphaos-session-alert",
-            renotify: true
-          }
-        });
-      }).catch(err => console.error("❌ Session-Push fehlgeschlagen:", err));
+    // Nutzt die saubere Funktion aus deiner session-popup.js
+    if (typeof showSessionStartNotification === "function") {
+      showSessionStartNotification(
+        primarySession.name, 
+        `Aktive Session gewechselt zu: ${currentNames}. Prüfe deine Setups.`
+      );
     }
 
     lastNotifiedActiveSession = currentNames;
-  } else if (!currentNames) {
-    lastNotifiedActiveSession = null; // Reset, falls keine Session aktiv ist
   }
 }
