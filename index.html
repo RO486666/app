@@ -411,39 +411,7 @@
     Tipps und Infos zur Session erscheinen hier...
   </div>
   
-  <!-- 🧪 DEV TEST BUTTON FÜR PUSH-BENACHRICHTIGUNG -->
-<div style="text-align: center; margin: 20px 0;">
-  <button type="button" onclick="runDevPushTest()" style="
-    background: linear-gradient(135deg, #ff00cc, #9900ff);
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
-  ">
-    🧪 DEV TEST: Push auslösen
-  </button>
-</div>
 
-<script>
-  function runDevPushTest() {
-    console.log("🧪 Dev-Test Button geklickt.");
-    
-    // Prüfen ob die Funktion da ist
-    if (typeof showSessionStartNotification === "function") {
-      showSessionStartNotification(
-        "London Killzone", 
-        "Dev-Test erfolgreich! Benachrichtigung läuft einwandfrei."
-      );
-      alert("Test-Signal an Service Worker gesendet! Schau auf den Homescreen / Sperrbildschirm.");
-    } else {
-      alert("❌ Fehler: showSessionStartNotification nicht gefunden. Prüfe die Reihenfolge der Skripte!");
-    }
-  }
-</script>
 
   <!-- 🟢 Fortschrittsbalken -->
   <div class="progress-container">
