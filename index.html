@@ -1625,5 +1625,24 @@
   }
 </script>
 
+<script>
+  // 🛑 AGGRESSIVER CACHE-KILLER BEIM START
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      for(let registration of registrations) {
+        registration.unregister().then(boolean => {
+          if (boolean) {
+            console.log("🔥 Alter Service Worker erfolgreich gelöscht.");
+            // Optional: Seite sofort frisch erzwingen, wenn Caches gekillt wurden
+            if (!sessionStorage.getItem("cache_cleared")) {
+              sessionStorage.setItem("cache_cleared", "true");
+              window.location.reload(true);
+            }
+          }
+        });
+      }
+    });
+  }
+</script>
 </body>
 </html>
