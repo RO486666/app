@@ -1136,3 +1136,47 @@ window.addEventListener("load", () => {
         dstButtons.forEach(btn => btn.addEventListener("click", () => setDSTMode(btn.dataset.dst)));
     }
 });
+
+// =========================================================
+// 🔔 AUTOMATISCHER SESSION-WECHSEL PUSH TRIGGER
+// =========================================================
+let lastNotifiedActiveSession = null;
+
+function checkAndTriggerSessionPush(activeSessions) {
+  // Prüfen, ob Benachrichtigungen im Browser grundsätzlich erlaubt sind
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  const currentNames = activeSessions.map(s => s.name).join(", ");
+  
+  // Wenn sich die aktive Session im Vergleich zur letzten Prüfung geändert hat
+  if (currentNames && lastNotifiedActiveSession !== currentNames) {
+    const primarySession = activeSessions[0];
+    const isKillzone = primarySession.name.includes("Killzone");
+    
+    const title = isKillzone 
+      ? `🔥 ${primarySession.name} START!` 
+      : `🔔 ${primarySession.name} gestartet`;
+    
+    const body = `Aktive Session gewechselt zu: ${currentNames}. Prüfe deine Setups.`;
+
+    // Senden über den Service Worker via postMessage
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage({
+          title: title,
+          options: {
+            body: body,
+            icon: "./icon-192.png",
+            vibrate: [200, 100, 200],
+            tag: "alphaos-session-alert",
+            renotify: true
+          }
+        });
+      }).catch(err => console.error("❌ Session-Push fehlgeschlagen:", err));
+    }
+
+    lastNotifiedActiveSession = currentNames;
+  } else if (!currentNames) {
+    lastNotifiedActiveSession = null; // Reset, falls keine Session aktiv ist
+  }
+}
