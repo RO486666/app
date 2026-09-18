@@ -1,5 +1,53 @@
 window.ALPHAOS_MT5_FEED = [
     {
+        "id": "mt5_86652704",
+        "timestamp": 1789712212000,
+        "pair": "XAUUSD",
+        "direction": "SELL",
+        "lots": 0.10,
+        "pnl": -2.61,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #86652704",
+        "images": []
+    },
+    {
+        "id": "mt5_86633282",
+        "timestamp": 1789697192000,
+        "pair": "XAUUSD",
+        "direction": "SELL",
+        "lots": 0.10,
+        "pnl": -11.68,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #86633282",
+        "images": []
+    },
+    {
+        "id": "mt5_86633162",
+        "timestamp": 1789697180000,
+        "pair": "XAUUSD",
+        "direction": "SELL",
+        "lots": 0.10,
+        "pnl": -11.50,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #86633162",
+        "images": []
+    },
+    {
+        "id": "mt5_86632316",
+        "timestamp": 1789696286000,
+        "pair": "XAUUSD",
+        "direction": "SELL",
+        "lots": 0.10,
+        "pnl": -27.10,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #86632316",
+        "images": []
+    },
+    {
         "id": "mt5_86426353",
         "timestamp": 1789592408000,
         "pair": "XAUUSD",
