@@ -1,4 +1,4 @@
-const CACHE_NAME = "alphaos-v20260918-095251";
+const CACHE_NAME = "alphaos-v20260918-095842";
 
 // Basis-Dateien cachen (ohne Datenfeeds)
 const urlsToCache = [
@@ -16,17 +16,14 @@ self.addEventListener('install', event => {
   );
 });
 
-// 2. Fetch-Handler mit Network-First Bypass für Trading-Feeds
+// 2. Fetch-Handler mit erzwungenem Network-First / No-Store Bypass für Trading-Feeds
 self.addEventListener("fetch", (event) => {
   const reqUrl = event.request.url;
 
-  // WICHTIG: MT5-Datenfeed NIEMALS aus dem alten Cache laden!
+  // WICHTIG: MT5-Datenfeed NIEMALS aus dem Cache laden, sondern immer frisch holen!
   if (reqUrl.includes("journal_data.js") || reqUrl.includes("journal_import.json")) {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          return response;
-        })
+      fetch(event.request, { cache: "no-store" })
         .catch(() => caches.match(event.request))
     );
     return;
