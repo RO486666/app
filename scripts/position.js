@@ -1,8 +1,9 @@
-
 function calculatePositionSize() {
   const accountSize = parseFloat(document.getElementById("accountSize").value);
   const riskPercent = parseFloat(document.getElementById("riskPercent").value);
-  const stopLossPips = parseFloat(document.getElementById("stopLossPips").value);
+  
+  // Stop-Loss opsjoneel makke: as leech of 0, brûk in standert of skatting op basis fan it pear
+  let stopLossPips = parseFloat(document.getElementById("stopLossPips").value);
   const leverage = parseFloat(document.getElementById("leverage").value);
   const symbol = document.getElementById("symbolSelector").value;
   const manualLots = parseFloat(document.getElementById("manualLots")?.value);
@@ -12,15 +13,30 @@ function calculatePositionSize() {
   const contractSize = basisWerte[symbol] || 100000;
   const price = getCurrentPrice(symbol);
 
-  // ❌ Fehlerprüfung
+  // Standert Stop-Loss foarstel as der neat ynfierd is (oanpast per asset-type)
+  let isDefaultSL = false;
+  if (isNaN(stopLossPips) || stopLossPips <= 0) {
+    isDefaultSL = true;
+    if (symbol.includes("XAU")) {
+      stopLossPips = 30; // 30 pips foar Goud as foarstel
+    } else if (symbol.includes("BTC") || symbol.includes("ETH")) {
+      stopLossPips = 100; // Hegere takt foar Crypto
+    } else if (symbol.endsWith("JPY")) {
+      stopLossPips = 25; // Yen-paaren
+    } else {
+      stopLossPips = 20; // Standaard FX-haadpearen
+    }
+  }
+
+  // ❌ Fehlerprüfung (Sûnder SL-kontrôle om't wy dy no sels opfange)
   if (
-    isNaN(accountSize) || isNaN(riskPercent) || isNaN(stopLossPips) ||
+    isNaN(accountSize) || isNaN(riskPercent) ||
     isNaN(leverage) || accountSize <= 0 || riskPercent <= 0 ||
-    stopLossPips <= 0 || leverage <= 0 || !pipValueStandard
+    leverage <= 0 || !pipValueStandard
   ) {
     resultEl.style.display = "block";
     resultEl.className = "result-box risk-extreme"; 
-    resultEl.innerHTML = "❌ Bitte alle Felder korrekt ausfüllen!";
+    resultEl.innerHTML = "❌ Bitte alle Pflichtfelder (Kontogröße, Risiko, Hebel) korrekt ausfüllen!";
     return;
   }
 
@@ -30,13 +46,17 @@ function calculatePositionSize() {
   // 📏 Margin-Berechnung
   let maxLots;
   if (symbol.endsWith("/JPY")) {
-    // Yen-Paare: Kurs nicht nochmal berücksichtigen
     maxLots = (accountSize * leverage) / contractSize;
   } else {
     maxLots = (accountSize * leverage) / (price * contractSize);
   }
 
   let output = "";
+
+  // Melding as in automatyske SL brûkt wurdt
+  if (isDefaultSL) {
+    output += `<div class="risk-mid">ℹ️ Gjin Stop-Loss ynfierd. Foarstel foar <strong>${symbol}</strong>: <strong>${stopLossPips} Pips</strong> (automatysk berekkene).</div><br>`;
+  }
 
   if (0.01 > maxLots) {
     resultEl.style.display = "block";
@@ -49,7 +69,7 @@ function calculatePositionSize() {
 
   if (baseLot < 0.01) {
     output += `<div class="risk-mid">⚠️ Empfohlene Größe: <strong>${baseLot.toFixed(4)}</strong> Lots (unter 0.01)<br>
-               🔒 Mindestgröße: 0.01 Lots – Risiko kleiner als erwartet.</div><br>`;
+                🔒 Mindestgröße: 0.01 Lots – Risiko kleiner als erwartet.</div><br>`;
     baseLot = 0.01;
   }
 
@@ -58,10 +78,10 @@ function calculatePositionSize() {
   const risikoProzentEmpfohlen = (risikoEuroEmpfohlen / accountSize) * 100;
 
   // Risiko-Klasse
-  function getRiskClass(riskPercent) {
-    if (riskPercent < 2) return "risk-low";
-    if (riskPercent < 5) return "risk-mid";
-    if (riskPercent < 10) return "risk-high";
+  function getRiskClass(rp) {
+    if (rp < 2) return "risk-low";
+    if (rp < 5) return "risk-mid";
+    if (rp < 10) return "risk-high";
     return "risk-extreme";
   }
 
@@ -81,30 +101,29 @@ function calculatePositionSize() {
   // 📈 Szenarien
   const steps = [
     { mult: 1, label: "✅ Empfohlen", cls: "low1" },
-    { mult: 2, label: "🟡 Riskant",   cls: "low2" },
-    { mult: 3, label: "🟡 Riskant",   cls: "mid1" },
-    { mult: 4, label: "🔥 Hoch",      cls: "mid2" },
+    { mult: 2, label: "🟡 Riskant",    cls: "low2" },
+    { mult: 3, label: "🟡 Riskant",    cls: "mid1" },
+    { mult: 4, label: "🔥 Hoch",       cls: "mid2" },
     { mult: 5, label: "🧮 Sehr hoch", cls: "high" },
   ];
 
-steps.forEach(s => {
-  const lot = baseLot * s.mult;
-  const pipValue = pipValueStandard * lot;
-  const riskEuro = stopLossPips * pipValue;
-  const riskPercent = (riskEuro / accountSize) * 100;
+  steps.forEach(s => {
+    const lot = baseLot * s.mult;
+    const pipValue = pipValueStandard * lot;
+    const riskEuro = stopLossPips * pipValue;
+    const riskPercentStep = (riskEuro / accountSize) * 100;
 
-  output += `
-    <div class="risk-step ${s.cls}">
-      ${s.label}: 
-      <strong>${lot.toFixed(2)} Lots</strong> – 
-      <span class="risk-eur">${riskEuro.toFixed(2)} €</span> 
-      (<span class="risk-pct">${riskPercent.toFixed(1)} %</span>)
-    </div>
-  `;
-});
+    output += `
+      <div class="risk-step ${s.cls}">
+        ${s.label}: 
+        <strong>${lot.toFixed(2)} Lots</strong> – 
+        <span class="risk-eur">${riskEuro.toFixed(2)} €</span> 
+        (<span class="risk-pct">${riskPercentStep.toFixed(1)} %</span>)
+      </div>
+    `;
+  });
 
-
-  // ⚠️ Limit-Zeile dunkelrot
+  // ⚠️ Limit-Zeile
   const limitLots = (baseLot * steps[4].mult).toFixed(2);
   output += `<div class="risk-step extreme">
                ⚠️ Mehr als ${limitLots} Lots = über deinem Risiko-Limit
@@ -132,7 +151,6 @@ steps.forEach(s => {
   resultEl.className = "result-box " + sessionClass;
   resultEl.innerHTML = output;
 }
-
 
 
 
