@@ -1,5 +1,29 @@
 window.ALPHAOS_MT5_FEED = [
     {
+        "id": "mt5_90065451",
+        "timestamp": 1792429887000,
+        "pair": "XAUUSD",
+        "direction": "BUY",
+        "lots": 0.05,
+        "pnl": 182.18,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #90065451",
+        "images": []
+    },
+    {
+        "id": "mt5_89915331",
+        "timestamp": 1792172335000,
+        "pair": "XAUUSD",
+        "direction": "BUY",
+        "lots": 0.10,
+        "pnl": 2.22,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #89915331",
+        "images": []
+    },
+    {
         "id": "mt5_89834743",
         "timestamp": 1792129854000,
         "pair": "XAUUSD",
