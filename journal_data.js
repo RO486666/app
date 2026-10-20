@@ -1,5 +1,17 @@
 window.ALPHAOS_MT5_FEED = [
     {
+        "id": "mt5_90108484",
+        "timestamp": 1792467593000,
+        "pair": "XAUUSD",
+        "direction": "BUY",
+        "lots": 0.05,
+        "pnl": 220.79,
+        "session": "New York",
+        "confluence": 80,
+        "notes": "MT5 Deal #90108484",
+        "images": []
+    },
+    {
         "id": "mt5_90065451",
         "timestamp": 1792429887000,
         "pair": "XAUUSD",
